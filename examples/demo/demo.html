@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+
+    <!-- STYLESHEETS -->
+    <link href="css/animate.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/buttons.css" rel="stylesheet">
+    <link href="css/site.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- MAP -->
+    <div id="map-canvas"></div>
+
+
+
+    <!-- SIDE BAR -->
+    <div id="sidebar-wrapper"></div>
+    <article id="sidebar" class="animated bounceInUp">
+        <header>
+            <h1><i class="icon-globe"></i> GeoFire</h1>
+            <h2><a target="_blank" href="http://www.firebase.com">powered by <strong>Firebase</strong></a></h2>
+        </header>
+
+        <section class="content">
+            <h3>What is GeoFire?</h3>
+            <p>
+                geoFire is a helper library for location-based operations in <a target="_blank" href="http://www.firebase.com">Firebase</a>.
+                It provides functions to store data for location querying in Firebase,
+                and perform location queries such as location updates and localized searches.
+            </p>
+
+            <h3>About the demo</h3>
+            <p>
+                The example is using geoFire's <strong>onPointsNearLoc</strong> function to get the list of buses
+                within the highlighted area of the map in real-time.
+            </p>
+
+            <h3>API Functions</h3>
+            <dl>
+                <dt>insertByLoc()</dt>
+                <dd>Inserts data solely by location, specified by a [latitude, longitude] array.</dd>
+
+                <dt>insertByLocWithId()</dt>
+                <dd>Inserts data by location, specified by a [latitude, longitude] array, and a client-provided identifer.</dd>
+
+                <dt>removeById()</dt>
+                <dd>Removes the data point with the specified Id; the data point must have been inserted using insertByLocWithId.</dd>
+
+                <dt>getLocById()</dt>
+                <dd>Gets the location of the data point with the specified Id; the data point must have been inserted using insertByLocWithId.</dd>
+
+                <dt>updateLocForId()</dt>
+                <dd>Updates the location of the data point with the specified Id; the data point must have been inserted using insertByLocWithId.</dd>
+
+                <dt>getPointsNearLoc()</dt>
+                <dd>Finds all data points that are within the specified radius from the source point, specified by a [latitude, longitude] array, at the time the function is called.</dd>
+
+                <dt>onPointsNearLoc()</dt>
+                <dd>As above but continues to return matching data points till offPointsNearLoc is called.</dd>
+
+                <dt>offPointsNearLoc()</dt>
+                <dd>Cancels a search that was initiated by onPointsNearLoc with the source point, radius and callback specified.</dd>
+
+                <dt>getPointsNearId()</dt>
+                <dd>Finds all data points that are within the specified radius from the source point, specified by Id, at the time the function is called.</dd>
+
+                <dt>onPointsNearId()</dt>
+                <dd>As above but continues to return matching data points till offPointsNearId is called.</dd>
+
+                <dt>offPointsNearId()</dt>
+                <dd>Cancels a search that was initiated by onPointsNearId with the source point, radius and callback specified.</dd>
+            </dl>
+        </section>
+
+        <footer>
+            <a target="_blank" href="https://github.com/kav-ya/geoFire" class="button button-large button-block button-primary button-rounded"><i class="icon-github"></i> Download</a>
+        </footer>
+    </article>
+
+
+    <!-- LOCATION CONSOLE -->
+    <section id="location-console" class="animated slideInUp">
+
+        <h3><i class="icon-circle-blank"></i> Buses currently in the circle </h3>
+
+        <ul class="clearfix"><ul>
+    </section>
+
+
+    <!-- SOCIAL BAR -->
+    <div id="social-bar">
+          <!-- GITHUB STAR BUTTON -->
+            <iframe class="github-button" src="http://ghbtns.com/github-btn.html?user=kav-ya&repo=geoFire&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>
+
+            <!-- GITHUB FORK BUTTON -->
+            <iframe class="github-button" src="http://ghbtns.com/github-btn.html?user=kav-ya&repo=geoFire&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>
+
+            <!-- TWITTER TWEET BUTTON -->
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://github.com/kav-ya/geoFire" data-text="geoFire is a helper library for location-based operations in Firebase.">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+            <!-- FACEBOOK LIKE BUTTON -->
+            <div class="fb-like" data-href="https://github.com/kav-ya/geoFire" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+        </section>
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANQ0KPuNhYNPwxfX4NRkJZ25jEWGK35q8&sensor=false"></script>
+    <script src="https://cdn.firebase.com/v0/firebase.js"></script>
+    <script src="../../geoFire.js"></script>
+    <script src="js/vendor/jquery-1.10.2.min.js"></script>
+    <script src="js/vendor/underscore-min.js"></script>
+    <script src="js/newdemo.js"></script>
+
+    <script type="text/javascript">
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+</body>
+</html>

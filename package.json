@@ -1,0 +1,16 @@
+{
+  "name": "geoFire",
+  "title": "geoFire",
+  "description": "Location based operations in Firebase",
+  "private": true,
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://firebase.mit-license.org/"
+    }
+  ],
+  "version": "0.1.0",
+  "dependencies": {
+    "firebase": "~0.6.0"
+  }
+}
