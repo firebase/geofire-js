@@ -44,25 +44,25 @@ function initialize() {
     circle = new google.maps.Circle(circleOptions);
 }
 
-moveRef.once("value", function(snapshot) {
+idRef.once("value", function(snapshot) {
         snapshot.forEach(function(car) {
                 createCar(car.val(), car.name());
             });
     });
 
-moveRef.on("child_changed", function(snapshot) {
+idRef.on("child_changed", function(snapshot) {
         var marker = cars[snapshot.name()];
         if (typeof marker === 'undefined') {
             createCar(snapshot.val(), snapshot.name());
         }
         else {
-            //var loc = geoFire.decode(snapshot.val().geohash);
-            //marker.animatedMoveTo(loc[0], loc[1]);
-            marker.animatedMoveTo(snapshot.val().lat, snapshot.val().lon);
+            var loc = geoFire.decode(snapshot.val().geohash);
+            marker.animatedMoveTo(loc[0], loc[1]);
+            //marker.animatedMoveTo(snapshot.val().lat, snapshot.val().lon);
         }
     });
 
-moveRef.on("child_removed", function(snapshot) {
+idRef.on("child_removed", function(snapshot) {
         var marker = cars[snapshot.name()];
         if (typeof marker !== 'undefined') {
             marker.setMap(null);
@@ -71,6 +71,7 @@ moveRef.on("child_removed", function(snapshot) {
     });
 
 geo.onPointsNearLoc(src, radiusInKm, function(allBuses) {
+<<<<<<< HEAD
         if(allBuses.length > 0) {
             $consoleList.html('').hide();
             var buses = [];
@@ -87,13 +88,30 @@ geo.onPointsNearLoc(src, radiusInKm, function(allBuses) {
             });
         
         $consoleList.fadeIn();   
+=======
+    if(allBuses.length > 0) {
+        $consoleList.html('');
+        $console.removeClass('hidden').addClass('bounceInUp');
+        var buses = [];
+
+        _.map(allBuses, function(bus) {
+            buses.push(bus.routeTag);
+        });
+
+        var uniqueBuses = _.unique(buses);
+
+        // Loop through and add coordinates
+        _.each(uniqueBuses, function(bus){
+            $consoleList.append('<li>' + bus + '</li>');
+        });
+>>>>>>> 2b818b95660b302d8b3ab61f32ac7726d6e4454b
     }
     });
 
 function createCar(car, firebaseId) {
     var latLon = new google.maps.LatLng(car.lat, car.lon);
-    var dirColor = car.dirTag && car.dirTag.indexOf('OB') > -1 ? "7094FF" : "FF6262";
-    var iconType = car.vtype == 'bus' ? 'bus' : 'locomotive'; // 'train' looks nearly identical to bus at rendered size
+    var dirColor = car.dirTag && car.dirTag.indexOf('OB') > -1 ? "50B1FF" : "FF6450";
+    var iconType = 'bus'; // 'train' looks nearly identical to bus at rendered size
     var marker = new google.maps.Marker({ icon: 'http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=' + iconType + '|bbT|'+ car.routeTag+'|' + dirColor + '|eee',
                                           position: latLon,
                                           map: map });
@@ -140,8 +158,8 @@ google.maps.Marker.prototype.animatedMoveTo = function(toLat, toLng) {
                     move(marker, latlngs, index+1, wait);
                 }, wait);
         }
-    }
+    };
 
     // begin animation, send back to origin after completion
     move(this, frames, 0, 25);
-}
+};

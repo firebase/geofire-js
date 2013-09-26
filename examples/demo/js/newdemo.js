@@ -71,29 +71,28 @@ idRef.on("child_removed", function(snapshot) {
     });
 
 geo.onPointsNearLoc(src, radiusInKm, function(allBuses) {
-        if(allBuses.length > 0) {
-            $consoleList.html('').hide();
-            var buses = [];
-            
-            _.map(allBuses, function(bus) {
-                    buses.push(bus.routeTag);
-                });
-            
-        var uniqueBuses = buses; //_.unique(buses);
-        
+    if(allBuses.length > 0) {
+        $consoleList.html('');
+        $console.removeClass('hidden').addClass('bounceInUp');
+        var buses = [];
+
+        _.map(allBuses, function(bus) {
+            buses.push(bus.routeTag);
+        });
+
+        var uniqueBuses = buses;//_.unique(buses);
+
         // Loop through and add coordinates
         _.each(uniqueBuses, function(bus){
-                $consoleList.append('<li>' + bus + '</li>');
-            });
-        
-        $consoleList.fadeIn();   
+            $consoleList.append('<li>' + bus + '</li>');
+        });
     }
     });
 
 function createCar(car, firebaseId) {
     var latLon = new google.maps.LatLng(car.lat, car.lon);
-    var dirColor = car.dirTag && car.dirTag.indexOf('OB') > -1 ? "7094FF" : "FF6262";
-    var iconType = car.vtype == 'bus' ? 'bus' : 'locomotive'; // 'train' looks nearly identical to bus at rendered size
+    var dirColor = car.dirTag && car.dirTag.indexOf('OB') > -1 ? "50B1FF" : "FF6450";
+    var iconType = 'bus'; // 'train' looks nearly identical to bus at rendered size
     var marker = new google.maps.Marker({ icon: 'http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=' + iconType + '|bbT|'+ car.routeTag+'|' + dirColor + '|eee',
                                           position: latLon,
                                           map: map });
@@ -140,8 +139,8 @@ google.maps.Marker.prototype.animatedMoveTo = function(toLat, toLng) {
                     move(marker, latlngs, index+1, wait);
                 }, wait);
         }
-    }
+    };
 
     // begin animation, send back to origin after completion
     move(this, frames, 0, 25);
-}
+};
