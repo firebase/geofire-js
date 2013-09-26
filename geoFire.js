@@ -438,21 +438,21 @@
                                     });
     }
     
-  /**
-   * Find all data points within the specified radius, in kilometers,
-   * from the point with the specified geohash.
-   * The matching points are passed to the callback function in distance sorted order.
-   * If the setAlert flag is set, the callback function is called each time the search results change i.e.
-   * if the set of data points that are within the radius changes.
-   */
+    /**
+     * Find all data points within the specified radius, in kilometers,
+     * from the point with the specified geohash.
+     * The matching points are passed to the callback function in distance sorted order.
+     * If the setAlert flag is set, the callback function is called each time the search results change i.e.
+     * if the set of data points that are within the radius changes.
+     */
     geoFire.prototype.searchRadius = function searchRadius(srcHash, radius,
                                                            setAlert, cb) {
         var self = this,
-            hash = srcHash,
-            neighborPrefixes = [],
-            matches = [],
-            matchesFiltered = [],
-            distDict = {},
+        hash = srcHash,
+        neighborPrefixes = [],
+        matches = [],
+        matchesFiltered = [],
+        distDict = {},
         i = 0;
 
         // An approximation of the bounding box dimension per hash length.
@@ -482,6 +482,9 @@
         delete uniquesObj;
         
         var resultHandler = function(snapshot) {            
+            if (i >= queries.length)
+                matches = [];
+
             // Compile the results for each of the queries as they return.
             var matchSet = snapshot.val();
             for (var hash in matchSet) {
@@ -492,6 +495,9 @@
             
             // Wait for each of the queries to return before filtering and sorting.
             if (++i >= queries.length) {
+                var arr = [],
+                removeIndexes = [];
+
                 // Filter the returned queries using the specified radius.
                 for (var jx = 0; jx < matches.length; jx++) {
                     var match = matches[jx],
@@ -501,21 +507,36 @@
                     
                     if (pointDist <= radius) {
                         distDict[matchElt] = pointDist;
-                        matchesFiltered.push(matchElt);
+                        if (i == queries.length) {
+                            matchesFiltered.push(matchElt);
+                        } else {
+                            arr.push(matchElt);
+                        }
                     }
                 }
-                
-                // Sort the results by radius.
+                                
+                if (i > queries.length) {
+                    for (var j = 0; j < matchesFiltered.length; j++) {
+                        var index = arr.indexOf(matchesFiltered[j]);
+                        if (index === -1) {
+                            removeIndexes.push(j);
+                        } else {
+                            arr = arr.splice(index, 1);
+                        }
+                    }
+
+                    for (var k = 0; k < removeIndexes.length; k++) {
+                        matchesFiltered = matchesFiltered.splice(removeIndexes[k], 1);
+                    }
+                    matchesFiltered.push.apply(matchesFiltered, arr);                                        
+                }
+
+                // Sort the results by radius.                                                                                     
                 matchesFiltered.sort(function(a, b) {
                         return distDict[a] - distDict[b];
                     });
-                
                 cb(matchesFiltered);
-
-                matches = [];
-                matchesFiltered = [];
-                distDict = {};
-           }
+            }
         };
         resultHandler.callback = cb;
 
@@ -524,10 +545,12 @@
             var startPrefix = queries[ix].substring(0, zoomLevel);
             var endPrefix = startPrefix;
             endPrefix = startPrefix + "~";
-	  
+
+            prefixList.push(startPrefix);
+            
             if (setAlert) {
                 prefixList.push(startPrefix);
-
+                
                 this._firebase
                     .startAt(null, startPrefix)
                     .endAt(null, endPrefix)
