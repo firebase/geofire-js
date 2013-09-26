@@ -56,7 +56,7 @@ moveRef.on("child_changed", function(snapshot) {
             createCar(snapshot.val(), snapshot.name());
         }
         else {
-            var loc = geoFire.decode(snapshot.val().geohash);
+            //var loc = geoFire.decode(snapshot.val().geohash);
             //marker.animatedMoveTo(loc[0], loc[1]);
             marker.animatedMoveTo(snapshot.val().lat, snapshot.val().lon);
         }
