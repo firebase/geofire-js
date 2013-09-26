@@ -454,7 +454,6 @@
             matchesFiltered = [],
             distDict = {},
         i = 0;
-        //resultHandler;
 
         // An approximation of the bounding box dimension per hash length.
         var boundingBoxShortestEdgeByHashLength = [ null, 5003.771699005143,

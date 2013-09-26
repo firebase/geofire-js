@@ -2,6 +2,8 @@ var cars = {},
     map, circle;
 
 // For creating the map markers
+var moveRef = new Firebase("https://munigeo.firebaseio.com/sf-muni/data");
+
 var geoRef = new Firebase("https://munigeo.firebaseio.com/sf-muni/geo/geoFire");
 var hashRef = geoRef.child("/dataByHash");
 var idRef = geoRef.child("/dataById");
@@ -9,8 +11,7 @@ var idRef = geoRef.child("/dataById");
 // For the search
 var geo = new geoFire(new Firebase("https://munigeo.firebaseio.com/sf-muni/geo"));
 var center = [37.7789, -122.3917];
-var src = [37.785326, -122.402696];//[37.779551, -122.413813];
-//var searchRadiusInMiles = 2;
+var src = [37.785326, -122.402696];
 var radiusInKm = 0.5;
 
 // UI Elements
@@ -37,30 +38,31 @@ function initialize() {
         fillOpacity: 0.35,
         map: map,
         center: circleLoc,
-        radius: (radiusInKm) * 1000 //(geoFire.miles2km(searchRadiusInMiles) * 1000)/15
+        radius: ((radiusInKm) * 1000)
     };
 
     circle = new google.maps.Circle(circleOptions);
 }
 
-idRef.once("value", function(snapshot) {
+moveRef.once("value", function(snapshot) {
         snapshot.forEach(function(car) {
                 createCar(car.val(), car.name());
             });
     });
 
-idRef.on("child_changed", function(snapshot) {
+moveRef.on("child_changed", function(snapshot) {
         var marker = cars[snapshot.name()];
         if (typeof marker === 'undefined') {
             createCar(snapshot.val(), snapshot.name());
         }
         else {
-            var loc = geoFire.decode(snapshot.val().geohash);
-            marker.animatedMoveTo(loc[0], loc[1]);
+            //var loc = geoFire.decode(snapshot.val().geohash);
+            //marker.animatedMoveTo(loc[0], loc[1]);
+            marker.animatedMoveTo(snapshot.val().lat, snapshot.val().lon);
         }
     });
 
-idRef.on("child_removed", function(snapshot) {
+moveRef.on("child_removed", function(snapshot) {
         var marker = cars[snapshot.name()];
         if (typeof marker !== 'undefined') {
             marker.setMap(null);
@@ -69,25 +71,24 @@ idRef.on("child_removed", function(snapshot) {
     });
 
 geo.onPointsNearLoc(src, radiusInKm, function(allBuses) {
-    if(allBuses.length > 0) {
-        $consoleList.html('').hide();
-        var buses = [];
-
-        _.map(allBuses, function(bus) {
-            buses.push(bus.routeTag);
-        });
-
-        var uniqueBuses = _.unique(buses);
-
+        if(allBuses.length > 0) {
+            $consoleList.html('').hide();
+            var buses = [];
+            
+            _.map(allBuses, function(bus) {
+                    buses.push(bus.routeTag);
+                });
+            
+        var uniqueBuses = buses; //_.unique(buses);
+        
         // Loop through and add coordinates
         _.each(uniqueBuses, function(bus){
-            $consoleList.append('<li>' + bus + '</li>');
-        });
-
-        $consoleList.fadeIn();
-
+                $consoleList.append('<li>' + bus + '</li>');
+            });
+        
+        $consoleList.fadeIn();   
     }
-});
+    });
 
 function createCar(car, firebaseId) {
     var latLon = new google.maps.LatLng(car.lat, car.lon);
@@ -120,10 +121,9 @@ google.maps.Marker.prototype.animatedMoveTo = function(toLat, toLng) {
     var fromLat = this.getPosition().lat();
     var fromLng = this.getPosition().lng();
 
-    if(feq(fromLat, toLat) && feq(fromLng, toLng)) {
-        console.log("Return boohoo");
+    if(feq(fromLat, toLat) && feq(fromLng, toLng))
         return;
-    }
+
     // store a LatLng for each step of the animation
     var frames = [];
     for (var percent = 0; percent < 1; percent += 0.005) {
