@@ -3,7 +3,6 @@ var cars = {},
 
 // For creating the map markers
 var moveRef = new Firebase("https://munigeo.firebaseio.com/sf-muni/data");
-
 var geoRef = new Firebase("https://munigeo.firebaseio.com/sf-muni/geo/geoFire");
 var hashRef = geoRef.child("/dataByHash");
 var idRef = geoRef.child("/dataById");
