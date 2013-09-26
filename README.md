@@ -1,6 +1,6 @@
 GeoFire
 =======
-**GeoFire** is a helper library for location-based operations in [Firebase](https://www.firebase.com/).  
+**GeoFire** is a helper library for location-based operations in <a href="https://www.firebase.com/" target="_blank">Firebase</a> 
 
 It provides functions to store data for location querying in Firebase, 
 and perform location queries such as location updates and localized searches.
@@ -19,7 +19,7 @@ will be stored at:
 You can see your Firebase data at any time by navigating to the geoRef url.
 
 The GeoFire library provides functions to:  
-  1. [Store/ remove data in Firebase for location queries](#-storing-removing-data-for-location-queries):  
+  1. [Store/remove data in Firebase for location queries](#storingremoving-data-for-location-queries)
     - [insertByLoc](#insertbyloclatlon-data-oncomplete)
     - [insertByLocWithId](#insertbylocwithidlatlon-id-data-oncomplete)  
     - [removeById](#removebyidid-oncomplete)
