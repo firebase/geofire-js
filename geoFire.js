@@ -450,7 +450,7 @@
         var self = this,
         hash = srcHash,
         neighborPrefixes = [],
-        matches = [],
+        matchesByPrefix = {},
         matchesFiltered = [],
         distDict = {},
         i = 0;
@@ -475,66 +475,48 @@
         // Get unique list of neighbor hashes.
         var uniquesObj = {};
         for (var ix = 0; ix < queries.length; ix++) {
-            if (queries[ix].length > 0)
+            if (queries[ix].length > 0) {
                 uniquesObj[queries[ix]] = queries[ix];
+                matchesByPrefix[queries[ix]] = [];
+            }
         }
         queries = values(uniquesObj);
         delete uniquesObj;
         
-        var resultHandler = function(snapshot) {            
-            if (i >= queries.length)
-                matches = [];
+        var resultHandler = function(snapshot) {
+            var prefix = this.prefix;
+            matchesByPrefix[prefix] = [];
 
             // Compile the results for each of the queries as they return.
             var matchSet = snapshot.val();
             for (var hash in matchSet) {
-                for (var pushId in matchSet[hash]) {
-                    matches.push([hash, matchSet[hash][pushId]]);
+                for (var locationId in matchSet[hash]) {
+                    matchesByPrefix[prefix].push([hash, matchSet[hash][locationId]]);
                 }
             }
-            
+
             // Wait for each of the queries to return before filtering and sorting.
             if (++i >= queries.length) {
-                var arr = [],
-                removeIndexes = [];
-
                 // Filter the returned queries using the specified radius.
-                for (var jx = 0; jx < matches.length; jx++) {
-                    var match = matches[jx],
-                        matchHash = match[0],
-                        matchElt = match[1],
-                        pointDist = distByHash(srcHash, matchHash);
-                    
-                    if (pointDist <= radius) {
-                        distDict[matchElt] = pointDist;
-                        if (i == queries.length) {
+                for (var prefix in matchesByPrefix) {
+                    var matches = matchesByPrefix[prefix];
+                    for (var jx = 0; jx < matches.length; jx++) {
+                        var match = matches[jx],
+                            matchHash = match[0],
+                            matchElt = match[1],
+                            pointDist = distByHash(srcHash, matchHash);
+                        
+                        if (pointDist <= radius) {
+                            distDict[matchElt] = pointDist;
                             matchesFiltered.push(matchElt);
-                        } else {
-                            arr.push(matchElt);
                         }
                     }
-                }
-                                
-                if (i > queries.length) {
-                    for (var j = 0; j < matchesFiltered.length; j++) {
-                        var index = arr.indexOf(matchesFiltered[j]);
-                        if (index === -1) {
-                            removeIndexes.push(j);
-                        } else {
-                            arr = arr.splice(index, 1);
-                        }
-                    }
-
-                    for (var k = 0; k < removeIndexes.length; k++) {
-                        matchesFiltered = matchesFiltered.splice(removeIndexes[k], 1);
-                    }
-                    matchesFiltered.push.apply(matchesFiltered, arr);                                        
                 }
 
                 // Sort the results by radius.                                                                                     
                 matchesFiltered.sort(function(a, b) {
-                        return distDict[a] - distDict[b];
-                    });
+                    return distDict[a] - distDict[b];
+                });
                 cb(matchesFiltered);
             }
         };
@@ -554,12 +536,12 @@
                 this._firebase
                     .startAt(null, startPrefix)
                     .endAt(null, endPrefix)
-                    .on('value', resultHandler);
+                    .on('value', resultHandler, { prefix: startPrefix });
             } else {
                 this._firebase
                     .startAt(null, startPrefix)
                     .endAt(null, endPrefix)
-                    .once('value', resultHandler);
+                    .once('value', resultHandler, { prefix: startPrefix });
             }
         }
         
