@@ -40,37 +40,37 @@
 
             <h3>API Functions</h3>
             <dl>
-                <dt>insertByLoc()</dt>
+                <a href="https://github.com/firebase/geoFire/blob/gh-pages/README.md#insertbyloclatlon-data-oncomplete" target="_blank"><dt>insertByLoc()</dt></a>
                 <dd>Inserts data solely by location, specified by a [latitude, longitude] array.</dd>
 
-                <dt>insertByLocWithId()</dt>
+                <a href="https://github.com/firebase/geoFire/blob/gh-pages/README.md#insertbylocwithidlatlon-id-data-oncomplete" target="_blank"><dt>insertByLocWithId()</dt></a>
                 <dd>Inserts data by location, specified by a [latitude, longitude] array, and a client-provided identifer.</dd>
 
-                <dt>removeById()</dt>
+                <a href="https://github.com/firebase/geoFire/blob/gh-pages/README.md#removebyidid-oncomplete" target="_blank"><dt>removeById()</dt></a>
                 <dd>Removes the data point with the specified Id; the data point must have been inserted using insertByLocWithId.</dd>
 
-                <dt>getLocById()</dt>
+                <a href="https://github.com/firebase/geoFire/blob/gh-pages/README.md#getlocbyidid-callback" target="_blank"><dt>getLocById()</dt></a>
                 <dd>Gets the location of the data point with the specified Id; the data point must have been inserted using insertByLocWithId.</dd>
 
-                <dt>updateLocForId()</dt>
+                <a href="https://github.com/firebase/geoFire/blob/gh-pages/README.md#updatelocforidlatlon-id-oncomplete" target="_blank"><dt>updateLocForId()</dt></a>
                 <dd>Updates the location of the data point with the specified Id; the data point must have been inserted using insertByLocWithId.</dd>
 
-                <dt>getPointsNearLoc()</dt>
+                <a href="https://github.com/firebase/geoFire/blob/gh-pages/README.md#getpointsnearloclatlon-radius-callback" target="_blank"><dt>getPointsNearLoc()</dt></a>
                 <dd>Finds all data points that are within the specified radius from the source point, specified by a [latitude, longitude] array, at the time the function is called.</dd>
 
-                <dt>onPointsNearLoc()</dt>
+                <a href="https://github.com/firebase/geoFire/blob/gh-pages/README.md#onpointsnearloclatlon-radius-callback" target="_blank"><dt>onPointsNearLoc()</dt></a>
                 <dd>As above but continues to return matching data points till offPointsNearLoc is called.</dd>
 
-                <dt>offPointsNearLoc()</dt>
+                <a href="https://github.com/firebase/geoFire/blob/gh-pages/README.md#offpointsnearloclatlon-radius-callback" target="_blank"><dt>offPointsNearLoc()</dt></a>
                 <dd>Cancels a search that was initiated by onPointsNearLoc with the source point, radius and callback specified.</dd>
 
-                <dt>getPointsNearId()</dt>
+                <a href="https://github.com/firebase/geoFire/blob/gh-pages/README.md#getpointsnearidid-radius-callback" target="_blank"><dt>getPointsNearId()</dt></a>
                 <dd>Finds all data points that are within the specified radius from the source point, specified by Id, at the time the function is called.</dd>
 
-                <dt>onPointsNearId()</dt>
+                <a href="https://github.com/firebase/geoFire/blob/gh-pages/README.md#onpointsnearidid-radius-callback" target="_blank"><dt>onPointsNearId()</dt></a>
                 <dd>As above but continues to return matching data points till offPointsNearId is called.</dd>
 
-                <dt>offPointsNearId()</dt>
+                <a href="https://github.com/firebase/geoFire/blob/gh-pages/README.md#offpointsnearidid-radius-callback" target="_blank"><dt>offPointsNearId()</dt></a>
                 <dd>Cancels a search that was initiated by onPointsNearId with the source point, radius and callback specified.</dd>
             </dl>
         </section>
@@ -99,7 +99,7 @@
             <iframe class="github-button" src="http://ghbtns.com/github-btn.html?user=firebase&repo=geoFire&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>
 
             <!-- TWITTER TWEET BUTTON -->
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://github.com/firebase/geoFire" data-text="geoFire is a helper library for location-based operations in Firebase.">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://github.com/firebase/geoFire" data-text="GeoFire is a helper library for location-based operations in @Firebase.">Tweet</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
             <!-- FACEBOOK LIKE BUTTON -->
@@ -118,6 +118,18 @@
 
     <script type="text/javascript">
       google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+
+    <script>
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-37102688-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
     </script>
 </body>
 </html>

@@ -274,6 +274,11 @@ html, body, #map-canvas {
   color: #408ecc;
   line-height: 24px;
 }
+
+#sidebar .content dl a {
+  text-decoration: none;
+}
+
 /* line 215, ../scss/site.scss */
 #sidebar .content dl dd {
   line-height: 24px;
