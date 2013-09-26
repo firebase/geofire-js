@@ -8,7 +8,7 @@ GeoFire stores the location coordinates of a data point as a <a href="http://en.
 
 ###<a href="http://firebase.github.io/geoFire/examples/demo/index.html" target="_blank">See a live demo of GeoFire here!</a>###
 
-<a href="http://firebase.github.io/geoFire/examples/demo/index.html" target="_blank"><img src="geofire.png"/></a>
+<a href="http://firebase.github.io/geoFire/examples/demo/index.html?2" target="_blank"><img src="geofire.png"/></a>
 
 Using the GeoFire library
 ------------------------
