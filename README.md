@@ -15,7 +15,7 @@ Using the GeoFire library
 To use the GeoFire library, include the **geoFire.js** file and create a geoFire object with the Firebase reference your data
 will be stored at:
 
-    var geoRef = new Firebase('https://abc.firebaseio-demo.com'),
+    var geoRef = new Firebase('https://abc.firebaseio-demo.com/geodata'),
         geo = new geoFire(geoRef);
 
 You can see your Firebase data at any time by navigating to the geoRef url.
