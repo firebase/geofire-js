@@ -4,7 +4,7 @@ GeoFire
 
 It provides functions to store data for location querying in Firebase, 
 and perform location queries such as location updates and localized searches.
-geoFire stores the location coordinates of a data point as a [geohash] (http://en.wikipedia.org/wiki/Geohash) in Firebase.
+geoFire stores the location coordinates of a data point as a <a href="http://en.wikipedia.org/wiki/Geohash" target="_blank">geohash</a> in Firebase.
 
 <a href="http://firebase.github.io/geoFire/examples/demo/index.html" target="_blank">See a live demo of GeoFire here</a>
 
@@ -215,8 +215,8 @@ bounding box around the location coordinate.
 Geohashes have a neat property that makes them suitable for localized search: points with similar geohashes are near each other. 
 (It's worth noting that points that are near each other may not have similar geohashes though.)  
 
-You can learn about geohashes at: [the wikipedia page] (http://en.wikipedia.org/wiki/Geohash) or
-[this blog post] (http://www.bigfastblog.com/geohash-intro).
+You can learn about geohashes at: <a href="http://en.wikipedia.org/wiki/Geohash" target="_blank">the wikipedia page</a> or 
+<a href="http://www.bigfastblog.com/geohash-intro" target="_blank">this blog post</a>
 
 ###encode(latLon, precision)
 
