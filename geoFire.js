@@ -513,7 +513,7 @@
                     }
                 }
 
-                // Sort the results by radius.                                                                                     
+                // Sort the results by radius.                                          
                 matchesFiltered.sort(function(a, b) {
                     return distDict[a] - distDict[b];
                 });
