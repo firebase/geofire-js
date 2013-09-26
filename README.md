@@ -1,12 +1,12 @@
 GeoFire
 =======
-**GeoFire** is a helper library for location-based operations in <a href="https://www.firebase.com/" target="_blank">Firebase</a> 
+**GeoFire** is a helper library for location-based operations in <a href="https://www.firebase.com/" target="_blank">Firebase.</a> 
 
 It provides functions to store data for location querying in Firebase, 
 and perform location queries such as location updates and localized searches.
-geoFire stores the location coordinates of a data point as a <a href="http://en.wikipedia.org/wiki/Geohash" target="_blank">geohash</a> in Firebase.
+GeoFire stores the location coordinates of a data point as a <a href="http://en.wikipedia.org/wiki/Geohash" target="_blank">geohash</a> in Firebase.
 
-<a href="http://firebase.github.io/geoFire/examples/demo/index.html" target="_blank">See a live demo of GeoFire here</a>
+<a href="http://firebase.github.io/geoFire/examples/demo/index.html" target="_blank">See a live demo of GeoFire here</a>.
 
 Using the GeoFire library
 ------------------------
@@ -116,8 +116,7 @@ Performing localized searches:
 Finds all data points within the specified radius, in kilometers, from the
 source point, specified as a [latitude, longitude] array.
 The function does not return anything; the matching data points are passed
-to the callback function as an array in **distance sorted order**.  
-**The callback function is called once, with the initial set of search results;
+to the callback function as an array in **distance sorted order**. **The callback function is called once, with the initial set of search results;
 it is not called when the set of search results changes.**
 
     geo.getPointsNearLoc([37.771393, -122.447104], 5,
@@ -131,8 +130,7 @@ it is not called when the set of search results changes.**
 Finds all data points within the specified radius, in kilometers, from the
 source point, specified as a [latitude, longitude] array.
 The function does not return anything; the matching data points are passed
-to the callback function as an array in **distance sorted order**.
-**The callback function is called with the initial set of search results and
+to the callback function as an array in **distance sorted order**. **The callback function is called with the initial set of search results and
 each time the set of search results changes.**
 
     geo.onPointsNearLoc([37.771393, -122.447104], 5,
@@ -160,8 +158,7 @@ The function does not return anything.
 Finds all data points within the specified radius, in kilometers, from the
 source point, specified by Id. The source point must have been inserted using `insertByLocWithId`.
 The function does not return anything; the matching data points are passed
-to the callback function as an array in **distance sorted order**.  
-**The callback function is called once, with the initial set of search results;
+to the callback function as an array in **distance sorted order**. **The callback function is called once, with the initial set of search results;
 it is not called when the set of search results changes.**
 
     geo.getPointsNearId(car2.id, 5,
@@ -175,8 +172,7 @@ it is not called when the set of search results changes.**
 Finds all data points within the specified radius, in kilometers, from the
 source point, specified by Id. The source point must have been inserted using `insertByLocWithId`.
 The function does not return anything; the matching data points are passed
-to the callback function as an array in **distance sorted order**.
-**The callback function is called with the initial set of search results and
+to the callback function as an array in **distance sorted order**. **The callback function is called with the initial set of search results and
 each time the set of search results changes.**
 
     geo.onPointsNearId(car2.id, 5,
@@ -216,7 +212,7 @@ Geohashes have a neat property that makes them suitable for localized search: po
 (It's worth noting that points that are near each other may not have similar geohashes though.)  
 
 You can learn about geohashes at: <a href="http://en.wikipedia.org/wiki/Geohash" target="_blank">the wikipedia page</a> or 
-<a href="http://www.bigfastblog.com/geohash-intro" target="_blank">this blog post</a>
+<a href="http://www.bigfastblog.com/geohash-intro" target="_blank">this blog post</a>.
 
 ###encode(latLon, precision)
 
