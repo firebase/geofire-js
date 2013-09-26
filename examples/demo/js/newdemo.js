@@ -79,7 +79,7 @@ geo.onPointsNearLoc(src, radiusInKm, function(allBuses) {
             buses.push(bus.routeTag);
         });
 
-        var uniqueBuses = buses;//_.unique(buses);
+        var uniqueBuses = _.unique(buses);
 
         // Loop through and add coordinates
         _.each(uniqueBuses, function(bus){
