@@ -48,6 +48,10 @@ html, body, #map-canvas {
 	min-height: 150px;
 	padding-top: 42px;
 
+	&.hidden {
+		bottom: -192px;
+	}
+
 
 
 	h3 {

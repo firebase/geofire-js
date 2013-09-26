@@ -71,6 +71,7 @@ idRef.on("child_removed", function(snapshot) {
 geo.onPointsNearLoc(src, radiusInKm, function(allBuses) {
     if(allBuses.length > 0) {
         $consoleList.html('');
+        $console.removeClass('hidden').addClass('bounceInUp');
         var buses = [];
 
         _.map(allBuses, function(bus) {
