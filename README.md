@@ -1,12 +1,12 @@
 GeoFire
 =======
-**GeoFire** is a helper library for location-based operations in <a href="https://www.firebase.com/" target="_blank">Firebase</a> 
+**GeoFire** is a helper library for location-based operations in <a href="https://www.firebase.com/" target="_blank">Firebase.</a> 
 
 It provides functions to store data for location querying in Firebase, 
 and perform location queries such as location updates and localized searches.
-geoFire stores the location coordinates of a data point as a <a href="http://en.wikipedia.org/wiki/Geohash" target="_blank">geohash</a> in Firebase.
+GeoFire stores the location coordinates of a data point as a <a href="http://en.wikipedia.org/wiki/Geohash" target="_blank">geohash</a> in Firebase.
 
-<a href="http://firebase.github.io/geoFire/examples/demo/index.html" target="_blank">See a live demo of GeoFire here</a>
+<a href="http://firebase.github.io/geoFire/examples/demo/index.html" target="_blank">See a live demo of GeoFire here</a>.
 
 Using the GeoFire library
 ------------------------
