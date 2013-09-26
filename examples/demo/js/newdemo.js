@@ -44,25 +44,25 @@ function initialize() {
     circle = new google.maps.Circle(circleOptions);
 }
 
-idRef.once("value", function(snapshot) {
+moveRef.once("value", function(snapshot) {
         snapshot.forEach(function(car) {
                 createCar(car.val(), car.name());
             });
     });
 
-idRef.on("child_changed", function(snapshot) {
+moveRef.on("child_changed", function(snapshot) {
         var marker = cars[snapshot.name()];
         if (typeof marker === 'undefined') {
             createCar(snapshot.val(), snapshot.name());
         }
         else {
             var loc = geoFire.decode(snapshot.val().geohash);
-            marker.animatedMoveTo(loc[0], loc[1]);
-            //marker.animatedMoveTo(snapshot.val().lat, snapshot.val().lon);
+            //marker.animatedMoveTo(loc[0], loc[1]);
+            marker.animatedMoveTo(snapshot.val().lat, snapshot.val().lon);
         }
     });
 
-idRef.on("child_removed", function(snapshot) {
+moveRef.on("child_removed", function(snapshot) {
         var marker = cars[snapshot.name()];
         if (typeof marker !== 'undefined') {
             marker.setMap(null);
