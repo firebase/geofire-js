@@ -6,7 +6,7 @@ It provides functions to store data for location querying in Firebase,
 and perform location queries such as location updates and localized searches.
 geoFire stores the location coordinates of a data point as a [geohash] (http://en.wikipedia.org/wiki/Geohash) in Firebase.
 
-[See a live demo of GeoFire here](http://firebase.github.io/geoFire/examples/demo/index.html)
+<a href="http://firebase.github.io/geoFire/examples/demo/index.html" target="_blank">See a live demo of GeoFire here</a>
 
 Using the GeoFire library
 ------------------------
