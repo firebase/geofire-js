@@ -319,7 +319,7 @@
                                     function (snapshot) {
                                         var data = snapshot.val();
                                         if (data === null) {
-                                            cb(new Error("geoFire.removeById error: Invalid Id argument."));
+                                            cb(new Error("geoFire.removeById error: No data exists with provided id."));
                                         }
                                         else {
                                             self._firebase.child(data.geohash).child(id).remove(function(error) {
@@ -361,7 +361,7 @@
                                     function (snapshot) {
                                         var data = snapshot.val();         
                                         if (data === null) {
-                                            cb(new Error("geoFire.updateLocForId error: Invalid Id argument."));
+                                            cb(new Error("geoFire.updateLocForId error: No data exists with provided id."));
                                         } else {
                                             var geohash = data.geohash;
                                             self._firebase.child(geohash).child(id).remove(function(error) {
