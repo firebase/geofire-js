@@ -318,12 +318,17 @@
         this._agents.child(id).once('value', 
                                     function (snapshot) {
                                         var data = snapshot.val();
-                                        self._firebase.child(data.geohash).child(id).remove(function(error) {
-                                                if (!error)
-                                                    self._agents.child(id).remove(cb);                                                    
-                                                else
-                                                    cb(error);
-                                            });
+                                        if (data === null) {
+                                            cb(new Error("geoFire.removeById error: Invalid Id argument."));
+                                        }
+                                        else {
+                                            self._firebase.child(data.geohash).child(id).remove(function(error) {
+                                                    if (!error)
+                                                        self._agents.child(id).remove(cb);                                                    
+                                                    else
+                                                        cb(error);
+                                                });    
+                                        }
                                     });
     };
 
