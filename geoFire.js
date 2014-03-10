@@ -318,6 +318,7 @@
         this._agents.child(id).once('value', 
                                     function (snapshot) {
                                         var data = snapshot.val();
+                                        if (!data || !data['geohash']) return;
                                         self._firebase.child(data.geohash).child(id).remove(function(error) {
                                                 if (!error)
                                                     self._agents.child(id).remove(cb);                                                    
