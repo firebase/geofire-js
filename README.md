@@ -1,7 +1,9 @@
 GeoFire — Realtime location queries with Firebase
 ==========
 
-GeoFire is a simple javascript library that allows you to store and query a set of keys based on location. GeoFire uses Firebase for data storage, allowing query results to be updated in realtime as they change.
+GeoFire is a simple javascript library that allows you to store and
+query a set of keys based on location. GeoFire uses Firebase for
+data storage, allowing query results to be updated in realtime as they change.
 
 Here’s a simple example of using GeoFire:
 
@@ -15,10 +17,10 @@ Here’s a simple example of using GeoFire:
     var newItem = geo.set(“some-unique-key”, [1, 2]);
 
     //Create a location query for a circle with a 1 km radius from the center of San Francisco.
-    var q = geo.query({type: “circle”, center: [], radius: 1000});
-    
+    var q = geo.query({type: “circle”, center: [1, 2], radius: 1000});
+
     //Print the results — both initial items and new items that enter into our search area
-    q.onKey(function(key, location) { 
+    q.onKeyEntered(function(key, location) {
       console.log(key, location);
     });
 
@@ -30,10 +32,16 @@ var promise = geo.set(key, location);
 var promise = geo.get(key);
 
 var query = geo.query(criteria);
-var registration = query.onKey(callback(key, location));
+var registration = query.onKeyEntered(callback(key, location));
+var registration = query.onKeyLeft(callback(key));
 var promise = query.then();
-var promise = query.changeQuery(criteria);
+var promise = query.updateQueryCriteria(criteria);
 query.cancel();
 
 registration.cancel();
 
+Objects:
+GeoFire
+Query
+Promise
+Registration
