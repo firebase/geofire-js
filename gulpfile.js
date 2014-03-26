@@ -1,23 +1,39 @@
 var gulp = require('gulp');
+var streamqueue = require('streamqueue');
 var jshint = require('gulp-jshint');
-var header = require('gulp-header');
 var jasmine = require('gulp-jasmine');
 var karma = require('gulp-karma');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 
 var paths = {
-  scripts: ['lib/geofire.js']
+  scripts: ['lib/*.js'],
 };
 
 gulp.task('scripts', function() {
-  // Minify and copy all JavaScript (except vendor scripts)
-  return gulp.src(paths.scripts)
+
+  //Load the code, and process it.
+  var code = gulp.src(paths.scripts)
     .pipe(jshint())
     .pipe(jshint.reporter('default'))
-    .pipe(uglify())
+    .pipe(uglify());
+
+  //wrap it with headers and footers to namespace it
+  var stream = streamqueue({ objectMode: true });
+  stream.queue(gulp.src('build/header'));
+  stream.queue(code);
+  stream.queue(gulp.src('build/footer'));
+
+  //and output it.
+  return stream.done()
     .pipe(concat('geofire.min.js'))
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('default', ['scripts']);
+gulp.task('tests', function() {
+  //Run the jasmine tests.
+  gulp.src('tests/geofire.spec.js')
+    .pipe(jasmine());
+});
+
+gulp.task('default', ['tests', 'scripts']);

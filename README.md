@@ -45,3 +45,13 @@ GeoFire
 Query
 Promise
 Registration
+
+Development
+====
+
+```bash
+npm install
+bower install
+grunt test
+grunt
+```
