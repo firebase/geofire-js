@@ -487,6 +487,8 @@
         var resultHandler = function(snapshot) {
             var prefix = this.prefix;
             matchesByPrefix[prefix] = [];
+            // clear prior results
+            matchesFiltered.length = 0;
 
             // Compile the results for each of the queries as they return.
             var matchSet = snapshot.val();
