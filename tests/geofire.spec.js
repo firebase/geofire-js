@@ -159,4 +159,64 @@ describe("GeoFire Tests", function() {
       cl.x("seventh promise");
     });
   }, 1000);
+
+  it("query() returns GeoQuery instance", function() {
+    var gf = new GeoFire(dataRef);
+    var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+
+    expect(gq instanceof GeoQuery).toBeTruthy();
+  });
+
+});
+
+describe("GeoQuery Tests", function() {
+  var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
+
+  function Checklist(items, doneCB) {
+    var eventsToComplete = items ? items : ["default"];
+
+    this.x = function(item) {
+      var ind = eventsToComplete.indexOf(item);
+      if(ind >= 0) {
+        eventsToComplete.splice(ind, 1);
+      }
+      if(eventsToComplete.length == 0) {
+        doneCB();
+      }
+    }
+  };
+
+  it("constructor stores query criteria", function() {
+    var gf = new GeoFire(dataRef);
+    var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+
+    expect(gq._type).toEqual("circle");
+    expect(gq._center).toEqual([1,2]);
+    expect(gq._radius).toEqual(1000);
+  });
+
+  xit("constructor throws error on invalid criteria", function() {
+    var gf = new GeoFire(dataRef);
+    var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+  });
+
+  it("updateQueryCriteria() updates query criteria", function() {
+    var gf = new GeoFire(dataRef);
+    var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+
+    expect(gq._type).toEqual("circle");
+    expect(gq._center).toEqual([1,2]);
+    expect(gq._radius).toEqual(1000);
+
+    gq.updateQueryCriteria({type:"square", center: [2,3], radius: 100});
+
+    expect(gq._type).toEqual("square");
+    expect(gq._center).toEqual([2,3]);
+    expect(gq._radius).toEqual(100);
+  });
+
+  xit("updateQueryCriteria() throws error on invalid criteria", function() {
+    var gf = new GeoFire(dataRef);
+    var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+  });
 });

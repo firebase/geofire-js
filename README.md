@@ -44,7 +44,7 @@ Here is the full set of API methods:
 
 This API has 4 different developer-facing object types:
     GeoFire - A geodata storage engine instance
-    Query - A standing query that tracks a set of keys matching a criteria
+    GeoQuery - A standing query that tracks a set of keys matching a criteria
     Promise - Returned by a few methods to indicate that I/O is complete.
     Registration - Used to cancel callbacks when they are no longer needed.
 
