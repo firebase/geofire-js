@@ -27,27 +27,31 @@ Here’s a simple example of using GeoFire:
     //Terminate the query, so we are no longer sent location updates for this query from the server.
     q.cancel();
 
-var geo = new GeoFire(ref);
-var promise = geo.set(key, location);
-var promise = geo.get(key);
+Here is the full set of API methods:
+    var geo = new GeoFire(ref);
+    var promise = geo.set(key, location);
+    var promise = geo.get(key);
 
-var query = geo.query(criteria);
-var registration = query.onKeyEntered(callback(key, location));
-var registration = query.onKeyLeft(callback(key));
-var promise = query.then();
-var promise = query.updateQueryCriteria(criteria);
-query.cancel();
+    var query = geo.query(criteria);
+    var registration = query.onKeyEntered(callback(key, location));
+    var registration = query.onKeyLeft(callback(key));
+    var promise = query.then();
+    var promise = query.updateQueryCriteria(criteria);
+    query.cancel();
 
-registration.cancel();
+    registration.cancel();
 
-Objects:
-GeoFire
-Query
-Promise
-Registration
+This API has 4 different developer-facing object types:
+    GeoFire - A geodata storage engine instance
+    Query - A standing query that tracks a set of keys matching a criteria
+    Promise - Returned by a few methods to indicate that I/O is complete.
+    Registration - Used to cancel callbacks when they are no longer needed.
 
 Development
 ====
+
+If you'd like to contribute to GeoFire, you'll need to run the following commands to get your
+environment set up.
 
 ```bash
 npm install
@@ -55,3 +59,5 @@ bower install
 grunt test
 grunt
 ```
+
+During development, you may find it useful to open tests/TestRunner.html.
