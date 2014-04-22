@@ -30,9 +30,9 @@ describe("GeoFire Tests", function() {
       expect(loc).toEqual([1,2]);
       cl.x("second promise");
     });
-  });
+  }, 1000);
 
-  /*it("get throws error on invalid inputs" ,function(done) {
+  xit("get throws error on invalid inputs" ,function(done) {
     var cl = new Checklist(["first promise", "second promise"], done);
 
     var gf = new GeoFire(ref);
@@ -47,5 +47,5 @@ describe("GeoFire Tests", function() {
       expect(loc).toEqual([1,2]);
       cl.x("second promise");
     });
-  });*/
+  });
 });
