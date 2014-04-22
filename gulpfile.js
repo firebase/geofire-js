@@ -30,10 +30,10 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('tests', function() {
+gulp.task('test', function() {
   //Run the jasmine tests.
   gulp.src('tests/geofire.spec.js')
     .pipe(jasmine());
 });
 
-gulp.task('default', ['tests', 'scripts']);
+gulp.task('default', ['test', 'scripts']);
