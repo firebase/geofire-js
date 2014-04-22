@@ -19,6 +19,5 @@
   },
   "devDependencies": {
     "jasmine": "~2.0.0",
-    "rsvp": "~3.0.6"
   }
 }
