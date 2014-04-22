@@ -11,7 +11,7 @@ Here’s a simple example of using GeoFire:
     var dataRef = new Firebase('https://my-firebase.firebaseio-demo.com'),
 
     //Create a GeoFire index
-    var geo = new GeoFire(geoRef);
+    var geo = new GeoFire(dataRef);
 
     //Write a key into the index
     var newItem = geo.set(“some-unique-key”, [1, 2]);
@@ -57,8 +57,8 @@ environment set up.
 ```bash
 npm install
 bower install
-grunt test
-grunt
+gulp test
+gulp
 ```
 
 During development, you may find it useful to open tests/TestRunner.html.
