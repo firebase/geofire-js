@@ -1,19 +1,25 @@
 var gulp = require('gulp');
 var streamqueue = require('streamqueue');
 var jshint = require('gulp-jshint');
-var jasmine = require('gulp-jasmine');
 var karma = require('gulp-karma');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 
-var paths = {
+var distFiles = {
   scripts: ['lib/*.js'],
 };
+
+var testFiles = [
+  'bower_components/firebase/firebase.js',
+  'bower_components/rsvp/rsvp.min.js',
+  'lib/*.js',
+  'tests/geofire.spec.js'
+];
 
 gulp.task('scripts', function() {
 
   //Load the code, and process it.
-  var code = gulp.src(paths.scripts)
+  var code = gulp.src(distFiles.scripts)
     .pipe(jshint())
     .pipe(jshint.reporter('default'))
     .pipe(uglify());
@@ -31,9 +37,16 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('test', function() {
-  //Run the jasmine tests.
-  gulp.src('tests/geofire.spec.js')
-    .pipe(jasmine());
+  // Be sure to return the stream
+  return gulp.src(testFiles)
+    .pipe(karma({
+      configFile: 'tests/automatic_karma.conf.js',
+      action: 'run'
+    }))
+    .on('error', function(err) {
+      // Make sure failed tests cause gulp to exit non-zero
+      throw err;
+    });
 });
 
 gulp.task('default', ['test', 'scripts']);
