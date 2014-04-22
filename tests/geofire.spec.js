@@ -32,6 +32,18 @@ describe("GeoFire Tests", function() {
     });
   }, 1000);
 
+  it("get handles an unknown key", function(done) {
+    var cl = new Checklist(["first promise"], done);
+
+    var gf = new GeoFire(dataRef);
+    var p1 = gf.get("unknown");
+
+    p1.then(function(loc) {
+      expect(loc).toBeNull();
+      cl.x("first promise");
+    });
+  }, 1000);
+
   it("set throws error on invalid key" ,function(done) {
     var cl = new Checklist(["first promise", "second promise", "third promise"], done);
 
@@ -57,7 +69,7 @@ describe("GeoFire Tests", function() {
     }, function(error) {
       cl.x("third promise");
     });
-  });
+  }, 1000);
 
   xit("set throws error on invalid location" ,function(done) {
     var cl = new Checklist(["first promise", "second promise", "third promise", "fourth promise", "fifth promise", "sixth promise", "seventh promise"], done);
@@ -119,5 +131,5 @@ describe("GeoFire Tests", function() {
     }, function(error) {
       cl.x("seventh promise");
     });
-  });
+  }, 1000);
 });
