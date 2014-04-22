@@ -15,7 +15,7 @@ describe("GeoFire Tests", function() {
     }
   };
 
-  it("get and set return promises", function(done) {
+  it("get() and set() return promises", function(done) {
     var cl = new Checklist(["first promise", "second promise"], done);
 
     var gf = new GeoFire(dataRef);
@@ -32,7 +32,7 @@ describe("GeoFire Tests", function() {
     });
   }, 1000);
 
-  it("get handles an unknown key", function(done) {
+  it("get() handles an unknown key", function(done) {
     var cl = new Checklist(["first promise"], done);
 
     var gf = new GeoFire(dataRef);
@@ -44,7 +44,34 @@ describe("GeoFire Tests", function() {
     });
   }, 1000);
 
-  it("set throws error on invalid key" ,function(done) {
+  it("get() throws error on invalid key" ,function(done) {
+    var cl = new Checklist(["first promise", "second promise", "third promise"], done);
+
+    var gf = new GeoFire(dataRef);
+    var p1 = gf.get(100);
+    var p2 = gf.get(true);
+    var p3 = gf.get({"a": 1});
+
+    p1.then(function() {
+      expect(true).toBeFalsy();
+    }, function(error) {
+      cl.x("first promise");
+    });
+
+    p2.then(function() {
+      expect(true).toBeFalsy();
+    }, function(error) {
+      cl.x("second promise");
+    });
+
+    p3.then(function() {
+      expect(true).toBeFalsy();
+    }, function(error) {
+      cl.x("third promise");
+    });
+  }, 1000);
+
+  it("set() throws error on invalid key" ,function(done) {
     var cl = new Checklist(["first promise", "second promise", "third promise"], done);
 
     var gf = new GeoFire(dataRef);
@@ -71,7 +98,7 @@ describe("GeoFire Tests", function() {
     });
   }, 1000);
 
-  xit("set throws error on invalid location" ,function(done) {
+  xit("set() throws error on invalid location" ,function(done) {
     var cl = new Checklist(["first promise", "second promise", "third promise", "fourth promise", "fifth promise", "sixth promise", "seventh promise"], done);
 
     var gf = new GeoFire(dataRef);
