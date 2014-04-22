@@ -34,8 +34,9 @@ Here is the full set of API methods:
 
     var query = geo.query(criteria);
     var registration = query.onKeyEntered(callback(key, location));
+    var registration = query.onKeyMoved(callback(key, location));
     var registration = query.onKeyLeft(callback(key));
-    var promise = query.then();
+    var promise = query.getInitialResults();
     var promise = query.updateQueryCriteria(criteria);
     query.cancel();
 
