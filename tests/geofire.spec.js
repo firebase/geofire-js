@@ -31,5 +31,5 @@ describe("GeoFire Tests", function() {
       expect(loc).toEqual([1,2]);
       cl.x("second promise");
     });
-  })
+  }, 1000)
 });
