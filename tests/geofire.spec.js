@@ -1,26 +1,35 @@
-describe("GeoFire Tests", function() {
-  var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
+var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
 
-  function Checklist(items, doneCB) {
-    var eventsToComplete = items ? items : ["default"];
+// TODO: do we need to reset the firebase after every test to ensure correctness?
+function resetFirebase() {
+  return new RSVP.Promise(function(resolve, reject) {
+    dataRef.remove(function() {
+      resolve();
+    });
+  });
+};
 
-    this.x = function(item) {
-      var ind = eventsToComplete.indexOf(item);
-      if(ind >= 0) {
-        eventsToComplete.splice(ind, 1);
-      }
-      if(eventsToComplete.length == 0) {
-        doneCB();
-      }
+function Checklist(items, doneCB) {
+  var eventsToComplete = items ? items : ["default"];
+
+  this.x = function(item) {
+    var ind = eventsToComplete.indexOf(item);
+    if(ind >= 0) {
+      eventsToComplete.splice(ind, 1);
     }
-  };
+    if(eventsToComplete.length == 0) {
+      doneCB();
+    }
+  }
+};
 
+describe("GeoFire Tests", function() {
   it("get() and set() return promises", function(done) {
     var cl = new Checklist(["first promise", "second promise"], done);
 
     var gf = new GeoFire(dataRef);
-    var p1 = gf.set("hello", [1,2]);
-    var p2 = gf.get("hello");
+    var p1 = gf.set("loc1", [1,2]);
+    var p2 = gf.get("loc1");
 
     p1.then(function() {
       cl.x("first promise");
@@ -32,42 +41,32 @@ describe("GeoFire Tests", function() {
     });
   }, 1000);
 
-  it("get() handles an unknown key", function(done) {
-    var cl = new Checklist(["first promise"], done);
+  it("set() handles existing key", function(done) {
+    var cl = new Checklist(["first promise", "second promise", "third promise", "fourth promise"], done);
 
     var gf = new GeoFire(dataRef);
-    var p1 = gf.get("unknown");
-
-    p1.then(function(loc) {
-      expect(loc).toBeNull();
-      cl.x("first promise");
-    });
-  }, 1000);
-
-  it("get() throws error on invalid key" ,function(done) {
-    var cl = new Checklist(["first promise", "second promise", "third promise"], done);
-
-    var gf = new GeoFire(dataRef);
-    var p1 = gf.get(100);
-    var p2 = gf.get(true);
-    var p3 = gf.get({"a": 1});
+    var p1 = gf.set("loc1", [1,2]);
+    var p2 = gf.get("loc1");
 
     p1.then(function() {
-      expect(true).toBeFalsy();
-    }, function(error) {
       cl.x("first promise");
     });
 
-    p2.then(function() {
-      expect(true).toBeFalsy();
-    }, function(error) {
+    p2.then(function(loc) {
+      expect(loc).toEqual([1,2]);
       cl.x("second promise");
-    });
 
-    p3.then(function() {
-      expect(true).toBeFalsy();
-    }, function(error) {
-      cl.x("third promise");
+      var p3 = gf.set("loc1", [2,3]);
+      var p4 = gf.get("loc1");
+
+      p3.then(function() {
+        cl.x("third promise");
+      });
+
+      p4.then(function(loc) {
+        expect(loc).toEqual([2,3]);
+        cl.x("fourth promise");
+      });
     });
   }, 1000);
 
@@ -160,32 +159,54 @@ describe("GeoFire Tests", function() {
     });
   }, 1000);
 
+  it("get() handles an unknown key", function(done) {
+    var cl = new Checklist(["first promise"], done);
+
+    var gf = new GeoFire(dataRef);
+    var p1 = gf.get("unknown");
+
+    p1.then(function(loc) {
+      expect(loc).toBeNull();
+      cl.x("first promise");
+    });
+  }, 1000);
+
+  it("get() throws error on invalid key" ,function(done) {
+    var cl = new Checklist(["first promise", "second promise", "third promise"], done);
+
+    var gf = new GeoFire(dataRef);
+    var p1 = gf.get(100);
+    var p2 = gf.get(true);
+    var p3 = gf.get({"a": 1});
+
+    p1.then(function() {
+      expect(true).toBeFalsy();
+    }, function(error) {
+      cl.x("first promise");
+    });
+
+    p2.then(function() {
+      expect(true).toBeFalsy();
+    }, function(error) {
+      cl.x("second promise");
+    });
+
+    p3.then(function() {
+      expect(true).toBeFalsy();
+    }, function(error) {
+      cl.x("third promise");
+    });
+  }, 1000);
+
   it("query() returns GeoQuery instance", function() {
     var gf = new GeoFire(dataRef);
     var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
 
     expect(gq instanceof GeoQuery).toBeTruthy();
   });
-
 });
 
 describe("GeoQuery Tests", function() {
-  var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
-
-  function Checklist(items, doneCB) {
-    var eventsToComplete = items ? items : ["default"];
-
-    this.x = function(item) {
-      var ind = eventsToComplete.indexOf(item);
-      if(ind >= 0) {
-        eventsToComplete.splice(ind, 1);
-      }
-      if(eventsToComplete.length == 0) {
-        doneCB();
-      }
-    }
-  };
-
   it("constructor stores query criteria", function() {
     var gf = new GeoFire(dataRef);
     var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
@@ -219,4 +240,37 @@ describe("GeoQuery Tests", function() {
     var gf = new GeoFire(dataRef);
     var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
   });
+
+  xit("getInitialResults() returns valid results", function(done) {
+    var cl = new Checklist(["set promises", "getInitialResults promise"], done);
+
+    resetFirebase().then(function() {
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+
+      var p1 = gf.set("loc1", [1,2]);
+      var p2 = gf.set("loc2", [1,3]);
+      var p3 = gf.set("loc3", [1,4]);
+      var p4 = gf.set("loc4", [1,5]);
+      var p5 = gf.set("loc5", [67,55]);
+      var setPromises = [p1, p2, p3, p4, p5];
+
+      RSVP.all(setPromises).then(function(posts) {
+        cl.x("set promises")
+
+        var p6 = gq.getInitialResults();
+        /*p6.then(function() {
+          cl.x("getInitialResults promise");
+        })*/
+        cl.x("getInitialResults promise");
+      }).catch(function(error){
+        expect(true).toBeFalsy();
+      });
+
+      /*p2.then(function(loc) {
+        expect(loc).toEqual([1,2]);
+        cl.x("second promise");
+      });*/
+    });
+  }, 1000);
 });
