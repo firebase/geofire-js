@@ -18,7 +18,7 @@ describe("GeoFire Tests", function() {
   it("get and set return promises", function(done) {
     var cl = new Checklist(["first promise", "second promise"], done);
 
-    var gf = new GeoFire(ref);
+    var gf = new GeoFire(dataRef);
     var p1 = gf.set("hello", [1,2]);
     var p2 = gf.get("hello");
 
