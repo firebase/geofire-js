@@ -255,7 +255,7 @@ describe("GeoQuery Tests", function() {
       var p5 = gf.set("loc5", [67,55]);
       var setPromises = [p1, p2, p3, p4, p5];
 
-      RSVP.all(setPromises).then(function(posts) {
+      RSVP.all(setPromises).then(function() {
         cl.x("set promises")
 
         var p6 = gq.getInitialResults();
@@ -283,7 +283,7 @@ describe("GeoQuery Tests", function() {
       var p5 = gf.set("loc5", [67,55]);
       var setPromises = [p1, p2, p3, p4, p5];
 
-      RSVP.all(setPromises).then(function(posts) {
+      RSVP.all(setPromises).then(function() {
         cl.x("set promises")
 
         var p6 = gq.getInitialResults();
@@ -291,6 +291,46 @@ describe("GeoQuery Tests", function() {
           expect(initialResults).toEqual([]);
           cl.x("getInitialResults promise");
         });
+      }).catch(function(error){
+        expect(true).toBeFalsy();
+      });
+    });
+  }, 1000);
+
+  it("onKeyEntered() keeps track of locations which enter within the GeoQuery", function(done) {
+    var cl = new Checklist(["set promises", "loc1 entered", "loc4 entered"], done);
+
+    resetFirebase().then(function() {
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+
+      var p1 = gf.set("loc1", [1,90]);
+      var p2 = gf.set("loc2", [50,-7]);
+      var p3 = gf.set("loc3", [16,-150]);
+      var p4 = gf.set("loc4", [25,5]);
+      var p5 = gf.set("loc5", [67,55]);
+      var setPromises = [p1, p2, p3, p4, p5];
+
+      RSVP.all(setPromises).then(function() {
+        cl.x("set promises")
+
+        gq.onKeyEntered(function(key, location) {
+          console.log(key + "," + location + ": key entered");
+          cl.x(key + " entered");
+        });
+
+        var p6 = gf.set("loc1", [2,3]);
+        var p7 = gf.set("loc4", [5,5]);
+        setPromises = [p6, p7];
+        RSVP.all(setPromises).then(function() {
+          console.log("done");
+        });
+
+        /*var p6 = gq.getInitialResults();
+        p6.then(function(initialResults) {
+          expect(initialResults).toEqual([]);
+          cl.x("getInitialResults promise");
+        });*/
       }).catch(function(error){
         expect(true).toBeFalsy();
       });
