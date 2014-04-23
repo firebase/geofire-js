@@ -216,7 +216,7 @@ describe("GeoQuery Tests", function() {
     expect(gq._radius).toEqual(1000);
   });
 
-  xit("constructor throws error on invalid criteria", function() {
+  xit("constructor throws error on invalid query criteria", function() {
     var gf = new GeoFire(dataRef);
     var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
   });
@@ -236,12 +236,12 @@ describe("GeoQuery Tests", function() {
     expect(gq._radius).toEqual(100);
   });
 
-  xit("updateQueryCriteria() throws error on invalid criteria", function() {
+  xit("updateQueryCriteria() throws error on invalid query criteria", function() {
     var gf = new GeoFire(dataRef);
     var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
   });
 
-  xit("getInitialResults() returns valid results", function(done) {
+  it("getInitialResults() returns valid, non-empty results", function(done) {
     var cl = new Checklist(["set promises", "getInitialResults promise"], done);
 
     resetFirebase().then(function() {
@@ -251,7 +251,7 @@ describe("GeoQuery Tests", function() {
       var p1 = gf.set("loc1", [1,2]);
       var p2 = gf.set("loc2", [1,3]);
       var p3 = gf.set("loc3", [1,4]);
-      var p4 = gf.set("loc4", [1,5]);
+      var p4 = gf.set("loc4", [25,5]);
       var p5 = gf.set("loc5", [67,55]);
       var setPromises = [p1, p2, p3, p4, p5];
 
@@ -259,18 +259,41 @@ describe("GeoQuery Tests", function() {
         cl.x("set promises")
 
         var p6 = gq.getInitialResults();
-        /*p6.then(function() {
+        p6.then(function(initialResults) {
+          expect(initialResults).toEqual(["loc1", "loc2", "loc3"]);
           cl.x("getInitialResults promise");
-        })*/
-        cl.x("getInitialResults promise");
+        });
       }).catch(function(error){
         expect(true).toBeFalsy();
       });
+    });
+  }, 1000);
 
-      /*p2.then(function(loc) {
-        expect(loc).toEqual([1,2]);
-        cl.x("second promise");
-      });*/
+  it("getInitialResults() returns valid, emtpy results", function(done) {
+    var cl = new Checklist(["set promises", "getInitialResults promise"], done);
+
+    resetFirebase().then(function() {
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+
+      var p1 = gf.set("loc1", [1,90]);
+      var p2 = gf.set("loc2", [50,-7]);
+      var p3 = gf.set("loc3", [16,-150]);
+      var p4 = gf.set("loc4", [25,5]);
+      var p5 = gf.set("loc5", [67,55]);
+      var setPromises = [p1, p2, p3, p4, p5];
+
+      RSVP.all(setPromises).then(function(posts) {
+        cl.x("set promises")
+
+        var p6 = gq.getInitialResults();
+        p6.then(function(initialResults) {
+          expect(initialResults).toEqual([]);
+          cl.x("getInitialResults promise");
+        });
+      }).catch(function(error){
+        expect(true).toBeFalsy();
+      });
     });
   }, 1000);
 });
