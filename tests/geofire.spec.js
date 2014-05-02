@@ -1,6 +1,16 @@
+/*************/
+/*  GLOBALS  */
+/*************/
+// Override the default timeout interval for Jasmine
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
+
+// Get a reference to the demo Firebase
 var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
 
-// TODO: do we need to reset the firebase after every test to ensure correctness?
+/**********************/
+/*  HELPER FUNCTIONS  */
+/**********************/
+/* Returns a promise which resets the demo Firebase; runs before each test to ensure there is no pollution between tests */
 function resetFirebase() {
   return new RSVP.Promise(function(resolve, reject) {
     dataRef.remove(function() {
@@ -9,6 +19,7 @@ function resetFirebase() {
   });
 };
 
+/* Keeps track of all the current async tasks being run */
 function Checklist(items, doneCB) {
   var eventsToComplete = items ? items : ["default"];
 
@@ -23,7 +34,16 @@ function Checklist(items, doneCB) {
   }
 };
 
+/*******************/
+/*  GEOFIRE TESTS  */
+/*******************/
 describe("GeoFire Tests", function() {
+  // Reset the Firebase before each test
+  beforeEach(function(done) {
+    console.log("*** Reseting Firebase for next test ***");
+    resetFirebase().then(done);
+  });
+
   it("get() and set() return promises", function(done) {
     var cl = new Checklist(["first promise", "second promise"], done);
 
@@ -39,7 +59,7 @@ describe("GeoFire Tests", function() {
       expect(loc).toEqual([1,2]);
       cl.x("second promise");
     });
-  }, 1000);
+  });
 
   it("set() handles existing key", function(done) {
     var cl = new Checklist(["first promise", "second promise", "third promise", "fourth promise"], done);
@@ -68,7 +88,7 @@ describe("GeoFire Tests", function() {
         cl.x("fourth promise");
       });
     });
-  }, 1000);
+  });
 
   it("set() throws error on invalid key" ,function(done) {
     var cl = new Checklist(["first promise", "second promise", "third promise"], done);
@@ -95,7 +115,7 @@ describe("GeoFire Tests", function() {
     }, function(error) {
       cl.x("third promise");
     });
-  }, 1000);
+  });
 
   xit("set() throws error on invalid location" ,function(done) {
     var cl = new Checklist(["first promise", "second promise", "third promise", "fourth promise", "fifth promise", "sixth promise", "seventh promise"], done);
@@ -157,7 +177,7 @@ describe("GeoFire Tests", function() {
     }, function(error) {
       cl.x("seventh promise");
     });
-  }, 1000);
+  });
 
   it("get() handles an unknown key", function(done) {
     var cl = new Checklist(["first promise"], done);
@@ -169,7 +189,7 @@ describe("GeoFire Tests", function() {
       expect(loc).toBeNull();
       cl.x("first promise");
     });
-  }, 1000);
+  });
 
   it("get() throws error on invalid key" ,function(done) {
     var cl = new Checklist(["first promise", "second promise", "third promise"], done);
@@ -196,7 +216,7 @@ describe("GeoFire Tests", function() {
     }, function(error) {
       cl.x("third promise");
     });
-  }, 1000);
+  });
 
   it("query() returns GeoQuery instance", function() {
     var gf = new GeoFire(dataRef);
@@ -206,7 +226,16 @@ describe("GeoFire Tests", function() {
   });
 });
 
+/********************/
+/*  GEOQUERY TESTS  */
+/********************/
 describe("GeoQuery Tests", function() {
+  // Reset the Firebase before each test
+  beforeEach(function(done) {
+    console.log("*** Reseting Firebase for next test ***");
+    resetFirebase().then(done);
+  });
+
   it("constructor stores query criteria", function() {
     var gf = new GeoFire(dataRef);
     var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
@@ -244,96 +273,149 @@ describe("GeoQuery Tests", function() {
   it("getInitialResults() returns valid, non-empty results", function(done) {
     var cl = new Checklist(["set promises", "getInitialResults promise"], done);
 
-    resetFirebase().then(function() {
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+    var gf = new GeoFire(dataRef);
+    var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
 
-      var p1 = gf.set("loc1", [1,2]);
-      var p2 = gf.set("loc2", [1,3]);
-      var p3 = gf.set("loc3", [1,4]);
-      var p4 = gf.set("loc4", [25,5]);
-      var p5 = gf.set("loc5", [67,55]);
-      var setPromises = [p1, p2, p3, p4, p5];
+    var p1 = gf.set("loc1", [1,2]);
+    var p2 = gf.set("loc2", [1,3]);
+    var p3 = gf.set("loc3", [1,4]);
+    var p4 = gf.set("loc4", [25,5]);
+    var p5 = gf.set("loc5", [67,55]);
+    var setPromises = [p1, p2, p3, p4, p5];
 
-      RSVP.all(setPromises).then(function() {
-        cl.x("set promises")
+    RSVP.all(setPromises).then(function() {
+      cl.x("set promises")
 
-        var p6 = gq.getInitialResults();
-        p6.then(function(initialResults) {
-          expect(initialResults).toEqual(["loc1", "loc2", "loc3"]);
-          cl.x("getInitialResults promise");
-        });
-      }).catch(function(error){
-        expect(true).toBeFalsy();
+      var p6 = gq.getInitialResults();
+      p6.then(function(initialResults) {
+        expect(initialResults).toEqual(["loc1", "loc2", "loc3"]);
+        cl.x("getInitialResults promise");
       });
+    }).catch(function(error){
+      expect(true).toBeFalsy();
     });
-  }, 1000);
+  });
 
   it("getInitialResults() returns valid, emtpy results", function(done) {
     var cl = new Checklist(["set promises", "getInitialResults promise"], done);
 
-    resetFirebase().then(function() {
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+    var gf = new GeoFire(dataRef);
+    var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
 
-      var p1 = gf.set("loc1", [1,90]);
-      var p2 = gf.set("loc2", [50,-7]);
-      var p3 = gf.set("loc3", [16,-150]);
-      var p4 = gf.set("loc4", [25,5]);
-      var p5 = gf.set("loc5", [67,55]);
-      var setPromises = [p1, p2, p3, p4, p5];
+    var p1 = gf.set("loc1", [1,90]);
+    var p2 = gf.set("loc2", [50,-7]);
+    var p3 = gf.set("loc3", [16,-150]);
+    var p4 = gf.set("loc4", [25,5]);
+    var p5 = gf.set("loc5", [67,55]);
+    var setPromises = [p1, p2, p3, p4, p5];
 
-      RSVP.all(setPromises).then(function() {
-        cl.x("set promises")
+    RSVP.all(setPromises).then(function() {
+      cl.x("set promises")
 
-        var p6 = gq.getInitialResults();
-        p6.then(function(initialResults) {
-          expect(initialResults).toEqual([]);
-          cl.x("getInitialResults promise");
-        });
-      }).catch(function(error){
-        expect(true).toBeFalsy();
+      var p6 = gq.getInitialResults();
+      p6.then(function(initialResults) {
+        expect(initialResults).toEqual([]);
+        cl.x("getInitialResults promise");
       });
+    }).catch(function(error){
+      expect(true).toBeFalsy();
     });
-  }, 1000);
+  });
 
-  it("onKeyEntered() keeps track of locations which enter within the GeoQuery", function(done) {
-    var cl = new Checklist(["set promises", "loc1 entered", "loc4 entered"], done);
+  xit("onKeyMoved() keeps track of locations which moved", function(done) {
+    var cl = new Checklist(["set promises", "loc1 moved", "loc4 moved"], done);
 
-    resetFirebase().then(function() {
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+    var gf = new GeoFire(dataRef);
+    var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
 
-      var p1 = gf.set("loc1", [1,90]);
-      var p2 = gf.set("loc2", [50,-7]);
-      var p3 = gf.set("loc3", [16,-150]);
-      var p4 = gf.set("loc4", [25,5]);
-      var p5 = gf.set("loc5", [67,55]);
-      var setPromises = [p1, p2, p3, p4, p5];
+    gq.onKeyMoved(function(key, location) {
+      console.log(key + "," + location + ": key moved");
+      cl.x(key + " moved");
+    });
 
-      RSVP.all(setPromises).then(function() {
-        cl.x("set promises")
+    // TODO: add batch get/set operations?
+    var p1 = gf.set("loc1", [1,90]);
+    var p2 = gf.set("loc2", [50,-7]);
+    var p3 = gf.set("loc3", [16,-150]);
+    var p4 = gf.set("loc4", [25,5]);
+    var p5 = gf.set("loc5", [67,55]);
+    var setPromises = [p1, p2, p3, p4, p5];
 
-        gq.onKeyEntered(function(key, location) {
-          console.log(key + "," + location + ": key entered");
-          cl.x(key + " entered");
-        });
+    RSVP.all(setPromises).then(function() {
+      gq.getInitialResults().then(function() {
+        cl.x("set promises");
 
         var p6 = gf.set("loc1", [2,3]);
         var p7 = gf.set("loc4", [5,5]);
         setPromises = [p6, p7];
-        RSVP.all(setPromises).then(function() {
-          console.log("done");
-        });
-
-        /*var p6 = gq.getInitialResults();
-        p6.then(function(initialResults) {
-          expect(initialResults).toEqual([]);
-          cl.x("getInitialResults promise");
-        });*/
+        RSVP.all(setPromises);
       }).catch(function(error){
         expect(true).toBeFalsy();
       });
     });
-  }, 1000);
+  });
+
+  it("onKeyEntered() keeps track of locations which entered the GeoQuery", function(done) {
+    var cl = new Checklist(["set promises", "loc1 entered", "loc4 entered"], done);
+
+    var gf = new GeoFire(dataRef);
+    var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+    gq.onKeyEntered(function(key, location) {
+      console.log(key + "," + location + ": key entered");
+      cl.x(key + " entered");
+    });
+
+    var p1 = gf.set("loc1", [1,90]);
+    var p2 = gf.set("loc2", [50,-7]);
+    var p3 = gf.set("loc3", [16,-150]);
+    var p4 = gf.set("loc4", [25,5]);
+    var p5 = gf.set("loc5", [67,55]);
+    var setPromises = [p1, p2, p3, p4, p5];
+
+    RSVP.all(setPromises).then(function() {
+      gq.getInitialResults().then(function() {
+        cl.x("set promises");
+
+        var p6 = gf.set("loc1", [2,3]);
+        var p7 = gf.set("loc4", [5,5]);
+        setPromises = [p6, p7];
+        RSVP.all(setPromises);
+      }).catch(function(error){
+        expect(true).toBeFalsy();
+      });
+    });
+  });
+
+  it("onKeyLeft() keeps track of locations which left the GeoQuery", function(done) {
+    var cl = new Checklist(["set promises", "loc1 left", "loc4 left"], done);
+
+    var gf = new GeoFire(dataRef);
+    var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+    gq.onKeyLeft(function(key, location) {
+      console.log(key + "," + location + ": key left");
+      cl.x(key + " left");
+    });
+
+    var p1 = gf.set("loc1", [2, 3]);
+    var p2 = gf.set("loc2", [50,-7]);
+    var p3 = gf.set("loc3", [16,-150]);
+    var p4 = gf.set("loc4", [5,5]);
+    var p5 = gf.set("loc5", [67,55]);
+    var setPromises = [p1, p2, p3, p4, p5];
+
+    RSVP.all(setPromises).then(function() {
+      gq.getInitialResults().then(function() {
+        cl.x("set promises");
+
+        var p6 = gf.set("loc1", [1,90]);
+        var p7 = gf.set("loc4", [25, 5]);
+        setPromises = [p6, p7];
+        RSVP.all(setPromises);
+      }).catch(function(error){
+        expect(true).toBeFalsy();
+      });
+    });
+  });
 });
