@@ -1,24 +1,27 @@
-describe("GeoFire Tests - geo-utils", function() {
-  describe("Test geo hashing", function() {
+/*********************/
+/*  GEO-UTILS TESTS  */
+/*********************/
+describe("geo-utils Tests", function() {
+  describe("Geohashing", function() {
     var locations = [
-      [[-90, -180], '000000000000'],
-      [[90, 180], 'zzzzzzzzzzzz'],
-      [[-90, 180], 'pbpbpbpbpbpb'],
-      [[90, -180], 'bpbpbpbpbpbp'],
-      [[37.7853074, -122.4054274], '9q8yywe56gcf'],
-      [[38.98719, -77.250783], 'dqcjf17sy6cp'],
-      [[29.3760648, 47.9818853], 'tj4p5gerfzqu'],
-      [[78.216667, 15.55], 'umghcygjj782'],
-      [[-54.933333, -67.616667], '4qpzmren1kwb']
+      [[-90, -180], "000000000000"],
+      [[90, 180], "zzzzzzzzzzzz"],
+      [[-90, 180], "pbpbpbpbpbpb"],
+      [[90, -180], "bpbpbpbpbpbp"],
+      [[37.7853074, -122.4054274], "9q8yywe56gcf"],
+      [[38.98719, -77.250783], "dqcjf17sy6cp"],
+      [[29.3760648, 47.9818853], "tj4p5gerfzqu"],
+      [[78.216667, 15.55], "umghcygjj782"],
+      [[-54.933333, -67.616667], "4qpzmren1kwb"]
     ];
 
-    it('Encode', function() {
+    it("encodeGeohash() properly encodes locations to geohashes", function() {
       for(var i = 0; i < locations.length; i++) {
         expect(encodeGeohash(locations[i][0])).toBe(locations[i][1])
       }
     });
 
-    it('Decode', function() {
+    it("decodeGeohash() properly decodes geohashes to locations", function() {
       for(var i = 0; i < locations.length; i++) {
         var decodedHash = decodeGeohash(locations[i][1]);
         var targetLatLon = locations[i][0];;
@@ -28,9 +31,9 @@ describe("GeoFire Tests - geo-utils", function() {
       }
     });
 
-    it('Neighbor', function() {
+    it("neighborGeohash() properly returns the neighbord geohash", function() {
       var locations = [
-        ['gbz', 'east', 'u0b']
+        ["gbz", "east", "u0b"]
       ];
 
       for(var i = 0; i < locations.length; i++) {
