@@ -44,12 +44,13 @@ function resetFirebase() {
 
 /* Keeps track of all the current async tasks being run */
 function Checklist(items, done) {
-  var eventsToComplete = items ? items : ["default"];
+  var eventsToComplete = items;
 
   this.x = function(item) {
     var index = eventsToComplete.indexOf(item);
     if (index == -1) {
-      items.push("unexpectedEventRaised");
+      // TODO: throwing this error is not enough to make some tests fail
+      throw new Error("Attempting to remove unexpected item '" + item + "' from Checklist");
     }
     else {
       eventsToComplete.splice(index, 1);
@@ -361,7 +362,7 @@ describe("GeoQuery Tests", function() {
   });
 
   describe("onKey*() events", function() {
-    it("onKeyMoved() callback fires for each location added to the GeoQuery", function(done) {
+    xit("onKeyMoved() callback fires for each location added to the GeoQuery", function(done) {
       var cl = new Checklist(["batchSet promise", "loc1 moved", "loc2 moved", "loc3 moved"], done);
 
       var gf = new GeoFire(dataRef);
@@ -379,7 +380,29 @@ describe("GeoQuery Tests", function() {
       });
     });
 
-    it("onKeyEntered() callback fires for each new location added to the GeoQuery after onKeyEntered() was called", function(done) {
+    it("onKeyEntered() callback fires for each location added to the GeoQuery before onKeyEntered() was called", function(done) {
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      var cl = new Checklist(["batchSet promise", "loc1 entered", "loc4 entered"], done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+      gf.batchSet([
+        {key: "loc1", location: [2, 3]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]},
+        {key: "loc4", location: [5, 5]},
+        {key: "loc5", location: [67, 55]}
+      ]).then(function() {
+        cl.x("batchSet promise");
+
+        gq.onKeyEntered(function(key, location) {
+          cl.x(key + " entered");
+        });
+      });
+    });
+
+    it("onKeyEntered() callback fires for each location added to the GeoQuery after onKeyEntered() was called", function(done) {
       var cl = new Checklist(["batchSet promise", "loc1 entered", "loc4 entered"], done);
 
       var gf = new GeoFire(dataRef);
