@@ -72,153 +72,159 @@ describe("GeoFire Tests", function() {
 
   describe("Promises", function() {
     it("get() and set() return promises", function(done) {
-      var cl = new Checklist(["first promise", "second promise"], done);
+      var cl = new Checklist(["p1", "p2"], done);
 
       var gf = new GeoFire(dataRef);
-      var p1 = gf.set("loc1", [1,2]);
+      var p1 = gf.set("loc1", [0, 0]);
       var p2 = gf.get("loc1");
 
       p1.then(function() {
-        cl.x("first promise");
+        cl.x("p1");
       });
 
-      p2.then(function(loc) {
-        expect(loc).toEqual([1,2]);
-        cl.x("second promise");
+      p2.then(function(location) {
+        expect(location).toEqual([0, 0]);
+        cl.x("p2");
       });
     });
   });
 
   describe("set()", function() {
-    it("set() handles existing key", function(done) {
-      var cl = new Checklist(["first promise", "second promise", "third promise", "fourth promise"], done);
+    it("set() properly updates Firebase", function(done) {
+      var cl = new Checklist(["p1", "p2"], done);
 
       var gf = new GeoFire(dataRef);
-      var p1 = gf.set("loc1", [1,2]);
+      var p1 = gf.set("loc1", [0, 0]);
+
+      p1.then(function() {
+        cl.x("p1");
+
+        new RSVP.Promise(function(resolve, reject) {
+          dataRef.once("value", function(dataSnapshot) {
+            expect(dataSnapshot.val()).toEqual({
+              "indices": {
+                "7zzzzzzzzzzz": "loc1"
+              },
+              "locations": {
+                "loc1": "0,0"
+              }
+            });
+            cl.x("p2");
+          });
+        });
+      });
+    });
+
+    it("set() updates location given pre-existing key", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], done);
+
+      var gf = new GeoFire(dataRef);
+      var p1 = gf.set("loc1", [0, 0]);
       var p2 = gf.get("loc1");
 
       p1.then(function() {
-        cl.x("first promise");
+        cl.x("p1");
       });
 
-      p2.then(function(loc) {
-        expect(loc).toEqual([1,2]);
-        cl.x("second promise");
+      p2.then(function(location) {
+        expect(location).toEqual([0, 0]);
+        cl.x("p2");
 
-        var p3 = gf.set("loc1", [2,3]);
+        var p3 = gf.set("loc1", [2, 3]);
         var p4 = gf.get("loc1");
 
         p3.then(function() {
-          cl.x("third promise");
+          cl.x("p3");
         });
 
-        p4.then(function(loc) {
-          expect(loc).toEqual([2,3]);
-          cl.x("fourth promise");
+        p4.then(function(location) {
+          expect(location).toEqual([2, 3]);
+          cl.x("p4");
+
+          new RSVP.Promise(function(resolve, reject) {
+            dataRef.once("value", function(dataSnapshot) {
+              expect(dataSnapshot.val()).toEqual({
+                "indices": {
+                  "s065kk0dc540": "loc1"
+                },
+                "locations": {
+                  "loc1": "2,3"
+                }
+              });
+              cl.x("p5");
+            });
+          });
         });
       });
+
+      // TODO: validate that /indices/ and /locations/ are correct in Firebase
     });
 
     it("set() throws error on invalid key" ,function(done) {
-      var cl = new Checklist(["first promise", "second promise", "third promise"], done);
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], done);
 
       var gf = new GeoFire(dataRef);
-      var p1 = gf.set(100, [1,2]);
-      var p2 = gf.set(true, [1,2]);
-      var p3 = gf.set({"a": 1}, [1,2]);
 
-      p1.then(function() {
-        expect(true).toBeFalsy();
-      }, function(error) {
-        cl.x("first promise");
-      });
+      var promises = {
+        "p1": gf.set(100, [0, 0]),
+        "p2": gf.set(true, [0, 0]),
+        "p3": gf.set([0, 0], [0, 0]),
+        "p4": gf.set({"a": 1}, [0, 0]),
+        "p5": gf.set(null, [[0, 0], 0]),
+        "p6": gf.set(undefined, [0, [0, 0]])
+      };
 
-      p2.then(function() {
-        expect(true).toBeFalsy();
-      }, function(error) {
-        cl.x("second promise");
-      });
-
-      p3.then(function() {
-        expect(true).toBeFalsy();
-      }, function(error) {
-        cl.x("third promise");
+      RSVP.hashSettled(promises).then(function(resultsHash) {
+        for (var key in resultsHash) {
+          expect(resultsHash[key].state).toEqual("rejected");
+          cl.x(key);
+        }
       });
     });
 
-    xit("set() throws error on invalid location" ,function(done) {
-      var cl = new Checklist(["first promise", "second promise", "third promise", "fourth promise", "fifth promise", "sixth promise", "seventh promise"], done);
+    it("set() throws error on invalid location" ,function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15"], done);
 
       var gf = new GeoFire(dataRef);
-      var p1 = gf.set("loc1", [-91,0]);
-      var p2 = gf.set("loc2", [91,0]);
-      var p3 = gf.set("loc3", [0,181]);
-      var p4 = gf.set("loc4", [0,-181]);
-      var p5 = gf.set("loc5", ["text",0]);
-      var p6 = gf.set("loc6", [0,"text"]);
-      var p7 = gf.set("loc7", ["text", "text"]);
 
-      p1.then(function() {
-        console.log("womp womp");
-        expect(true).toBeFalsy();
-      }, function(error) {
-        cl.x("first promise");
-      });
+      var promises = {
+        "p1": gf.set("loc1", [-91, 0]),
+        "p2": gf.set("loc2", [91, 0]),
+        "p3": gf.set("loc3", [0, 181]),
+        "p4": gf.set("loc4", [0, -181]),
+        "p5": gf.set("loc5", [[0, 0], 0]),
+        "p6": gf.set("loc6", [0, [0, 0]]),
+        "p7": gf.set("loc7", ["text", 0]),
+        "p8": gf.set("loc8", [0, "text"]),
+        "p9": gf.set("loc9", ["text", "text"]),
+        "p10": gf.set("loc10", [null, 0]),
+        "p11": gf.set("loc11", [0, null]),
+        "p12": gf.set("loc12", [null, null]),
+        "p13": gf.set("loc13", [undefined, 0]),
+        "p14": gf.set("loc14", [0, undefined]),
+        "p15": gf.set("loc15", [undefined, undefined])
+      };
 
-      p2.then(function() {
-        console.log("womp womp");
-        expect(true).toBeFalsy();
-      }, function(error) {
-        cl.x("second promise");
-      });
-
-      p3.then(function() {
-        console.log("womp womp");
-        expect(true).toBeFalsy();
-      }, function(error) {
-        cl.x("third promise");
-      });
-
-      p4.then(function() {
-        console.log("womp womp");
-        expect(true).toBeFalsy();
-      }, function(error) {
-        cl.x("fourth promise");
-      });
-
-      p5.then(function() {
-        console.log("womp womp");
-        expect(true).toBeFalsy();
-      }, function(error) {
-        cl.x("fifth promise");
-      });
-
-      p6.then(function() {
-        console.log("womp womp");
-        expect(true).toBeFalsy();
-      }, function(error) {
-        cl.x("sixth promise");
-      });
-
-      p7.then(function() {
-        console.log("womp womp");
-        expect(true).toBeFalsy();
-      }, function(error) {
-        cl.x("seventh promise");
+      RSVP.hashSettled(promises).then(function(resultsHash) {
+        for (var key in resultsHash) {
+          expect(resultsHash[key].state).toEqual("rejected");
+          cl.x(key);
+        }
       });
     });
   });
 
   describe("get()", function() {
-    it("get() handles an unknown key", function(done) {
-      var cl = new Checklist(["first promise"], done);
+    it("get() returns null for non-existent keys", function(done) {
+      var cl = new Checklist(["p1"], done);
 
       var gf = new GeoFire(dataRef);
-      var p1 = gf.get("unknown");
 
-      p1.then(function(loc) {
-        expect(loc).toBeNull();
-        cl.x("first promise");
+      var p1 = gf.get("loc1");
+
+      p1.then(function(location) {
+        expect(location).toBeNull();
+        cl.x("p1");
       });
     });
 
