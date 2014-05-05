@@ -316,7 +316,7 @@ describe("GeoQuery Tests", function() {
   });
 
   describe("getResults()", function() {
-    xit("getResults() returns valid, non-empty results", function(done) {
+    it("getResults() returns valid, non-empty results", function(done) {
       var cl = new Checklist(["set promises", "getResults promise"], expect, done);
 
       var gf = new GeoFire(dataRef);
@@ -333,8 +333,8 @@ describe("GeoQuery Tests", function() {
         cl.x("set promises")
 
         var p6 = gq.getResults();
-        p6.then(function(initialResults) {
-          expect(initialResults).toEqual(["loc1", "loc2", "loc3"]);
+        p6.then(function(results) {
+          expect(results).toEqual(["loc1", "loc2", "loc3"]);
           cl.x("getResults promise");
         });
       }).catch(function(error){
@@ -342,7 +342,7 @@ describe("GeoQuery Tests", function() {
       });
     });
 
-    xit("getResults() returns valid, emtpy results", function(done) {
+    it("getResults() returns valid, emtpy results", function(done) {
       var cl = new Checklist(["set promises", "getResults promise"], expect, done);
 
       var gf = new GeoFire(dataRef);
@@ -370,9 +370,8 @@ describe("GeoQuery Tests", function() {
   });
 
   describe("onKeyMoved() event", function() {
-    // TODO: should we fire or not fire for these locations?
-    xit("onKeyMoved() callback fires for new locations which are within the GeoQuery", function(done) {
-      var cl = new Checklist(["batchSet1", "loc1 moved", "loc3 moved"], expect, done);
+    it("onKeyMoved() callback does not fire for brand new locations within or outside of the GeoQuery", function(done) {
+      var cl = new Checklist(["batchSet1"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
@@ -414,8 +413,8 @@ describe("GeoQuery Tests", function() {
       });
     });
 
-    it("onKeyMoved() callback fires for locations outside of the GeoQuery which are moved within the GeoQuery", function(done) {
-      var cl = new Checklist(["batchSet1", "batchSet2", "loc1 moved", "loc3 moved"], expect, done);
+    it("onKeyMoved() callback does not fire for locations outside of the GeoQuery which are moved within the GeoQuery", function(done) {
+      var cl = new Checklist(["batchSet1", "batchSet2"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
@@ -440,12 +439,11 @@ describe("GeoQuery Tests", function() {
     });
 
     it("onKeyMoved() callback fires for locations within the GeoQuery which are moved somewhere else within the GeoQuery", function(done) {
-      var cl = new Checklist(["batchSet1", "batchSet2", "loc1 moved", "loc1 moved", "loc3 moved", "loc3 moved"], expect, done);
+      var cl = new Checklist(["batchSet1", "batchSet2", "loc1 moved", "loc3 moved"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
       gq.onKeyMoved(function(key, location) {
-        console.log("Boooo: " + key)
         cl.x(key + " moved");
       });
 
@@ -465,9 +463,8 @@ describe("GeoQuery Tests", function() {
       });
     });
 
-    // TODO: should we fire or not fire for these locations?
-    xit("onKeyMoved() callback fires for a location within the GeoQuery which is updated to the same location", function(done) {
-      var cl = new Checklist(["batchSet1", "batchSet2", "loc1 moved", "loc3 moved"], expect, done);
+    it("onKeyMoved() callback does not fire for locations within the GeoQuery which are moved somewhere outside of the GeoQuery", function(done) {
+      var cl = new Checklist(["batchSet1", "batchSet2"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
@@ -478,12 +475,38 @@ describe("GeoQuery Tests", function() {
       gf.batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
-        {key: "loc3", location: [16, -150]}
+        {key: "loc3", location: [1, 1]}
+      ]).then(function() {
+        cl.x("batchSet1");
+
+        gf.batchSet([
+          {key: "loc1", location: [1, 90]},
+          {key: "loc3", location: [-1, -90]}
+        ]).then(function() {
+          cl.x("batchSet2");
+        })
+      });
+    });
+
+    it("onKeyMoved() callback does not fire for a location within the GeoQuery which is set to the same location", function(done) {
+      var cl = new Checklist(["batchSet1", "batchSet2", "loc3 moved"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+      gq.onKeyMoved(function(key, location) {
+        cl.x(key + " moved");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [1, -1]}
       ]).then(function() {
         cl.x("batchSet1");
 
         gf.batchSet([
           {key: "loc1", location: [0, 0]},
+          {key: "loc2", location: [55, 55]},
           {key: "loc3", location: [1, 1]}
         ]).then(function() {
           cl.x("batchSet2");
@@ -493,7 +516,7 @@ describe("GeoQuery Tests", function() {
   });
 
   describe("onKeyEntered() event", function() {
-    it("onKeyEntered() callback fires for each location added to the GeoQuery before onKeyEntered() was called", function(done) {
+    xit("onKeyEntered() callback fires for each location added to the GeoQuery before onKeyEntered() was called", function(done) {
       console.log("Does this test actually work??")
       var cl = new Checklist(["batchSet promise", "loc1 entered", "loc4 entered"], expect, done);
 
@@ -537,7 +560,7 @@ describe("GeoQuery Tests", function() {
   });
 
   describe("onKeyLeft() event", function() {
-    xit("onKeyLeft() callbackfires when a location leaves the GeoQuery", function(done) {
+    it("onKeyLeft() callbackfires when a location leaves the GeoQuery", function(done) {
       var cl = new Checklist(["batchSet1 promise", "batchSet2 promise", "loc1 entered", "loc4 entered", "loc1 left", "loc4 left"], expect, done);
 
       var gf = new GeoFire(dataRef);
