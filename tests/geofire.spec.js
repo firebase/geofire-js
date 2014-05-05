@@ -12,9 +12,8 @@ var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
 /**********************/
 /* Clears all Firebase event handlers and resets the Firebase; runs before each test to ensure there is no pollution between tests */
 function resetFirebase() {
-  console.log("***************************************");
-  console.log("*** Reseting Firebase for next test ***");
-  console.log("***************************************");
+  console.log("");
+  console.log("********** Reseting Firebase for next test **********");
   var indicesPromise = new RSVP.Promise(function(resolve, reject) {
     dataRef.child("indices").on("value", function(dataSnapshot) {
       dataSnapshot.forEach(function(childSnapshot) {
@@ -43,14 +42,13 @@ function resetFirebase() {
 };
 
 /* Keeps track of all the current async tasks being run */
-function Checklist(items, done) {
+function Checklist(items, expect, done) {
   var eventsToComplete = items;
 
   this.x = function(item) {
     var index = eventsToComplete.indexOf(item);
     if (index == -1) {
-      // TODO: throwing this error is not enough to make some tests fail
-      throw new Error("Attempting to remove unexpected item '" + item + "' from Checklist");
+      expect("Attempting to delete unexpected item '" + item + "' from Checklist").toBeFalsy();
     }
     else {
       eventsToComplete.splice(index, 1);
@@ -58,7 +56,11 @@ function Checklist(items, done) {
         done();
       }
     }
-  }
+  };
+
+  this.isEmpty = function() {
+    return (eventsToComplete.length == 0);
+  };
 };
 
 /*******************/
@@ -72,7 +74,7 @@ describe("GeoFire Tests", function() {
 
   describe("Promises", function() {
     it("get() and set() return promises", function(done) {
-      var cl = new Checklist(["p1", "p2"], done);
+      var cl = new Checklist(["p1", "p2"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var p1 = gf.set("loc1", [0, 0]);
@@ -91,7 +93,7 @@ describe("GeoFire Tests", function() {
 
   describe("set()", function() {
     it("set() properly updates Firebase", function(done) {
-      var cl = new Checklist(["p1", "p2"], done);
+      var cl = new Checklist(["p1", "p2"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var p1 = gf.set("loc1", [0, 0]);
@@ -116,7 +118,7 @@ describe("GeoFire Tests", function() {
     });
 
     it("set() updates location given pre-existing key", function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], done);
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var p1 = gf.set("loc1", [0, 0]);
@@ -161,7 +163,7 @@ describe("GeoFire Tests", function() {
     });
 
     it("set() throws error on invalid key" ,function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], done);
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], expect, done);
 
       var gf = new GeoFire(dataRef);
 
@@ -183,7 +185,7 @@ describe("GeoFire Tests", function() {
     });
 
     it("set() throws error on invalid location" ,function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15"], done);
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15"], expect, done);
 
       var gf = new GeoFire(dataRef);
 
@@ -216,7 +218,7 @@ describe("GeoFire Tests", function() {
 
   describe("get()", function() {
     it("get() returns null for non-existent keys", function(done) {
-      var cl = new Checklist(["p1"], done);
+      var cl = new Checklist(["p1"], expect, done);
 
       var gf = new GeoFire(dataRef);
 
@@ -229,7 +231,7 @@ describe("GeoFire Tests", function() {
     });
 
     it("get() throws error on invalid key" ,function(done) {
-      var cl = new Checklist(["first promise", "second promise", "third promise"], done);
+      var cl = new Checklist(["first promise", "second promise", "third promise"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var p1 = gf.get(100);
@@ -315,7 +317,7 @@ describe("GeoQuery Tests", function() {
 
   describe("getResults()", function() {
     xit("getResults() returns valid, non-empty results", function(done) {
-      var cl = new Checklist(["set promises", "getResults promise"], done);
+      var cl = new Checklist(["set promises", "getResults promise"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
@@ -341,7 +343,7 @@ describe("GeoQuery Tests", function() {
     });
 
     xit("getResults() returns valid, emtpy results", function(done) {
-      var cl = new Checklist(["set promises", "getResults promise"], done);
+      var cl = new Checklist(["set promises", "getResults promise"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
@@ -367,9 +369,28 @@ describe("GeoQuery Tests", function() {
     });
   });
 
-  describe("onKey*() events", function() {
-    xit("onKeyMoved() callback fires for each location added to the GeoQuery", function(done) {
-      var cl = new Checklist(["batchSet promise", "loc1 moved", "loc2 moved", "loc3 moved"], done);
+  describe("onKeyMoved() event", function() {
+    // TODO: should we fire or not fire for these locations?
+    xit("onKeyMoved() callback fires for new locations which are within the GeoQuery", function(done) {
+      var cl = new Checklist(["batchSet1", "loc1 moved", "loc3 moved"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+      gq.onKeyMoved(function(key, location) {
+        cl.x(key + " moved");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [1, 1]}
+      ]).then(function() {
+        cl.x("batchSet1");
+      });
+    });
+
+    it("onKeyMoved() callback does not fire for locations outside of the GeoQuery which are moved somewhere else outside of the GeoQuery", function(done) {
+      var cl = new Checklist(["batchSet1", "batchSet2"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
@@ -382,13 +403,99 @@ describe("GeoQuery Tests", function() {
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]}
       ]).then(function() {
-        cl.x("batchSet promise");
+        cl.x("batchSet1");
+
+        gf.batchSet([
+          {key: "loc1", location: [1, 91]},
+          {key: "loc3", location: [-50, -50]}
+        ]).then(function() {
+          cl.x("batchSet2");
+        })
       });
     });
 
+    it("onKeyMoved() callback fires for locations outside of the GeoQuery which are moved within the GeoQuery", function(done) {
+      var cl = new Checklist(["batchSet1", "batchSet2", "loc1 moved", "loc3 moved"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+      gq.onKeyMoved(function(key, location) {
+        cl.x(key + " moved");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [1, 90]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]}
+      ]).then(function() {
+        cl.x("batchSet1");
+
+        gf.batchSet([
+          {key: "loc1", location: [0, 0]},
+          {key: "loc3", location: [-1, -1]}
+        ]).then(function() {
+          cl.x("batchSet2");
+        })
+      });
+    });
+
+    it("onKeyMoved() callback fires for locations within the GeoQuery which are moved somewhere else within the GeoQuery", function(done) {
+      var cl = new Checklist(["batchSet1", "batchSet2", "loc1 moved", "loc1 moved", "loc3 moved", "loc3 moved"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+      gq.onKeyMoved(function(key, location) {
+        console.log("Boooo: " + key)
+        cl.x(key + " moved");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [1, 1]}
+      ]).then(function() {
+        cl.x("batchSet1");
+
+        gf.batchSet([
+          {key: "loc1", location: [2, 2]},
+          {key: "loc3", location: [-1, -1]}
+        ]).then(function() {
+          cl.x("batchSet2");
+        })
+      });
+    });
+
+    // TODO: should we fire or not fire for these locations?
+    xit("onKeyMoved() callback fires for a location within the GeoQuery which is updated to the same location", function(done) {
+      var cl = new Checklist(["batchSet1", "batchSet2", "loc1 moved", "loc3 moved"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+      gq.onKeyMoved(function(key, location) {
+        cl.x(key + " moved");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]}
+      ]).then(function() {
+        cl.x("batchSet1");
+
+        gf.batchSet([
+          {key: "loc1", location: [0, 0]},
+          {key: "loc3", location: [1, 1]}
+        ]).then(function() {
+          cl.x("batchSet2");
+        })
+      });
+    });
+  });
+
+  describe("onKeyEntered() event", function() {
     it("onKeyEntered() callback fires for each location added to the GeoQuery before onKeyEntered() was called", function(done) {
-      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-      var cl = new Checklist(["batchSet promise", "loc1 entered", "loc4 entered"], done);
+      console.log("Does this test actually work??")
+      var cl = new Checklist(["batchSet promise", "loc1 entered", "loc4 entered"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
@@ -409,7 +516,7 @@ describe("GeoQuery Tests", function() {
     });
 
     it("onKeyEntered() callback fires for each location added to the GeoQuery after onKeyEntered() was called", function(done) {
-      var cl = new Checklist(["batchSet promise", "loc1 entered", "loc4 entered"], done);
+      var cl = new Checklist(["batchSet promise", "loc1 entered", "loc4 entered"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
@@ -427,9 +534,11 @@ describe("GeoQuery Tests", function() {
         cl.x("batchSet promise");
       });
     });
+  });
 
-    it("onKeyLeft() callbackfires when a location leaves the GeoQuery", function(done) {
-      var cl = new Checklist(["batchSet1 promise", "batchSet2 promise", "loc1 entered", "loc4 entered", "loc1 left", "loc4 left"], done);
+  describe("onKeyLeft() event", function() {
+    xit("onKeyLeft() callbackfires when a location leaves the GeoQuery", function(done) {
+      var cl = new Checklist(["batchSet1 promise", "batchSet2 promise", "loc1 entered", "loc4 entered", "loc1 left", "loc4 left"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
