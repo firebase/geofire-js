@@ -4,6 +4,15 @@
 // Override the default timeout interval for Jasmine
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
 
+// Add a batchSet() method to GeoFire to make it easier to test
+GeoFire.prototype.batchSet = function (keyLocationPairs) {
+  var promises = keyLocationPairs.map(function(keyLocationPair) {
+    console.log(keyLocationPair);
+    return this.set(keyLocationPair.key, keyLocationPair.location);
+  }.bind(this));
+  return RSVP.allSettled(promises);
+};
+
 // Get a reference to the demo Firebase
 var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
 
@@ -91,7 +100,7 @@ describe("GeoFire Tests", function() {
     });
   });
 
-  describe("set()", function() {
+  describe("Adding locations", function() {
     it("set() properly updates Firebase", function(done) {
       var cl = new Checklist(["p1", "p2"], expect, done);
 
@@ -158,8 +167,6 @@ describe("GeoFire Tests", function() {
           });
         });
       });
-
-      // TODO: validate that /indices/ and /locations/ are correct in Firebase
     });
 
     it("set() throws error on invalid key" ,function(done) {
@@ -216,7 +223,7 @@ describe("GeoFire Tests", function() {
     });
   });
 
-  describe("get()", function() {
+  describe("Retrieving locations", function() {
     it("get() returns null for non-existent keys", function(done) {
       var cl = new Checklist(["p1"], expect, done);
 
@@ -254,6 +261,190 @@ describe("GeoFire Tests", function() {
         expect(true).toBeFalsy();
       }, function(error) {
         cl.x("third promise");
+      });
+    });
+  });
+
+  describe("Removing locations", function() {
+    it("set() removes existing location given null", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var p1 = gf.batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [2, 3]}
+      ])
+      var p2 = gf.get("loc1");
+
+      p1.then(function() {
+        cl.x("p1");
+      });
+
+      p2.then(function(location) {
+        expect(location).toEqual([0, 0]);
+        cl.x("p2");
+
+        var p3 = gf.set("loc1", null);
+        var p4 = gf.get("loc1");
+
+        p3.then(function() {
+          cl.x("p3");
+        });
+
+        p4.then(function(location) {
+          expect(location).toBeNull();
+          cl.x("p4");
+
+          new RSVP.Promise(function(resolve, reject) {
+            dataRef.once("value", function(dataSnapshot) {
+              expect(dataSnapshot.val()).toEqual({
+                "indices": {
+                  "s065kk0dc540": "loc2"
+                },
+                "locations": {
+                  "loc2": "2,3"
+                }
+              });
+              cl.x("p5");
+            });
+          });
+        });
+      });
+    });
+
+    it("set() does nothing given a non-existent location and null", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var p1 = gf.batchSet([
+        {key: "loc1", location: [0, 0]}
+      ])
+      var p2 = gf.get("loc1");
+
+      p1.then(function() {
+        cl.x("p1");
+      });
+
+      p2.then(function(location) {
+        expect(location).toEqual([0, 0]);
+        cl.x("p2");
+
+        var p3 = gf.set("loc2", null);
+        var p4 = gf.get("loc2");
+
+        p3.then(function() {
+          cl.x("p3");
+        });
+
+        p4.then(function(location) {
+          expect(location).toBeNull();
+          cl.x("p4");
+
+          new RSVP.Promise(function(resolve, reject) {
+            dataRef.once("value", function(dataSnapshot) {
+              expect(dataSnapshot.val()).toEqual({
+                "indices": {
+                  "7zzzzzzzzzzz": "loc1"
+                },
+                "locations": {
+                  "loc1": "0,0"
+                }
+              });
+              cl.x("p5");
+            });
+          });
+        });
+      });
+    });
+
+    it("remove() removes existing location", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var p1 = gf.batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [2, 3]}
+      ])
+      var p2 = gf.get("loc1");
+
+      p1.then(function() {
+        cl.x("p1");
+      });
+
+      p2.then(function(location) {
+        expect(location).toEqual([0, 0]);
+        cl.x("p2");
+
+        var p3 = gf.remove("loc1");
+        var p4 = gf.get("loc1");
+
+        p3.then(function() {
+          cl.x("p3");
+        });
+
+        p4.then(function(location) {
+          expect(location).toBeNull();
+          cl.x("p4");
+
+          new RSVP.Promise(function(resolve, reject) {
+            dataRef.once("value", function(dataSnapshot) {
+              expect(dataSnapshot.val()).toEqual({
+                "indices": {
+                  "s065kk0dc540": "loc2"
+                },
+                "locations": {
+                  "loc2": "2,3"
+                }
+              });
+              cl.x("p5");
+            });
+          });
+        });
+      });
+    });
+
+    it("remove() does nothing given a non-existent location", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var p1 = gf.batchSet([
+        {key: "loc1", location: [0, 0]}
+      ])
+      var p2 = gf.get("loc1");
+
+      p1.then(function() {
+        cl.x("p1");
+      });
+
+      p2.then(function(location) {
+        expect(location).toEqual([0, 0]);
+        cl.x("p2");
+
+        var p3 = gf.remove("loc2");
+        var p4 = gf.get("loc2");
+
+        p3.then(function() {
+          cl.x("p3");
+        });
+
+        p4.then(function(location) {
+          expect(location).toBeNull();
+          cl.x("p4");
+
+          new RSVP.Promise(function(resolve, reject) {
+            dataRef.once("value", function(dataSnapshot) {
+              expect(dataSnapshot.val()).toEqual({
+                "indices": {
+                  "7zzzzzzzzzzz": "loc1"
+                },
+                "locations": {
+                  "loc1": "0,0"
+                }
+              });
+              cl.x("p5");
+            });
+          });
+        });
       });
     });
   });
