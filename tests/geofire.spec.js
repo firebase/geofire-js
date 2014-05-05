@@ -7,7 +7,6 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
 // Add a batchSet() method to GeoFire to make it easier to test
 GeoFire.prototype.batchSet = function (keyLocationPairs) {
   var promises = keyLocationPairs.map(function(keyLocationPair) {
-    console.log(keyLocationPair);
     return this.set(keyLocationPair.key, keyLocationPair.location);
   }.bind(this));
   return RSVP.allSettled(promises);
@@ -22,7 +21,7 @@ var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
 /* Clears all Firebase event handlers and resets the Firebase; runs before each test to ensure there is no pollution between tests */
 function resetFirebase() {
   console.log("");
-  console.log("********** Reseting Firebase for next test **********");
+  console.log("********** Resetting Firebase **********");
   var indicesPromise = new RSVP.Promise(function(resolve, reject) {
     dataRef.child("indices").on("value", function(dataSnapshot) {
       dataSnapshot.forEach(function(childSnapshot) {
@@ -525,7 +524,11 @@ describe("GeoQuery Tests", function() {
 
         var p6 = gq.getResults();
         p6.then(function(results) {
-          expect(results).toEqual(["loc1", "loc2", "loc3"]);
+          expect(results).toEqual({
+            "loc1": [1,2],
+            "loc2": [1,3],
+            "loc3": [1,4]
+          });
           cl.x("getResults promise");
         });
       }).catch(function(error){
@@ -551,7 +554,7 @@ describe("GeoQuery Tests", function() {
 
         var p6 = gq.getResults();
         p6.then(function(initialResults) {
-          expect(initialResults).toEqual([]);
+          expect(initialResults).toEqual({});
           cl.x("getResults promise");
         });
       }).catch(function(error){
@@ -707,7 +710,7 @@ describe("GeoQuery Tests", function() {
   });
 
   describe("onKeyEntered() event", function() {
-    xit("onKeyEntered() callback fires for each location added to the GeoQuery before onKeyEntered() was called", function(done) {
+    it("onKeyEntered() callback fires for each location added to the GeoQuery before onKeyEntered() was called", function(done) {
       console.log("Does this test actually work??")
       var cl = new Checklist(["batchSet promise", "loc1 entered", "loc4 entered"], expect, done);
 
