@@ -1,8 +1,8 @@
 /*********************/
 /*  GEO-UTILS TESTS  */
 /*********************/
-describe("geo-utils Tests", function() {
-  describe("Geohashing", function() {
+describe("geo-utils Tests:", function() {
+  describe("Geohashing:", function() {
     var locations = [
       [[-90, -180], "000000000000"],
       [[90, 180], "zzzzzzzzzzzz"],
