@@ -172,6 +172,10 @@ describe("GeoFire Tests:", function() {
       });
     });
 
+    xit("set() handles multiple keys at the same location", function(done) {
+      expect(true).toBeFalsy();
+    });
+
     it("set() throws errors on invalid keys" ,function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], expect, done);
 
