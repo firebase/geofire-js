@@ -25,6 +25,7 @@ function resetFirebase() {
 
   return new RSVP.Promise(function(resolve, reject) {
     dataRef.child("indices").off("child_added");
+    dataRef.child("locations").off("child_removed");
     dataRef.remove(function() {
       resolve();
     });
