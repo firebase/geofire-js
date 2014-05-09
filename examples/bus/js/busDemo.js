@@ -1,14 +1,16 @@
 var map, circle;
+var geoQuery;
 
 var locations = {
   "FirebaseHQ": [37.785326, -122.405696],
   "Caltrain": [37.7789, -122.3917]
 };
 var center = locations["FirebaseHQ"];
-var radiusInKm = 0.2;
+var radiusInKm = 0.75;
 
 // Get a reference to the SF Muni public transit data
-var muniFirebaseRef = new Firebase("https://publicdata-transit.firebaseio.com/sf-muni/data");
+//var muniFirebaseRef = new Firebase("https://publicdata-transit.firebaseio.com/sf-muni/data");
+var muniFirebaseRef = new Firebase("https://busRoutes.firebaseio-demo.com/sf-muni/");
 
 // For the search
 var demoFirebaseRef = new Firebase("https://geoFireBus.firebaseio-demo.com/");
@@ -17,7 +19,7 @@ demoFirebaseRef.remove(function() {
   var geoFire = new GeoFire(demoFirebaseRef);
 
   // Create a geo query
-  var geoQuery = geoFire.query({
+  geoQuery = geoFire.query({
     type: "circle",
     center: center,
     radius: radiusInKm
@@ -32,7 +34,7 @@ demoFirebaseRef.remove(function() {
     var vehicle = snapshot.val();
 
     // Create the vehicle marker
-    vehicle.marker = createVehicleMarker(vehicle, getVehicleColor(vehicle));
+    //vehicle.marker = createVehicleMarker(vehicle, getVehicleColor(vehicle));
 
     // Store the vehicle for later
     vehicles[vehicle.id] = vehicle;
@@ -50,16 +52,18 @@ demoFirebaseRef.remove(function() {
 
     console.assert(vehicles[vehicle.id], "Vehicle " + vehicle.id + " (" + vehicle.routeTag + ") is not in the vehicles list.");
 
-    vehicle.marker = vehicles[vehicle.id].marker;
+    if (vehicles[vehicle.id].marker) {
+      vehicle.marker = vehicles[vehicle.id].marker;
+    }
     vehicles[vehicle.id] = vehicle;
 
-    if (vehicle.marker) {
+    /*if (vehicle.marker) {
       vehicle.marker.animatedMoveTo(vehicle.lat, vehicle.lon);
     }
     else {
       console.log("new vehicle from child_changed");
       vehicle.marker = createVehicleMarker(vehicle, getVehicleColor(vehicle));
-    }
+    }*/
 
     geoFire.set(vehicle.id.toString(), [vehicle.lat, vehicle.lon]).then().catch(function(error) {
       console.error("Error in GeoFire.set(): " + error);
@@ -67,31 +71,44 @@ demoFirebaseRef.remove(function() {
   });
 
   muniFirebaseRef.on("child_removed", function(snapshot) {
-    console.log("child_removed");
+    console.log("child_removed: " + snapshot.val().id);
 
     var vehicle = snapshot.val();
 
     console.assert(vehicles[vehicle.id], "Vehicle " + vehicle.id + " (" + vehicle.routeTag + ") is not in the vehicles list.");
 
-    vehicle.marker = vehicles[vehicle.id].marker;
+    geoFire.remove(vehicle.id.toString()).then(function() {
+      vehicle.marker = null;
+      delete vehicles[vehicle.id];
+    }).catch(function(error) {
+      console.error("Error in GeoFire.remove(): " + error);
+    });
 
-    if (vehicle.marker) {
+
+
+    //vehicle.marker = vehicles[vehicle.id].marker;
+
+    /*if (vehicle.marker) {
       vehicle.marker.setMap(null);
       delete vehicles[vehicle.id];
 
       geoFire.remove(vehicle.id.toString()).then().catch(function(error) {
         console.error("Error in GeoFire.remove(): " + error);
       });
-    }
+    }*/
   });
 
   geoQuery.onKeyEntered(function(vehicleId, vehicleLocation) {
     var vehicle = vehicles[vehicleId];
 
-    console.assert(vehicles[vehicle.id], "Vehicle " + vehicle.id + " (" + vehicle.routeTag + ") is not in the vehicles list.");
-    console.log("onKeyEntered(): " + vehicleId + " (" + vehicle.routeTag + ")");
+    console.assert(vehicle, "Vehicle " + vehicleId + " is not in the vehicles list.");
+    //console.log("onKeyEntered(): " + vehicleId + " (" + vehicle.routeTag + ")");
 
-    vehicle.marker.setIcon("http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=" + vehicle.vtype + "|bbT|" + vehicle.routeTag + "|BF5FFF|eee");
+    vehicle.marker = createVehicleMarker(vehicle, getVehicleColor(vehicle));
+
+    vehicles[vehicleId] = vehicle;
+
+    //vehicle.marker.setIcon("http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=" + vehicle.vtype + "|bbT|" + vehicle.routeTag + "|BF5FFF|eee");
     //vehicle.marker.setMap(null);
     //vehicle.marker = createVehicleMarker(vehicle, "BF5FFF");
 
@@ -101,21 +118,25 @@ demoFirebaseRef.remove(function() {
   geoQuery.onKeyMoved(function(vehicleId, vehicleLocation) {
     var vehicle = vehicles[vehicleId];
 
-    console.assert(vehicles[vehicle.id], "Vehicle " + vehicle.id + " (" + vehicle.routeTag + ") is not in the vehicles list.");
-    console.log("onKeyMoved(): " + vehicleId + " (" + vehicle.routeTag + ")");
+    console.assert(vehicle, "Vehicle " + vehicleId + " is not in the vehicles list.");
+    //console.log("onKeyMoved(): " + vehicleId + " (" + vehicle.routeTag + ")");
 
     //vehicle.marker.setIcon("http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=" + vehicle.vtype + "|bbT|" + vehicle.routeTag + "|BF5FFF|eee");
+
+    vehicle.marker.animatedMoveTo(vehicleLocation[0], vehicleLocation[1]);
   });
 
   geoQuery.onKeyLeft(function(vehicleId, vehicleLocation) {
     var vehicle = vehicles[vehicleId];
 
-    console.assert(vehicles[vehicle.id], "Vehicle " + vehicle.id + " (" + vehicle.routeTag + ") is not in the vehicles list.");
-    console.log("onKeyLeft(): " + vehicleId + " (" + vehicle.routeTag + ")");
+    console.assert(vehicle, "Vehicle " + vehicleId + " is not in the vehicles list.");
+    //console.log("onKeyLeft(): " + vehicleId + " (" + vehicle.routeTag + ")");
 
-    vehicle.marker.setIcon("http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=" + vehicle.vtype + "|bbT|" + vehicle.routeTag + "|" + getVehicleColor(vehicle) + "|eee");
+    //vehicle.marker.setIcon("http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=" + vehicle.vtype + "|bbT|" + vehicle.routeTag + "|" + getVehicleColor(vehicle) + "|eee");
     //vehicle.marker.setMap(null);
     //vehicle.marker = createVehicleMarker(vehicle, getVehicleColor(vehicle));
+    vehicle.marker.setMap(null);
+
 
     $("#vehicle" + vehicleId).remove();
   });
@@ -140,10 +161,21 @@ function initializeMap() {
     fillOpacity: 0.35,
     map: map,
     center: circleLoc,
-    radius: ((radiusInKm) * 1000)
+    radius: ((radiusInKm) * 1000),
+    draggable: true
   };
 
   circle = new google.maps.Circle(circleOptions);
+
+  google.maps.event.addListener(circle, "drag", function (event) {
+    var latLng = circle.getCenter();
+
+    geoQuery.updateQueryCriteria({
+      type: "circle",
+      center: [latLng.lat(), latLng.lng()],
+      radius: radiusInKm
+    });
+  });
 }
 
 /**********************/
@@ -154,6 +186,7 @@ function createVehicleMarker(vehicle, vehicleColor) {
   var marker = new google.maps.Marker({
     icon: "http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=" + vehicle.vtype + "|bbT|" + vehicle.routeTag + "|" + vehicleColor + "|eee",
     position: new google.maps.LatLng(vehicle.lat, vehicle.lon),
+    optimized: true,
     map: map
   });
 
@@ -176,25 +209,18 @@ google.maps.Marker.prototype.animatedMoveTo = function(toLat, toLng) {
   var fromLng = this.getPosition().lng();
 
   if (!coordinatesAreEquivalent(fromLat, toLat) || !coordinatesAreEquivalent(fromLng, toLng)) {
-    // Store a LatLng for each step of the animation
-    var frames = [];
-    for (var percent = 0; percent < 1; percent += 0.01) {
-      curLat = fromLat + percent * (toLat - fromLat);
-      curLng = fromLng + percent * (toLng - fromLng);
-      frames.push(new google.maps.LatLng(curLat, curLng));
-    }
-
-    move = function(marker, latlngs, numLatlngs, index, wait) {
-      marker.setPosition(latlngs[index]);
-      if (index != numLatlngs - 1) {
-        // Call the next "frame" of the animation
-        setTimeout(function() {
-          move(marker, latlngs, numLatlngs, index + 1, wait);
-        }, wait);
+    var percent = 0;
+    var latDistance = toLat - fromLat;
+    var lngDistance = toLng - fromLng;
+    var interval = window.setInterval(function () {
+      percent += 0.01;
+      var curLat = fromLat + (percent * latDistance);
+      var curLng = fromLng + (percent * lngDistance);
+      var pos = new google.maps.LatLng(curLat, curLng);
+      this.setPosition(pos);
+      if (percent >= 1) {
+        window.clearInterval(interval);
       }
-    };
-
-    // Begin animation
-    move(this, frames, frames.length, 0, 25);
+    }.bind(this), 25);
   }
 };
