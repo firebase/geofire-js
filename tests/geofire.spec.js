@@ -20,8 +20,10 @@ var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
 /**********************/
 /* Clears all Firebase event handlers and resets the Firebase; runs before each test to ensure there is no pollution between tests */
 function resetFirebase() {
-  console.log("");
-  console.log("********** Resetting Firebase **********");
+  console.log("***** Resetting Firebase *****");
+
+  // Disable geoFire debugging
+  GEOFIRE_DEBUG = false;
 
   return new RSVP.Promise(function(resolve, reject) {
     dataRef.child("indices").off("child_added");
@@ -41,6 +43,7 @@ function getFirebaseData() {
   });
 };
 
+/* Returns a promise which is fulfilled after the inputted number of milliseconds pass */
 function wait(milliseconds) {
   return new RSVP.Promise(function(resolve, reject) {
     var timeout = window.setTimeout(function() {
@@ -85,9 +88,7 @@ describe("GeoFire Tests:", function() {
 
   describe("Adding locations:", function() {
     it("set() returns a promise", function(done) {
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log("!!!  GeoFire Tests  !!!");
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!");
+      console.log("!!!!!  GeoFire Tests  !!!!!");
 
       var cl = new Checklist(["p1"], expect, done);
 
@@ -112,7 +113,6 @@ describe("GeoFire Tests:", function() {
 
         return getFirebaseData();
       }).then(function(firebaseData) {
-        console.log(firebaseData);
         expect(firebaseData).toEqual({
           "indices": {
             "7zzzzzzzzzzz": "loc1",
@@ -493,9 +493,7 @@ describe("GeoQuery Tests:", function() {
 
   describe("Constructor:", function() {
     it("Constructor stores query criteria", function() {
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log("!!!  GeoQuery Tests  !!!");
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
+      console.log("!!!!!  GeoQuery Tests  !!!!!");
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
@@ -505,33 +503,122 @@ describe("GeoQuery Tests:", function() {
       expect(gq._radius).toEqual(1000);
     });
 
-    xit("Constructor throws error on invalid query criteria", function() {
+    it("Constructor throws error on invalid query criteria", function() {
       var gf = new GeoFire(dataRef);
-      var gq = gf.query({type:"triangle", center: [1,2], radius: 1000});
+
+      expect(function() { gf.query({}) }).toThrow();
+      expect(function() { gf.query({type:"circle"}) }).toThrow();
+      expect(function() { gf.query({center: [1,2]}) }).toThrow();
+      expect(function() { gf.query({radius: 1000}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: [1,2]}) }).toThrow();
+      expect(function() { gf.query({type:"circle", radius: 1000}) }).toThrow();
+      expect(function() { gf.query({center: [1,2], radius: 1000}) }).toThrow();
+      expect(function() { gf.query({type:"triangle", center: [1,2], radius: 1000}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: [91,2], radius: 1000}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: [1,-181], radius: 1000}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: ["text",2], radius: 1000}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: [1,[1,2]], radius: 1000}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: [null,2], radius: 1000}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: [1,undefined], radius: 1000}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: [1,2], radius: -10}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: [1,2], radius: "text"}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: [1,2], radius: [1,2]}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: [1,2], radius: null}) }).toThrow();
+      expect(function() { gf.query({type:"circle", center: [1,2], radius: undefined}) }).toThrow();
     });
   });
 
   describe("updateQueryCriteria():", function() {
     it("updateQueryCriteria() updates query criteria", function() {
       var gf = new GeoFire(dataRef);
-      var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
 
       expect(gq._type).toEqual("circle");
       expect(gq._center).toEqual([1,2]);
       expect(gq._radius).toEqual(1000);
 
-      gq.updateQueryCriteria({type:"square", center: [2,3], radius: 100});
+      gq.updateQueryCriteria({type: "square", center: [2,3], radius: 100});
 
       expect(gq._type).toEqual("square");
       expect(gq._center).toEqual([2,3]);
       expect(gq._radius).toEqual(100);
     });
 
-    xit("updateQueryCriteria() throws error on invalid query criteria", function() {
+    it("updateQueryCriteria() fires onKeyEntered() callback for locations which now belong to the GeoQuery", function(done) {
+      var cl = new Checklist(["p1", "p2", "loc1 entered", "loc4 entered"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type:  "circle", center: [90,90], radius: 1000});
+      gq.onKeyEntered(function(key, location) {
+        cl.x(key + " entered");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [2, 3]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]},
+        {key: "loc4", location: [5, 5]},
+        {key: "loc5", location: [67, 55]}
+      ]).then(function() {
+        cl.x("p1");
+
+        gq.updateQueryCriteria({type: "circle", center: [1,2], radius: 1000});
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p2");
+      });
+    });
+
+    it("updateQueryCriteria() fires onKeyLeft() callback for locations which no longer belong to the GeoQuery", function(done) {
+      var cl = new Checklist(["p1", "p2", "loc1 left", "loc4 left"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type:  "circle", center: [1, 2], radius: 1000});
+      gq.onKeyLeft(function(key, location) {
+        cl.x(key + " left");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [2, 3]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]},
+        {key: "loc4", location: [5, 5]},
+        {key: "loc5", location: [67, 55]}
+      ]).then(function() {
+        cl.x("p1");
+
+        gq.updateQueryCriteria({type: "circle", center: [90,90], radius: 1000});
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p2");
+      });
+    });
+
+    it("updateQueryCriteria() throws error on invalid query criteria", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
 
-      gq.updateQueryCriteria({type:"triangle", center: [1,2], radius: 1000});
+      expect(function() { gq.updateQueryCriteria({}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle"}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({center: [1,2]}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({radius: 1000}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: [1,2]}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", radius: 1000}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({center: [1,2], radius: 1000}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"triangle", center: [1,2], radius: 1000}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: [91,2], radius: 1000}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: [1,-181], radius: 1000}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: ["text",2], radius: 1000}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: [1,[1,2]], radius: 1000}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: [null,2], radius: 1000}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: [1,undefined], radius: 1000}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: [1,2], radius: -10}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: [1,2], radius: "text"}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: [1,2], radius: [1,2]}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: [1,2], radius: null}) }).toThrow();
+      expect(function() { gq.updateQueryCriteria({type:"circle", center: [1,2], radius: undefined}) }).toThrow();
     });
   });
 
@@ -589,10 +676,11 @@ describe("GeoQuery Tests:", function() {
 
   describe("onKeyMoved() event:", function() {
     it("onKeyMoved() callback does not fire for brand new locations within or outside of the GeoQuery", function(done) {
-      var cl = new Checklist(["p1"], expect, done);
+      var cl = new Checklist(["p1", "p2"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
       gq.onKeyMoved(function(key, location) {
         cl.x(key + " moved");
       });
@@ -603,14 +691,19 @@ describe("GeoQuery Tests:", function() {
         {key: "loc3", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p2");
       });
     });
 
     it("onKeyMoved() callback does not fire for locations outside of the GeoQuery which are moved somewhere else outside of the GeoQuery", function(done) {
-      var cl = new Checklist(["p1", "p2"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
       gq.onKeyMoved(function(key, location) {
         cl.x(key + " moved");
       });
@@ -628,14 +721,19 @@ describe("GeoQuery Tests:", function() {
         ]);
       }).then(function() {
         cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p3");
       });
     });
 
     it("onKeyMoved() callback does not fire for locations outside of the GeoQuery which are moved within the GeoQuery", function(done) {
-      var cl = new Checklist(["p1", "p2"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
       gq.onKeyMoved(function(key, location) {
         cl.x(key + " moved");
       });
@@ -653,14 +751,19 @@ describe("GeoQuery Tests:", function() {
         ]);
       }).then(function() {
         cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p3");
       });
     });
 
     it("onKeyMoved() callback fires for locations within the GeoQuery which are moved somewhere else within the GeoQuery", function(done) {
-      var cl = new Checklist(["p1", "p2", "loc1 moved", "loc3 moved"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3", "loc1 moved", "loc3 moved"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
       gq.onKeyMoved(function(key, location) {
         cl.x(key + " moved");
       });
@@ -678,14 +781,52 @@ describe("GeoQuery Tests:", function() {
         ]);
       }).then(function() {
         cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p3");
+      });
+    });
+
+    it("multiple onKeyMoved() callbacks fire for locations within the GeoQuery which are moved somewhere else within the GeoQuery", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "loc1 moved1", "loc3 moved1", "loc1 moved2", "loc3 moved2"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+      gq.onKeyMoved(function(key, location) {
+        cl.x(key + " moved1");
+      });
+      gq.onKeyMoved(function(key, location) {
+        cl.x(key + " moved2");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [1, 1]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return gf.batchSet([
+          {key: "loc1", location: [2, 2]},
+          {key: "loc3", location: [-1, -1]}
+        ]);
+      }).then(function() {
+        cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p3");
       });
     });
 
     it("onKeyMoved() callback does not fire for locations within the GeoQuery which are moved somewhere outside of the GeoQuery", function(done) {
-      var cl = new Checklist(["p1", "p2"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
       gq.onKeyMoved(function(key, location) {
         cl.x(key + " moved");
       });
@@ -703,14 +844,19 @@ describe("GeoQuery Tests:", function() {
         ]);
       }).then(function() {
         cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p3");
       });
     });
 
     it("onKeyMoved() callback fires for a location within the GeoQuery which is set to the same location", function(done) {
-      var cl = new Checklist(["p1", "p2", "loc1 moved", "loc3 moved"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3", "loc1 moved", "loc3 moved"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
       gq.onKeyMoved(function(key, location) {
         cl.x(key + " moved");
       });
@@ -729,6 +875,10 @@ describe("GeoQuery Tests:", function() {
         ]);
       }).then(function() {
         cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p3");
       });
     });
 
@@ -745,8 +895,8 @@ describe("GeoQuery Tests:", function() {
   });
 
   describe("onKeyEntered() event:", function() {
-    it("onKeyEntered() callback fires for each location added to the GeoQuery before onKeyEntered() was called", function(done) {
-      var cl = new Checklist(["p1", "loc1 entered", "loc4 entered"], expect, done);
+    it("onKeyEntered() callback fires when a location enters the GeoQuery before onKeyEntered() was called", function(done) {
+      var cl = new Checklist(["p1", "p2", "loc1 entered", "loc4 entered"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
@@ -763,14 +913,19 @@ describe("GeoQuery Tests:", function() {
         gq.onKeyEntered(function(key, location) {
           cl.x(key + " entered");
         });
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p2");
       });
     });
 
-    it("onKeyEntered() callback fires for each location added to the GeoQuery after onKeyEntered() was called", function(done) {
-      var cl = new Checklist(["p1", "loc1 entered", "loc4 entered"], expect, done);
+    it("onKeyEntered() callback fires when a location enters the GeoQuery after onKeyEntered() was called", function(done) {
+      var cl = new Checklist(["p1", "p2", "loc1 entered", "loc4 entered"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
       gq.onKeyEntered(function(key, location) {
         cl.x(key + " entered");
       });
@@ -783,6 +938,38 @@ describe("GeoQuery Tests:", function() {
         {key: "loc5", location: [67, 55]}
       ]).then(function() {
         cl.x("p1");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p2");
+      });
+    });
+
+    it("multiple onKeyEntered() callbacks fire when a location enters the GeoQuery", function(done) {
+      var cl = new Checklist(["p1", "p2", "loc1 entered1", "loc4 entered1", "loc1 entered2", "loc4 entered2"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+      gq.onKeyEntered(function(key, location) {
+        cl.x(key + " entered1");
+      });
+      gq.onKeyEntered(function(key, location) {
+        cl.x(key + " entered2");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [2, 3]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]},
+        {key: "loc4", location: [5, 5]},
+        {key: "loc5", location: [67, 55]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p2");
       });
     });
 
@@ -800,13 +987,10 @@ describe("GeoQuery Tests:", function() {
 
   describe("onKeyLeft() event:", function() {
     it("onKeyLeft() callback fires when a location leaves the GeoQuery", function(done) {
-      var cl = new Checklist(["p1", "p2", "loc1 entered", "loc4 entered", "loc1 left", "loc4 left"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3", "loc1 left", "loc4 left"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
-      gq.onKeyEntered(function(key, location) {
-        cl.x(key + " entered");
-      });
 
       gq.onKeyLeft(function(key, location) {
         cl.x(key + " left");
@@ -827,6 +1011,71 @@ describe("GeoQuery Tests:", function() {
         ]);
       }).then(function() {
         cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p3");
+      });
+    });
+
+    it("multiple onKeyLeft() callbacks fire when a location leaves the GeoQuery", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "loc1 left1", "loc4 left1", "loc1 left2", "loc4 left2"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+      gq.onKeyLeft(function(key, location) {
+        cl.x(key + " left1");
+      });
+      gq.onKeyLeft(function(key, location) {
+        cl.x(key + " left2");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [2, 3]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]},
+        {key: "loc4", location: [5, 5]},
+        {key: "loc5", location: [67, 55]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return gf.batchSet([
+          {key: "loc1", location: [25, 90]},
+          {key: "loc4", location: [25, 5]}
+        ]);
+      }).then(function() {
+        cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p3");
+      });
+    });
+
+    it("onKeyLeft() callback fires when a location within the GeoQuery is entirely removed from GeoFire", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "loc1 left"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+      gq.onKeyLeft(function(key, location) {
+        cl.x(key + " left");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [2, 3]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return gf.remove("loc1");
+      }).then(function() {
+        cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p3");
       });
     });
 
@@ -842,9 +1091,105 @@ describe("GeoQuery Tests:", function() {
     });
   });
 
+  describe("onKey*() events:", function() {
+    it ("onKey*() event callbacks fire when used all at the same time", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "loc1 entered", "loc4 entered", "loc1 moved", "loc4 left", "loc1 left", "loc5 entered"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+      gq.onKeyEntered(function(key, location) {
+        cl.x(key + " entered");
+      });
+      gq.onKeyLeft(function(key, location) {
+        cl.x(key + " left");
+      });
+      gq.onKeyMoved(function(key, location) {
+        cl.x(key + " moved");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [2, 3]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]},
+        {key: "loc4", location: [5, 5]},
+        {key: "loc5", location: [67, 55]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return gf.batchSet([
+          {key: "loc1", location: [1, 1]},
+          {key: "loc4", location: [25, 5]}
+        ]);
+      }).then(function() {
+        cl.x("p2");
+
+        return gf.batchSet([
+          {key: "loc1", location: [10, -100]},
+          {key: "loc2", location: [50, -50]},
+          {key: "loc5", location: [5, 5]}
+        ]);
+      }).then(function() {
+        cl.x("p3");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p4");
+      });
+    });
+  });
+
   describe("Cancelling GeoQuery:", function() {
-    xit ("cancel() prevents GeoQuery from firing any more onKey*() event callbacks", function(done) {
-      expect(true).toBeFalsy();
+    it ("cancel() prevents GeoQuery from firing any more onKey*() event callbacks", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 entered", "loc4 entered", "loc1 moved", "loc4 left"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+      gq.onKeyEntered(function(key, location) {
+        cl.x(key + " entered");
+      });
+      gq.onKeyLeft(function(key, location) {
+        cl.x(key + " left");
+      });
+      gq.onKeyMoved(function(key, location) {
+        cl.x(key + " moved");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [2, 3]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]},
+        {key: "loc4", location: [5, 5]},
+        {key: "loc5", location: [67, 55]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return gf.batchSet([
+          {key: "loc1", location: [1, 1]},
+          {key: "loc4", location: [25, 5]}
+        ]);
+      }).then(function() {
+        cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p3")
+
+        gq.cancel();
+
+        return gf.batchSet([
+          {key: "loc1", location: [10, -100]},
+          {key: "loc2", location: [50, -50]},
+          {key: "loc5", location: [5, 5]}
+        ]);
+      }).then(function() {
+        cl.x("p4");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p5");
+      });
     });
   });
 });
@@ -860,9 +1205,7 @@ describe("GeoCallbackRegistration Tests:", function() {
 
   describe("Constructor:", function() {
     it("Constructor throws error given non-function", function() {
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log("!!!  GeoCallbackRegistration Tests  !!!");
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      console.log("!!!!!  GeoCallbackRegistration Tests  !!!!!");
 
       var createCallbackRegistration = function() {
         GeoCallbackRegistration("nonFunction");
@@ -873,11 +1216,12 @@ describe("GeoCallbackRegistration Tests:", function() {
   });
 
   describe("Cancelling event callbacks:", function() {
-    it("onKeyMoved() can be cancelled", function(done) {
+    it("onKeyMoved() registrations can be cancelled", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 moved"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
       var onKeyMovedRegistration = gq.onKeyMoved(function(key, location) {
         cl.x(key + " moved");
       });
@@ -908,11 +1252,12 @@ describe("GeoCallbackRegistration Tests:", function() {
       });
     });
 
-    it("onKeyEntered() can be cancelled", function(done) {
+    it("onKeyEntered() registrations can be cancelled", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "loc1 entered"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
       var onKeyEnteredRegistration = gq.onKeyEntered(function(key, location) {
         cl.x(key + " entered");
       });
@@ -939,11 +1284,12 @@ describe("GeoCallbackRegistration Tests:", function() {
       });
     });
 
-    it("onKeyLeft() can be cancelled", function(done) {
+    it("onKeyLeft() registrations can be cancelled", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 left"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
       var onKeyLeftRegistration = gq.onKeyLeft(function(key, location) {
         cl.x(key + " left");
       });
@@ -962,6 +1308,119 @@ describe("GeoCallbackRegistration Tests:", function() {
         return wait(5);
       }).then(function() {
         onKeyLeftRegistration.cancel();
+        cl.x("p3");
+
+        return gf.set("loc3", [-80, -80]);
+      }).then(function() {
+        cl.x("p4");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p5");
+      });
+    });
+
+    it("Cancelling an onKeyMoved() registration does not cancel all onKeyMoved() callbacks", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 moved1", "loc1 moved2", "loc3 moved2"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+      var onKeyMovedRegistration1 = gq.onKeyMoved(function(key, location) {
+        cl.x(key + " moved1");
+      });
+      var onKeyMovedRegistration2 = gq.onKeyMoved(function(key, location) {
+        cl.x(key + " moved2");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [1, 1]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return gf.set("loc1", [2, 2]);
+      }).then(function() {
+        cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        onKeyMovedRegistration1.cancel();
+        cl.x("p3");
+
+        return gf.set("loc3", [1, 2]);
+      }).then(function() {
+        cl.x("p4");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p5");
+      });
+    });
+
+    it("Cancelling an onKeyEntered() registration does not cancel all onKeyEntered() callbacks", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "loc1 entered1", "loc1 entered2", "loc3 entered2"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+      var onKeyEnteredRegistration1 = gq.onKeyEntered(function(key, location) {
+        cl.x(key + " entered1");
+      });
+      var onKeyEnteredRegistration2 = gq.onKeyEntered(function(key, location) {
+        cl.x(key + " entered2");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [80, 80]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return wait(5);
+      }).then(function() {
+        onKeyEnteredRegistration1.cancel();
+        cl.x("p2");
+
+        return gf.set("loc3", [1, 2]);
+      }).then(function() {
+        cl.x("p3");
+
+        return wait(5);
+      }).then(function() {
+        cl.x("p4");
+      });
+    });
+
+    it("Cancelling an onKeyLeft() registration does not cancel all onKeyLeft() callbacks", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 left1", "loc1 left2", "loc3 left2"], expect, done);
+
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
+
+      var onKeyLeftRegistration1 = gq.onKeyLeft(function(key, location) {
+        cl.x(key + " left1");
+      });
+      var onKeyLeftRegistration2 = gq.onKeyLeft(function(key, location) {
+        cl.x(key + " left2");
+      });
+
+      gf.batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [1, 1]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return gf.set("loc1", [80, 80]);
+      }).then(function() {
+        cl.x("p2");
+
+        return wait(5);
+      }).then(function() {
+        onKeyLeftRegistration1.cancel();
         cl.x("p3");
 
         return gf.set("loc3", [-80, -80]);
