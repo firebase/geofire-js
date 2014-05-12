@@ -640,11 +640,11 @@ describe("GeoQuery Tests:", function() {
 
         return gq.getResults();
       }).then(function(results) {
-        expect(results).toEqual({
-          "loc1": [1,2],
-          "loc2": [1,3],
-          "loc3": [1,4]
-        });
+        expect(results).toEqual([
+          ["loc1", [1,2]],
+          ["loc2", [1,3]],
+          ["loc3", [1,4]]
+        ]);
 
         cl.x("p2");
       });
@@ -667,7 +667,7 @@ describe("GeoQuery Tests:", function() {
 
         return gq.getResults();
       }).then(function(results) {
-        expect(results).toEqual({});
+        expect(results).toEqual([]);
 
         cl.x("p2");
       });
