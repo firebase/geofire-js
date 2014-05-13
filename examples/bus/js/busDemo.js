@@ -9,8 +9,8 @@ var center = locations["FirebaseHQ"];
 var radiusInKm = 0.75;
 
 // Get a reference to the SF Muni public transit data
-//var muniFirebaseRef = new Firebase("https://publicdata-transit.firebaseio.com/sf-muni/data");
-var muniFirebaseRef = new Firebase("https://busRoutes.firebaseio-demo.com/sf-muni/");
+var muniFirebaseRef = new Firebase("https://publicdata-transit.firebaseio.com/sf-muni/data");
+//var muniFirebaseRef = new Firebase("https://busRoutes.firebaseio-demo.com/sf-muni/");
 
 // For the search
 var demoFirebaseRef = new Firebase("https://geoFireBus.firebaseio-demo.com/");

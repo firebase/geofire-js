@@ -1,8 +1,31 @@
 # GeoFire — Realtime location queries with Firebase
 
 GeoFire is a simple JavaScript library that allows you to store and query a set
-of keys based on their goegraphic location. GeoFire uses Firebase for data
+of keys based on their geographic location. GeoFire uses Firebase for data
 storage, allowing query results to be updated in realtime as they change.
+
+## Downloading
+
+In order to use GeoFire in your project, you need to include the following files in your HTML file:
+
+    <!-- RSVP -->
+    <script src="rsvp.min.js"></script>
+
+    <!-- Firebase -->
+    <script src="firebase.js"></script>
+
+    <!-- GeoFire -->
+    <script src="geo-utils.js"></script>
+    <script src="geofire.js"></script>
+
+You can find each of these files in the `/lib/` directory of this GitHub repository.
+
+You can also download `rsvp.min.js` and `firebase.js` from Bower:
+
+    bower install rsvp
+    bower install firebase
+
+We are working on making GeoFire easier to install and use in your projects and changes to this process will be coming soon. By the time version 2.0 is released, GeoFire will be available on npm and Bower.
 
 ## Example Usage
 
@@ -34,7 +57,7 @@ Here’s a simple example of using GeoFire:
 
 ## API Reference
 
-TODO: Mention RSVP
+Firebase uses the lightweight [RSVP.js](https://github.com/tildeio/rsvp.js/) library to provide an implementation of JavaScript promises. If you are unfamiliar with promises, please refer to the [RSVP.js documentation](https://github.com/tildeio/rsvp.js/).
 
 ### GeoFire
 
@@ -52,7 +75,7 @@ Returns an empty promise after the provided `key`-`location` pair has been added
 
 Returns a promise fulfilled with the location corresponding to the provided `key`.
 
-If the `key` does not exist, the returned promise is fullfilled with `null`.
+If the `key` does not exist, the returned promise is fulfilled with `null`.
 
 #### GeoFire.remove(key)
 
@@ -139,7 +162,6 @@ commands to get your environment set up.
 
     $ npm install
     $ bower install
-    $ gulp test
     $ gulp
 
 During development, you may find it useful to open tests/TestRunner.html.
