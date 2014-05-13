@@ -1,0 +1,14 @@
+{
+  "bitwise": false,
+  "curly": true,
+  "eqeqeq": true,
+  "forin": true,
+  "freeze": true,
+  "indent": 2,
+  "latedef": true,
+  "quotmark": "double",
+  "strict": false,
+  "trailing": true,
+  "undef": false,
+  "unused": true
+}

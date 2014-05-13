@@ -31,6 +31,8 @@
     "gulp-concat": "^2.2.0",
     "gulp-uglify": "^0.2.1",
     "gulp-jshint": "^1.5.1",
+    "gulp-ext-replace": "0.0.5",
+    "jshint-stylish": "^0.2.0",
     "gulp-karma": "0.0.4",
     "streamqueue": "0.0.5"
   }

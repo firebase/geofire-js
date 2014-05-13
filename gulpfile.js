@@ -1,52 +1,71 @@
-var gulp = require('gulp');
-var streamqueue = require('streamqueue');
-var jshint = require('gulp-jshint');
-var karma = require('gulp-karma');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
+/**************/
+/*  REQUIRES  */
+/**************/
+var gulp = require("gulp");
+var streamqueue = require("streamqueue");
+var karma = require("gulp-karma");
+var concat = require("gulp-concat");
+var jshint = require("gulp-jshint");
+var uglify = require("gulp-uglify");
 
-var distFiles = {
-  scripts: ['lib/*.js'],
+/****************/
+/*  FILE PATHS  */
+/****************/
+var paths = {
+  scripts: [
+    "lib/geofire.js",
+    "lib/geo-utils.js"
+  ],
+
+  tests: [
+    "bower_components/firebase/firebase.js",
+    "bower_components/rsvp/rsvp.min.js",
+    "lib/*.js",
+    "tests/geofire.spec.js"
+  ]
 };
 
-var testFiles = [
-  'bower_components/firebase/firebase.js',
-  'bower_components/rsvp/rsvp.min.js',
-  'lib/*.js',
-  'tests/geofire.spec.js'
-];
-
-gulp.task('scripts', function() {
-
-  //Load the code, and process it.
-  var code = gulp.src(distFiles.scripts)
+/***********/
+/*  TASKS  */
+/***********/
+/* Lints, minifies, and concatenates the script files */
+gulp.task("scripts", function() {
+  var code = gulp.src(paths.scripts)
+    // Lint
     .pipe(jshint())
-    .pipe(jshint.reporter('default'))
+    .pipe(jshint.reporter("jshint-stylish"))
+
+    // Minify
     .pipe(uglify());
 
-  //wrap it with headers and footers to namespace it
+  // Wrap code with a header and footer to namespace it
   var stream = streamqueue({ objectMode: true });
-  stream.queue(gulp.src('build/header'));
+  stream.queue(gulp.src("build/header"));
   stream.queue(code);
-  stream.queue(gulp.src('build/footer'));
+  stream.queue(gulp.src("build/footer"));
 
-  //and output it.
+  // Output the final concatenated script file
   return stream.done()
-    .pipe(concat('geofire.min.js'))
-    .pipe(gulp.dest('dist'));
+    .pipe(concat("geofire.min.js"))
+    .pipe(gulp.dest("dist"));
 });
 
-gulp.task('test', function() {
-  // Be sure to return the stream
-  return gulp.src(testFiles)
+/* Uses the Karma test runner to run the Jasmine tests */
+gulp.task("test", function() {
+  return gulp.src(paths.tests)
     .pipe(karma({
-      configFile: 'tests/automatic_karma.conf.js',
-      action: 'run'
+      configFile: "karma.conf.js",
+      action: "run"
     }))
-    .on('error', function(err) {
-      // Make sure failed tests cause gulp to exit non-zero
+    .on("error", function(err) {
       throw err;
     });
 });
 
-gulp.task('default', ['test', 'scripts']);
+/* Re-runs the "scripts" task every time a script file changes */
+gulp.task("watch", function() {
+  gulp.watch(paths.scripts, ["scripts"]);
+});
+
+/* Runs the "test" and "scripts" tasks by default */
+gulp.task("default", ["test", "scripts"]);
