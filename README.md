@@ -8,22 +8,26 @@ storage, allowing query results to be updated in realtime as they change.
 
 In order to use GeoFire in your project, you need to include the following files in your HTML file:
 
-    <!-- RSVP -->
-    <script src="rsvp.min.js"></script>
+```html
+<!-- RSVP -->
+<script src="rsvp.min.js"></script>
 
-    <!-- Firebase -->
-    <script src="firebase.js"></script>
+<!-- Firebase -->
+<script src="firebase.js"></script>
 
-    <!-- GeoFire -->
-    <script src="geo-utils.js"></script>
-    <script src="geofire.js"></script>
+<!-- GeoFire -->
+<script src="geo-utils.js"></script>
+<script src="geofire.js"></script>
+```
 
 You can find each of these files in the `/lib/` directory of this GitHub repository.
 
 You can also download `rsvp.min.js` and `firebase.js` from Bower:
 
-    bower install rsvp
-    bower install firebase
+```bash
+$ bower install rsvp
+$ bower install firebase
+```
 
 We are working on making GeoFire easier to install and use in your projects and changes to this process will be coming soon. By the time version 2.0 is released, GeoFire will be available on npm and Bower.
 
@@ -31,29 +35,31 @@ We are working on making GeoFire easier to install and use in your projects and 
 
 Here’s a simple example of using GeoFire:
 
-    // Create a Firebase reference where GeoFire will store its information
-    var dataRef = new Firebase('https://my-firebase.firebaseio-demo.com'),
+```JavaScript
+// Create a Firebase reference where GeoFire will store its information
+var dataRef = new Firebase('https://my-firebase.firebaseio-demo.com'),
 
-    // Create a GeoFire index
-    var geoFire = new GeoFire(dataRef);
+// Create a GeoFire index
+var geoFire = new GeoFire(dataRef);
 
-    // Add a key to GeoFire
-    var newItem = geoFire.set(“some-unique-key”, [54.92, 21.08]);
+// Add a key to GeoFire
+var newItem = geoFire.set(“some-unique-key”, [54.92, 21.08]);
 
-    // Create a location query for a circle with a 1 km radius
-    var geoQuery = geoFire.query({
-        type: “circle”,
-        center: [10.389, 2.412],
-        radius: 1000
-    });
+// Create a location query for a circle with a 1 km radius
+var geoQuery = geoFire.query({
+  type: “circle”,
+  center: [10.389, 2.412],
+  radius: 1000
+});
 
-    // Log the results (both initial items and new items that enter into our query)
-    geoQuery.onKeyEntered(function(key, location) {
-      console.log(key, location);
-    });
+// Log the results (both initial items and new items that enter into our query)
+geoQuery.onKeyEntered(function(key, location) {
+  console.log(key, location);
+});
 
-    // Terminate the query (we will no longer receive location updates from the server for this query)
-    geoQuery.cancel();
+// Terminate the query (we will no longer receive location updates from the server for this query)
+geoQuery.cancel();
+```
 
 ## API Reference
 
@@ -113,11 +119,13 @@ Returns a promise fulfilled with a list of the key-location pairs which are curr
 
 The returned list will take the following form:
 
-    [
-      ["key1": [latitude1, longitude1],
-      ...
-      ["keyN": [latitudeN, longitudeN]
-    ]
+```JSON
+[
+  ["key1": [latitude1, longitude1],
+  ...
+  ["keyN": [latitudeN, longitudeN]
+]
+```
 
 #### GeoQuery.onKeyEntered(callback)
 
@@ -160,8 +168,10 @@ Cancels this `GeoCallbackRegistration` so that it no longer fires its callback.
 If you'd like to contribute to GeoFire, you'll need to run the following
 commands to get your environment set up.
 
-    $ npm install
-    $ bower install
-    $ gulp
+```bash
+$ npm install
+$ bower install
+$ gulp
+```
 
 During development, you may find it useful to open tests/TestRunner.html.
