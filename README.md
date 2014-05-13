@@ -119,7 +119,7 @@ Returns a promise fulfilled with a list of the key-location pairs which are curr
 
 The returned list will take the following form:
 
-```JSON
+```JavaScript
 [
   ["key1": [latitude1, longitude1],
   ...
