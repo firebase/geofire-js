@@ -6,8 +6,9 @@ module.exports = function(config) {
     files: [
       "../bower_components/firebase/firebase.js",
       "../bower_components/rsvp/rsvp.min.js",
-      "../lib/*.js",
-      "geofire.spec.js"
+      "../dest/GeoFire.js",
+      "geofire.spec.js",
+      "geo-utils.spec.js"
     ],
 
     browsers: ["Chrome"]

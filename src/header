@@ -4,4 +4,5 @@
 // geoFire stores the location coordinates of a data point as a geohash
 // (http://en.wikipedia.org/wiki/Geohash) in Firebase.
 
-var GeoFire = (function() {
+//var GeoFire = (function() {
+//(function(){

@@ -129,19 +129,19 @@ The returned list will take the following form:
 
 #### GeoQuery.onKeyEntered(callback)
 
-Sets a callback that will fire when a `key` enters this `GeoQuery`. Returns a `GeoCallbackRegistration` which can be used to cancel the callback.
+Sets a callback that will fire when a `key` enters this `GeoQuery`. The callback will be passed two input parameters, the key of the location and the latitude-longitude pair of the location. Returns a `GeoCallbackRegistration` which can be used to cancel the callback.
 
 You can add as many `onKeyEntered` callbacks as you would like. Each one will get called when a `key` enters this `GeoQuery`. Each callback must be cancelled individually.
 
 #### GeoQuery.onKeyLeft(callback)
 
-Sets a callback that will fire when a `key` leaves this `GeoQuery`. Returns a `GeoCallbackRegistration` which can be used to cancel the callback.
+Sets a callback that will fire when a `key` leaves this `GeoQuery`. The callback will be passed two input parameters, the key of the location and the latitude-longitude pair of the location. Returns a `GeoCallbackRegistration` which can be used to cancel the callback.
 
 You can add as many `onKeyLeft` callbacks as you would like. Each one will get called when a `key` leaves this `GeoQuery` and. Each callback must be cancelled individually.
 
 #### GeoQuery.onKeyMoved(callback)
 
-Sets a callback that will fire when a `key` which is already in this `GeoQuery` moves to another (or the same) location in this `GeoQuery`. Returns a `GeoCallbackRegistration` which can be used to cancel the callback.
+Sets a callback that will fire when a `key` which is already in this `GeoQuery` moves to another (or the same) location in this `GeoQuery`. The callback will be passed two input parameters, the key of the location and the latitude-longitude pair of the location. Returns a `GeoCallbackRegistration` which can be used to cancel the callback.
 
 You can add as many `onKeyMoved` callbacks as you would like. Each one will get called when a `key` which is already in this `GeoQuery` moves to another (or the same) location in this `GeoQuery`. Each callback must be cancelled individually.
 

@@ -1,5 +1,5 @@
-return GeoFire;
-})();
+//return GeoFire;
+//})();
 
 //Make sure this works in node.
 if (typeof module !== "undefined") {
