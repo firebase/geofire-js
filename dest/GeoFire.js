@@ -281,9 +281,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   this._saveQueryCriteria(queryCriteria);
   this._firebaseRef = firebaseRef;
   this._callbacks = {
-    "onKeyMoved": [],
-    "onKeyEntered": [],
-    "onKeyLeft": []
+    key_entered: [],
+    key_left: [],
+    key_moved: []
   };
   this._locationsInQuery = {};
   this._allLocations = {};
@@ -300,11 +300,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     }.bind(this));
   }.bind(this));
 
-  // Fire the onKeyLeft() event if a location in the query is removed entirely from geoFire
+  // Fire the "key_left" event if a location in the query is removed entirely from geoFire
   this._firebaseRef.child("locations").on("child_removed", function(locationsChildSnapshot) {
     var locationKey = locationsChildSnapshot.name();
     if (this._locationsInQuery[locationKey] !== undefined) {
-      this._callbacks.onKeyLeft.forEach(function(callback) {
+      this._callbacks.key_left.forEach(function(callback) {
         callback(locationKey, this._allLocations[locationKey]);
       }.bind(this));
       delete this._allLocations[locationKey];
@@ -318,7 +318,7 @@ GeoQuery.prototype._fireCallbacks = function(locationKey, location) {
   var isNowInQuery = (dist(location, this._center) <= this._radius);
   if (!wasAlreadyInQuery && isNowInQuery) {
     log(locationKey + " entered GeoQuery");
-    this._callbacks.onKeyEntered.forEach(function(callback) {
+    this._callbacks.key_entered.forEach(function(callback) {
       callback(locationKey, location);
     });
 
@@ -327,7 +327,7 @@ GeoQuery.prototype._fireCallbacks = function(locationKey, location) {
   }
   else if (wasAlreadyInQuery && !isNowInQuery) {
     log(locationKey + " left GeoQuery");
-    this._callbacks.onKeyLeft.forEach(function(callback) {
+    this._callbacks.key_left.forEach(function(callback) {
       callback(locationKey, location);
     });
 
@@ -336,7 +336,7 @@ GeoQuery.prototype._fireCallbacks = function(locationKey, location) {
   }
   else if (wasAlreadyInQuery) {
     log(locationKey + " moved within GeoQuery");
-    this._callbacks.onKeyMoved.forEach(function(callback) {
+    this._callbacks.key_moved.forEach(function(callback) {
       callback(locationKey, location);
     });
 
@@ -365,63 +365,35 @@ GeoQuery.prototype.getResults = function() {
 };
 
 /**
- * Sets this GeoQuery's onKeyEntered() callback.
+ * Attaches a callback to this GeoQuery for a given event type.
  *
- * @param {function} callback Callback function to be called when a key enters this GeoQuery.
- * @return {GeoCallbackRegistration} A callback registration which can be used to cancel the onKeyEntered() callback.
+ * @param {string} eventType The event type for which to attach the callback. One of "key_entered", "key_left", or "key_moved".
+ * @param {function} callback Callback function to be called when an event of type eventType fires.
+ * @return {GeoCallbackRegistration} A callback registration which can be used to cancel the provided callback.
  */
-GeoQuery.prototype.onKeyEntered = function(callback) {
+GeoQuery.prototype.on = function(eventType, callback) {
+  if (["key_entered", "key_left", "key_moved"].indexOf(eventType) === -1) {
+    throw new Error("Event type must be \"key_entered\", \"key_left\", or \"key_moved\"");
+  }
   if (typeof callback !== "function") {
-    throw new Error("onKeyEntered() callback must be a function.");
+    throw new Error("Event callback must be a function.");
   }
 
-  this._callbacks.onKeyEntered.push(callback);
+  // Add the callback to this GeoQuery's callbacks list
+  this._callbacks[eventType].push(callback);
 
-  // Fire the onKeyEntered() callback for every location already within our GeoQuery
-  for (var key in this._locationsInQuery) {
-    if (this._locationsInQuery.hasOwnProperty(key)) {
-      callback(key, this._locationsInQuery[key]);
+  // Fire the "key_entered" callback for every location already within our GeoQuery
+  if (eventType === "key_entered") {
+    for (var key in this._locationsInQuery) {
+      if (this._locationsInQuery.hasOwnProperty(key)) {
+        callback(key, this._locationsInQuery[key]);
+      }
     }
   }
 
+  // Return an event registration which can be used to cancel the callback
   return new GeoCallbackRegistration(function() {
-    this._callbacks.onKeyEntered.splice(this._callbacks.onKeyEntered.indexOf(callback), 1);
-  }.bind(this));
-};
-
-/**
- * Sets this GeoQuery's onKeyLeft() callback.
- *
- * @param {function} callback Callback function to be called when a key leaves this GeoQuery.
- * @return {GeoCallbackRegistration} A callback registration which can be used to cancel the onKeyLeft() callback.
- */
-GeoQuery.prototype.onKeyLeft = function(callback) {
-  if (typeof callback !== "function") {
-    throw new Error("onKeyLeft() callback must be a function.");
-  }
-
-  this._callbacks.onKeyLeft.push(callback);
-
-  return new GeoCallbackRegistration(function() {
-    this._callbacks.onKeyLeft.splice(this._callbacks.onKeyLeft.indexOf(callback), 1);
-  }.bind(this));
-};
-
-/**
- * Sets this GeoQuery's onKeyMoved() callback.
- *
- * @param {function} callback Callback function to be called when a key within this GeoQuery moves.
- * @return {GeoCallbackRegistration} A callback registration which can be used to cancel the onKeyMoved() callback.
- */
-GeoQuery.prototype.onKeyMoved = function(callback) {
-  if (typeof callback !== "function") {
-    throw new Error("onKeyMoved() callback must be a function.");
-  }
-
-  this._callbacks.onKeyMoved.push(callback);
-
-  return new GeoCallbackRegistration(function() {
-    this._callbacks.onKeyMoved.splice(this._callbacks.onKeyMoved.indexOf(callback), 1);
+    this._callbacks[eventType].splice(this._callbacks[eventType].indexOf(callback), 1);
   }.bind(this));
 };
 
@@ -430,9 +402,9 @@ GeoQuery.prototype.onKeyMoved = function(callback) {
  */
 GeoQuery.prototype.cancel = function () {
   this._callbacks = {
-      "onKeyMoved": [],
-      "onKeyEntered": [],
-      "onKeyLeft": []
+    key_entered: [],
+    key_left: [],
+    key_moved: []
   };
 
   this._firebaseRef.child("indices").off();
@@ -447,7 +419,7 @@ GeoQuery.prototype.cancel = function () {
 GeoQuery.prototype.updateQueryCriteria = function(newQueryCriteria) {
   this._saveQueryCriteria(newQueryCriteria);
 
-  // Loop through all of the locations and fire the onKeyEntered() or onKeyLeft() callbacks if necessary
+  // Loop through all of the locations and fire the "key_entered" or "key_left" callbacks if necessary
   for (var key in this._allLocations) {
     if (this._allLocations.hasOwnProperty(key)) {
       this._fireCallbacks(key, this._allLocations[key]);
