@@ -1,11 +1,98 @@
-// geoFire is a helper library for location-based operations in Firebase.
-// It provides functions to store data for location querying in Firebase,
-// and perform location queries such as location updates and localized searches.
-// geoFire stores the location coordinates of a data point as a geohash
-// (http://en.wikipedia.org/wiki/Geohash) in Firebase.
+// GeoFire is a JavaScript library that allows you to store and query a set of
+// keys based on their geographic location. GeoFire uses Firebase for data
+// storage, allowing query results to be updated in realtime as they change.
+//
+//   GeoFire 2.0.0
+//   https://github.com/firebase/geoFire/
+//   License: MIT
 
-//var GeoFire = (function() {
 //(function(){
+//  "use strict";
+var BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
+
+var deg2rad = function(deg) {
+  return deg * Math.PI / 180;
+};
+
+/**
+ * Calculate the distance between two points on a globe, via Haversine
+ * formula, in kilometers. This is approximate due to the nature of the
+ * Earth's radius varying between 6356.752 km through 6378.137 km.
+ */
+var dist = function(loc1, loc2) {
+  var lat1 = loc1[0],
+    lon1 = loc1[1],
+    lat2 = loc2[0],
+    lon2 = loc2[1];
+
+  var radius = 6371, // km
+    dlat = deg2rad(lat2 - lat1),
+    dlon = deg2rad(lon2 - lon1),
+    a, c;
+
+  a = Math.sin(dlat / 2) * Math.sin(dlat / 2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dlon / 2) * Math.sin(dlon / 2);
+
+  c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return radius * c;
+};
+
+/** public functions **/
+
+/**
+ * Generate a geohash of the specified precision/string length
+ * from the [latitude, longitude] pair, specified as an array.
+ */
+var encodeGeohash = function(latLon, precision) {
+  var latRange = { "min": -90, "max": 90 },
+    lonRange = { "min": -180, "max": 180 };
+  var lat = latLon[0],
+    lon = latLon[1],
+    hash = "",
+    hashVal = 0,
+    bits = 0,
+    even = 1,
+    val, range, mid;
+
+  precision = Math.min(precision || 12, 22);
+
+  if (lat < latRange.min || lat > latRange.max) {
+    throw "Invalid latitude specified! (" + lat + ")";
+  }
+
+  if (lon < lonRange.min || lon > lonRange.max) {
+    throw "Invalid longitude specified! (" + lon + ")";
+  }
+
+  while (hash.length < precision) {
+    val = even ? lon : lat;
+    range = even ? lonRange : latRange;
+
+    mid = (range.min + range.max) / 2;
+    if (val > mid) {
+      hashVal = (hashVal << 1) + 1;
+      range.min = mid;
+    }
+    else {
+      hashVal = (hashVal << 1) + 0;
+      range.max = mid;
+    }
+
+    even = !even;
+    if (bits < 4) {
+      bits++;
+    }
+    else {
+      bits = 0;
+      hash += BASE32[hashVal].toString();
+      hashVal = 0;
+    }
+  }
+
+  return hash;
+};
+
 // TODO: delete before releasing or make it like Firebase.enableLogging()
 var GEOFIRE_DEBUG = true;
 console.log("Note: debug set to " + GEOFIRE_DEBUG);
@@ -423,7 +510,6 @@ GeoQuery.prototype._saveQueryCriteria = function(newQueryCriteria) {
 
 /**
  * Creates a GeoFire instance.
- * Note: This is the only publicly exposed symbol.
  *
  * @constructor
  * @this {GeoFire}
@@ -432,12 +518,11 @@ GeoQuery.prototype._saveQueryCriteria = function(newQueryCriteria) {
 var GeoFire = function (firebaseRef) {
   this._firebaseRef = firebaseRef;
 
+  // Keep track of all of the locations
   this._allLocations = {};
-
   this._firebaseRef.child("locations").on("child_added", function(locationsChildSnapshot) {
     this._allLocations[locationsChildSnapshot.name()] = locationsChildSnapshot.val();
   }.bind(this));
-
   this._firebaseRef.child("locations").on("child_removed", function(locationsChildSnapshot) {
     delete this._allLocations[locationsChildSnapshot.name()];
   }.bind(this));
@@ -498,132 +583,7 @@ GeoFire.prototype.remove = function (key) {
 GeoFire.prototype.query = function(criteria) {
   return new GeoQuery(this._firebaseRef, criteria);
 };
-var BITS = [16, 8, 4, 2, 1];
-
-var BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
-
-function halve_interval(interval, decimal, mask) {
-  var mid = (interval.min + interval.max) / 2;
-  if (decimal & mask) {
-    interval.min = mid;
-  }
-  else {
-    interval.max = mid;
-  }
-}
-
-
-function deg2rad(deg) {
-  return deg * Math.PI / 180;
-}
-
-/**
- * Calculate the distance between two points on a globe, via Haversine
- * formula, in kilometers. This is approximate due to the nature of the
- * Earth's radius varying between 6356.752 km through 6378.137 km.
- */
-dist = function(loc1, loc2) {
-  var lat1 = loc1[0],
-    lon1 = loc1[1],
-    lat2 = loc2[0],
-    lon2 = loc2[1];
-
-  var radius = 6371, // km
-    dlat = deg2rad(lat2 - lat1),
-    dlon = deg2rad(lon2 - lon1),
-    a, c;
-
-  a = Math.sin(dlat / 2) * Math.sin(dlat / 2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dlon / 2) * Math.sin(dlon / 2);
-
-  c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return radius * c;
-};
-
-/** public functions **/
-
-/**
- * Generate a geohash of the specified precision/string length
- * from the [latitude, longitude] pair, specified as an array.
- */
-encodeGeohash = function(latLon, precision) {
-  var latRange = { "min": -90, "max": 90 },
-    lonRange = { "min": -180, "max": 180 };
-  var lat = latLon[0],
-    lon = latLon[1],
-    hash = "",
-    hashVal = 0,
-    bits = 0,
-    even = 1,
-    val, range, mid;
-
-  precision = Math.min(precision || 12, 22);
-
-  if (lat < latRange.min || lat > latRange.max) {
-    throw "Invalid latitude specified! (" + lat + ")";
-  }
-
-  if (lon < lonRange.min || lon > lonRange.max) {
-    throw "Invalid longitude specified! (" + lon + ")";
-  }
-
-  while (hash.length < precision) {
-    val = even ? lon : lat;
-    range = even ? lonRange : latRange;
-
-    mid = (range.min + range.max) / 2;
-    if (val > mid) {
-      hashVal = (hashVal << 1) + 1;
-      range.min = mid;
-    }
-    else {
-      hashVal = (hashVal << 1) + 0;
-      range.max = mid;
-    }
-
-    even = !even;
-    if (bits < 4) {
-      bits++;
-    }
-    else {
-      bits = 0;
-      hash += BASE32[hashVal].toString();
-      hashVal = 0;
-    }
-  }
-
-  return hash;
-};
-
-/**
- * Decode the geohash to get the location of the center of the bounding box it represents;
- * the [latitude, longitude] coordinates of the center are returned as an array.
- */
-decodeGeohash = function(hash) {
-  var latRange = { "min": -90, "max": 90 },
-    lonRange = { "min": -180, "max": 180 };
-  var even = 1,
-    lat, lon, decimal, mask, interval;
-
-  for (var i = 0; i < hash.length; i++) {
-    decimal = BASE32.indexOf(hash[i]);
-
-    for (var j = 0; j < 5; j++) {
-      interval = (even) ? lonRange : latRange;
-      mask = BITS[j];
-      halve_interval(interval, decimal, mask);
-      even = !even;
-    }
-  }
-
-  lat = (latRange.min + latRange.max) / 2;
-  lon = (lonRange.min + lonRange.max) / 2;
-
-  return [lat, lon];
-};
-
-//return GeoFire;
+//  return GeoFire;
 //})();
 
 //Make sure this works in node.

@@ -4,14 +4,6 @@
 // Override the default timeout interval for Jasmine
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
 
-// Add a batchSet() method to GeoFire to make it easier to test
-GeoFire.prototype.batchSet = function (keyLocationPairs) {
-  var promises = keyLocationPairs.map(function(keyLocationPair) {
-    return this.set(keyLocationPair.key, keyLocationPair.location);
-  }.bind(this));
-  return RSVP.allSettled(promises);
-};
-
 // Get a reference to the demo Firebase
 var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
 
@@ -42,6 +34,15 @@ function getFirebaseData() {
     });
   });
 };
+
+/* Adds multiple keys to GeoFire in a single call */
+function batchSet(geoFire, keyLocationPairs) {
+  var promises = keyLocationPairs.map(function(keyLocationPair) {
+    return geoFire.set(keyLocationPair.key, keyLocationPair.location);
+  });
+  return RSVP.allSettled(promises);
+};
+
 
 /* Returns a promise which is fulfilled after the inputted number of milliseconds pass */
 function wait(milliseconds) {
@@ -104,7 +105,7 @@ describe("GeoFire Tests:", function() {
 
       var gf = new GeoFire(dataRef);
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, 50]},
         {key: "loc3", location: [-90, -90]}
@@ -135,7 +136,7 @@ describe("GeoFire Tests:", function() {
 
       var gf = new GeoFire(dataRef);
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, 50]},
         {key: "loc3", location: [-90, -90]}
@@ -259,7 +260,7 @@ describe("GeoFire Tests:", function() {
 
       var gf = new GeoFire(dataRef);
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, 50]},
         {key: "loc3", location: [-90, -90]}
@@ -312,7 +313,7 @@ describe("GeoFire Tests:", function() {
 
       var gf = new GeoFire(dataRef);
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [2, 3]}
       ]).then(function() {
@@ -393,7 +394,7 @@ describe("GeoFire Tests:", function() {
 
       var gf = new GeoFire(dataRef);
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [2, 3]}
       ]).then(function() {
@@ -553,7 +554,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " entered");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -579,7 +580,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " left");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -629,7 +630,7 @@ describe("GeoQuery Tests:", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [1, 2]},
         {key: "loc2", location: [1, 3]},
         {key: "loc3", location: [1, 4]},
@@ -656,7 +657,7 @@ describe("GeoQuery Tests:", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type:"circle", center: [1,2], radius: 1000});
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [1, 90]},
         {key: "loc2", location: [50, -1]},
         {key: "loc3", location: [16, -150]},
@@ -685,7 +686,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
@@ -708,14 +709,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [1, 90]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]}
       ]).then(function() {
         cl.x("p1");
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [1, 91]},
           {key: "loc3", location: [-50, -50]}
         ]);
@@ -738,14 +739,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [1, 90]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]}
       ]).then(function() {
         cl.x("p1");
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [0, 0]},
           {key: "loc3", location: [-1, -1]}
         ]);
@@ -768,14 +769,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [2, 2]},
           {key: "loc3", location: [-1, -1]}
         ]);
@@ -801,14 +802,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved2");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [2, 2]},
           {key: "loc3", location: [-1, -1]}
         ]);
@@ -831,14 +832,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [1, 90]},
           {key: "loc3", location: [-1, -90]}
         ]);
@@ -861,14 +862,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, -1]}
       ]).then(function() {
         cl.x("p1");
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [0, 0]},
           {key: "loc2", location: [55, 55]},
           {key: "loc3", location: [1, 1]}
@@ -901,7 +902,7 @@ describe("GeoQuery Tests:", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({type: "circle", center: [1,2], radius: 1000});
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -930,7 +931,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " entered");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -958,7 +959,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " entered2");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -996,7 +997,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " left");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -1005,7 +1006,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [25, 90]},
           {key: "loc4", location: [25, 5]}
         ]);
@@ -1031,7 +1032,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " left2");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -1040,7 +1041,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [25, 90]},
           {key: "loc4", location: [25, 5]}
         ]);
@@ -1063,7 +1064,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " left");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [2, 3]}
       ]).then(function() {
@@ -1108,7 +1109,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -1117,14 +1118,14 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [1, 1]},
           {key: "loc4", location: [25, 5]}
         ]);
       }).then(function() {
         cl.x("p2");
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [10, -100]},
           {key: "loc2", location: [50, -50]},
           {key: "loc5", location: [5, 5]}
@@ -1156,7 +1157,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -1165,7 +1166,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [1, 1]},
           {key: "loc4", location: [25, 5]}
         ]);
@@ -1178,7 +1179,7 @@ describe("GeoQuery Tests:", function() {
 
         gq.cancel();
 
-        return gf.batchSet([
+        return batchSet(gf, [
           {key: "loc1", location: [10, -100]},
           {key: "loc2", location: [50, -50]},
           {key: "loc5", location: [5, 5]}
@@ -1226,7 +1227,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " moved");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
@@ -1262,7 +1263,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " entered");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [80, 80]}
@@ -1294,7 +1295,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " left");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
@@ -1333,7 +1334,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " moved2");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
@@ -1372,7 +1373,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " entered2");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [80, 80]}
@@ -1407,7 +1408,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " left2");
       });
 
-      gf.batchSet([
+      batchSet(gf, [
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}

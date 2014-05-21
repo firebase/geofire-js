@@ -22,16 +22,6 @@ describe("geo-utils Tests:", function() {
         expect(encodeGeohash(locations[i][0])).toBe(locations[i][1])
       }
     });
-
-    it("decodeGeohash() properly decodes geohashes to locations", function() {
-      for(var i = 0; i < locations.length; i++) {
-        var decodedHash = decodeGeohash(locations[i][1]);
-        var targetLatLon = locations[i][0];;
-
-        expect(decodedHash[0]).toBeCloseTo(targetLatLon[0],.001);
-        expect(decodedHash[1]).toBeCloseTo(targetLatLon[1],.001);
-      }
-    });
   });
 
   describe("Distance between locations:", function() {

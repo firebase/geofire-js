@@ -415,7 +415,6 @@ GeoQuery.prototype._saveQueryCriteria = function(newQueryCriteria) {
 
 /**
  * Creates a GeoFire instance.
- * Note: This is the only publicly exposed symbol.
  *
  * @constructor
  * @this {GeoFire}
@@ -424,12 +423,11 @@ GeoQuery.prototype._saveQueryCriteria = function(newQueryCriteria) {
 var GeoFire = function (firebaseRef) {
   this._firebaseRef = firebaseRef;
 
+  // Keep track of all of the locations
   this._allLocations = {};
-
   this._firebaseRef.child("locations").on("child_added", function(locationsChildSnapshot) {
     this._allLocations[locationsChildSnapshot.name()] = locationsChildSnapshot.val();
   }.bind(this));
-
   this._firebaseRef.child("locations").on("child_removed", function(locationsChildSnapshot) {
     delete this._allLocations[locationsChildSnapshot.name()];
   }.bind(this));

@@ -1,28 +1,15 @@
-var BITS = [16, 8, 4, 2, 1];
-
 var BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
 
-function halve_interval(interval, decimal, mask) {
-  var mid = (interval.min + interval.max) / 2;
-  if (decimal & mask) {
-    interval.min = mid;
-  }
-  else {
-    interval.max = mid;
-  }
-}
-
-
-function deg2rad(deg) {
+var deg2rad = function(deg) {
   return deg * Math.PI / 180;
-}
+};
 
 /**
  * Calculate the distance between two points on a globe, via Haversine
  * formula, in kilometers. This is approximate due to the nature of the
  * Earth's radius varying between 6356.752 km through 6378.137 km.
  */
-dist = function(loc1, loc2) {
+var dist = function(loc1, loc2) {
   var lat1 = loc1[0],
     lon1 = loc1[1],
     lat2 = loc2[0],
@@ -47,7 +34,7 @@ dist = function(loc1, loc2) {
  * Generate a geohash of the specified precision/string length
  * from the [latitude, longitude] pair, specified as an array.
  */
-encodeGeohash = function(latLon, precision) {
+var encodeGeohash = function(latLon, precision) {
   var latRange = { "min": -90, "max": 90 },
     lonRange = { "min": -180, "max": 180 };
   var lat = latLon[0],
@@ -94,31 +81,4 @@ encodeGeohash = function(latLon, precision) {
   }
 
   return hash;
-};
-
-/**
- * Decode the geohash to get the location of the center of the bounding box it represents;
- * the [latitude, longitude] coordinates of the center are returned as an array.
- */
-decodeGeohash = function(hash) {
-  var latRange = { "min": -90, "max": 90 },
-    lonRange = { "min": -180, "max": 180 };
-  var even = 1,
-    lat, lon, decimal, mask, interval;
-
-  for (var i = 0; i < hash.length; i++) {
-    decimal = BASE32.indexOf(hash[i]);
-
-    for (var j = 0; j < 5; j++) {
-      interval = (even) ? lonRange : latRange;
-      mask = BITS[j];
-      halve_interval(interval, decimal, mask);
-      even = !even;
-    }
-  }
-
-  lat = (latRange.min + latRange.max) / 2;
-  lon = (lonRange.min + lonRange.max) / 2;
-
-  return [lat, lon];
 };

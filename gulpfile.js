@@ -25,8 +25,8 @@ var paths = {
   destDir: "dest",
   scripts: {
     src: [
-      "src/geofire.js",
-      "src/geo-utils.js"
+      "src/geo-utils.js",
+      "src/geofire.js"
     ],
     srcDir: "src",
     destDir: "dest",
@@ -115,7 +115,7 @@ gulp.task("server", function() {
 
 /* Re-runs the "scripts" task every time a script file changes */
 gulp.task("watch", function() {
-  gulp.watch(paths.scripts.srcDir, ["scripts"]);
+  gulp.watch(paths.scripts.srcDir + "/**/*", ["scripts"]);
   gulp.watch(["examples/**/*", paths.buildDir + "/**/*"], ["reload"]);
 });
 
