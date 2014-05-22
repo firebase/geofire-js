@@ -88,11 +88,27 @@ Returns an empty promise after the provided `key` - `location` pair has been add
 
 `key` must be a string or a number.
 
+```JavaScript
+geoFire.set("some-unique-key", [37.785326, -122.405696]).then(function() {
+  alert("Location has been added to GeoFire");
+}, function(error) {
+  // Handle error case
+});
+```
+
 #### GeoFire.get(key)
 
 Returns a promise fulfilled with the location corresponding to the provided `key`.
 
 If the `key` does not exist, the returned promise is fulfilled with `null`.
+
+```JavaScript
+geoFire.get("some-unique-key").then(function(location) {
+  alert("Provided key has a location of " + location);
+}. function(error) {
+  // Handle error case
+});
+```
 
 #### GeoFire.remove(key)
 
@@ -100,17 +116,17 @@ Returns an empty promise after the provided `key` has been removed from Firebase
 
 If the `key` does not exist, nothing happens, but the promise will still be resolved.
 
+```JavaScript
+geoFire.remove("some-unique-key").then(function() {
+  alert("Location has been removed from GeoFire");
+}, function(error) {
+  // Handle error case
+});
+```
+
 #### GeoFire.query(queryCriteria)
 
-Returns a new `GeoQuery` instance with the provide `queryCriteria`. See the `GeoQuery` documentation below for more information about valid query criteria.
-
-### GeoQuery
-
-A standing query that tracks a set of keys matching a criteria.
-
-#### new GeoQuery(firebaseRef, queryCriteria)
-
-Returns a new `GeoQuery` instance. The data for this `GeoQuery` will be read from the provided `firebaseRef` and the query with be described by the provided `queryCriteria`.
+Returns a new `GeoQuery` instance with the provide `queryCriteria`.
 
 The `queryCriteria` must contain each of the following:
 
@@ -118,7 +134,17 @@ The `queryCriteria` must contain each of the following:
 * center (location with the form [`latitude`, `longitude`])
 * radius (the radius, in kilometers, of the query; can have a decimal value)
 
-You never need to create a `GeoQuery` instance directly and should only create them via `GeoFire.query(queryCriteria)`.
+```JavaScript
+var geoQuery = geoFire.query({
+  type: "circle",
+  center: [10.389, 2.412],
+  radius: 10
+});
+```
+
+### GeoQuery
+
+A standing query that tracks a set of keys matching a criteria.
 
 #### GeoQuery.updateQueryCriteria(newQueryCriteria)
 
@@ -140,6 +166,16 @@ The returned list will have the following form:
 ]
 ```
 
+```JavaScript
+geoQuery.getResults().then(function(results) {
+  results.forEach(function(result) {
+    console.log(result.key + " currently in query at " + result.location);
+  });
+}, function(error) {
+  // Handle error case
+});
+```
+
 #### GeoQuery.on(eventType, callback)
 
 Attaches a `callback` to this `GeoQuery` for a given `eventType`. The `callback` will be passed two parameters, the location's `key` and the location's [`latitude`, `longitude`] pair.
@@ -154,23 +190,55 @@ Valid `eventType` values are `key_entered`, `key_left`, and `key_moved`.
 
 `key_moved` is fired when a `key` which is already in this `GeoQuery` moves to another (or the same) location inside of it.
 
+```JavaScript
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
+  console.log(key + " entered query at " + location);
+});
+
+var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location) {
+  console.log(key + " moved within query to " + location);
+});
+
+var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location) {
+  console.log(key + " left query to " + location);
+});
+```
+
 #### GeoQuery.cancel()
 
 Terminates this `GeoQuery` so that it no longer sends location updates. This `GeoQuery` can no longer be used in the future.
+
+```JavaScript
+var geoQuery = geoFire.query({
+  type: "circle",
+  center: [10.389, 2.412],
+  radius: 10
+});
+
+geoQuery.cancel();
+```
 
 ### GeoCallbackRegistration
 
 A `GeoCallbackRegistration` is returned every time you call `on()` on a `GeoQuery` instance. It is used to cancel a callback when it is no longer needed.
 
-#### new GeoCallbackRegistration(callback)
-
-Returns a new `GeoCallbackRegistration` instance. The provided `callback` is the function used to cancel a `GeoQuery.on()` callback.
-
-You never need to create this directly and should only create them via `GeoQuery.on(callback)`.
-
 #### GeoCallbackRegistration.cancel()
 
 Cancels this `GeoCallbackRegistration` so that it no longer fires its callback.
+
+```JavaScript
+// This example stops listening for new keys entering the query once the
+// first key leaves the query
+
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
+  console.log(key + " entered query at " + location);
+});
+
+var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location) {
+  console.log(key + " left query to " + location);
+  onKeyEnteredRegistration.cancel();
+});
+```
 
 ## Contributing
 
