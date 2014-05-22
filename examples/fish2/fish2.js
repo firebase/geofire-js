@@ -30,18 +30,18 @@
   });
 
   // Set events on the geo query
-  var onKeyEnteredRegistration = geoQuery.onKeyEntered(function(key, location) {
+  var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
     log(key + " entered our query. Hi " + key + "!");
 
     document.getElementById(key + "Inside").style.display = "block";
     document.getElementById(key + "Outside").style.display = "none";
   });
 
-  var onKeyMovedRegistration = geoQuery.onKeyMoved(function(key, location) {
+  var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location) {
     log(key + " moved to somewere else within our query.");
   });
 
-  var onKeyLeftRegistration = geoQuery.onKeyLeft(function(key, location) {
+  var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location) {
     log(key + " migrated out of our query. Bye bye :(");
 
     document.getElementById(key + "Inside").style.display = "none";

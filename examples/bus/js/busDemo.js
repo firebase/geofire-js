@@ -98,7 +98,7 @@ demoFirebaseRef.remove(function() {
     }*/
   });
 
-  geoQuery.onKeyEntered(function(vehicleId, vehicleLocation) {
+  geoQuery.on("key_entered", function(vehicleId, vehicleLocation) {
     var vehicle = vehicles[vehicleId];
 
     console.assert(vehicle, "Vehicle " + vehicleId + " is not in the vehicles list.");
@@ -115,7 +115,7 @@ demoFirebaseRef.remove(function() {
     $("#location-console ul").append("<li id='vehicle" + vehicleId + "'>" + vehicle.routeTag + "</li>");
   });
 
-  geoQuery.onKeyMoved(function(vehicleId, vehicleLocation) {
+  geoQuery.on("key_moved", function(vehicleId, vehicleLocation) {
     var vehicle = vehicles[vehicleId];
 
     console.assert(vehicle, "Vehicle " + vehicleId + " is not in the vehicles list.");
@@ -126,7 +126,7 @@ demoFirebaseRef.remove(function() {
     vehicle.marker.animatedMoveTo(vehicleLocation[0], vehicleLocation[1]);
   });
 
-  geoQuery.onKeyLeft(function(vehicleId, vehicleLocation) {
+  geoQuery.on("key_left", function(vehicleId, vehicleLocation) {
     var vehicle = vehicles[vehicleId];
 
     console.assert(vehicle, "Vehicle " + vehicleId + " is not in the vehicles list.");

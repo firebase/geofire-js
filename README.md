@@ -33,7 +33,7 @@ By the time GeoFire version 2.0 is officially released, it will be available via
 
 ```JavaScript
 // Create a Firebase reference where GeoFire will store its information
-var dataRef = new Firebase("https://my-firebase.firebaseio-demo.com"),
+var dataRef = new Firebase("https://my-firebase.firebaseio-demo.com");
 
 // Create a GeoFire index
 var geoFire = new GeoFire(dataRef);
@@ -59,7 +59,7 @@ geoQuery.getResults().then(function(results) {
 
 // Log the results (both initial items and new items that enter into the query)
 geoQuery.on("key_entered", function(key, location) {
-  console.log(key + "entered query at " + location);
+  console.log(key + " entered query at " + location);
 });
 
 // Terminate the query (we will no longer receive location updates from the server for this query)

@@ -12,7 +12,7 @@
 // Tell JSHint about variables defined elsewhere
 /* global console */
 // TODO: delete before releasing or make it like Firebase.enableLogging()
-var GEOFIRE_DEBUG = true;
+var GEOFIRE_DEBUG = false;
 console.log("Note: debug set to " + GEOFIRE_DEBUG);
 
 function log(message) {
@@ -360,10 +360,7 @@ GeoQuery.prototype.getResults = function() {
     var results = [];
     for (var key in this._locationsInQuery) {
       if (this._locationsInQuery.hasOwnProperty(key)) {
-        results.push({
-          key: key,
-          location: this._locationsInQuery[key]
-        });
+        results.push([key, this._locationsInQuery[key]]);
       }
     }
     resolve(results);
