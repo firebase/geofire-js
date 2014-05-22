@@ -33,19 +33,19 @@ By the time GeoFire version 2.0 is officially released, it will be available via
 
 ```JavaScript
 // Create a Firebase reference where GeoFire will store its information
-var dataRef = new Firebase('https://my-firebase.firebaseio-demo.com'),
+var dataRef = new Firebase("https://my-firebase.firebaseio-demo.com"),
 
 // Create a GeoFire index
 var geoFire = new GeoFire(dataRef);
 
 // Add a key to GeoFire
-geoFire.set(“some-unique-key”, [37.785326, -122.405696]).then(function() {
+geoFire.set("some-unique-key", [37.785326, -122.405696]).then(function() {
   // Do something after the location has been written to GeoFire
 });
 
 // Create a location query for a circle with a 10 km radius
 var geoQuery = geoFire.query({
-  type: “circle”,
+  type: "circle",
   center: [10.389, 2.412],
   radius: 10
 });
