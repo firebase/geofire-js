@@ -1,5 +1,3 @@
-var BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
-
 var deg2rad = function(deg) {
   return deg * Math.PI / 180;
 };
@@ -28,8 +26,6 @@ var dist = function(loc1, loc2) {
   return radius * c;
 };
 
-/** public functions **/
-
 /**
  * Generate a geohash of the specified precision/string length
  * from the [latitude, longitude] pair, specified as an array.
@@ -42,8 +38,7 @@ var encodeGeohash = function(latLon, precision) {
     hash = "",
     hashVal = 0,
     bits = 0,
-    even = 1,
-    val, range, mid;
+    even = 1;
 
   precision = Math.min(precision || 12, 22);
 
@@ -56,16 +51,20 @@ var encodeGeohash = function(latLon, precision) {
   }
 
   while (hash.length < precision) {
-    val = even ? lon : lat;
-    range = even ? lonRange : latRange;
+    var val = even ? lon : lat;
+    var range = even ? lonRange : latRange;
 
-    mid = (range.min + range.max) / 2;
+    var mid = (range.min + range.max) / 2;
     if (val > mid) {
+      /* jshint -W016 */
       hashVal = (hashVal << 1) + 1;
+      /* jshint +W016 */
       range.min = mid;
     }
     else {
+      /* jshint -W016 */
       hashVal = (hashVal << 1) + 0;
+      /* jshint +W016 */
       range.max = mid;
     }
 
@@ -75,7 +74,7 @@ var encodeGeohash = function(latLon, precision) {
     }
     else {
       bits = 0;
-      hash += BASE32[hashVal].toString();
+      hash += "0123456789bcdefghjkmnpqrstuvwxyz"[hashVal];
       hashVal = 0;
     }
   }

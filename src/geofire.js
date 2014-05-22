@@ -1,3 +1,6 @@
+// Tell JSHint about variables defined elsewhere
+/* global console, module, RSVP */
+
 // TODO: delete before releasing or make it like Firebase.enableLogging()
 var GEOFIRE_DEBUG = true;
 console.log("Note: debug set to " + GEOFIRE_DEBUG);

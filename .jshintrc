@@ -1,5 +1,5 @@
 {
-  "bitwise": false,
+  "bitwise": true,
   "curly": true,
   "eqeqeq": true,
   "forin": true,
@@ -7,8 +7,8 @@
   "indent": 2,
   "latedef": true,
   "quotmark": "double",
-  "strict": false,
+  "strict": false,  // TODO: set this to true
   "trailing": true,
-  "undef": false,
+  "undef": true,
   "unused": true
 }
