@@ -360,7 +360,10 @@ GeoQuery.prototype.getResults = function() {
     var results = [];
     for (var key in this._locationsInQuery) {
       if (this._locationsInQuery.hasOwnProperty(key)) {
-        results.push([key, this._locationsInQuery[key]]);
+        results.push({
+          key: key,
+          location: this._locationsInQuery[key]
+        });
       }
     }
     resolve(results);

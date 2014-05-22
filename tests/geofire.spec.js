@@ -640,9 +640,9 @@ describe("GeoQuery Tests:", function() {
         return gq.getResults();
       }).then(function(results) {
         expect(results).toEqual([
-          ["loc1", [1,2]],
-          ["loc2", [1,3]],
-          ["loc3", [1,4]]
+          { key: "loc1", location: [1,2] },
+          { key: "loc2", location: [1,3] },
+          { key: "loc3", location: [1,4] }
         ]);
 
         cl.x("p2");
