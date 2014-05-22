@@ -1,15 +1,5 @@
 // Tell JSHint about variables defined elsewhere
-/* global console, module, RSVP */
-
-// TODO: delete before releasing or make it like Firebase.enableLogging()
-var GEOFIRE_DEBUG = true;
-console.log("Note: debug set to " + GEOFIRE_DEBUG);
-
-function log(message) {
-  if (GEOFIRE_DEBUG) {
-    console.log(message);
-  }
-}
+/* global module, RSVP */
 
 /**
  * Helper functions to detect invalid inputs
@@ -18,12 +8,12 @@ var validateKey = function (key) {
   return new RSVP.Promise(function(resolve, reject) {
     var error;
 
-    if (typeof key !== "string") {
-      error = "key must be a string";
+    if (typeof key !== "string" && typeof key !== "number") {
+      error = "key must be a string or a number";
     }
 
     if (error !== undefined) {
-      reject("Invalid key '" + key + "': " + error);
+      reject("Error: Invalid key '" + key + "': " + error);
     }
     else {
       resolve();
@@ -56,7 +46,7 @@ var validateLocation = function (location) {
     }
 
     if (error !== undefined) {
-      reject("Invalid location [" + location + "]: " + error);
+      reject("Erorr: Invalid location [" + location + "]: " + error);
     }
     else {
       resolve();
@@ -78,7 +68,7 @@ var updateFirebaseIndex = function(firebaseRef, key, location) {
     // TODO: make sure 12 is correct; want 1 meter precision
     firebaseRef.child("indices/" + encodeGeohash(location, 12)).set(key, function(error) {
       if (error) {
-        reject("Firebase synchronization failed: " + error);
+        reject("Error: Firebase synchronization failed: " + error);
       }
       else {
         log("write to /indices/");
@@ -96,7 +86,7 @@ var updateFirebaseLocation = function(firebaseRef, key, location, allLocations) 
         // TODO: make sure 12 is correct; want 1 meter precision
         firebaseRef.child("indices/" + encodeGeohash(allLocations[key].split(",").map(Number), 12)).remove(function(error) {
           if (error) {
-            reject("Firebase synchronization failed: " + error);
+            reject("Error: Firebase synchronization failed: " + error);
           }
           else {
             log("removal of /indices/");
@@ -115,7 +105,7 @@ var updateFirebaseLocation = function(firebaseRef, key, location, allLocations) 
           // TODO: make sure 12 is correct; want 1 meter precision
           firebaseRef.child("indices/" + encodeGeohash(locationsChildSnapshot.val().split(",").map(Number), 12)).remove(function(error) {
             if (error) {
-              reject("Firebase synchronization failed: " + error);
+              reject("Error: Firebase synchronization failed: " + error);
             }
             else {
               log("removal of /indices/");
@@ -134,7 +124,7 @@ var updateFirebaseLocation = function(firebaseRef, key, location, allLocations) 
     return new RSVP.Promise(function(resolve, reject) {
       firebaseRef.child("locations/" + key).set(location ? location.toString() : null, function(error) {
         if (error) {
-          reject("Firebase synchronization failed: " + error);
+          reject("Error: Firebase synchronization failed: " + error);
         }
         else {
           log("write to /locations/");
@@ -418,9 +408,9 @@ var GeoFire = function (firebaseRef) {
 GeoFire.prototype.set = function (key, location) {
   log("set(" + key + ", [" + location + "]) called");
   return RSVP.all([validateKey(key), validateLocation(location)]).then(function() {
-    return updateFirebaseLocation(this._firebaseRef, key, location, this._allLocations);
+    return updateFirebaseLocation(this._firebaseRef, key.toString(), location, this._allLocations);
   }.bind(this)).then(function() {
-    return updateFirebaseIndex(this._firebaseRef, key, location);
+    return updateFirebaseIndex(this._firebaseRef, key.toString(), location);
   }.bind(this));
 };
 
@@ -435,10 +425,10 @@ GeoFire.prototype.get = function (key) {
   log("get(" + key + ") called");
   return validateKey(key).then(function() {
     return new RSVP.Promise(function(resolve, reject) {
-      this._firebaseRef.child("locations/" + key).once("value", function(dataSnapshot) {
+      this._firebaseRef.child("locations/" + key.toString()).once("value", function(dataSnapshot) {
         resolve(dataSnapshot.val() ? dataSnapshot.val().split(",").map(Number) : null);
       }, function(error) {
-        reject(error);
+        reject("Error: Firebase synchronization failed: " + error);
       });
     }.bind(this));
   }.bind(this));

@@ -179,17 +179,16 @@ describe("GeoFire Tests:", function() {
     });
 
     it("set() throws errors on invalid keys" ,function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
 
       var gf = new GeoFire(dataRef);
 
       var promises = {
-        "p1": gf.set(100, [0, 0]),
-        "p2": gf.set(true, [0, 0]),
-        "p3": gf.set([0, 0], [0, 0]),
-        "p4": gf.set({"a": 1}, [0, 0]),
-        "p5": gf.set(null, [[0, 0], 0]),
-        "p6": gf.set(undefined, [0, [0, 0]])
+        "p1": gf.set(true, [0, 0]),
+        "p2": gf.set([0, 0], [0, 0]),
+        "p3": gf.set({"a": 1}, [0, 0]),
+        "p4": gf.set(null, [[0, 0], 0]),
+        "p5": gf.set(undefined, [0, [0, 0]])
       };
 
       RSVP.hashSettled(promises).then(function(resultsHash) {
@@ -285,17 +284,16 @@ describe("GeoFire Tests:", function() {
     });
 
     it("get() throws errors on invalid keys" ,function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
 
       var gf = new GeoFire(dataRef);
 
       var promises = {
-        "p1": gf.get(100),
-        "p2": gf.get(true),
-        "p3": gf.get([1, 2]),
-        "p4": gf.get({"a": 1}),
-        "p5": gf.get(null),
-        "p6": gf.get(undefined)
+        "p1": gf.get(true),
+        "p2": gf.get([1, 2]),
+        "p3": gf.get({"a": 1}),
+        "p4": gf.get(null),
+        "p5": gf.get(undefined)
       };
 
       RSVP.hashSettled(promises).then(function(resultsHash) {
