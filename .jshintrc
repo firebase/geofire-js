@@ -7,7 +7,7 @@
   "indent": 2,
   "latedef": true,
   "quotmark": "double",
-  "strict": false,  // TODO: set this to true
+  "strict": true,
   "trailing": true,
   "undef": true,
   "unused": true
