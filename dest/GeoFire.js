@@ -9,17 +9,6 @@
 //(function(){
 //  "use strict";
 
-// Tell JSHint about variables defined elsewhere
-/* global console */
-// TODO: delete before releasing or make it like Firebase.enableLogging()
-var GEOFIRE_DEBUG = false;
-console.log("Note: debug set to " + GEOFIRE_DEBUG);
-
-function log(message) {
-  if (GEOFIRE_DEBUG) {
-    console.log(message);
-  }
-}
 var deg2rad = function(deg) {
   return deg * Math.PI / 180;
 };
@@ -163,7 +152,6 @@ var validateLocation = function (location) {
  * Helper functions to write to Firebase
  */
 var updateFirebaseIndex = function(firebaseRef, key, location) {
-  log("updateFirebaseIndex() called");
   return new RSVP.Promise(function(resolve, reject) {
     // Setting location to null will remove key from the Firebase so there is nothing to do here
     if (location === null) {
@@ -176,7 +164,6 @@ var updateFirebaseIndex = function(firebaseRef, key, location) {
         reject("Error: Firebase synchronization failed: " + error);
       }
       else {
-        log("write to /indices/");
         resolve();
       }
     });
@@ -184,7 +171,6 @@ var updateFirebaseIndex = function(firebaseRef, key, location) {
 };
 
 var updateFirebaseLocation = function(firebaseRef, key, location, allLocations) {
-  log("updateFirebaseLocation() called");
   var removeOldIndex = function() {
     return new RSVP.Promise(function(resolve, reject) {
       if (allLocations[key] !== undefined) {
@@ -194,7 +180,6 @@ var updateFirebaseLocation = function(firebaseRef, key, location, allLocations) 
             reject("Error: Firebase synchronization failed: " + error);
           }
           else {
-            log("removal of /indices/");
             resolve();
           }
         });
@@ -213,7 +198,6 @@ var updateFirebaseLocation = function(firebaseRef, key, location, allLocations) 
               reject("Error: Firebase synchronization failed: " + error);
             }
             else {
-              log("removal of /indices/");
               resolve();
             }
           });
@@ -232,7 +216,6 @@ var updateFirebaseLocation = function(firebaseRef, key, location, allLocations) 
           reject("Error: Firebase synchronization failed: " + error);
         }
         else {
-          log("write to /locations/");
           resolve();
         }
       });
@@ -281,7 +264,14 @@ GeoCallbackRegistration.prototype.cancel = function() {
  * @param {object} queryCriteria The criteria which specifies the GeoQuery's type, center, and radius.
  */
 var GeoQuery = function (firebaseRef, queryCriteria) {
+  if (typeof queryCriteria.center === "undefined") {
+    throw new Error("No \"center\" attribute specified for query criteria.");
+  }
+  if (typeof queryCriteria.radius === "undefined") {
+    throw new Error("No \"radius\" attribute specified for query criteria.");
+  }
   this._saveQueryCriteria(queryCriteria);
+
   this._firebaseRef = firebaseRef;
   this._callbacks = {
     key_entered: [],
@@ -320,7 +310,6 @@ GeoQuery.prototype._fireCallbacks = function(locationKey, location) {
   var wasAlreadyInQuery = (this._locationsInQuery[locationKey] !== undefined);
   var isNowInQuery = (dist(location, this._center) <= this._radius);
   if (!wasAlreadyInQuery && isNowInQuery) {
-    log(locationKey + " entered GeoQuery");
     this._callbacks.key_entered.forEach(function(callback) {
       callback(locationKey, location);
     });
@@ -329,7 +318,6 @@ GeoQuery.prototype._fireCallbacks = function(locationKey, location) {
     this._locationsInQuery[locationKey] = location;
   }
   else if (wasAlreadyInQuery && !isNowInQuery) {
-    log(locationKey + " left GeoQuery");
     this._callbacks.key_left.forEach(function(callback) {
       callback(locationKey, location);
     });
@@ -338,7 +326,6 @@ GeoQuery.prototype._fireCallbacks = function(locationKey, location) {
     delete this._locationsInQuery[locationKey];
   }
   else if (wasAlreadyInQuery) {
-    log(locationKey + " moved within GeoQuery");
     this._callbacks.key_moved.forEach(function(callback) {
       callback(locationKey, location);
     });
@@ -360,7 +347,10 @@ GeoQuery.prototype.getResults = function() {
     var results = [];
     for (var key in this._locationsInQuery) {
       if (this._locationsInQuery.hasOwnProperty(key)) {
-        results.push([key, this._locationsInQuery[key]]);
+        results.push({
+          key: key,
+          location: this._locationsInQuery[key]
+        });
       }
     }
     resolve(results);
@@ -431,25 +421,40 @@ GeoQuery.prototype.updateQueryCriteria = function(newQueryCriteria) {
 };
 
 /**
+ * Returns this GeoQuery's center.
+ *
+ * @return {array} The [latitude, longitude] pair signifying the center of this GeoQuery.
+ */
+GeoQuery.prototype.getCenter = function() {
+  return this._center;
+};
+
+/**
+ * Returns this GeoQuery's radius.
+ *
+ * @return {integer} The radius of this GeoQuery.
+ */
+GeoQuery.prototype.getRadius = function() {
+  return this._radius;
+};
+
+/**
  * Overwrites this GeoQuery's current query criteria with the inputted one.
  *
  * @param {object} newQueryCriteria The criteria which specifies the GeoQuery's type, center, and radius.
  */
 GeoQuery.prototype._saveQueryCriteria = function(newQueryCriteria) {
-  // Validate the inputs
-  if (newQueryCriteria.type === undefined) {
-    throw new Error("No \"type\" attribute specified for query criteria.");
-  }
-  else {
-    if (newQueryCriteria.type !== "circle" && newQueryCriteria.type !== "square") {
-      throw new Error("Invalid \"type\" attribute specified for query criteria. Valid types are \"circle\" and \"square\".");
+  // Throw an error if there are any extraneous attributes
+  for (var key in newQueryCriteria) {
+    if (newQueryCriteria.hasOwnProperty(key)) {
+      if (key !== "center" && key !== "radius") {
+        throw new Error("Unexpected \"" + key + "\" attribute found in query criteria.");
+      }
     }
   }
 
-  if (newQueryCriteria.center === undefined) {
-    throw new Error("No \"center\" attribute specified for query criteria.");
-  }
-  else {
+  // Validate the "center" attribute
+  if (typeof newQueryCriteria.center !== "undefined") {
     if (!(newQueryCriteria.center instanceof Array) || newQueryCriteria.center.length !== 2) {
       throw new Error("Invalid \"center\" attribute specified for query criteria. Expected array of length 2, got " + newQueryCriteria._center.length);
     }
@@ -466,16 +471,14 @@ GeoQuery.prototype._saveQueryCriteria = function(newQueryCriteria) {
     }
   }
 
-  if (newQueryCriteria.radius === undefined) {
-    throw new Error("No \"radius\" attribute specified for query criteria.");
-  }
-  else {
+  // Validate the "radius" attribute
+  if (typeof newQueryCriteria.radius !== "undefined") {
     if (typeof newQueryCriteria.radius !== "number" || newQueryCriteria.radius < 0) {
       throw new Error("Invalid \"radius\" attribute specified for query criteria. Radius must be a number greater than or equal to 0.");
     }
   }
 
-  this._type = newQueryCriteria.type;
+  // Save the query criteria
   this._center = newQueryCriteria.center;
   this._centerHash = encodeGeohash(newQueryCriteria.center, 12);  // TODO: is 12 the correct value here?
   this._radius = newQueryCriteria.radius;
@@ -511,7 +514,6 @@ var GeoFire = function (firebaseRef) {
  * @return {promise} A promise that is fulfilled when the write is complete.
  */
 GeoFire.prototype.set = function (key, location) {
-  log("set(" + key + ", [" + location + "]) called");
   return RSVP.all([validateKey(key), validateLocation(location)]).then(function() {
     return updateFirebaseLocation(this._firebaseRef, key.toString(), location, this._allLocations);
   }.bind(this)).then(function() {
@@ -527,7 +529,6 @@ GeoFire.prototype.set = function (key, location) {
  * @return {promise} A promise that is fulfilled with the location of the given key.
  */
 GeoFire.prototype.get = function (key) {
-  log("get(" + key + ") called");
   return validateKey(key).then(function() {
     return new RSVP.Promise(function(resolve, reject) {
       this._firebaseRef.child("locations/" + key.toString()).once("value", function(dataSnapshot) {

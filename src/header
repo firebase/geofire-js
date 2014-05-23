@@ -8,15 +8,3 @@
 
 //(function(){
 //  "use strict";
-
-// Tell JSHint about variables defined elsewhere
-/* global console */
-// TODO: delete before releasing or make it like Firebase.enableLogging()
-var GEOFIRE_DEBUG = false;
-console.log("Note: debug set to " + GEOFIRE_DEBUG);
-
-function log(message) {
-  if (GEOFIRE_DEBUG) {
-    console.log(message);
-  }
-}
