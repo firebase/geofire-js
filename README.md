@@ -43,10 +43,10 @@ geoFire.set("some-unique-key", [37.785326, -122.405696]).then(function() {
   // Do something after the location has been written to GeoFire
 });
 
-// Create a location query for a circle with a 10 km radius
+// Create a location query for a circle with a 10.5 km radius
 var geoQuery = geoFire.query({
   center: [10.38, 2.41],
-  radius: 10
+  radius: 10.5
 });
 
 // Get the keys currently in the query
@@ -161,13 +161,41 @@ The `queryCriteria` must be a dictionary containing the following keys:
 ```JavaScript
 var geoQuery = geoFire.query({
   center: [10.38, 2.41],
-  radius: 10
+  radius: 10.5
 });
 ```
 
 ### GeoQuery
 
 A standing query that tracks a set of keys matching a criteria. A new `GeoQuery` is returned every time you call `GeoFire.query()`.
+
+#### GeoQuery.getCenter()
+
+Returns the location which marks the center of this query.
+
+The returned location will have the form [latitude, longitude].
+
+```JavaScript
+var geoQuery = geoFire.query({
+  center: [10.38, 2.41],
+  radius: 10.5
+});
+
+var center = geoQuery.getCenter();  // center === [10.38, 2.41]
+```
+
+#### GeoQuery.getRadius()
+
+Returns the radius of this query.
+
+```JavaScript
+var geoQuery = geoFire.query({
+  center: [10.38, 2.41],
+  radius: 10.5
+});
+
+var radius = geoQuery.getRadius();  // radius === 10.5
+```
 
 #### GeoQuery.updateQueryCriteria(newQueryCriteria)
 
@@ -243,7 +271,7 @@ Terminates this query so that it no longer sends location updates. This query ca
 ```JavaScript
 var geoQuery = geoFire.query({
   center: [10.38, 2.41],
-  radius: 10
+  radius: 10.5
 });
 
 geoQuery.cancel();
