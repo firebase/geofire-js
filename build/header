@@ -6,5 +6,5 @@
 //   https://github.com/firebase/geoFire/
 //   License: MIT
 
-//(function(){
-//  "use strict";
+var GeoFire = (function() {
+  "use strict";

@@ -49,9 +49,9 @@ var paths = {
 gulp.task("scripts", function() {
   // Concatenate all src files together
   var stream = streamqueue({ objectMode: true });
-  stream.queue(gulp.src("src/header"));
+  stream.queue(gulp.src("build/header"));
   stream.queue(gulp.src(paths.scripts.src));
-  stream.queue(gulp.src("src/footer"));
+  stream.queue(gulp.src("build/footer"));
 
   // Output the final concatenated script file
   return stream.done()

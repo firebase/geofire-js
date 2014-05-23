@@ -6,9 +6,8 @@
 //   https://github.com/firebase/geoFire/
 //   License: MIT
 
-//(function(){
-//  "use strict";
-
+var GeoFire = (function() {
+  "use strict";
 var deg2rad = function(deg) {
   return deg * Math.PI / 180;
 };
@@ -559,8 +558,8 @@ GeoFire.prototype.remove = function (key) {
 GeoFire.prototype.query = function(criteria) {
   return new GeoQuery(this._firebaseRef, criteria);
 };
-//  return GeoFire;
-//})();
+  return GeoFire;
+})();
 
 //Make sure this works in node.
 if (typeof module !== "undefined") {

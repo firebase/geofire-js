@@ -24,7 +24,6 @@
 
   // Create a geo query centered at fish3
   var geoQuery = geoFire.query({
-    type: "circle",
     center: fishLocations[2],
     radius: 3000
   });

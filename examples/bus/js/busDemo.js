@@ -20,7 +20,6 @@ demoFirebaseRef.remove(function() {
 
   // Create a geo query
   geoQuery = geoFire.query({
-    type: "circle",
     center: center,
     radius: radiusInKm
   });
@@ -171,7 +170,6 @@ function initializeMap() {
     var latLng = circle.getCenter();
 
     geoQuery.updateQueryCriteria({
-      type: "circle",
       center: [latLng.lat(), latLng.lng()],
       radius: radiusInKm
     });
