@@ -399,69 +399,70 @@ GeoQuery.prototype._saveQueryCriteria = function(newQueryCriteria) {
  * @this {GeoFire}
  * @param {object} firebaseRef A Firebase reference.
  */
-var GeoFire = function (firebaseRef) {
-  this._firebaseRef = firebaseRef;
+var GeoFire = function(firebaseRef) {
+  // Private variables
+  var _firebaseRef = firebaseRef;
+  var _allLocations = {};
 
   // Keep track of all of the locations
-  this._allLocations = {};
-  this._firebaseRef.child("locations").on("child_added", function(locationsChildSnapshot) {
-    this._allLocations[locationsChildSnapshot.name()] = locationsChildSnapshot.val();
-  }.bind(this));
-  this._firebaseRef.child("locations").on("child_removed", function(locationsChildSnapshot) {
-    delete this._allLocations[locationsChildSnapshot.name()];
-  }.bind(this));
-};
+  _firebaseRef.child("locations").on("child_added", function(locationsChildSnapshot) {
+    _allLocations[locationsChildSnapshot.name()] = locationsChildSnapshot.val();
+  });
+  _firebaseRef.child("locations").on("child_removed", function(locationsChildSnapshot) {
+    delete _allLocations[locationsChildSnapshot.name()];
+  });
 
-/**
- * Returns a promise after adding the key-location pair.
- *
- * @param {string} key The key of the location to add.
- * @param {array} location A latitude/longitude pair
- * @return {promise} A promise that is fulfilled when the write is complete.
- */
-GeoFire.prototype.set = function (key, location) {
-  return RSVP.all([validateKey(key), validateLocation(location)]).then(function() {
-    return updateFirebaseLocation(this._firebaseRef, key.toString(), location, this._allLocations);
-  }.bind(this)).then(function() {
-    return updateFirebaseIndex(this._firebaseRef, key.toString(), location);
-  }.bind(this));
-};
+  /**
+   * Returns a promise after adding the key-location pair.
+   *
+   * @param {string} key The key of the location to add.
+   * @param {array} location A latitude/longitude pair
+   * @return {promise} A promise that is fulfilled when the write is complete.
+   */
+  this.set = function(key, location) {
+    return RSVP.all([validateKey(key), validateLocation(location)]).then(function() {
+      return updateFirebaseLocation(_firebaseRef, key.toString(), location, _allLocations);
+    }).then(function() {
+      return updateFirebaseIndex(_firebaseRef, key.toString(), location);
+    });
+  };
 
-/**
- * Returns a promise that is fulfilled with the location corresponding to the given key.
- * Note: If the key does not exist, null is returned.   // TODO: is this what we want?
- *
- * @param {string} key The key of the location to retrieve.
- * @return {promise} A promise that is fulfilled with the location of the given key.
- */
-GeoFire.prototype.get = function (key) {
-  return validateKey(key).then(function() {
-    return new RSVP.Promise(function(resolve, reject) {
-      this._firebaseRef.child("locations/" + key.toString()).once("value", function(dataSnapshot) {
-        resolve(dataSnapshot.val() ? dataSnapshot.val().split(",").map(Number) : null);
-      }, function(error) {
-        reject("Error: Firebase synchronization failed: " + error);
+  /**
+   * Returns a promise that is fulfilled with the location corresponding to the given key.
+   * Note: If the key does not exist, null is returned.   // TODO: is this what we want?
+   *
+   * @param {string} key The key of the location to retrieve.
+   * @return {promise} A promise that is fulfilled with the location of the given key.
+   */
+  this.get = function(key) {
+    return validateKey(key).then(function() {
+      return new RSVP.Promise(function(resolve, reject) {
+        _firebaseRef.child("locations/" + key.toString()).once("value", function(dataSnapshot) {
+          resolve(dataSnapshot.val() ? dataSnapshot.val().split(",").map(Number) : null);
+        }, function(error) {
+          reject("Error: Firebase synchronization failed: " + error);
+        });
       });
-    }.bind(this));
-  }.bind(this));
-};
+    });
+  };
 
-/**
- * Returns a promise that is fulfilled after the location corresponding to the given key is removed.
- *
- * @param {string} key The ID/key of the location to retrieve.
- * @return {promise} A promise that is fulfilled with the location of the given ID/key.
- */
-GeoFire.prototype.remove = function (key) {
-  return this.set(key, null);
-};
+  /**
+   * Returns a promise that is fulfilled after the location corresponding to the given key is removed.
+   *
+   * @param {string} key The ID/key of the location to retrieve.
+   * @return {promise} A promise that is fulfilled with the location of the given ID/key.
+   */
+  this.remove = function(key) {
+    return this.set(key, null);
+  };
 
-/**
- * Creates and returns a GeoQuery object.
- *
- * @param {object} queryCriteria The criteria which specifies the GeoQuery's type, center, and radius.
- * @return {GeoQuery} The new GeoQuery object.
- */
-GeoFire.prototype.query = function(criteria) {
-  return new GeoQuery(this._firebaseRef, criteria);
+  /**
+   * Creates and returns a GeoQuery object.
+   *
+   * @param {object} queryCriteria The criteria which specifies the GeoQuery's type, center, and radius.
+   * @return {GeoQuery} The new GeoQuery object.
+   */
+  this.query = function(criteria) {
+    return new GeoQuery(_firebaseRef, criteria);
+  };
 };

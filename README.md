@@ -29,62 +29,6 @@ $ bower install rsvp firebase [geofire]
 
 By the time GeoFire version 2.0 is officially released, it will be available via both npm and Bower.
 
-## Example Usage
-
-```JavaScript
-// Create a Firebase reference where GeoFire will store its information
-var dataRef = new Firebase("https://my-firebase.firebaseio-demo.com/");
-
-// Create a GeoFire index
-var geoFire = new GeoFire(dataRef);
-
-// Add a key to GeoFire
-geoFire.set("some-unique-key", [37.785326, -122.405696]).then(function() {
-  // Do something after the location has been written to GeoFire
-});
-
-// Create a location query for a circle with a 10.5 km radius
-var geoQuery = geoFire.query({
-  center: [10.38, 2.41],
-  radius: 10.5
-});
-
-// Get the keys currently in the query
-geoQuery.getResults().then(function(results) {
-  results.forEach(function(result) {
-    console.log(result.key + " currently in query at " + result.location);
-  });
-});
-
-// Log the results (both initial items and new items that enter into the query)
-var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
-  console.log(key + " entered query at " + location);
-});
-
-// Terminate the query (we will no longer receive location updates from the server for this query)
-geoQuery.cancel();
-```
-
-## Promises
-
-As can be seen in the example usage above, GeoFire uses promises when writing and retrieving data. Promises represent the result of a potentially long-running operation. Promises do not block execution and act as an object which contains the promised result. Whenever the result has been computed, the promise will call its `then()` method and pass it the result.
-
-GeoFire uses the lightweight [RSVP.js](https://github.com/tildeio/rsvp.js/) library to provide an implementation of JavaScript promises. If you are unfamiliar with promises, please refer to the [RSVP.js documentation](https://github.com/tildeio/rsvp.js/) for all of the details. Here is a quick example of the use of a promise:
-
-```JavaScript
-var promise = new RSVP.Promise(function(resolve, reject) {
-  var data = getData();
-  resolve(data);
-});
-
-promise.then(function(result) {
-  // Will be called after the promise resolves
-  // result will contain the same values as the data passed into resolve() above
-}, function(error) {
-  // Otherwise, will be called if the promise rejects
-})
-```
-
 ## API Reference
 
 ### GeoFire
@@ -93,7 +37,7 @@ A `GeoFire` instance is used to read and write geolocation data to your Firebase
 
 #### new GeoFire(firebaseRef)
 
-Returns a new `GeoFire` instance. The data for this `GeoFire` will be written to the provided `firebaseRef`. Note that this `firebaseRef` can point to anywhere in your Firebase.
+Returns a new `GeoFire` instance. The data for this `GeoFire` will be written to the `/indices/` and `/locations/` nodes at `firebaseRef`. Note that this `firebaseRef` can point to anywhere in your Firebase.
 
 ```JavaScript
 // Create a Firebase reference where GeoFire will store its information
@@ -121,7 +65,7 @@ geoFire.set("some-unique-key", [37.785326, -122.405696]).then(function() {
 
 #### GeoFire.get(key)
 
-Returns a promise fulfilled with the location corresponding to the provided `key`. If the `key` does not exist, the returned promise is fulfilled with `null`.
+Returns a promise fulfilled with the `location` corresponding to the provided `key`. If the `key` does not exist, the returned promise is fulfilled with `null`.
 
 The returned location will have the form [latitude, longitude].
 
@@ -137,7 +81,9 @@ geoFire.get("some-unique-key").then(function(location) {
 
 #### GeoFire.remove(key)
 
-Returns an empty promise fulfilled when the provided `key` has been removed from Firebase. If the `key` does not exist, nothing happens, but the promise will still be successfully resolved. This is equivalent to calling `set(key, null)`.
+Returns an empty promise fulfilled when the provided `key` has been removed from Firebase. If the the provided `key` is not in this `GeoFire`, the promise will successfully resolve immediately.
+
+This is equivalent to calling `set(key, null)`.
 
 `key` must be a string or number.
 
@@ -155,8 +101,8 @@ Returns a new `GeoQuery` instance with the provide `queryCriteria`.
 
 The `queryCriteria` must be a dictionary containing the following keys:
 
-* `center` (a location with the form [latitude, longitude])
-* `radius` (the radius, in kilometers, of the query; can have a decimal value)
+* `center` - the center of this query with the form [latitude, longitude]
+* `radius` - the radius, in kilometers, of this query
 
 ```JavaScript
 var geoQuery = geoFire.query({
@@ -171,9 +117,9 @@ A standing query that tracks a set of keys matching a criteria. A new `GeoQuery`
 
 #### GeoQuery.getCenter()
 
-Returns the location which marks the center of this query.
+Returns the `location` which marks the center of this query.
 
-The returned location will have the form [latitude, longitude].
+The returned `location` will have the form [latitude, longitude].
 
 ```JavaScript
 var geoQuery = geoFire.query({
@@ -186,7 +132,7 @@ var center = geoQuery.getCenter();  // center === [10.38, 2.41]
 
 #### GeoQuery.getRadius()
 
-Returns the radius of this query.
+Returns the `radius` of this query, in kilometers.
 
 ```JavaScript
 var geoQuery = geoFire.query({
@@ -248,7 +194,7 @@ Valid `eventType` values are `key_entered`, `key_left`, and `key_moved`.
 
 `key_moved` is fired when a key which is already in this query moves to another (or the same) location inside of it.
 
-Returns a `GeoCallbackRegistration` which can be used to cancel the `callback`. You can add as many callbacks as you would like by reapeatedly calling `on()`. Each one will get called when its corresponding `eventType` fires. Each `callback` must be cancelled individually.
+Returns a `GeoCallbackRegistration` which can be used to cancel the `callback`. You can add as many callbacks as you would like by repeatedly calling `on()`. Each one will get called when its corresponding `eventType` fires. Each `callback` must be cancelled individually.
 
 ```JavaScript
 var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
@@ -266,7 +212,7 @@ var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location) {
 
 #### GeoQuery.cancel()
 
-Terminates this query so that it no longer sends location updates. This query can no longer be used in the future.
+Terminates this query so that it no longer sends location updates. All callbacks attached to this query via `on()` will be cancelled. This query can no longer be used in the future.
 
 ```JavaScript
 var geoQuery = geoFire.query({
@@ -297,6 +243,61 @@ var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location) {
   console.log(key + " left query to " + location);
   onKeyEnteredRegistration.cancel();
 });
+```
+## Example Usage
+
+```JavaScript
+// Create a Firebase reference where GeoFire will store its information
+var dataRef = new Firebase("https://my-firebase.firebaseio-demo.com/");
+
+// Create a GeoFire index
+var geoFire = new GeoFire(dataRef);
+
+// Add a key to GeoFire
+geoFire.set("some-unique-key", [37.785326, -122.405696]).then(function() {
+  // Do something after the location has been written to GeoFire
+});
+
+// Create a location query for a circle with a 10.5 km radius
+var geoQuery = geoFire.query({
+  center: [10.38, 2.41],
+  radius: 10.5
+});
+
+// Get the keys currently in the query
+geoQuery.getResults().then(function(results) {
+  results.forEach(function(result) {
+    console.log(result.key + " currently in query at " + result.location);
+  });
+});
+
+// Log the results (both initial items and new items that enter into the query)
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
+  console.log(key + " entered query at " + location);
+});
+
+// Terminate the query (we will no longer receive location updates from the server for this query)
+geoQuery.cancel();
+```
+
+## Promises
+
+As can be seen in the example usage above, GeoFire uses promises when writing and retrieving data. Promises represent the result of a potentially long-running operation. Promises do not block execution and act as an object which contains the promised result. Whenever the result has been computed, the promise will call its `then()` method and pass it the result.
+
+GeoFire uses the lightweight [RSVP.js](https://github.com/tildeio/rsvp.js/) library to provide an implementation of JavaScript promises. If you are unfamiliar with promises, please refer to the [RSVP.js documentation](https://github.com/tildeio/rsvp.js/) for all of the details. Here is a quick example of the use of a promise:
+
+```JavaScript
+var promise = new RSVP.Promise(function(resolve, reject) {
+  var data = getData();
+  resolve(data);
+});
+
+promise.then(function(result) {
+  // Will be called after the promise resolves
+  // result will contain the same values as the data passed into resolve() above
+}, function(error) {
+  // Otherwise, will be called if the promise rejects
+})
 ```
 
 ## Contributing
