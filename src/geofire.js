@@ -65,7 +65,7 @@ var updateFirebaseIndex = function(firebaseRef, key, location) {
     }
 
     // TODO: make sure 12 is correct; want 1 meter precision
-    firebaseRef.child("indices/" + encodeGeohash(location, 12)).set(key, function(error) {
+    firebaseRef.child("indices/" + encodeGeohash(location, 10)).set(key, function(error) {
       if (error) {
         reject("Error: Firebase synchronization failed: " + error);
       }
@@ -81,7 +81,7 @@ var updateFirebaseLocation = function(firebaseRef, key, location, allLocations) 
     return new RSVP.Promise(function(resolve, reject) {
       if (allLocations[key] !== undefined) {
         // TODO: make sure 12 is correct; want 1 meter precision
-        firebaseRef.child("indices/" + encodeGeohash(allLocations[key].split(",").map(Number), 12)).remove(function(error) {
+        firebaseRef.child("indices/" + encodeGeohash(allLocations[key].split(",").map(Number), 10)).remove(function(error) {
           if (error) {
             reject("Error: Firebase synchronization failed: " + error);
           }
@@ -386,7 +386,7 @@ GeoQuery.prototype._saveQueryCriteria = function(newQueryCriteria) {
 
   // Save the query criteria
   this._center = newQueryCriteria.center;
-  this._centerHash = encodeGeohash(newQueryCriteria.center, 12);  // TODO: is 12 the correct value here?
+  this._centerHash = encodeGeohash(newQueryCriteria.center, 10);  // TODO: is 12 the correct value here?
   this._radius = newQueryCriteria.radius;
 };
 
