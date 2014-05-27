@@ -501,8 +501,9 @@ describe("GeoQuery Tests:", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      expect(gq._center).toEqual([1,2]);
-      expect(gq._radius).toEqual(1000);
+      console.log(gq.getCenter());
+      expect(gq.getCenter()).toEqual([1,2]);
+      expect(gq.getRadius()).toEqual(1000);
     });
 
     it("Constructor throws error on invalid query criteria", function() {
@@ -532,13 +533,13 @@ describe("GeoQuery Tests:", function() {
       var gq = gf.query({center: [1,2], radius: 1000});
 
       // TODO: change
-      expect(gq._center).toEqual([1,2]);
-      expect(gq._radius).toEqual(1000);
+      expect(gq.getCenter()).toEqual([1,2]);
+      expect(gq.getRadius()).toEqual(1000);
 
       gq.updateQueryCriteria({center: [2,3], radius: 100});
 
-      expect(gq._center).toEqual([2,3]);
-      expect(gq._radius).toEqual(100);
+      expect(gq.getCenter()).toEqual([2,3]);
+      expect(gq.getRadius()).toEqual(100);
     });
 
     it("updateQueryCriteria() fires \"key_entered\" callback for locations which now belong to the GeoQuery", function(done) {
@@ -1413,6 +1414,16 @@ describe("GeoCallbackRegistration Tests:", function() {
       }).then(function() {
         cl.x("p5");
       });
+    });
+
+    it("Calling cancel on a GeoCallbackRegistration twice does not throw", function() {
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({center: [1,2], radius: 1000});
+
+      var onKeyLeftRegistration = gq.on("key_left", function() {});
+
+      expect(function() { onKeyLeftRegistration.cancel() }).not.toThrow();
+      expect(function() { onKeyLeftRegistration.cancel() }).not.toThrow();
     });
   });
 });
