@@ -421,16 +421,22 @@ var GeoFire = function(firebaseRef) {
         var latitude = location[0];
         var longitude = location[1];
 
-        if (typeof latitude !== "number" || latitude < -90 || latitude > 90) {
-          error = "latitude must be a number within the range [-90, 90]";
+        if (typeof latitude !== "number") {
+          error = "latitude must be a number";
         }
-        else if (typeof longitude !== "number" || longitude < -180 || longitude > 180) {
-          error = "longitude must be a number within the range [-180, 180]";
+        else if (latitude < -90 || latitude > 90) {
+          error = "latitude must be within the range [-90, 90]";
+        }
+        else if (longitude !== "number") {
+          error = "longitude must be a number";
+        }
+        else if (longitude < -180 || longitude > 180) {
+          error = "longitude must be within the range [-180, 180]";
         }
       }
 
       if (error !== undefined) {
-        reject("Erorr: Invalid location [" + location + "]: " + error);
+        reject("Error: Invalid location [" + location + "]: " + error);
       }
       else {
         resolve();
