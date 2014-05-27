@@ -255,7 +255,8 @@ GeoQuery.prototype.getResults = function() {
       if (this._locationsInQuery.hasOwnProperty(key)) {
         results.push({
           key: key,
-          location: this._locationsInQuery[key]
+          location: this._locationsInQuery[key],
+	        distance: dist(this._locationsInQuery[key], this._center)
         });
       }
     }

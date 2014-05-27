@@ -306,6 +306,7 @@ If you'd like to contribute to GeoFire, you'll need to run the following
 commands to get your environment set up.
 
 ```bash
+$ npm install -g gulp   # install global gulp js task runner if not already present
 $ git clone https://github.com/firebase/GeoFire.git
 $ npm install    # install local npm build /test dependencies
 $ bower install  # install local JavaScript dependencies
