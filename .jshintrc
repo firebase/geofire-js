@@ -1,4 +1,9 @@
 {
+  "predef": [
+    "RSVP",
+    "module",
+    "console"
+  ],
   "bitwise": true,
   "curly": true,
   "eqeqeq": true,

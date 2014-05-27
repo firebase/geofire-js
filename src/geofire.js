@@ -1,6 +1,3 @@
-// Tell JSHint about variables defined elsewhere
-/* global module, RSVP */
-
 /*****************************/
 /*  GeoCallbackRegistration  */
 /*****************************/

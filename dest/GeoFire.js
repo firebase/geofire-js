@@ -91,9 +91,6 @@ var encodeGeohash = function(latLon, precision) {
 
   return hash;
 };
-// Tell JSHint about variables defined elsewhere
-/* global module, RSVP */
-
 /*****************************/
 /*  GeoCallbackRegistration  */
 /*****************************/
