@@ -164,9 +164,9 @@ The returned list will have the following form:
 
 ```JavaScript
 [
-  { key: "key1", location: [latitude1, longitude1] },
+  { key: "key1", location: [latitude1, longitude1], distance: dist1 },
   ...
-  { key: "keyN", location: [latitudeN, longitudeN] }
+  { key: "keyN", location: [latitudeN, longitudeN], distance: distN }
 ]
 ```
 
@@ -175,7 +175,7 @@ If there are no keys currently within this query, an empty list will be returned
 ```JavaScript
 geoQuery.getResults().then(function(results) {
   results.forEach(function(result) {
-    console.log(result.key + " currently in query at " + result.location);
+    console.log(result.key + " currently in query at " + result.location + " (Distance: " + result.distance + " km)");
   });
 }, function(error) {
   // Handle error case
