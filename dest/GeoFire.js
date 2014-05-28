@@ -187,25 +187,6 @@ var updateFirebaseLocation = function(firebaseRef, key, location, allLocations) 
         resolve();
       }
     }.bind(this));
-
-    /*return new RSVP.Promise(function(resolve, reject) {
-      firebaseRef.child("locations/" + key).once("value", function(locationsChildSnapshot) {
-        if (locationsChildSnapshot.val()) {
-          // TODO: make sure 12 is correct; want 1 meter precision
-          firebaseRef.child("indices/" + encodeGeohash(locationsChildSnapshot.val().split(",").map(Number), 12)).remove(function(error) {
-            if (error) {
-              reject("Error: Firebase synchronization failed: " + error);
-            }
-            else {
-              resolve();
-            }
-          });
-        }
-        else {
-          resolve();
-        }
-      });
-    });*/
   };
 
   var updateLocation = function() {
@@ -297,7 +278,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     var locationKey = locationsChildSnapshot.name();
     if (this._locationsInQuery[locationKey] !== undefined) {
       this._callbacks.key_left.forEach(function(callback) {
-        callback(locationKey, this._allLocations[locationKey]);
+        callback(locationKey, this._allLocations[locationKey], dist(this._allLocations[locationKey],this._center));
       }.bind(this));
       delete this._allLocations[locationKey];
     }
@@ -307,10 +288,12 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
 GeoQuery.prototype._fireCallbacks = function(locationKey, location) {
   var wasAlreadyInQuery = (this._locationsInQuery[locationKey] !== undefined);
-  var isNowInQuery = (dist(location, this._center) <= this._radius);
+	var distance = dist(location, this._center);
+	var isNowInQuery = (distance <= this._radius);
+
   if (!wasAlreadyInQuery && isNowInQuery) {
     this._callbacks.key_entered.forEach(function(callback) {
-      callback(locationKey, location);
+      callback(locationKey, location, distance);
     });
 
     // Add the current location key to our list of location keys within this GeoQuery
@@ -318,7 +301,7 @@ GeoQuery.prototype._fireCallbacks = function(locationKey, location) {
   }
   else if (wasAlreadyInQuery && !isNowInQuery) {
     this._callbacks.key_left.forEach(function(callback) {
-      callback(locationKey, location);
+      callback(locationKey, location, distance);
     });
 
     // Remove the current location key from our list of location keys within this GeoQuery
@@ -326,7 +309,7 @@ GeoQuery.prototype._fireCallbacks = function(locationKey, location) {
   }
   else if (wasAlreadyInQuery) {
     this._callbacks.key_moved.forEach(function(callback) {
-      callback(locationKey, location);
+      callback(locationKey, location, distance);
     });
 
     // Update the current location's location
@@ -379,7 +362,7 @@ GeoQuery.prototype.on = function(eventType, callback) {
   if (eventType === "key_entered") {
     for (var key in this._locationsInQuery) {
       if (this._locationsInQuery.hasOwnProperty(key)) {
-        callback(key, this._locationsInQuery[key]);
+        callback(key, this._locationsInQuery[key], dist(this._locationsInQuery[key], this._center));
       }
     }
   }
