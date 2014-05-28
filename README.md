@@ -184,7 +184,7 @@ geoQuery.getResults().then(function(results) {
 
 #### GeoQuery.on(eventType, callback)
 
-Attaches a `callback` to this query for a given `eventType`. The `callback` will be passed two parameters, the location's key and the location's [latitude, longitude] pair.
+Attaches a `callback` to this query for a given `eventType`. The `callback` will be passed three parameters, the location's key, the location's [latitude, longitude] pair, and the distance in KM from the query's center.
 
 Valid `eventType` values are `key_entered`, `key_left`, and `key_moved`.
 
@@ -197,15 +197,15 @@ Valid `eventType` values are `key_entered`, `key_left`, and `key_moved`.
 Returns a `GeoCallbackRegistration` which can be used to cancel the `callback`. You can add as many callbacks as you would like by repeatedly calling `on()`. Each one will get called when its corresponding `eventType` fires. Each `callback` must be cancelled individually.
 
 ```JavaScript
-var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
   console.log(key + " entered query at " + location);
 });
 
-var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location) {
+var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location, distance) {
   console.log(key + " moved within query to " + location);
 });
 
-var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location) {
+var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location, distance) {
   console.log(key + " left query to " + location);
 });
 ```
@@ -235,11 +235,11 @@ Cancels this `GeoCallbackRegistration` so that it no longer fires its callback.
 // This example stops listening for new keys entering the query once the
 // first key leaves the query
 
-var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
   console.log(key + " entered query at " + location);
 });
 
-var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location) {
+var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location, distance) {
   console.log(key + " left query to " + location);
   onKeyEnteredRegistration.cancel();
 });
@@ -268,11 +268,12 @@ var geoQuery = geoFire.query({
 geoQuery.getResults().then(function(results) {
   results.forEach(function(result) {
     console.log(result.key + " currently in query at " + result.location);
+    console.log(result.key + " is " + result.distance + " km away from the center");
   });
 });
 
 // Log the results (both initial items and new items that enter into the query)
-var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
   console.log(key + " entered query at " + location);
 });
 
