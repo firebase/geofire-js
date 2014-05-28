@@ -274,9 +274,9 @@ var geoFire = new GeoFire(dataRef);
 // Add a key to GeoFire
 geoFire.set("some-unique-key", [37.78, -122.41]).then(function() {
   // Retrieve the key that was just added to GeoFire
-  geoFire.get("some-unique-key").then(function(location) {
-    // location === [37.78, -122.41]
-  });
+  return geoFire.get("some-unique-key");
+}).then(function(location) {
+  // location === [37.78, -122.41]
 });
 
 // Create a location query for a circle with a 10.5 km radius
