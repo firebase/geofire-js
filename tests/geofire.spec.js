@@ -491,19 +491,14 @@ describe("GeoQuery Tests:", function() {
   });
 
   describe("Constructor:", function() {
-    xit("Test getCenter() and getRadius()", function() {
-
-    });
-
     it("Constructor stores query criteria", function() {
       console.log("!!!!!  GeoQuery Tests  !!!!!");
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      console.log(gq.getCenter());
-      expect(gq.getCenter()).toEqual([1,2]);
-      expect(gq.getRadius()).toEqual(1000);
+      expect(gq.center()).toEqual([1,2]);
+      expect(gq.radius()).toEqual(1000);
     });
 
     it("Constructor throws error on invalid query criteria", function() {
@@ -527,22 +522,50 @@ describe("GeoQuery Tests:", function() {
     });
   });
 
-  describe("updateQueryCriteria():", function() {
-    it("updateQueryCriteria() updates query criteria", function() {
+  describe("updateCriteria():", function() {
+    it("updateCriteria() updates query criteria", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
       // TODO: change
-      expect(gq.getCenter()).toEqual([1,2]);
-      expect(gq.getRadius()).toEqual(1000);
+      expect(gq.center()).toEqual([1,2]);
+      expect(gq.radius()).toEqual(1000);
 
-      gq.updateQueryCriteria({center: [2,3], radius: 100});
+      gq.updateCriteria({center: [2,3], radius: 100});
 
-      expect(gq.getCenter()).toEqual([2,3]);
-      expect(gq.getRadius()).toEqual(100);
+      expect(gq.center()).toEqual([2,3]);
+      expect(gq.radius()).toEqual(100);
     });
 
-    it("updateQueryCriteria() fires \"key_entered\" callback for locations which now belong to the GeoQuery", function(done) {
+    it("updateCriteria() updates query criteria when given only center", function() {
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({center: [1,2], radius: 1000});
+
+      // TODO: change
+      expect(gq.center()).toEqual([1,2]);
+      expect(gq.radius()).toEqual(1000);
+
+      gq.updateCriteria({center: [2,3]});
+
+      expect(gq.center()).toEqual([2,3]);
+      expect(gq.radius()).toEqual(1000);
+    });
+
+    it("updateCriteria() updates query criteria when given only radius", function() {
+      var gf = new GeoFire(dataRef);
+      var gq = gf.query({center: [1,2], radius: 1000});
+
+      // TODO: change
+      expect(gq.center()).toEqual([1,2]);
+      expect(gq.radius()).toEqual(1000);
+
+      gq.updateCriteria({radius: 100});
+
+      expect(gq.center()).toEqual([1,2]);
+      expect(gq.radius()).toEqual(100);
+    });
+
+    it("updateCriteria() fires \"key_entered\" callback for locations which now belong to the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "loc1 entered", "loc4 entered"], expect, done);
 
       var gf = new GeoFire(dataRef);
@@ -560,7 +583,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        gq.updateQueryCriteria({center: [1,2], radius: 1000});
+        gq.updateCriteria({center: [1,2], radius: 1000});
 
         return wait(5);
       }).then(function() {
@@ -568,7 +591,7 @@ describe("GeoQuery Tests:", function() {
       });
     });
 
-    it("updateQueryCriteria() fires \"key_left\" callback for locations which no longer belong to the GeoQuery", function(done) {
+    it("updateCriteria() fires \"key_left\" callback for locations which no longer belong to the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "loc1 left", "loc4 left"], expect, done);
 
       var gf = new GeoFire(dataRef);
@@ -586,7 +609,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        gq.updateQueryCriteria({center: [90,90], radius: 1000});
+        gq.updateCriteria({center: [90,90], radius: 1000});
 
         return wait(5);
       }).then(function() {
@@ -594,28 +617,28 @@ describe("GeoQuery Tests:", function() {
       });
     });
 
-    it("updateQueryCriteria() throws error on invalid query criteria", function() {
+    it("updateCriteria() throws error on invalid query criteria", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      expect(function() { gf.updateQueryCriteria({}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({random: 100}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({center: [91,2], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({center: [1,-181], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({center: ["text",2], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({center: [1,[1,2]], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({center: [null,2], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({center: [1,undefined], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({center: [1,2], radius: -10}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({center: [1,2], radius: "text"}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({center: [1,2], radius: [1,2]}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({center: [1,2], radius: null}) }).toThrow();
-      expect(function() { gf.updateQueryCriteria({center: [1,2], radius: undefined}) }).toThrow();
+      expect(function() { gf.updateCriteria({}) }).toThrow();
+      expect(function() { gf.updateCriteria({random: 100}) }).toThrow();
+      expect(function() { gf.updateCriteria({center: [91,2], radius: 1000}) }).toThrow();
+      expect(function() { gf.updateCriteria({center: [1,-181], radius: 1000}) }).toThrow();
+      expect(function() { gf.updateCriteria({center: ["text",2], radius: 1000}) }).toThrow();
+      expect(function() { gf.updateCriteria({center: [1,[1,2]], radius: 1000}) }).toThrow();
+      expect(function() { gf.updateCriteria({center: [null,2], radius: 1000}) }).toThrow();
+      expect(function() { gf.updateCriteria({center: [1,undefined], radius: 1000}) }).toThrow();
+      expect(function() { gf.updateCriteria({center: [1,2], radius: -10}) }).toThrow();
+      expect(function() { gf.updateCriteria({center: [1,2], radius: "text"}) }).toThrow();
+      expect(function() { gf.updateCriteria({center: [1,2], radius: [1,2]}) }).toThrow();
+      expect(function() { gf.updateCriteria({center: [1,2], radius: null}) }).toThrow();
+      expect(function() { gf.updateCriteria({center: [1,2], radius: undefined}) }).toThrow();
     });
   });
 
-  describe("getResults():", function() {
-    it("getResults() returns valid results when there are locations within the GeoQuery", function(done) {
+  describe("results():", function() {
+    it("results() returns valid results when there are locations within the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2"], expect, done);
 
       var gf = new GeoFire(dataRef);
@@ -630,7 +653,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1")
 
-        return gq.getResults();
+        return gq.results();
       }).then(function(results) {
         expect(results).toEqual([
           { key: "loc1", location: [1,2] },
@@ -642,7 +665,7 @@ describe("GeoQuery Tests:", function() {
       });
     });
 
-    it("getResults() returns empty results when there are no locations within the GeoQuery", function(done) {
+    it("results() returns empty results when there are no locations within the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2"], expect, done);
 
       var gf = new GeoFire(dataRef);
@@ -657,7 +680,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1")
 
-        return gq.getResults();
+        return gq.results();
       }).then(function(results) {
         expect(results).toEqual([]);
 

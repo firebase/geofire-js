@@ -115,7 +115,7 @@ var geoQuery = geoFire.query({
 
 A standing query that tracks a set of keys matching a criteria. A new `GeoQuery` is returned every time you call `GeoFire.query()`.
 
-#### GeoQuery.getCenter()
+#### GeoQuery.center()
 
 Returns the `location` which marks the center of this query.
 
@@ -127,10 +127,10 @@ var geoQuery = geoFire.query({
   radius: 10.5
 });
 
-var center = geoQuery.getCenter();  // center === [10.38, 2.41]
+var center = geoQuery.center();  // center === [10.38, 2.41]
 ```
 
-#### GeoQuery.getRadius()
+#### GeoQuery.radius()
 
 Returns the `radius` of this query, in kilometers.
 
@@ -140,23 +140,40 @@ var geoQuery = geoFire.query({
   radius: 10.5
 });
 
-var radius = geoQuery.getRadius();  // radius === 10.5
+var radius = geoQuery.radius();  // radius === 10.5
 ```
 
-#### GeoQuery.updateQueryCriteria(newQueryCriteria)
+#### GeoQuery.updateCriteria(newQueryCriteria)
 
-Updates the query criteria for this query.
+Updates the criteria for this query.
 
 `newQueryCriteria` must be a dictionary containing `center`, `radius`, or both.
 
 ```JavaScript
-geoQuery.updateQueryCriteria({
+var geoQuery = geoFire.query({
+  center: [10.38, 2.41],
+  radius: 10.5
+});
+
+var center = geoQuery.center();  // center === [10.38, 2.41]
+var radius = geoQuery.radius();  // radius === 10.5
+
+geoQuery.updateCriteria({
   center: [-50.83, 100.19],
   radius: 5
 });
+
+center = geoQuery.center();  // center === [-50.83, 100.19]
+radius = geoQuery.radius();  // radius === 5
+
+geoQuery.updateCriteria({
+  radius: 7
+});
+
+radius = geoQuery.radius();  // radius === 7
 ```
 
-#### GeoQuery.getResults()
+#### GeoQuery.results()
 
 Returns a promise fulfilled with a list of dictionaries containing the `key` - `location` pairs which are currently within this query.
 
@@ -173,7 +190,7 @@ The returned list will have the following form:
 If there are no keys currently within this query, an empty list will be returned.
 
 ```JavaScript
-geoQuery.getResults().then(function(results) {
+geoQuery.results().then(function(results) {
   results.forEach(function(result) {
     console.log(result.key + " currently in query at " + result.location);
   });
@@ -254,13 +271,16 @@ var dataRef = new Firebase("https://my-firebase.firebaseio-demo.com/");
 var geoFire = new GeoFire(dataRef);
 
 // Add a key to GeoFire
-geoFire.set("some-unique-key", [37.785326, -122.405696]).then(function() {
-  // Do something after the location has been written to GeoFire
+geoFire.set("some-unique-key", [37.78, -122.41]).then(function() {
+  // Retrieve the key that was just added to GeoFire
+  geoFire.get("some-unique-key").then(function(location) {
+    // location === [37.78, -122.41]
+  });
 });
 
 // Create a location query for a circle with a 10.5 km radius
 var geoQuery = geoFire.query({
-  center: [10.38, 2.41],
+  center: [37.60, -121.98],
   radius: 10.5
 });
 

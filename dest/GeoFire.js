@@ -146,7 +146,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    *
    * @param {object} newQueryCriteria The criteria which specifies the GeoQuery's type, center, and radius.
    */
-  function _saveQueryCriteria(newQueryCriteria) {
+  function _saveCriteria(newQueryCriteria) {
     // Throw an error if there are any extraneous attributes
     for (var key in newQueryCriteria) {
       if (newQueryCriteria.hasOwnProperty(key)) {
@@ -165,26 +165,35 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         var latitude = newQueryCriteria.center[0];
         var longitude = newQueryCriteria.center[1];
 
-        if (typeof latitude !== "number" || latitude < -90 || latitude > 90) {
-          throw new Error("Invalid \"center\" attribute specified for query criteria. Latitude must be a number within the range [-90, 90]");
+        if (typeof latitude !== "number") {
+          throw new Error("Invalid \"center\" attribute specified for query criteria. Latitude must be a number.");
         }
-        else if (typeof longitude !== "number" || longitude < -180 || longitude > 180) {
-          throw new Error("Invalid \"center\" attribute specified for query criteria. Longitude must be a number within the range [-180, 180]");
+        else if (latitude < -90 || latitude > 90) {
+          throw new Error("Invalid \"center\" attribute specified for query criteria. Latitude must be within the range [-90, 90].");
+        }
+        else if (typeof longitude !== "number") {
+          throw new Error("Invalid \"center\" attribute specified for query criteria. Longitude must be a number.");
+        }
+        else if (longitude < -180 || longitude > 180) {
+          throw new Error("Invalid \"center\" attribute specified for query criteria. Longitude must be within the range [-180, 180].");
         }
       }
     }
 
     // Validate the "radius" attribute
     if (typeof newQueryCriteria.radius !== "undefined") {
-      if (typeof newQueryCriteria.radius !== "number" || newQueryCriteria.radius < 0) {
-        throw new Error("Invalid \"radius\" attribute specified for query criteria. Radius must be a number greater than or equal to 0.");
+      if (typeof newQueryCriteria.radius !== "number") {
+        throw new Error("Invalid \"radius\" attribute specified for query criteria. Radius must be a number.");
+      }
+      else if (newQueryCriteria.radius < 0) {
+        throw new Error("Invalid \"radius\" attribute specified for query criteria. Radius must be greater than or equal to 0.");
       }
     }
 
     // Save the query criteria
-    _center = newQueryCriteria.center;
-    _centerHash = encodeGeohash(newQueryCriteria.center, 12);  // TODO: is 12 the correct value here?
-    _radius = newQueryCriteria.radius;
+    _center = newQueryCriteria.center || _center;
+    _centerHash = encodeGeohash(_center, 12);  // TODO: is 12 the correct value here?
+    _radius = newQueryCriteria.radius || _radius;
   }
 
 
@@ -226,7 +235,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @return {promise} A promise that is fulfilled with an array of locations which are inside of this
    *                   GeoQuery. The array takes the form of { key1: location1, key2: location2, ... }.
    */
-  this.getResults = function() {
+  this.results = function() {
     return new RSVP.Promise(function(resolve) {
       var results = [];
       for (var key in _locationsInQuery) {
@@ -293,8 +302,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    *
    * @param {object} newQueryCriteria The criteria which specifies the GeoQuery's type, center, and radius.
    */
-  this.updateQueryCriteria = function(newQueryCriteria) {
-    _saveQueryCriteria(newQueryCriteria);
+  this.updateCriteria = function(newQueryCriteria) {
+    _saveCriteria(newQueryCriteria);
 
     // Loop through all of the locations and fire the "key_entered" or "key_left" callbacks if necessary
     for (var key in _allLocations) {
@@ -309,7 +318,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    *
    * @return {array} The [latitude, longitude] pair signifying the center of this GeoQuery.
    */
-  this.getCenter = function() {
+  this.center = function() {
     return _center;
   };
 
@@ -318,7 +327,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    *
    * @return {integer} The radius of this GeoQuery.
    */
-  this.getRadius = function() {
+  this.radius = function() {
     return _radius;
   };
 
@@ -341,7 +350,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   var _allLocations = {};
 
   var _center, _radius, _centerHash;
-  _saveQueryCriteria(queryCriteria);
+  _saveCriteria(queryCriteria);
 
   _firebaseRef.child("indices").on("child_added", function(indicesChildSnapshot) {
     var locationKey = indicesChildSnapshot.val();
@@ -424,7 +433,7 @@ var GeoFire = function(firebaseRef) {
         else if (latitude < -90 || latitude > 90) {
           error = "latitude must be within the range [-90, 90]";
         }
-        else if (longitude !== "number") {
+        else if (typeof longitude !== "number") {
           error = "longitude must be a number";
         }
         else if (longitude < -180 || longitude > 180) {
