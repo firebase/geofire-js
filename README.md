@@ -3,6 +3,9 @@
 GeoFire is a JavaScript library that allows you to store and query a set
 of keys based on their geographic location. GeoFire uses Firebase for data
 storage, allowing query results to be updated in realtime as they change.
+GeoFire does more than just measure the distance between locations; it allows
+you to selectively load only the data within certain locations, keeping your
+applications light and responsive.
 
 ## Downloading
 
@@ -37,7 +40,7 @@ A `GeoFire` instance is used to read and write geolocation data to your Firebase
 
 #### new GeoFire(firebaseRef)
 
-Returns a new `GeoFire` instance. The data for this `GeoFire` will be written to the your `firebaseRef` but will not overwrite all the data at that location. Note that this `firebaseRef` can point to anywhere in your Firebase.
+Returns a new `GeoFire` instance. The data for this `GeoFire` will be written to the your `firebaseRef` but will not overwrite all of your data at that location. Note that this `firebaseRef` can point to anywhere in your Firebase.
 
 ```JavaScript
 // Create a Firebase reference where GeoFire will store its information
