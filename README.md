@@ -170,6 +170,7 @@ geoQuery.updateCriteria({
   radius: 7
 });
 
+center = geoQuery.center();  // center === [-50.83, 100.19]
 radius = geoQuery.radius();  // radius === 7
 ```
 
