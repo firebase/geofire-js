@@ -19,12 +19,12 @@ In order to use GeoFire in your project, you need to include the following files
 <script src="firebase.min.js"></script>
 
 <!-- GeoFire -->
-<script src="GeoFire.min.js"></script>
+<script src="geofire.min.js"></script>
 ```
 
-You can find each of these files in the `/dest/` directory of this GitHub repository. For debugging purposes, there is also a non-minified `GeoFire.js` file in the `/dest/` directory.
+You can find each of these files in the `/dest/` directory of this GitHub repository. For debugging purposes, there is also a non-minified `geofire.js` file in the `/dest/` directory.
 
-You can also download all of these files via Bower [__Note__: GeoFire is currently not available via bower]:
+You can also download all of these files via Bower [__Note__: geofire is currently not available via bower]:
 
 ```bash
 $ bower install rsvp firebase [geofire]

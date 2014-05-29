@@ -30,8 +30,8 @@ var paths = {
     ],
     srcDir: "src",
     destDir: "dest",
-    unminified: "GeoFire.js",
-    minified: "GeoFire.min.js"
+    unminified: "geofire.js",
+    minified: "geofire.min.js"
   },
 
   tests: [

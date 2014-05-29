@@ -6,7 +6,7 @@ module.exports = function(config) {
     files: [
       "../bower_components/firebase/firebase.js",
       "../bower_components/rsvp/rsvp.min.js",
-      "../dest/GeoFire.js",
+      "../dest/geofire.js",
       "geofire.spec.js",
       "geo-utils.spec.js"
     ],
