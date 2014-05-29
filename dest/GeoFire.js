@@ -91,6 +91,12 @@ var encodeGeohash = function(latLon, precision) {
 
   return hash;
 };
+/************/
+/*  COMMON  */
+/************/
+// TODO: Investigate the correct value for this
+var g_GEOHASH_LENGTH = 12;
+
 /*****************************/
 /*  GeoCallbackRegistration  */
 /*****************************/
@@ -192,7 +198,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // Save the query criteria
     _center = newQueryCriteria.center || _center;
-    _centerHash = encodeGeohash(_center, 12);  // TODO: is 12 the correct value here?
+    _centerHash = encodeGeohash(_center, g_GEOHASH_LENGTH);
     _radius = newQueryCriteria.radius || _radius;
   }
 
@@ -293,8 +299,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       key_moved: []
     };
 
-    _firebaseRef.child("indices").off();
-    _firebaseRef.child("locations").off();
+    // TODO: only cancel this particular instance of the callback; add test for this
+    _firebaseRef.child("indices").off("child_added");
+    _firebaseRef.child("locations").off("child_removed");
   };
 
   /**
@@ -353,7 +360,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   _saveCriteria(queryCriteria);
 
   _firebaseRef.child("indices").on("child_added", function(indicesChildSnapshot) {
-    var locationKey = indicesChildSnapshot.val();
+    var childName = indicesChildSnapshot.name();
+    var locationKey = childName.slice(g_GEOHASH_LENGTH);
 
     _firebaseRef.child("locations/" + locationKey).once("value", function(locationsDataSnapshot) {
       var location = locationsDataSnapshot.val().split(",").map(Number);
@@ -460,8 +468,7 @@ var GeoFire = function(firebaseRef) {
         resolve();
       }
 
-      // TODO: make sure 12 is correct; want 1 meter precision
-      _firebaseRef.child("indices/" + encodeGeohash(location, 12)).set(key, function(error) {
+      _firebaseRef.child("indices/" + encodeGeohash(location, g_GEOHASH_LENGTH) + key).set(true, function(error) {
         if (error) {
           reject("Error: Firebase synchronization failed: " + error);
         }
@@ -476,8 +483,7 @@ var GeoFire = function(firebaseRef) {
     function _removeOldIndex() {
       return new RSVP.Promise(function(resolve, reject) {
         if (_allLocations[key] !== undefined) {
-          // TODO: make sure 12 is correct; want 1 meter precision
-          _firebaseRef.child("indices/" + encodeGeohash(_allLocations[key].split(",").map(Number), 12)).remove(function(error) {
+          _firebaseRef.child("indices/" + encodeGeohash(_allLocations[key].split(",").map(Number), g_GEOHASH_LENGTH) + key).remove(function(error) {
             if (error) {
               reject("Error: Firebase synchronization failed: " + error);
             }
@@ -494,8 +500,7 @@ var GeoFire = function(firebaseRef) {
       /*return new RSVP.Promise(function(resolve, reject) {
         firebaseRef.child("locations/" + key).once("value", function(locationsChildSnapshot) {
           if (locationsChildSnapshot.val()) {
-            // TODO: make sure 12 is correct; want 1 meter precision
-            firebaseRef.child("indices/" + encodeGeohash(locationsChildSnapshot.val().split(",").map(Number), 12)).remove(function(error) {
+            firebaseRef.child("indices/" + encodeGeohash(locationsChildSnapshot.val().split(",").map(Number), g_GEOHASH_LENGTH) + key).remove(function(error) {
               if (error) {
                 reject("Error: Firebase synchronization failed: " + error);
               }
@@ -550,7 +555,7 @@ var GeoFire = function(firebaseRef) {
 
   /**
    * Returns a promise that is fulfilled with the location corresponding to the given key.
-   * Note: If the key does not exist, null is returned.   // TODO: is this what we want?
+   * Note: If the key does not exist, null is returned.
    *
    * @param {string} key The key of the location to retrieve.
    * @return {promise} A promise that is fulfilled with the location of the given key.
