@@ -196,7 +196,7 @@ If there are no keys currently within this query, an empty list will be returned
 ```JavaScript
 geoQuery.results().then(function(results) {
   results.forEach(function(result) {
-    console.log(result.key + " currently in query at " + result.location + "(distance from center: " + result.distance + ")");
+    console.log(result.key + " currently in query at " + result.location + " (" + result.distance + " km from center)");
   });
 }, function(error) {
   // Handle error case
@@ -219,15 +219,15 @@ Returns a `GeoCallbackRegistration` which can be used to cancel the `callback`. 
 
 ```JavaScript
 var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
-  console.log(key + " entered query at " + location + "(distance from center: " + distance + ")");
+  console.log(key + " entered query at " + location + " (" + distance + " km from center)");
 });
 
 var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location, distance) {
-  console.log(key + " moved within query to " + location + "(distance from center: " + distance + ")");
+  console.log(key + " moved within query to " + location + " (" + distance + " km from center)");
 });
 
 var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location, distance) {
-  console.log(key + " left query to " + location + "(distance from center: " + distance + ")");
+  console.log(key + " left query to " + location + " (" + distance + " km from center)");
 });
 ```
 
@@ -256,12 +256,12 @@ Cancels this `GeoCallbackRegistration` so that it no longer fires its callback.
 // This example stops listening for new keys entering the query once the
 // first key leaves the query
 
-var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
-  console.log(key + " entered query at " + location);
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
+  console.log(key + " entered query at " + location + " (" + distance + " km from center)");
 });
 
-var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location) {
-  console.log(key + " left query to " + location);
+var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location, distance) {
+  console.log(key + " left query to " + location + " (" + distance + " km from center)");
   onKeyEnteredRegistration.cancel();
 });
 ```
@@ -296,8 +296,8 @@ geoQuery.getResults().then(function(results) {
 });
 
 // Log the results (both initial items and new items that enter into the query)
-var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
-  console.log(key + " entered query at " + location);
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
+  console.log(key + " entered query at " + location + " (" + distance + " km from center)");
 });
 
 // Terminate the query (we will no longer receive location updates from the server for this query)
