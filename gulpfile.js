@@ -46,7 +46,7 @@ var paths = {
       "bower_components/firebase/firebase.js",
       "bower_components/rsvp/rsvp.min.js",
       "src/*.js",
-      "tests/*.spec.js"
+      "tests/specs/*.spec.js"
     ]
   }
 };

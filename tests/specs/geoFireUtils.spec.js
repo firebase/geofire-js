@@ -1,6 +1,3 @@
-/*********************/
-/*  GEO-UTILS TESTS  */
-/*********************/
 describe("geoFireUtils Tests:", function() {
   var locations = [
     [[-90, -180], "000000000000"],
