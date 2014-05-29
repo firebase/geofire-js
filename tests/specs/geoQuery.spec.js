@@ -26,6 +26,9 @@ describe("GeoQuery Tests:", function() {
       expect(function() { gf.query({center: [1,-181], radius: 1000}) }).toThrow();
       expect(function() { gf.query({center: ["text",2], radius: 1000}) }).toThrow();
       expect(function() { gf.query({center: [1,[1,2]], radius: 1000}) }).toThrow();
+      expect(function() { gf.query({center: 1000, radius: 1000}) }).toThrow();
+      expect(function() { gf.query({center: null, radius: 1000}) }).toThrow();
+      expect(function() { gf.query({center: undefined, radius: 1000}) }).toThrow();
       expect(function() { gf.query({center: [null,2], radius: 1000}) }).toThrow();
       expect(function() { gf.query({center: [1,undefined], radius: 1000}) }).toThrow();
       expect(function() { gf.query({center: [1,2], radius: -10}) }).toThrow();
@@ -33,6 +36,7 @@ describe("GeoQuery Tests:", function() {
       expect(function() { gf.query({center: [1,2], radius: [1,2]}) }).toThrow();
       expect(function() { gf.query({center: [1,2], radius: null}) }).toThrow();
       expect(function() { gf.query({center: [1,2], radius: undefined}) }).toThrow();
+      expect(function() { gf.query({center: [1,2], radius: 1000, other: "throw"}) }).toThrow();
     });
   });
 

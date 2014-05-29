@@ -41,7 +41,7 @@ var GeoFire = function(firebaseRef) {
         resolve();
       }
 
-      if (!(location instanceof Array) || location.length !== 2) {
+      if (Object.prototype.toString.call(location) !== "[object Array]" || location.length !== 2) {
         error = "expected 2 values, got " + location.length;
       }
       else {

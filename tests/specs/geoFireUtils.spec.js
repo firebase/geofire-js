@@ -19,6 +19,13 @@ describe("geoFireUtils Tests:", function() {
     }
   });
 
+  it("encodeGeohash() throws errors on invalid locations", function() {
+    expect(function() { encodeGeohash([91, 0]) }).toThrow();
+    expect(function() { encodeGeohash([-91, 0]) }).toThrow();
+    expect(function() { encodeGeohash([0, 181]) }).toThrow();
+    expect(function() { encodeGeohash([0, -181]) }).toThrow();
+  });
+
   it("dist() properly returns the distance between geohashes", function() {
     expect(dist(locations[1][0], locations[1][0])).toEqual(0);
     expect(dist(locations[0][0], locations[1][0])).toBeCloseTo(20015, 0);

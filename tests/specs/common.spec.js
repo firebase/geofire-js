@@ -12,25 +12,7 @@ var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
 /**********************/
 /* Clears all Firebase event handlers and resets the Firebase; runs before each test to ensure there is no pollution between tests */
 function resetFirebase() {
-  console.log("***** Resetting Firebase *****");
-
-  // Disable geoFire debugging
-  GEOFIRE_DEBUG = false;
-
   return new RSVP.Promise(function(resolve, reject) {
-     /*dataRef.child("indices").on("value", function(indicesChildSnapshot) {
-      var geohashes = indicesChildSnapshot.val();
-      for (var key in geohashes) {
-        if (geohashes.hasOwnProperty(key)) {
-          dataRef.child("indices/" + key).off();
-        }
-      }
-      dataRef.child("indices").off();
-      dataRef.child("locations").off("child_removed");
-      dataRef.remove(function() {
-        resolve();
-      });
-    });*/
     dataRef.child("indices").off("child_added");
     dataRef.child("locations").off("child_removed");
     dataRef.remove(function() {

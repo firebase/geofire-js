@@ -81,7 +81,7 @@ var GeoFire = function(firebaseRef) {
         resolve();
       }
 
-      if (!(location instanceof Array) || location.length !== 2) {
+      if (Object.prototype.toString.call(location) !== "[object Array]" || location.length !== 2) {
         error = "expected 2 values, got " + location.length;
       }
       else {
@@ -303,14 +303,15 @@ var encodeGeohash = function(latLon, precision) {
     bits = 0,
     even = 1;
 
+  // TODO: should precesion just use the global flag?
   precision = Math.min(precision || 12, 22);
 
+  // TODO: more error checking here?
   if (lat < latRange.min || lat > latRange.max) {
-    throw "Invalid latitude specified! (" + lat + ")";
+    throw new Error("Invalid latitude specified in encodeGeohash(): " + lat);
   }
-
   if (lon < lonRange.min || lon > lonRange.max) {
-    throw "Invalid longitude specified! (" + lon + ")";
+    throw new Error("Invalid longitude specified in encodeGeohash(): " + lon);
   }
 
   while (hash.length < precision) {
