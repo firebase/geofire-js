@@ -24,7 +24,7 @@ In order to use GeoFire in your project, you need to include the following files
 
 You can find each of these files in the `/dest/` directory of this GitHub repository. For debugging purposes, there is also a non-minified `geofire.js` file in the `/dest/` directory.
 
-You can also download all of these files via Bower [__Note__: geofire is currently not available via bower]:
+You can also download all of these files via Bower [__Note__: geofire is currently not available via Bower]:
 
 ```bash
 $ bower install rsvp firebase [geofire]
@@ -40,7 +40,7 @@ A `GeoFire` instance is used to read and write geolocation data to your Firebase
 
 #### new GeoFire(firebaseRef)
 
-Returns a new `GeoFire` instance. The data for this `GeoFire` will be written to the your `firebaseRef` but will not overwrite all of your data at that location. Note that this `firebaseRef` can point to anywhere in your Firebase.
+Returns a new `GeoFire` instance. The data for this `GeoFire` will be written to your `firebaseRef` but will not overwrite all of your data at that location. Note that this `firebaseRef` can point to anywhere in your Firebase.
 
 ```JavaScript
 // Create a Firebase reference where GeoFire will store its information
@@ -59,7 +59,7 @@ Returns an empty promise fulfilled when the provided `key` - `location` pair has
 `key` must be a string or number.
 
 ```JavaScript
-geoFire.set("some-unique-key", [37.785326, -122.405696]).then(function() {
+geoFire.set("some_key", [37.785326, -122.405696]).then(function() {
   alert("Location has been added to GeoFire");
 }, function(error) {
   // Handle error case
@@ -75,23 +75,25 @@ The returned location will have the form [latitude, longitude].
 `key` must be a string or number.
 
 ```JavaScript
-geoFire.get("some-unique-key").then(function(location) {
+geoFire.get("some_key").then(function(location) {
   alert("Provided key has a location of " + location);
-}. function(error) {
+}, function(error) {
   // Handle error case
 });
 ```
 
 #### GeoFire.remove(key)
 
-Returns an empty promise fulfilled when the provided `key` has been removed from Firebase. If the the provided `key` is not in this `GeoFire`, the promise will successfully resolve immediately.
+Ensures the `key` will be removed from this `GeoFire` index. Returns an empty promise fulfilled when the `key` has been removed.
+
+If the provided `key` is not in this `GeoFire` index, the promise will still successfully resolve.
 
 This is equivalent to calling `set(key, null)`.
 
 `key` must be a string or number.
 
 ```JavaScript
-geoFire.remove("some-unique-key").then(function() {
+geoFire.remove("some_key").then(function() {
   alert("Location has been removed from GeoFire");
 }, function(error) {
   // Handle error case
@@ -104,7 +106,7 @@ Returns a new `GeoQuery` instance with the provide `queryCriteria`.
 
 The `queryCriteria` must be a dictionary containing the following keys:
 
-* `center` - the center of this query with the form [latitude, longitude]
+* `center` - the center of this query, with the form [latitude, longitude]
 * `radius` - the radius, in kilometers, of this query
 
 ```JavaScript
@@ -222,12 +224,12 @@ var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location
   console.log(key + " entered query at " + location + " (" + distance + " km from center)");
 });
 
-var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location, distance) {
-  console.log(key + " moved within query to " + location + " (" + distance + " km from center)");
-});
-
 var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location, distance) {
   console.log(key + " left query to " + location + " (" + distance + " km from center)");
+});
+
+var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location, distance) {
+  console.log(key + " moved within query to " + location + " (" + distance + " km from center)");
 });
 ```
 
@@ -275,9 +277,9 @@ var dataRef = new Firebase("https://my-firebase.firebaseio-demo.com/");
 var geoFire = new GeoFire(dataRef);
 
 // Add a key to GeoFire
-geoFire.set("some-unique-key", [37.78, -122.41]).then(function() {
+geoFire.set("some_key", [37.78, -122.41]).then(function() {
   // Retrieve the key that was just added to GeoFire
-  return geoFire.get("some-unique-key");
+  return geoFire.get("some_key");
 }).then(function(location) {
   // location === [37.78, -122.41]
 });
@@ -289,7 +291,7 @@ var geoQuery = geoFire.query({
 });
 
 // Get the keys currently in the query
-geoQuery.getResults().then(function(results) {
+geoQuery.results().then(function(results) {
   results.forEach(function(result) {
     console.log(result.key + " currently in query at " + result.location);
   });
