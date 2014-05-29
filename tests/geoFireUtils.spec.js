@@ -1,7 +1,7 @@
 /*********************/
 /*  GEO-UTILS TESTS  */
 /*********************/
-describe("geo-utils Tests:", function() {
+describe("geoFireUtils Tests:", function() {
   var locations = [
     [[-90, -180], "000000000000"],
     [[90, 180], "zzzzzzzzzzzz"],
@@ -16,7 +16,7 @@ describe("geo-utils Tests:", function() {
   ];
 
   it("encodeGeohash() properly encodes locations to geohashes", function() {
-    console.log("!!!!!  geo-utils Tests  !!!!!");
+    console.log("!!!!!  geoFireUtils Tests  !!!!!");
     for(var i = 0; i < locations.length; i++) {
       expect(encodeGeohash(locations[i][0])).toBe(locations[i][1])
     }

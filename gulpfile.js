@@ -23,23 +23,32 @@ var lrserver = require('tiny-lr')();
 /****************/
 var paths = {
   destDir: "dest",
+
   scripts: {
-    src: [
-      "src/geo-utils.js",
-      "src/geofire.js"
-    ],
-    srcDir: "src",
-    destDir: "dest",
-    unminified: "geofire.js",
-    minified: "geofire.min.js"
+    src: {
+      dir: "src",
+      files: [
+        "src/*.js"
+      ]
+    },
+    dest: {
+      dir: "dest",
+      files: {
+        unminified: "geofire.js",
+        minified: "geofire.min.js"
+      }
+    }
   },
 
-  tests: [
-    "bower_components/firebase/firebase.js",
-    "bower_components/rsvp/rsvp.min.js",
-    "tests/geofire.spec.js",
-    "src/*.js"
-  ]
+  tests: {
+    config: "tests/karma.conf.js",
+    files: [
+      "bower_components/firebase/firebase.js",
+      "bower_components/rsvp/rsvp.min.js",
+      "src/*.js",
+      "tests/*.spec.js"
+    ]
+  }
 };
 
 /***********/
@@ -50,36 +59,36 @@ gulp.task("scripts", function() {
   // Concatenate all src files together
   var stream = streamqueue({ objectMode: true });
   stream.queue(gulp.src("build/header"));
-  stream.queue(gulp.src(paths.scripts.src));
+  stream.queue(gulp.src(paths.scripts.src.files));
   stream.queue(gulp.src("build/footer"));
 
   // Output the final concatenated script file
   return stream.done()
     // Rename file
-    .pipe(concat(paths.scripts.unminified))
+    .pipe(concat(paths.scripts.dest.files.unminified))
 
     // Lint
     .pipe(jshint())
     .pipe(jshint.reporter("jshint-stylish"))
 
     // Write un-minified version
-    .pipe(gulp.dest(paths.scripts.destDir))
+    .pipe(gulp.dest(paths.scripts.dest.dir))
 
     // Minify
     .pipe(uglify())
 
     // Rename file
-    .pipe(concat(paths.scripts.minified))
+    .pipe(concat(paths.scripts.dest.files.minified))
 
     // Write minified version
-    .pipe(gulp.dest(paths.scripts.destDir));
+    .pipe(gulp.dest(paths.scripts.dest.dir));
 });
 
 /* Uses the Karma test runner to run the Jasmine tests */
 gulp.task("test", function() {
-  return gulp.src(paths.tests)
+  return gulp.src(paths.tests.files)
     .pipe(karma({
-      configFile: "tests/karma.conf.js",
+      configFile: paths.tests.config,
       action: "run"
     }))
     .on("error", function(err) {
@@ -115,8 +124,8 @@ gulp.task("server", function() {
 
 /* Re-runs the "scripts" task every time a script file changes */
 gulp.task("watch", function() {
-  gulp.watch(paths.scripts.srcDir + "/**/*", ["scripts"]);
-  gulp.watch(["examples/**/*", paths.buildDir + "/**/*"], ["reload"]);
+  gulp.watch(paths.scripts.src.dir + "/**/*", ["scripts"]);
+  gulp.watch(["examples/**/*", paths.scripts.dest.dir + "/**/*"], ["reload"]);
 });
 
 /* Starts the live-reload server and refreshes it everytime a dest file changes */

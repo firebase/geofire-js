@@ -874,7 +874,6 @@ describe("GeoQuery Tests:", function() {
       var gq = gf.query({center: [1,2], radius: 1000});
 
       gq.on("key_moved", function(key, location) {
-        console.log(key);
         cl.x(key + " moved");
       });
 
