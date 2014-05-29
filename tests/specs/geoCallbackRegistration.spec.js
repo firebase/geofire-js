@@ -23,7 +23,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      var onKeyMovedRegistration = gq.on("key_moved", function(key, location) {
+      var onKeyMovedRegistration = gq.on("key_moved", function(key, location, distance) {
         cl.x(key + " moved");
       });
 
@@ -59,7 +59,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      var onKeyEnteredRegistration = gq.on("key_entered", function(key, location) {
+      var onKeyEnteredRegistration = gq.on("key_entered", function(key, location, distance) {
         cl.x(key + " entered");
       });
 
@@ -91,7 +91,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      var onKeyLeftRegistration = gq.on("key_left", function(key, location) {
+      var onKeyLeftRegistration = gq.on("key_left", function(key, location, distance) {
         cl.x(key + " left");
       });
 
@@ -127,10 +127,10 @@ describe("GeoCallbackRegistration Tests:", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      var onKeyMovedRegistration1 = gq.on("key_moved", function(key, location) {
+      var onKeyMovedRegistration1 = gq.on("key_moved", function(key, location, distance) {
         cl.x(key + " moved1");
       });
-      var onKeyMovedRegistration2 = gq.on("key_moved", function(key, location) {
+      var onKeyMovedRegistration2 = gq.on("key_moved", function(key, location, distance) {
         cl.x(key + " moved2");
       });
 
@@ -166,10 +166,10 @@ describe("GeoCallbackRegistration Tests:", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      var onKeyEnteredRegistration1 = gq.on("key_entered", function(key, location) {
+      var onKeyEnteredRegistration1 = gq.on("key_entered", function(key, location, distance) {
         cl.x(key + " entered1");
       });
-      var onKeyEnteredRegistration2 = gq.on("key_entered", function(key, location) {
+      var onKeyEnteredRegistration2 = gq.on("key_entered", function(key, location, distance) {
         cl.x(key + " entered2");
       });
 
@@ -201,10 +201,10 @@ describe("GeoCallbackRegistration Tests:", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      var onKeyLeftRegistration1 = gq.on("key_left", function(key, location) {
+      var onKeyLeftRegistration1 = gq.on("key_left", function(key, location, distance) {
         cl.x(key + " left1");
       });
-      var onKeyLeftRegistration2 = gq.on("key_left", function(key, location) {
+      var onKeyLeftRegistration2 = gq.on("key_left", function(key, location, distance) {
         cl.x(key + " left2");
       });
 

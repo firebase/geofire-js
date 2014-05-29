@@ -185,9 +185,9 @@ The returned list will have the following form:
 
 ```JavaScript
 [
-  { key: "key1", location: [latitude1, longitude1] },
+  { key: "key1", location: [latitude1, longitude1], distance: distance1 },
   ...
-  { key: "keyN", location: [latitudeN, longitudeN] }
+  { key: "keyN", location: [latitudeN, longitudeN], distance: distanceN }
 ]
 ```
 
@@ -196,7 +196,7 @@ If there are no keys currently within this query, an empty list will be returned
 ```JavaScript
 geoQuery.results().then(function(results) {
   results.forEach(function(result) {
-    console.log(result.key + " currently in query at " + result.location);
+    console.log(result.key + " currently in query at " + result.location + "(distance from center: " + result.distance + ")");
   });
 }, function(error) {
   // Handle error case
@@ -205,7 +205,7 @@ geoQuery.results().then(function(results) {
 
 #### GeoQuery.on(eventType, callback)
 
-Attaches a `callback` to this query for a given `eventType`. The `callback` will be passed two parameters, the location's key and the location's [latitude, longitude] pair.
+Attaches a `callback` to this query for a given `eventType`. The `callback` will be passed three parameters, the location's key, the location's [latitude, longitude] pair, and this distance from the location to this query's center, in km.
 
 Valid `eventType` values are `key_entered`, `key_left`, and `key_moved`.
 
@@ -218,16 +218,16 @@ Valid `eventType` values are `key_entered`, `key_left`, and `key_moved`.
 Returns a `GeoCallbackRegistration` which can be used to cancel the `callback`. You can add as many callbacks as you would like by repeatedly calling `on()`. Each one will get called when its corresponding `eventType` fires. Each `callback` must be cancelled individually.
 
 ```JavaScript
-var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
-  console.log(key + " entered query at " + location);
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
+  console.log(key + " entered query at " + location + "(distance from center: " + distance + ")");
 });
 
-var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location) {
-  console.log(key + " moved within query to " + location);
+var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location, distance) {
+  console.log(key + " moved within query to " + location + "(distance from center: " + distance + ")");
 });
 
-var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location) {
-  console.log(key + " left query to " + location);
+var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location, distance) {
+  console.log(key + " left query to " + location + "(distance from center: " + distance + ")");
 });
 ```
 

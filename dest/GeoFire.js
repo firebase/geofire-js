@@ -413,11 +413,12 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
 
   function _fireCallbacks(locationKey, location) {
+    var distanceFromCenter = dist(location, _center);
     var wasAlreadyInQuery = (_locationsInQuery[locationKey] !== undefined);
-    var isNowInQuery = (dist(location, _center) <= _radius);
+    var isNowInQuery = (distanceFromCenter <= _radius);
     if (!wasAlreadyInQuery && isNowInQuery) {
       _callbacks.key_entered.forEach(function(callback) {
-        callback(locationKey, location);
+        callback(locationKey, location, distanceFromCenter);
       });
 
       // Add the current location key to our list of location keys within this GeoQuery
@@ -425,7 +426,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     }
     else if (wasAlreadyInQuery && !isNowInQuery) {
       _callbacks.key_left.forEach(function(callback) {
-        callback(locationKey, location);
+        callback(locationKey, location, distanceFromCenter);
       });
 
       // Remove the current location key from our list of location keys within this GeoQuery
@@ -433,7 +434,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     }
     else if (wasAlreadyInQuery) {
       _callbacks.key_moved.forEach(function(callback) {
-        callback(locationKey, location);
+        callback(locationKey, location, distanceFromCenter);
       });
 
       // Update the current location's location
@@ -458,6 +459,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
           results.push({
             key: key,
             location: _locationsInQuery[key]
+            // TODO: add distance
           });
         }
       }
@@ -487,7 +489,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     if (eventType === "key_entered") {
       for (var key in _locationsInQuery) {
         if (_locationsInQuery.hasOwnProperty(key)) {
-          callback(key, _locationsInQuery[key]);
+          callback(key, _locationsInQuery[key], dist(_locationsInQuery[key], _center));
         }
       }
     }
@@ -585,8 +587,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   _firebaseRef.child("locations").on("child_removed", function(locationsChildSnapshot) {
     var locationKey = locationsChildSnapshot.name();
     if (_locationsInQuery[locationKey] !== undefined) {
+      var distanceFromCenter = dist(_locationsInQuery[locationKey], _center);
       _callbacks.key_left.forEach(function(callback) {
-        callback(locationKey, _allLocations[locationKey]);
+        callback(locationKey, _allLocations[locationKey], distanceFromCenter);
       });
       delete _allLocations[locationKey];
     }
