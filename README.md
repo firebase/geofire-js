@@ -209,11 +209,11 @@ geoQuery.results().then(function(results) {
 
 Attaches a `callback` to this query for a given `eventType`. The `callback` will be passed three parameters, the location's key, the location's [latitude, longitude] pair, and this distance from the location to this query's center, in km.
 
-Valid `eventType` values are `key_entered`, `key_left`, and `key_moved`.
+Valid `eventType` values are `key_entered`, `key_exited`, and `key_moved`.
 
 `key_entered` is fired when a key enters this query. This can happen when a key moves from a location outside of this query to one inside of it or when a key is written to `GeoFire` for the first time and it falls within this query.
 
-`key_left` is fired when a key moves from a location inside of this query to one outside of it.
+`key_exited` is fired when a key moves from a location inside of this query to one outside of it.
 
 `key_moved` is fired when a key which is already in this query moves to another (or the same) location inside of it.
 
@@ -224,7 +224,7 @@ var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location
   console.log(key + " entered query at " + location + " (" + distance + " km from center)");
 });
 
-var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location, distance) {
+var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
   console.log(key + " left query to " + location + " (" + distance + " km from center)");
 });
 
@@ -262,7 +262,7 @@ var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location
   console.log(key + " entered query at " + location + " (" + distance + " km from center)");
 });
 
-var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location, distance) {
+var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
   console.log(key + " left query to " + location + " (" + distance + " km from center)");
   onKeyEnteredRegistration.cancel();
 });

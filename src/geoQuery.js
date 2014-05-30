@@ -79,7 +79,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       _locationsInQuery[locationKey] = location;
     }
     else if (wasAlreadyInQuery && !isNowInQuery) {
-      _callbacks.key_left.forEach(function(callback) {
+      _callbacks.key_exited.forEach(function(callback) {
         callback(locationKey, location, distanceFromCenter);
       });
 
@@ -124,13 +124,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   /**
    * Attaches a callback to this GeoQuery for a given event type.
    *
-   * @param {string} eventType The event type for which to attach the callback. One of "key_entered", "key_left", or "key_moved".
+   * @param {string} eventType The event type for which to attach the callback. One of "key_entered", "key_exited", or "key_moved".
    * @param {function} callback Callback function to be called when an event of type eventType fires.
    * @return {GeoCallbackRegistration} A callback registration which can be used to cancel the provided callback.
    */
   this.on = function(eventType, callback) {
-    if (["key_entered", "key_left", "key_moved"].indexOf(eventType) === -1) {
-      throw new Error("Event type must be \"key_entered\", \"key_left\", or \"key_moved\"");
+    if (["key_entered", "key_exited", "key_moved"].indexOf(eventType) === -1) {
+      throw new Error("Event type must be \"key_entered\", \"key_exited\", or \"key_moved\"");
     }
     if (typeof callback !== "function") {
       throw new Error("Event callback must be a function.");
@@ -160,7 +160,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   this.cancel = function () {
     _callbacks = {
       key_entered: [],
-      key_left: [],
+      key_exited: [],
       key_moved: []
     };
 
@@ -177,7 +177,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   this.updateCriteria = function(newQueryCriteria) {
     _saveCriteria(newQueryCriteria);
 
-    // Loop through all of the locations and fire the "key_entered" or "key_left" callbacks if necessary
+    // Loop through all of the locations and fire the "key_entered" or "key_exited" callbacks if necessary
     for (var key in _allLocations) {
       if (_allLocations.hasOwnProperty(key)) {
         _fireCallbacks(key, _allLocations[key]);
@@ -215,7 +215,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   var _firebaseRef = firebaseRef;
   var _callbacks = {
     key_entered: [],
-    key_left: [],
+    key_exited: [],
     key_moved: []
   };
   var _locationsInQuery = {};
@@ -237,12 +237,12 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     });
   });
 
-  // Fire the "key_left" event if a location in the query is removed entirely from geoFire
+  // Fire the "key_exited" event if a location in the query is removed entirely from geoFire
   _firebaseRef.child("locations").on("child_removed", function(locationsChildSnapshot) {
     var locationKey = locationsChildSnapshot.name();
     if (_locationsInQuery[locationKey] !== undefined) {
       var distanceFromCenter = dist(_locationsInQuery[locationKey], _center);
-      _callbacks.key_left.forEach(function(callback) {
+      _callbacks.key_exited.forEach(function(callback) {
         callback(locationKey, _allLocations[locationKey], distanceFromCenter);
       });
       delete _allLocations[locationKey];

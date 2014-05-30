@@ -85,14 +85,14 @@ describe("GeoCallbackRegistration Tests:", function() {
       });
     });
 
-    it("\"key_left\" registrations can be cancelled", function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 left"], expect, done);
+    it("\"key_exited\" registrations can be cancelled", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 exited"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      var onKeyLeftRegistration = gq.on("key_left", function(key, location, distance) {
-        cl.x(key + " left");
+      var onKeyExitedRegistration = gq.on("key_exited", function(key, location, distance) {
+        cl.x(key + " exited");
       });
 
       batchSet(gf, [
@@ -108,7 +108,7 @@ describe("GeoCallbackRegistration Tests:", function() {
 
         return wait(5);
       }).then(function() {
-        onKeyLeftRegistration.cancel();
+        onKeyExitedRegistration.cancel();
         cl.x("p3");
 
         return gf.set("loc3", [-80, -80]);
@@ -195,17 +195,17 @@ describe("GeoCallbackRegistration Tests:", function() {
       });
     });
 
-    it("Cancelling an \"key_left\" registration does not cancel all \"key_left\" callbacks", function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 left1", "loc1 left2", "loc3 left2"], expect, done);
+    it("Cancelling an \"key_exited\" registration does not cancel all \"key_exited\" callbacks", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 exited1", "loc1 exited2", "loc3 exited2"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      var onKeyLeftRegistration1 = gq.on("key_left", function(key, location, distance) {
-        cl.x(key + " left1");
+      var onKeyExitedRegistration1 = gq.on("key_exited", function(key, location, distance) {
+        cl.x(key + " exited1");
       });
-      var onKeyLeftRegistration2 = gq.on("key_left", function(key, location, distance) {
-        cl.x(key + " left2");
+      var onKeyExitedRegistration2 = gq.on("key_exited", function(key, location, distance) {
+        cl.x(key + " exited2");
       });
 
       batchSet(gf, [
@@ -221,7 +221,7 @@ describe("GeoCallbackRegistration Tests:", function() {
 
         return wait(5);
       }).then(function() {
-        onKeyLeftRegistration1.cancel();
+        onKeyExitedRegistration1.cancel();
         cl.x("p3");
 
         return gf.set("loc3", [-80, -80]);
@@ -238,10 +238,10 @@ describe("GeoCallbackRegistration Tests:", function() {
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
 
-      var onKeyLeftRegistration = gq.on("key_left", function() {});
+      var onKeyExitedRegistration = gq.on("key_exited", function() {});
 
-      expect(function() { onKeyLeftRegistration.cancel() }).not.toThrow();
-      expect(function() { onKeyLeftRegistration.cancel() }).not.toThrow();
+      expect(function() { onKeyExitedRegistration.cancel() }).not.toThrow();
+      expect(function() { onKeyExitedRegistration.cancel() }).not.toThrow();
     });
   });
 });

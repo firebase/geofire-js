@@ -40,7 +40,7 @@
     log(key + " moved to somewere else within our query.");
   });
 
-  var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location) {
+  var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location) {
     log(key + " migrated out of our query. Bye bye :(");
 
     document.getElementById(key + "Inside").style.display = "none";

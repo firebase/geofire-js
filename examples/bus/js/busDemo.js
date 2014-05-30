@@ -125,11 +125,11 @@ demoFirebaseRef.remove(function() {
     vehicle.marker.animatedMoveTo(vehicleLocation[0], vehicleLocation[1]);
   });
 
-  geoQuery.on("key_left", function(vehicleId, vehicleLocation) {
+  geoQuery.on("key_exited", function(vehicleId, vehicleLocation) {
     var vehicle = vehicles[vehicleId];
 
     console.assert(vehicle, "Vehicle " + vehicleId + " is not in the vehicles list.");
-    //console.log("onKeyLeft(): " + vehicleId + " (" + vehicle.routeTag + ")");
+    //console.log("onKeyExited(): " + vehicleId + " (" + vehicle.routeTag + ")");
 
     //vehicle.marker.setIcon("http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=" + vehicle.vtype + "|bbT|" + vehicle.routeTag + "|" + getVehicleColor(vehicle) + "|eee");
     //vehicle.marker.setMap(null);

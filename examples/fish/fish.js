@@ -37,7 +37,7 @@
     log(key + " moved to somewere else within our query.");
   });
 
-  var onKeyLeftRegistration = geoQuery.on("key_left", function(key, location) {
+  var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location) {
     log(key + " migrated out of our query. Bye bye :(");
   });
 
@@ -50,23 +50,23 @@
   // Once all the fish are in geoFire, update some of their positions
   RSVP.allSettled(promises).then(function() {
     log("*** Updating locations ***");
-    return geoFire.set("fish2", [-53.435719, 140.808716]);    // fires onKeyEntered()
+    return geoFire.set("fish2", [-53.435719, 140.808716]);    // fires "key_entered"
   }).then(function() {
-    return geoFire.set("fish3", [56.83069, 1.94822]);         // fires onKeyLeft()
+    return geoFire.set("fish3", [56.83069, 1.94822]);         // fires "key_exited"
   }).then(function() {
-    return geoFire.set("fish1", [-20.93412, 143.23406]);      // fires onKeyMoved()
+    return geoFire.set("fish1", [-20.93412, 143.23406]);      // fires "key_moved"
   }).then(function() {
-    log("*** Unregistering onKeyLeft() ***");
-    onKeyLeftRegistration.cancel();
-    return geoFire.set("fish1", [-80.93521, 3.62056]);        // does not fire onKeyLeft() since it was cancelled
+    log("*** Unregistering \"key_exited\" ***");
+    onKeyExitedRegistration.cancel();
+    return geoFire.set("fish1", [-80.93521, 3.62056]);        // does not fire "key_exited" since it's callback registration was cancelled
   }).then(function() {
-    return geoFire.set("fish4", [-20.93412, 143.23406]);      // fires onKeyEntered()
+    return geoFire.set("fish4", [-20.93412, 143.23406]);      // fires "key_entered"
   }).then(function() {
-    log("*** Cancelling geo query ***");
+    log("*** Cancelling entire query ***");
     geoQuery.cancel();
-    return geoFire.set("fish2", [-52.14522, 145.52341]);      // does not fire onKeyMoved() since it was cancelled
+    return geoFire.set("fish2", [-52.14522, 145.52341]);      // does not fire "key_moved" since the whole query was cancelled
   }).then(function() {
-    return geoFire.set("fish1", [-56.32513, 147.02952]);      // does not fire onKeyEntered() since it was cancelled
+    return geoFire.set("fish1", [-56.32513, 147.02952]);      // does not fire "key_entered" since the whoel query was cancelled
   });
 
 
