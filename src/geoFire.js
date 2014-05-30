@@ -6,7 +6,7 @@ var g_GEOHASH_LENGTH = 12;
  *
  * @constructor
  * @this {GeoFire}
- * @param {object} firebaseRef A Firebase reference.
+ * @param {object} firebaseRef A Firebase reference where the GeoFire data will be stored.
  */
 var GeoFire = function(firebaseRef) {
   /*********************/
@@ -27,7 +27,7 @@ var GeoFire = function(firebaseRef) {
       }
 
       if (error !== undefined) {
-        reject("Error: Invalid key '" + key + "': " + error);
+        reject("Error: Invalid key \"" + key + "\": " + error);
       }
       else {
         resolve();
@@ -91,28 +91,31 @@ var GeoFire = function(firebaseRef) {
    */
   function _removePreviousIndex(key, location) {
     return new RSVP.Promise(function(resolve, reject) {
-      // Remove the key's current node in /indices/ if it exists
       _firebaseRef.child("locations/" + key).once("value", function(locationsChildSnapshot) {
         // If the key is not in GeoFire, there is no old index to remove
         var previousLocation = locationsChildSnapshot.val();
         if (previousLocation === null) {
           resolve(location !== null);
         }
-        // Otherwise, overwrite the existing index
         else {
-          var previousLatLon = previousLocation.split(",").map(Number);
-          if (location !== null && location[0] === previousLatLon[0] && location[1] === previousLatLon[1]) {
+          // If the location is not changing, there is no need to do anything
+          var previousLocation = previousLocation.split(",").map(Number);
+          if (location !== null && location[0] === previousLocation[0] && location[1] === previousLocation[1]) {
             resolve(false);
           }
-          _firebaseRef.child("indices/" + encodeGeohash(previousLatLon, g_GEOHASH_LENGTH) + key).remove(function(error) {
+
+          // Otherwise, overwrite the previous index
+          _firebaseRef.child("indices/" + encodeGeohash(previousLocation, g_GEOHASH_LENGTH) + key).remove(function(error) {
             if (error) {
-              reject("Error: Firebase synchronization failed: " + error); // TODO: throw exception here?
+              reject("Error: Firebase synchronization failed: " + error);
             }
             else {
               resolve(true);
             }
           });
         }
+      }, function(error) {
+        reject("Error: Firebase synchronization failed: " + error);
       });
     });
   }
@@ -126,11 +129,10 @@ var GeoFire = function(firebaseRef) {
    * @return {promise} A promise that is fulfilled when the write is over.
    */
   function _updateLocationsNode(key, location) {
-    // Add the key to /locations/
     return new RSVP.Promise(function(resolve, reject) {
       _firebaseRef.child("locations/" + key).set(location ? location.toString() : null, function(error) {
         if (error) {
-          reject("Error: Firebase synchronization failed: " + error); // TODO: throw exception here?
+          reject("Error: Firebase synchronization failed: " + error);
         }
         else {
           resolve();
@@ -148,16 +150,15 @@ var GeoFire = function(firebaseRef) {
    * @return {promise} A promise that is fulfilled when the write is over.
    */
   function _updateIndicesNode(key, location) {
-    // Add the key to /indices/
-    // If the new location is null, there is no need to add it to /indices/ as the previous /indices/ node has already been removed
     return new RSVP.Promise(function(resolve, reject) {
+      // If the new location is null, there is no need to update it
       if (location === null) {
         resolve();
       }
       else {
         _firebaseRef.child("indices/" + encodeGeohash(location, g_GEOHASH_LENGTH) + key).set(true, function(error) {
           if (error) {
-            reject("Error: Firebase synchronization failed: " + error); // TODO: throw exception here?
+            reject("Error: Firebase synchronization failed: " + error);
           }
           else {
             resolve();
