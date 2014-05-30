@@ -139,7 +139,7 @@ var GeoFire = function(firebaseRef) {
         }
         else {
           // If the location is not changing, there is no need to do anything
-          var previousLocation = previousLocation.split(",").map(Number);
+          previousLocation = previousLocation.split(",").map(Number);
           if (location !== null && location[0] === previousLocation[0] && location[1] === previousLocation[1]) {
             resolve(false);
           }
@@ -206,7 +206,7 @@ var GeoFire = function(firebaseRef) {
         });
       }
     });
-  };
+  }
 
   /**
    * Returns a promise that is fulfilled with the location corresponding to the given key.
@@ -245,7 +245,7 @@ var GeoFire = function(firebaseRef) {
         return new RSVP.all([_updateLocationsNode(key, location), _updateIndicesNode(key, location)]);
       }
       else {
-        return new RSVP.Promise(function(resolve, reject) { resolve() });
+        return new RSVP.Promise(function(resolve) { resolve(); });
       }
     });
   };
