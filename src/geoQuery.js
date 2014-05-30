@@ -212,6 +212,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   if (typeof queryCriteria.radius === "undefined") {
     throw new Error("No \"radius\" attribute specified for query criteria.");
   }
+
   var _firebaseRef = firebaseRef;
   var _callbacks = {
     key_entered: [],
@@ -224,6 +225,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   var _center, _radius, _centerHash;
   _saveCriteria(queryCriteria);
 
+  // Fire any key events for new or existing indices
   _firebaseRef.child("indices").on("child_added", function(indicesChildSnapshot) {
     var childName = indicesChildSnapshot.name();
     var locationKey = childName.slice(g_GEOHASH_LENGTH);

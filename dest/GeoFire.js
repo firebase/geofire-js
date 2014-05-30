@@ -53,7 +53,10 @@ var GeoFire = function(firebaseRef) {
   /*  PRIVATE METHODS  */
   /*********************/
   /**
-   * Helper functions to detect invalid inputs
+   * Returns a promise that is fulfilled after the inputted key has been verified.
+   *
+   * @param {string/number} key A GeoFire key.
+   * @return {promise} A promise that is fulfilled when the verification is complete.
    */
   function _validateKey(key) {
     return new RSVP.Promise(function(resolve, reject) {
@@ -72,6 +75,12 @@ var GeoFire = function(firebaseRef) {
     });
   }
 
+  /**
+   * Returns a promise that is fulfilled after the inputted location has been verified.
+   *
+   * @param {array} location A latitude/longitude pair.
+   * @return {promise} A promise that is fulfilled when the verification is complete.
+   */
   function _validateLocation(location) {
     return new RSVP.Promise(function(resolve, reject) {
       var error;
@@ -112,18 +121,56 @@ var GeoFire = function(firebaseRef) {
   }
 
   /**
-   * Helper functions to write to Firebase
+   * Returns a promise that is fulfilled after key's previous location has been removed from the /indices/
+   * node in Firebase. If the key's previous location is the same as its new location, Firebase is not
+   * updated.
+   *
+   * @param {string/number} key The key of the location to add.
+   * @param {array} location A latitude/longitude pair.
+   * @return {promise} A promise that is fulfilled when the write is over.
    */
-  function _updateFirebaseIndex(key, location) {
+  function _removePreviousIndex(key, location) {
     return new RSVP.Promise(function(resolve, reject) {
-      // Setting location to null will remove key from the Firebase so there is nothing to do here
-      if (location === null) {
-        resolve();
-      }
+      // Remove the key's current node in /indices/ if it exists
+      _firebaseRef.child("locations/" + key).once("value", function(locationsChildSnapshot) {
+        // If the key is not in GeoFire, there is no old index to remove
+        var previousLocation = locationsChildSnapshot.val();
+        if (previousLocation === null) {
+          resolve(location !== null);
+        }
+        // Otherwise, overwrite the existing index
+        else {
+          var previousLatLon = previousLocation.split(",").map(Number);
+          if (location !== null && location[0] === previousLatLon[0] && location[1] === previousLatLon[1]) {
+            resolve(false);
+          }
+          _firebaseRef.child("indices/" + encodeGeohash(previousLatLon, g_GEOHASH_LENGTH) + key).remove(function(error) {
+            if (error) {
+              reject("Error: Firebase synchronization failed: " + error); // TODO: throw exception here?
+            }
+            else {
+              resolve(true);
+            }
+          });
+        }
+      });
+    });
+  }
 
-      _firebaseRef.child("indices/" + encodeGeohash(location, g_GEOHASH_LENGTH) + key).set(true, function(error) {
+  /**
+   * Returns a promise that is fulfilled after key-location pair has been added to the /locations/ node
+   * in Firebase.
+   *
+   * @param {string/number} key The key of the location to add.
+   * @param {array} location A latitude/longitude pair.
+   * @return {promise} A promise that is fulfilled when the write is over.
+   */
+  function _updateLocationsNode(key, location) {
+    // Add the key to /locations/
+    return new RSVP.Promise(function(resolve, reject) {
+      _firebaseRef.child("locations/" + key).set(location ? location.toString() : null, function(error) {
         if (error) {
-          reject("Error: Firebase synchronization failed: " + error);
+          reject("Error: Firebase synchronization failed: " + error); // TODO: throw exception here?
         }
         else {
           resolve();
@@ -132,58 +179,48 @@ var GeoFire = function(firebaseRef) {
     });
   }
 
-  function _updateFirebaseLocation(key, location) {
-    function _removeOldIndex() {
-      return new RSVP.Promise(function(resolve, reject) {
-        if (_allLocations[key] !== undefined) {
-          _firebaseRef.child("indices/" + encodeGeohash(_allLocations[key].split(",").map(Number), g_GEOHASH_LENGTH) + key).remove(function(error) {
-            if (error) {
-              reject("Error: Firebase synchronization failed: " + error);
-            }
-            else {
-              resolve();
-            }
-          });
-        }
-        else {
-          resolve();
-        }
-      });
-
-      /*return new RSVP.Promise(function(resolve, reject) {
-        firebaseRef.child("locations/" + key).once("value", function(locationsChildSnapshot) {
-          if (locationsChildSnapshot.val()) {
-            firebaseRef.child("indices/" + encodeGeohash(locationsChildSnapshot.val().split(",").map(Number), g_GEOHASH_LENGTH) + key).remove(function(error) {
-              if (error) {
-                reject("Error: Firebase synchronization failed: " + error);
-              }
-              else {
-                resolve();
-              }
-            });
-          }
-          else {
-            resolve();
-          }
-        });
-      });*/
-    }
-
-    function _updateLocation() {
-      return new RSVP.Promise(function(resolve, reject) {
-        _firebaseRef.child("locations/" + key).set(location ? location.toString() : null, function(error) {
+  /**
+   * Returns a promise that is fulfilled after key-location pair has been added to the /indices/ node
+   * in Firebase. If the location is null, Firebase is not updated.
+   *
+   * @param {string/number} key The key of the location to add.
+   * @param {array} location A latitude/longitude pair.
+   * @return {promise} A promise that is fulfilled when the write is over.
+   */
+  function _updateIndicesNode(key, location) {
+    // Add the key to /indices/
+    // If the new location is null, there is no need to add it to /indices/ as the previous /indices/ node has already been removed
+    return new RSVP.Promise(function(resolve, reject) {
+      if (location === null) {
+        resolve();
+      }
+      else {
+        _firebaseRef.child("indices/" + encodeGeohash(location, g_GEOHASH_LENGTH) + key).set(true, function(error) {
           if (error) {
-            reject("Error: Firebase synchronization failed: " + error);
+            reject("Error: Firebase synchronization failed: " + error); // TODO: throw exception here?
           }
           else {
             resolve();
           }
         });
-      });
-    }
+      }
+    });
+  };
 
-    return _removeOldIndex().then(function() {
-      return _updateLocation();
+  /**
+   * Returns a promise that is fulfilled with the location corresponding to the given key.
+   * Note: If the key does not exist, null is returned.
+   *
+   * @param {string/number} key The key of the location to retrieve.
+   * @return {promise} A promise that is fulfilled with the location of the given key.
+   */
+  function _getLocation(key) {
+    return new RSVP.Promise(function(resolve, reject) {
+      _firebaseRef.child("locations/" + key.toString()).once("value", function(dataSnapshot) {
+        resolve(dataSnapshot.val() ? dataSnapshot.val().split(",").map(Number) : null);
+      }, function(error) {
+        reject("Error: Firebase synchronization failed: " + error);
+      });
     });
   }
 
@@ -194,15 +231,21 @@ var GeoFire = function(firebaseRef) {
   /**
    * Returns a promise after adding the key-location pair.
    *
-   * @param {string} key The key of the location to add.
-   * @param {array} location A latitude/longitude pair
+   * @param {string/number} key The key of the location to add.
+   * @param {array} location A latitude/longitude pair.
    * @return {promise} A promise that is fulfilled when the write is complete.
    */
   this.set = function(key, location) {
-    return RSVP.all([_validateKey(key), _validateLocation(location)]).then(function() {
-      return _updateFirebaseLocation(key.toString(), location);
-    }).then(function() {
-      return _updateFirebaseIndex(key.toString(), location);
+    return new RSVP.all([_validateKey(key), _validateLocation(location)]).then(function() {
+      return _removePreviousIndex(key, location);
+    }).then(function(locationChanged) {
+      // If the location has actually changed, update Firebase; otherwise, just return an empty promise
+      if (locationChanged) {
+        return new RSVP.all([_updateLocationsNode(key, location), _updateIndicesNode(key, location)]);
+      }
+      else {
+        return new RSVP.Promise(function(resolve, reject) { resolve() });
+      }
     });
   };
 
@@ -210,26 +253,20 @@ var GeoFire = function(firebaseRef) {
    * Returns a promise that is fulfilled with the location corresponding to the given key.
    * Note: If the key does not exist, null is returned.
    *
-   * @param {string} key The key of the location to retrieve.
+   * @param {string/number} key The key of the location to retrieve.
    * @return {promise} A promise that is fulfilled with the location of the given key.
    */
   this.get = function(key) {
     return _validateKey(key).then(function() {
-      return new RSVP.Promise(function(resolve, reject) {
-        _firebaseRef.child("locations/" + key.toString()).once("value", function(dataSnapshot) {
-          resolve(dataSnapshot.val() ? dataSnapshot.val().split(",").map(Number) : null);
-        }, function(error) {
-          reject("Error: Firebase synchronization failed: " + error);
-        });
-      });
+      return _getLocation(key);
     });
   };
 
   /**
    * Returns a promise that is fulfilled after the location corresponding to the given key is removed.
    *
-   * @param {string} key The ID/key of the location to retrieve.
-   * @return {promise} A promise that is fulfilled with the location of the given ID/key.
+   * @param {string/number} key The key of the location to remove.
+   * @return {promise} A promise that is fulfilled after the inputted key is removed.
    */
   this.remove = function(key) {
     return this.set(key, null);
@@ -241,8 +278,8 @@ var GeoFire = function(firebaseRef) {
    * @param {object} queryCriteria The criteria which specifies the GeoQuery's type, center, and radius.
    * @return {GeoQuery} The new GeoQuery object.
    */
-  this.query = function(criteria) {
-    return new GeoQuery(_firebaseRef, criteria);
+  this.query = function(queryCriteria) {
+    return new GeoQuery(_firebaseRef, queryCriteria);
   };
 
   /*****************/
@@ -250,15 +287,6 @@ var GeoFire = function(firebaseRef) {
   /*****************/
   // Private variables
   var _firebaseRef = firebaseRef;
-  var _allLocations = {};
-
-  // Keep track of all of the locations
-  _firebaseRef.child("locations").on("child_added", function(locationsChildSnapshot) {
-    _allLocations[locationsChildSnapshot.name()] = locationsChildSnapshot.val();
-  });
-  _firebaseRef.child("locations").on("child_removed", function(locationsChildSnapshot) {
-    delete _allLocations[locationsChildSnapshot.name()];
-  });
 };
 
 var deg2rad = function(deg) {
@@ -559,6 +587,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   if (typeof queryCriteria.radius === "undefined") {
     throw new Error("No \"radius\" attribute specified for query criteria.");
   }
+
   var _firebaseRef = firebaseRef;
   var _callbacks = {
     key_entered: [],
@@ -571,6 +600,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   var _center, _radius, _centerHash;
   _saveCriteria(queryCriteria);
 
+  // Fire any key events for new or existing indices
   _firebaseRef.child("indices").on("child_added", function(indicesChildSnapshot) {
     var childName = indicesChildSnapshot.name();
     var locationKey = childName.slice(g_GEOHASH_LENGTH);

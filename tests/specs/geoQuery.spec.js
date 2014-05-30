@@ -349,8 +349,8 @@ describe("GeoQuery Tests:", function() {
       });
     });
 
-    it("\"key_moved\" callback fires for a location within the GeoQuery which is set to the same location", function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "loc1 moved", "loc3 moved"], expect, done);
+    it("\"key_moved\" callback does not fires for a location within the GeoQuery which is set to the same location", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "loc3 moved"], expect, done);
 
       var gf = new GeoFire(dataRef);
       var gq = gf.query({center: [1,2], radius: 1000});
