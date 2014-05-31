@@ -38,6 +38,9 @@ var GeoCallbackRegistration = function(cancelCallback) {
 
   var _cancelCallback = cancelCallback;
 };
+/*************/
+/*  GLOBALS  */
+/*************/
 // TODO: Investigate the correct value for this
 var g_GEOHASH_LENGTH = 12;
 
@@ -91,7 +94,7 @@ var GeoFire = function(firebaseRef) {
       }
 
       if (Object.prototype.toString.call(location) !== "[object Array]" || location.length !== 2) {
-        error = "expected 2 values, got " + location.length;
+        error = "expected array of length 2, got " + location.length;
       }
       else {
         var latitude = location[0];
@@ -403,7 +406,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // Validate the "center" attribute
     if (typeof newQueryCriteria.center !== "undefined") {
-      if (!(newQueryCriteria.center instanceof Array) || newQueryCriteria.center.length !== 2) {
+      if (Object.prototype.toString.call(newQueryCriteria.center) !== "[object Array]" || newQueryCriteria.center.length !== 2) {
         throw new Error("Invalid \"center\" attribute specified for query criteria. Expected array of length 2, got " + newQueryCriteria._center.length);
       }
       else {
@@ -442,33 +445,33 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
 
 
-  function _fireCallbacks(locationKey, location) {
+  function _fireCallbacks(key, location) {
     var distanceFromCenter = dist(location, _center);
-    var wasAlreadyInQuery = (_locationsInQuery[locationKey] !== undefined);
+    var wasAlreadyInQuery = (_locationsInQuery[key] !== undefined);
     var isNowInQuery = (distanceFromCenter <= _radius);
     if (!wasAlreadyInQuery && isNowInQuery) {
       _callbacks.key_entered.forEach(function(callback) {
-        callback(locationKey, location, distanceFromCenter);
+        callback(key, location, distanceFromCenter);
       });
 
       // Add the current location key to our list of location keys within this GeoQuery
-      _locationsInQuery[locationKey] = location;
+      _locationsInQuery[key] = location;
     }
     else if (wasAlreadyInQuery && !isNowInQuery) {
       _callbacks.key_exited.forEach(function(callback) {
-        callback(locationKey, location, distanceFromCenter);
+        callback(key, location, distanceFromCenter);
       });
 
       // Remove the current location key from our list of location keys within this GeoQuery
-      delete _locationsInQuery[locationKey];
+      delete _locationsInQuery[key];
     }
     else if (wasAlreadyInQuery) {
       _callbacks.key_moved.forEach(function(callback) {
-        callback(locationKey, location, distanceFromCenter);
+        callback(key, location, distanceFromCenter);
       });
 
       // Update the current location's location
-      _locationsInQuery[locationKey] = location;
+      _locationsInQuery[key] = location;
     }
   }
 
@@ -500,12 +503,12 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   /**
    * Attaches a callback to this GeoQuery for a given event type.
    *
-   * @param {string} eventType The event type for which to attach the callback. One of "key_entered", "key_exited", or "key_moved".
+   * @param {string} eventType The event type for which to attach the callback. One of "ready", "key_entered", "key_exited", or "key_moved".
    * @param {function} callback Callback function to be called when an event of type eventType fires.
    * @return {GeoCallbackRegistration} A callback registration which can be used to cancel the provided callback.
    */
   this.on = function(eventType, callback) {
-    if (["key_entered", "key_exited", "key_moved"].indexOf(eventType) === -1) {
+    if (["ready", "key_entered", "key_exited", "key_moved"].indexOf(eventType) === -1) {
       throw new Error("Event type must be \"key_entered\", \"key_exited\", or \"key_moved\"");
     }
     if (typeof callback !== "function") {
@@ -535,6 +538,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    */
   this.cancel = function () {
     _callbacks = {
+      ready: [],
       key_entered: [],
       key_exited: [],
       key_moved: []
@@ -582,49 +586,66 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   /*****************/
   /*  CONSTRUCTOR  */
   /*****************/
-  if (typeof queryCriteria.center === "undefined") {
-    throw new Error("No \"center\" attribute specified for query criteria.");
-  }
-  if (typeof queryCriteria.radius === "undefined") {
-    throw new Error("No \"radius\" attribute specified for query criteria.");
-  }
-
+  // Private variables
   var _firebaseRef = firebaseRef;
   var _callbacks = {
+    ready: [],
     key_entered: [],
     key_exited: [],
     key_moved: []
   };
   var _locationsInQuery = {};
   var _allLocations = {};
-
   var _center, _radius, _centerHash;
+
+  // Verify the query criteria
+  if (typeof queryCriteria.center === "undefined") {
+    throw new Error("No \"center\" attribute specified for query criteria.");
+  }
+  if (typeof queryCriteria.radius === "undefined") {
+    throw new Error("No \"radius\" attribute specified for query criteria.");
+  }
   _saveCriteria(queryCriteria);
 
   // Fire any key events for new or existing indices
   _firebaseRef.child("indices").on("child_added", function(indicesChildSnapshot) {
-    var childName = indicesChildSnapshot.name();
-    var locationKey = childName.slice(g_GEOHASH_LENGTH);
+    console.log("child_added");
+    var key = indicesChildSnapshot.name().slice(g_GEOHASH_LENGTH);
 
-    _firebaseRef.child("locations/" + locationKey).once("value", function(locationsDataSnapshot) {
+    _firebaseRef.child("locations/" + key).once("value", function(locationsDataSnapshot) {
       var location = locationsDataSnapshot.val().split(",").map(Number);
 
-      _allLocations[locationKey] = location;
+      _allLocations[key] = location;
 
-      _fireCallbacks(locationKey, location);
+      _fireCallbacks(key, location);
     });
   });
 
-  // Fire the "key_exited" event if a location in the query is removed entirely from geoFire
+  // Fire the "ready" event once the data is loaded
+  _firebaseRef.child("indices").once("value", function(snapshot) {
+    console.log("value");
+    _callbacks.ready.forEach(function(callback) {
+      callback();
+    });
+  });
+
+  // Fire the "key_exited" callbacks if a location in the query is removed entirely from GeoFire
   _firebaseRef.child("locations").on("child_removed", function(locationsChildSnapshot) {
-    var locationKey = locationsChildSnapshot.name();
-    if (_locationsInQuery[locationKey] !== undefined) {
-      var distanceFromCenter = dist(_locationsInQuery[locationKey], _center);
+    // Get the key of the location being removed
+    var key = locationsChildSnapshot.name();
+
+    // If the removed location is in this query, fire the "key_exited" callbacks for it and remove
+    // it from the locations in query dictionary
+    if (_locationsInQuery[key] !== undefined) {
+      var distanceFromCenter = dist(_locationsInQuery[key], _center);
       _callbacks.key_exited.forEach(function(callback) {
-        callback(locationKey, _allLocations[locationKey], distanceFromCenter);
+        callback(key, _locationsInQuery[key], distanceFromCenter);
       });
-      delete _allLocations[locationKey];
+      delete _locationsInQuery[key];
     }
+
+    // Remove the location from the all locations dictionary
+    delete _allLocations[key];
   });
 };
   return GeoFire;

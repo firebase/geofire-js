@@ -1,98 +1,95 @@
 describe("GeoQuery Tests:", function() {
   // Reset the Firebase before each test
   beforeEach(function(done) {
-    resetFirebase().then(done);
+    beforeEachHelper(done);
+  });
+
+  afterEach(function(done) {
+    afterEachHelper(done);
   });
 
   describe("Constructor:", function() {
     it("Constructor stores query criteria", function() {
       console.log("!!!!!  GeoQuery Tests  !!!!!");
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      expect(gq.center()).toEqual([1,2]);
-      expect(gq.radius()).toEqual(1000);
+      expect(geoQueries[0].center()).toEqual([1,2]);
+      expect(geoQueries[0].radius()).toEqual(1000);
     });
 
     it("Constructor throws error on invalid query criteria", function() {
-      var gf = new GeoFire(dataRef);
-
-      expect(function() { gf.query({}) }).toThrow();
-      expect(function() { gf.query({random: 100}) }).toThrow();
-      expect(function() { gf.query({center: [1,2]}) }).toThrow();
-      expect(function() { gf.query({radius: 1000}) }).toThrow();
-      expect(function() { gf.query({center: [91,2], radius: 1000}) }).toThrow();
-      expect(function() { gf.query({center: [1,-181], radius: 1000}) }).toThrow();
-      expect(function() { gf.query({center: ["text",2], radius: 1000}) }).toThrow();
-      expect(function() { gf.query({center: [1,[1,2]], radius: 1000}) }).toThrow();
-      expect(function() { gf.query({center: 1000, radius: 1000}) }).toThrow();
-      expect(function() { gf.query({center: null, radius: 1000}) }).toThrow();
-      expect(function() { gf.query({center: undefined, radius: 1000}) }).toThrow();
-      expect(function() { gf.query({center: [null,2], radius: 1000}) }).toThrow();
-      expect(function() { gf.query({center: [1,undefined], radius: 1000}) }).toThrow();
-      expect(function() { gf.query({center: [1,2], radius: -10}) }).toThrow();
-      expect(function() { gf.query({center: [1,2], radius: "text"}) }).toThrow();
-      expect(function() { gf.query({center: [1,2], radius: [1,2]}) }).toThrow();
-      expect(function() { gf.query({center: [1,2], radius: null}) }).toThrow();
-      expect(function() { gf.query({center: [1,2], radius: undefined}) }).toThrow();
-      expect(function() { gf.query({center: [1,2], radius: 1000, other: "throw"}) }).toThrow();
+      expect(function() { geoFire.query({}) }).toThrow();
+      expect(function() { geoFire.query({random: 100}) }).toThrow();
+      expect(function() { geoFire.query({center: [1,2]}) }).toThrow();
+      expect(function() { geoFire.query({radius: 1000}) }).toThrow();
+      expect(function() { geoFire.query({center: [91,2], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.query({center: [1,-181], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.query({center: ["text",2], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.query({center: [1,[1,2]], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.query({center: 1000, radius: 1000}) }).toThrow();
+      expect(function() { geoFire.query({center: null, radius: 1000}) }).toThrow();
+      expect(function() { geoFire.query({center: undefined, radius: 1000}) }).toThrow();
+      expect(function() { geoFire.query({center: [null,2], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.query({center: [1,undefined], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.query({center: [1,2], radius: -10}) }).toThrow();
+      expect(function() { geoFire.query({center: [1,2], radius: "text"}) }).toThrow();
+      expect(function() { geoFire.query({center: [1,2], radius: [1,2]}) }).toThrow();
+      expect(function() { geoFire.query({center: [1,2], radius: null}) }).toThrow();
+      expect(function() { geoFire.query({center: [1,2], radius: undefined}) }).toThrow();
+      expect(function() { geoFire.query({center: [1,2], radius: 1000, other: "throw"}) }).toThrow();
     });
   });
 
   describe("updateCriteria():", function() {
     it("updateCriteria() updates query criteria", function() {
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
       // TODO: change
-      expect(gq.center()).toEqual([1,2]);
-      expect(gq.radius()).toEqual(1000);
+      expect(geoQueries[0].center()).toEqual([1,2]);
+      expect(geoQueries[0].radius()).toEqual(1000);
 
-      gq.updateCriteria({center: [2,3], radius: 100});
+      geoQueries[0].updateCriteria({center: [2,3], radius: 100});
 
-      expect(gq.center()).toEqual([2,3]);
-      expect(gq.radius()).toEqual(100);
+      expect(geoQueries[0].center()).toEqual([2,3]);
+      expect(geoQueries[0].radius()).toEqual(100);
     });
 
     it("updateCriteria() updates query criteria when given only center", function() {
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
       // TODO: change
-      expect(gq.center()).toEqual([1,2]);
-      expect(gq.radius()).toEqual(1000);
+      expect(geoQueries[0].center()).toEqual([1,2]);
+      expect(geoQueries[0].radius()).toEqual(1000);
 
-      gq.updateCriteria({center: [2,3]});
+      geoQueries[0].updateCriteria({center: [2,3]});
 
-      expect(gq.center()).toEqual([2,3]);
-      expect(gq.radius()).toEqual(1000);
+      expect(geoQueries[0].center()).toEqual([2,3]);
+      expect(geoQueries[0].radius()).toEqual(1000);
     });
 
     it("updateCriteria() updates query criteria when given only radius", function() {
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
       // TODO: change
-      expect(gq.center()).toEqual([1,2]);
-      expect(gq.radius()).toEqual(1000);
+      expect(geoQueries[0].center()).toEqual([1,2]);
+      expect(geoQueries[0].radius()).toEqual(1000);
 
-      gq.updateCriteria({radius: 100});
+      geoQueries[0].updateCriteria({radius: 100});
 
-      expect(gq.center()).toEqual([1,2]);
-      expect(gq.radius()).toEqual(100);
+      expect(geoQueries[0].center()).toEqual([1,2]);
+      expect(geoQueries[0].radius()).toEqual(100);
     });
 
     it("updateCriteria() fires \"key_entered\" callback for locations which now belong to the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "loc1 entered", "loc4 entered"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [90,90], radius: 1000});
-      gq.on("key_entered", function(key, location, distance) {
+      geoQueries.push(geoFire.query({center: [90,90], radius: 1000}));
+      geoQueries[0].on("key_entered", function(key, location, distance) {
         cl.x(key + " entered");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -101,7 +98,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        gq.updateCriteria({center: [1,2], radius: 1000});
+        geoQueries[0].updateCriteria({center: [1,2], radius: 1000});
 
         return wait(5);
       }).then(function() {
@@ -112,13 +109,12 @@ describe("GeoQuery Tests:", function() {
     it("updateCriteria() fires \"key_exited\" callback for locations which no longer belong to the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "loc1 exited", "loc4 exited"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1, 2], radius: 1000});
-      gq.on("key_exited", function(key, location, distance) {
+      geoQueries.push(geoFire.query({center: [1, 2], radius: 1000}));
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -127,7 +123,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        gq.updateCriteria({center: [90,90], radius: 1000});
+        geoQueries[0].updateCriteria({center: [90,90], radius: 1000});
 
         return wait(5);
       }).then(function() {
@@ -136,22 +132,21 @@ describe("GeoQuery Tests:", function() {
     });
 
     it("updateCriteria() throws error on invalid query criteria", function() {
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      expect(function() { gf.updateCriteria({}) }).toThrow();
-      expect(function() { gf.updateCriteria({random: 100}) }).toThrow();
-      expect(function() { gf.updateCriteria({center: [91,2], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateCriteria({center: [1,-181], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateCriteria({center: ["text",2], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateCriteria({center: [1,[1,2]], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateCriteria({center: [null,2], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateCriteria({center: [1,undefined], radius: 1000}) }).toThrow();
-      expect(function() { gf.updateCriteria({center: [1,2], radius: -10}) }).toThrow();
-      expect(function() { gf.updateCriteria({center: [1,2], radius: "text"}) }).toThrow();
-      expect(function() { gf.updateCriteria({center: [1,2], radius: [1,2]}) }).toThrow();
-      expect(function() { gf.updateCriteria({center: [1,2], radius: null}) }).toThrow();
-      expect(function() { gf.updateCriteria({center: [1,2], radius: undefined}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({random: 100}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({center: [91,2], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({center: [1,-181], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({center: ["text",2], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({center: [1,[1,2]], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({center: [null,2], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({center: [1,undefined], radius: 1000}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({center: [1,2], radius: -10}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({center: [1,2], radius: "text"}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({center: [1,2], radius: [1,2]}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({center: [1,2], radius: null}) }).toThrow();
+      expect(function() { geoFire.updateCriteria({center: [1,2], radius: undefined}) }).toThrow();
     });
   });
 
@@ -159,10 +154,9 @@ describe("GeoQuery Tests:", function() {
     it("results() returns valid results when there are locations within the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [1, 2]},
         {key: "loc2", location: [1, 3]},
         {key: "loc3", location: [1, 4]},
@@ -171,7 +165,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1")
 
-        return gq.results();
+        return geoQueries[0].results();
       }).then(function(results) {
         expect(results).toEqual([
           { key: "loc1", location: [1,2] },
@@ -186,10 +180,9 @@ describe("GeoQuery Tests:", function() {
     it("results() returns empty results when there are no locations within the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [1, 90]},
         {key: "loc2", location: [50, -1]},
         {key: "loc3", location: [16, -150]},
@@ -198,7 +191,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1")
 
-        return gq.results();
+        return geoQueries[0].results();
       }).then(function(results) {
         expect(results).toEqual([]);
 
@@ -213,25 +206,52 @@ describe("GeoQuery Tests:", function() {
 
   describe("on():", function() {
     it("on() throws error given invalid event type", function() {
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
       var setInvalidEventType = function() {
-        gq.on("invalid_event", function() { });
+        geoQueries[0].on("invalid_event", function() { });
       }
 
       expect(setInvalidEventType).toThrow();
     });
 
     it("on() throws error given invalid callback", function() {
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
       var setInvalidCallback = function() {
-        gq.on("key_entered", "non-function");
+        geoQueries[0].on("key_entered", "non-function");
       }
 
       expect(setInvalidCallback).toThrow();
+    });
+  });
+
+  describe("\"ready\" event:", function() {
+    it("\"ready\" event fires at the appropriate time:", function(done) {
+      //var cl = new Checklist(["p1", "p2"], expect, done);
+
+      new Firebase(url, Firebase.Context());
+
+
+      /*for (var i = 0; i < 100; ++i) {
+        //var latitude = Math.floor(Math.random() * 180) - 90;
+        //var longitude = Math.floor(Math.random() * 360) - 180;
+        //console.log("[" + latitude + "," + longitude + "]");
+        //geoFire.set("loc" + i, [latitude, longitude]);
+        geoFire.set("loc" + i, [1, 1]);
+      }*/
+
+      geoFire.query({center: [1,2], radius: 1000});
+
+      /*geoQueries[0].on("key_entered", function(key, location, distance) {
+        console.log(key + " entered");
+        //cl.x(key + " entered");
+      });
+
+      geoQueries[0].on("ready", function() {
+        console.log("ready");
+        done();
+      })*/
     });
   });
 
@@ -239,14 +259,13 @@ describe("GeoQuery Tests:", function() {
     it("\"key_moved\" callback does not fire for brand new locations within or outside of the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
@@ -262,21 +281,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_moved\" callback does not fire for locations outside of the GeoQuery which are moved somewhere else outside of the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [1, 90]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]}
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [1, 91]},
           {key: "loc3", location: [-50, -50]}
         ]);
@@ -292,21 +310,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_moved\" callback does not fire for locations outside of the GeoQuery which are moved within the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [1, 90]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]}
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [0, 0]},
           {key: "loc3", location: [-1, -1]}
         ]);
@@ -322,21 +339,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_moved\" callback does not fire for locations within the GeoQuery which are moved somewhere outside of the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [1, 90]},
           {key: "loc3", location: [-1, -90]}
         ]);
@@ -352,21 +368,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_moved\" callback does not fires for a location within the GeoQuery which is set to the same location", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc3 moved"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, -1]}
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [0, 0]},
           {key: "loc2", location: [55, 55]},
           {key: "loc3", location: [1, 1]}
@@ -383,21 +398,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_moved\" callback fires for locations within the GeoQuery which are moved somewhere else within the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 moved", "loc3 moved"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [2, 2]},
           {key: "loc3", location: [-1, -1]}
         ]);
@@ -413,21 +427,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_moved\" callback gets passed correct location parameter", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 moved to 2,2", "loc3 moved to -1,-1"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved to " + location);
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [2, 2]},
           {key: "loc3", location: [-1, -1]}
         ]);
@@ -443,21 +456,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_moved\" callback gets passed correct distance parameter", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 moved (111.19 km from center)", "loc3 moved (400.90 km from center)"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved (" + distance.toFixed(2) + " km from center)");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [2, 2]},
           {key: "loc3", location: [-1, -1]}
         ]);
@@ -473,21 +485,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_moved\" callback properly fires when multiple keys are at the same location within the GeoQuery and only one of them moves somewhere else within the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 moved", "loc3 moved"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [0, 0]},
         {key: "loc3", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [2, 2]},
           {key: "loc3", location: [-1, -1]}
         ]);
@@ -503,21 +514,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_moved\" callback properly fires when a location within the GeoQuery moves somehwere else within the GeoQuery that is already occupied by another key", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 moved", "loc3 moved"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [2, 2]},
         {key: "loc3", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [2, 2]},
           {key: "loc3", location: [-1, -1]}
         ]);
@@ -533,24 +543,23 @@ describe("GeoQuery Tests:", function() {
     it("multiple \"key_moved\" callbacks fire for locations within the GeoQuery which are moved somewhere else within the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 moved1", "loc3 moved1", "loc1 moved2", "loc3 moved2"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved1");
       });
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved2");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [2, 2]},
           {key: "loc3", location: [-1, -1]}
         ]);
@@ -568,10 +577,9 @@ describe("GeoQuery Tests:", function() {
     it("\"key_entered\" callback fires when a location enters the GeoQuery before onKeyEntered() was called", function(done) {
       var cl = new Checklist(["p1", "p2", "loc1 entered", "loc4 entered"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -580,7 +588,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        gq.on("key_entered", function(key, location, distance) {
+        geoQueries[0].on("key_entered", function(key, location, distance) {
           cl.x(key + " entered");
         });
 
@@ -593,14 +601,13 @@ describe("GeoQuery Tests:", function() {
     it("\"key_entered\" callback fires when a location enters the GeoQuery after onKeyEntered() was called", function(done) {
       var cl = new Checklist(["p1", "p2", "loc1 entered", "loc4 entered"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_entered", function(key, location, distance) {
+      geoQueries[0].on("key_entered", function(key, location, distance) {
         cl.x(key + " entered");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -618,14 +625,13 @@ describe("GeoQuery Tests:", function() {
     it("\"key_entered\" callback gets passed correct location parameter", function(done) {
       var cl = new Checklist(["p1", "p2", "loc1 entered at 2,3", "loc4 entered at 5,5"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_entered", function(key, location, distance) {
+      geoQueries[0].on("key_entered", function(key, location, distance) {
         cl.x(key + " entered at " + location);
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -643,14 +649,13 @@ describe("GeoQuery Tests:", function() {
     it("\"key_entered\" callback gets passed correct distance parameter", function(done) {
       var cl = new Checklist(["p1", "p2", "loc1 entered (157.23 km from center)", "loc4 entered (555.66 km from center)"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_entered", function(key, location, distance) {
+      geoQueries[0].on("key_entered", function(key, location, distance) {
         cl.x(key + " entered (" + distance.toFixed(2) + " km from center)");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -668,21 +673,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_entered\" callback properly fires when multiple keys are at the same location outside the GeoQuery and only one of them moves within the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 entered"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_entered", function(key, location, distance) {
+      geoQueries[0].on("key_entered", function(key, location, distance) {
         cl.x(key + " entered");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [50, 50]},
         {key: "loc2", location: [50, 50]},
         {key: "loc3", location: [18, -121]}
       ]).then(function() {
         cl.x("p1");
 
-        return gf.set("loc1", [2, 2]);
+        return geoFire.set("loc1", [2, 2]);
       }).then(function() {
         cl.x("p2");
 
@@ -695,21 +699,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_entered\" callback properly fires when a location outside the GeoQuery moves somewhere within the GeoQuery that is already occupied by another key", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 entered", "loc3 entered"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_entered", function(key, location, distance) {
+      geoQueries[0].on("key_entered", function(key, location, distance) {
         cl.x(key + " entered");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [50, 50]},
         {key: "loc2", location: [50, 50]},
         {key: "loc3", location: [0, 0]}
       ]).then(function() {
         cl.x("p1");
 
-        return gf.set("loc1", [0, 0]);
+        return geoFire.set("loc1", [0, 0]);
       }).then(function() {
         cl.x("p2");
 
@@ -722,17 +725,16 @@ describe("GeoQuery Tests:", function() {
     it("multiple \"key_entered\" callbacks fire when a location enters the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "loc1 entered1", "loc4 entered1", "loc1 entered2", "loc4 entered2"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_entered", function(key, location, distance) {
+      geoQueries[0].on("key_entered", function(key, location, distance) {
         cl.x(key + " entered1");
       });
-      gq.on("key_entered", function(key, location, distance) {
+      geoQueries[0].on("key_entered", function(key, location, distance) {
         cl.x(key + " entered2");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -752,14 +754,13 @@ describe("GeoQuery Tests:", function() {
     it("\"key_exited\" callback fires when a location leaves the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 exited", "loc4 exited"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_exited", function(key, location, distance) {
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -768,7 +769,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [25, 90]},
           {key: "loc4", location: [25, 5]}
         ]);
@@ -784,14 +785,13 @@ describe("GeoQuery Tests:", function() {
     it("\"key_exited\" callback gets passed correct location parameter", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 exited to 25,90", "loc4 exited to 25,5"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_exited", function(key, location, distance) {
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited to " + location);
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [5, 2]},
         {key: "loc3", location: [16, -150]},
@@ -800,7 +800,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [25, 90]},
           {key: "loc2", location: [5, 5]},
           {key: "loc4", location: [25, 5]}
@@ -817,14 +817,13 @@ describe("GeoQuery Tests:", function() {
     it("\"key_exited\" callback gets passed correct distance parameter", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 exited (9759.01 km from center)", "loc4 exited (2688.06 km from center)"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_exited", function(key, location, distance) {
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited (" + distance.toFixed(2) + " km from center)");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [5, 2]},
         {key: "loc3", location: [16, -150]},
@@ -833,7 +832,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [25, 90]},
           {key: "loc2", location: [5, 5]},
           {key: "loc4", location: [25, 5]}
@@ -850,20 +849,19 @@ describe("GeoQuery Tests:", function() {
     it("\"key_exited\" callback fires when a location within the GeoQuery is entirely removed from GeoFire", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 exited"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_exited", function(key, location, distance) {
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [2, 3]}
       ]).then(function() {
         cl.x("p1");
 
-        return gf.remove("loc1");
+        return geoFire.remove("loc1");
       }).then(function() {
         cl.x("p2");
 
@@ -876,21 +874,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_exited\" callback properly fires when multiple keys are at the same location inside the GeoQuery and only one of them moves outside the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 exited"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_exited", function(key, location, distance) {
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [0, 0]},
         {key: "loc3", location: [18, -121]}
       ]).then(function() {
         cl.x("p1");
 
-        return gf.set("loc1", [20, -55]);
+        return geoFire.set("loc1", [20, -55]);
       }).then(function() {
         cl.x("p2");
 
@@ -903,21 +900,20 @@ describe("GeoQuery Tests:", function() {
     it("\"key_exited\" callback properly fires when a location inside the GeoQuery moves somewhere outside the GeoQuery that is already occupied by another key", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 exited"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_exited", function(key, location, distance) {
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [50, 50]},
         {key: "loc3", location: [18, -121]}
       ]).then(function() {
         cl.x("p1");
 
-        return gf.set("loc1", [18, -121]);
+        return geoFire.set("loc1", [18, -121]);
       }).then(function() {
         cl.x("p2");
 
@@ -930,17 +926,16 @@ describe("GeoQuery Tests:", function() {
     it("multiple \"key_exited\" callbacks fire when a location leaves the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 exited1", "loc4 exited1", "loc1 exited2", "loc4 exited2"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_exited", function(key, location, distance) {
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited1");
       });
-      gq.on("key_exited", function(key, location, distance) {
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited2");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -949,7 +944,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [25, 90]},
           {key: "loc4", location: [25, 5]}
         ]);
@@ -967,20 +962,19 @@ describe("GeoQuery Tests:", function() {
     it ("\"key_*\" event callbacks fire when used all at the same time", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "loc1 entered", "loc4 entered", "loc1 moved", "loc4 exited", "loc1 exited", "loc5 entered"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_entered", function(key, location, distance) {
+      geoQueries[0].on("key_entered", function(key, location, distance) {
         cl.x(key + " entered");
       });
-      gq.on("key_exited", function(key, location, distance) {
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited");
       });
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -989,14 +983,14 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [1, 1]},
           {key: "loc4", location: [25, 5]}
         ]);
       }).then(function() {
         cl.x("p2");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [10, -100]},
           {key: "loc2", location: [50, -50]},
           {key: "loc5", location: [5, 5]}
@@ -1015,20 +1009,19 @@ describe("GeoQuery Tests:", function() {
     it ("cancel() prevents GeoQuery from firing any more \"key_*\" event callbacks", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 entered", "loc4 entered", "loc1 moved", "loc4 exited"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq = gf.query({center: [1,2], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq.on("key_entered", function(key, location, distance) {
+      geoQueries[0].on("key_entered", function(key, location, distance) {
         cl.x(key + " entered");
       });
-      gq.on("key_exited", function(key, location, distance) {
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited");
       });
-      gq.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved");
       });
 
-      batchSet(gf, [
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -1037,7 +1030,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [1, 1]},
           {key: "loc4", location: [25, 5]}
         ]);
@@ -1048,9 +1041,9 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p3")
 
-        gq.cancel();
+        geoQueries[0].cancel();
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [10, -100]},
           {key: "loc2", location: [50, -50]},
           {key: "loc5", location: [5, 5]}
@@ -1065,23 +1058,32 @@ describe("GeoQuery Tests:", function() {
     });
 
     xit ("Calling cancel() on one GeoQuery does not cancel other GeoQueries", function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 entered1", "loc4 entered1", "loc1 moved1", "loc4 exited1"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 entered1", "loc1 entered2", "loc4 entered1", "loc4 entered2", "loc1 moved1", "loc1 moved2", "loc4 exited1", "loc4 exited2", "loc1 exited2", "loc5 entered2"], expect, done);
 
-      var gf = new GeoFire(dataRef);
-      var gq1 = gf.query({center: [1,2], radius: 1000});
-      var gq2 = gf.query({center: [50,0], radius: 1000});
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      gq1.on("key_entered", function(key, location, distance) {
+      geoQueries[0].on("key_entered", function(key, location, distance) {
         cl.x(key + " entered1");
       });
-      gq1.on("key_exited", function(key, location, distance) {
+      geoQueries[0].on("key_exited", function(key, location, distance) {
         cl.x(key + " exited1");
       });
-      gq1.on("key_moved", function(key, location, distance) {
+      geoQueries[0].on("key_moved", function(key, location, distance) {
         cl.x(key + " moved1");
       });
 
-      batchSet(gf, [
+      geoQueries[1].on("key_entered", function(key, location, distance) {
+        cl.x(key + " entered2");
+      });
+      geoQueries[1].on("key_exited", function(key, location, distance) {
+        cl.x(key + " exited2");
+      });
+      geoQueries[1].on("key_moved", function(key, location, distance) {
+        cl.x(key + " moved2");
+      });
+
+      batchSet([
         {key: "loc1", location: [2, 3]},
         {key: "loc2", location: [50, -7]},
         {key: "loc3", location: [16, -150]},
@@ -1090,7 +1092,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [1, 1]},
           {key: "loc4", location: [25, 5]}
         ]);
@@ -1101,9 +1103,9 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p3")
 
-        gq1.cancel();
+        geoQueries[0].cancel();
 
-        return batchSet(gf, [
+        return batchSet([
           {key: "loc1", location: [10, -100]},
           {key: "loc2", location: [50, -50]},
           {key: "loc5", location: [5, 5]}

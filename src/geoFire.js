@@ -1,3 +1,6 @@
+/*************/
+/*  GLOBALS  */
+/*************/
 // TODO: Investigate the correct value for this
 var g_GEOHASH_LENGTH = 12;
 
@@ -51,7 +54,7 @@ var GeoFire = function(firebaseRef) {
       }
 
       if (Object.prototype.toString.call(location) !== "[object Array]" || location.length !== 2) {
-        error = "expected 2 values, got " + location.length;
+        error = "expected array of length 2, got " + location.length;
       }
       else {
         var latitude = location[0];

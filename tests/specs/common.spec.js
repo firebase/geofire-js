@@ -2,20 +2,55 @@
 /*  GLOBALS  */
 /*************/
 // Override the default timeout interval for Jasmine
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
-// Get a reference to the demo Firebase
-var dataRef = new Firebase("https://geofiretest.firebaseio-demo.com");
+// Get a reference to a random demo Firebase
+var demoFirebaseUrl = "https://" + generateRandomString() + ".firebaseio-demo.com";
+
+// Create global variables to hold the firebase ref and the GeoFire instance
+var firebaseRef, geoFire, geoQueries;
 
 /**********************/
 /*  HELPER FUNCTIONS  */
 /**********************/
+function beforeEachHelper(done) {
+  // Create a new firebase ref with a new context
+  firebaseRef = new Firebase(demoFirebaseUrl, Firebase.Context());
+
+  // Reset the Firebase
+  firebaseRef.remove(function() {
+    // Create a new firebase ref at a random node
+    firebaseRef = firebaseRef.child(generateRandomString());
+
+    // Create a new GeoFire
+    geoFire = new GeoFire(firebaseRef);
+
+    // Reset the GeoQueries
+    geoQueries = [];
+
+    done();
+  });
+}
+
+function afterEachHelper(done) {
+  // Cancel each outstanding GeoQuery
+  geoQueries.forEach(function(geoQuery) {
+    geoQuery.cancel();
+  })
+
+  done();
+}
+
+function generateRandomString() {
+  return (Math.random() + 1).toString(36).substring(7);
+}
+
 /* Clears all Firebase event handlers and resets the Firebase; runs before each test to ensure there is no pollution between tests */
 function resetFirebase() {
   return new RSVP.Promise(function(resolve, reject) {
-    dataRef.child("indices").off("child_added");
-    dataRef.child("locations").off("child_removed");
-    dataRef.remove(function() {
+    //firebaseRef.child("indices").off("child_added");
+    //firebaseRef.child("locations").off("child_removed");
+    firebaseRef.remove(function() {
       resolve();
     });
   });
@@ -24,14 +59,14 @@ function resetFirebase() {
 /* Returns the current data in the Firebase */
 function getFirebaseData() {
   return new RSVP.Promise(function(resolve, reject) {
-    dataRef.once("value", function(dataSnapshot) {
+    firebaseRef.once("value", function(dataSnapshot) {
       resolve(dataSnapshot.val());
     });
   });
 };
 
 /* Adds multiple keys to GeoFire in a single call */
-function batchSet(geoFire, keyLocationPairs) {
+function batchSet(keyLocationPairs) {
   var promises = keyLocationPairs.map(function(keyLocationPair) {
     return geoFire.set(keyLocationPair.key, keyLocationPair.location);
   });

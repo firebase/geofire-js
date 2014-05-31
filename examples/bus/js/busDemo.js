@@ -169,7 +169,7 @@ function initializeMap() {
   google.maps.event.addListener(circle, "drag", function (event) {
     var latLng = circle.getCenter();
 
-    geoQuery.updateQueryCriteria({
+    geoQuery.updateCriteria({
       center: [latLng.lat(), latLng.lng()],
       radius: radiusInKm
     });
