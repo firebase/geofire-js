@@ -38,7 +38,11 @@ function afterEachHelper(done) {
     geoQuery.cancel();
   })
 
-  done();
+  // Wait for 50 milliseconds after each test to give enough time for old
+  // query events to expire
+  wait(50).then(function() {
+    done();
+  });
 }
 
 function generateRandomString() {
