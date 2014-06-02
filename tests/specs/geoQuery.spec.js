@@ -100,7 +100,7 @@ describe("GeoQuery Tests:", function() {
 
         geoQueries[0].updateCriteria({center: [1,2], radius: 1000});
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p2");
       });
@@ -125,9 +125,48 @@ describe("GeoQuery Tests:", function() {
 
         geoQueries[0].updateCriteria({center: [90,90], radius: 1000});
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p2");
+      });
+    });
+
+    it("updateCriteria() does not cause event callbacks to fire on the previous critria", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "loc1 entered", "loc4 entered", "loc1 exited", "loc4 exited", "loc4 entered", "loc5 entered"], expect, done);
+
+      geoQueries.push(geoFire.query({center: [1, 2], radius: 1000}));
+      geoQueries[0].on("key_entered", function(key, location, distance) {
+        cl.x(key + " entered");
+      });
+      geoQueries[0].on("key_exited", function(key, location, distance) {
+        cl.x(key + " exited");
+      });
+
+      batchSet([
+        {key: "loc1", location: [2, 3]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]},
+        {key: "loc4", location: [5, 5]},
+        {key: "loc5", location: [88, 88]}
+      ]).then(function() {
+        cl.x("p1");
+
+        geoQueries[0].updateCriteria({center: [90,90], radius: 1000});
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p2");
+
+        return batchSet([
+          {key: "loc2", location: [1, 1]},
+          {key: "loc4", location: [89, 90]}
+        ]);
+      }).then(function() {
+        cl.x("p3");
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p4");
       });
     });
 
@@ -272,7 +311,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p2");
       });
@@ -301,7 +340,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -330,7 +369,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -359,7 +398,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -389,7 +428,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -418,7 +457,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -447,7 +486,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -476,7 +515,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -505,7 +544,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -534,7 +573,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -566,7 +605,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -592,7 +631,7 @@ describe("GeoQuery Tests:", function() {
           cl.x(key + " entered");
         });
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p2");
       });
@@ -616,7 +655,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p2");
       });
@@ -640,7 +679,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p2");
       });
@@ -664,7 +703,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p2");
       });
@@ -690,7 +729,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -716,7 +755,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -743,7 +782,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p2");
       });
@@ -776,7 +815,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -808,7 +847,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -840,7 +879,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -865,7 +904,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -873,7 +912,6 @@ describe("GeoQuery Tests:", function() {
 
     it("\"key_exited\" callback properly fires when multiple keys are at the same location inside the GeoQuery and only one of them moves outside the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 exited"], expect, done);
-
       geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
       geoQueries[0].on("key_exited", function(key, location, distance) {
@@ -891,7 +929,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -917,7 +955,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -951,7 +989,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3");
       });
@@ -998,7 +1036,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p3");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p4");
       });
@@ -1037,7 +1075,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3")
 
@@ -1051,7 +1089,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p4");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p5");
       });
@@ -1099,7 +1137,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p3")
 
@@ -1113,7 +1151,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p4");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p5");
       });

@@ -293,6 +293,47 @@ var GeoFire = function(firebaseRef) {
   var _firebaseRef = firebaseRef;
 };
 
+var BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
+
+var NEIGHBORS = {
+  north: {
+    even: "p0r21436x8zb9dcf5h7kjnmqesgutwvy",
+    odd: "bc01fg45238967deuvhjyznpkmstqrwx",
+  },
+  east: {
+    even: "bc01fg45238967deuvhjyznpkmstqrwx",
+    odd: "p0r21436x8zb9dcf5h7kjnmqesgutwvy"
+  },
+  south: {
+    even: "14365h7k9dcfesgujnmqp0r2twvyx8zb",
+    odd: "238967debc01fg45kmstqrwxuvhjyznp"
+  },
+  west: {
+    even: "238967debc01fg45kmstqrwxuvhjyznp",
+    odd: "14365h7k9dcfesgujnmqp0r2twvyx8zb"
+  }
+};
+
+var BORDERS = {
+  north: {
+    even: "prxz",
+    odd: "bcfguvyz"
+  },
+  east: {
+    even: "bcfguvyz",
+    odd: "prxz"
+  },
+  south:{
+    even: "028b",
+    odd: "0145hjnp"
+  },
+  west: {
+    even: "0145hjnp",
+    odd: "028b"
+  }
+};
+
+
 var deg2rad = function(deg) {
   return deg * Math.PI / 180;
 };
@@ -302,23 +343,54 @@ var deg2rad = function(deg) {
  * formula, in kilometers. This is approximate due to the nature of the
  * Earth's radius varying between 6356.752 km through 6378.137 km.
  */
-var dist = function(loc1, loc2) {
-  var lat1 = loc1[0],
-    lon1 = loc1[1],
-    lat2 = loc2[0],
-    lon2 = loc2[1];
+var dist = function(location1, location2) {
+  var radius = 6371; // km
+  var latDelta = deg2rad(location2[0] - location1[0]);
+  var lonDelta = deg2rad(location2[1] - location1[1]);
 
-  var radius = 6371, // km
-    dlat = deg2rad(lat2 - lat1),
-    dlon = deg2rad(lon2 - lon1),
-    a, c;
+  var a = (Math.sin(latDelta / 2) * Math.sin(latDelta / 2)) +
+          (Math.cos(deg2rad(location1[0])) * Math.cos(deg2rad(location2[0])) *
+          Math.sin(lonDelta / 2) * Math.sin(lonDelta / 2));
 
-  a = Math.sin(dlat / 2) * Math.sin(dlat / 2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dlon / 2) * Math.sin(dlon / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return radius * c;
+};
+
+
+/**
+ * Return the geohash of the neighboring bounding box in the
+ * direction specified,
+ */
+var neighbor = function(geohash, direction) {
+  var lastChar = geohash.charAt(geohash.length - 1);
+  var type = (geohash.length % 2) ? "odd" : "even";
+  var base = geohash.substring(0, geohash.length - 1);
+
+  if (BORDERS[direction][type].indexOf(lastChar) !== -1) {
+    if (base.length <= 0) {
+      return "";
+    }
+    base = neighbor(base, direction);
+  }
+
+  return base + BASE32[NEIGHBORS[direction][type].indexOf(lastChar)];
+};
+
+/**
+ * Return the geohashes of all neighboring bounding boxes.
+ */
+var neighbors = function(geohash) {
+  var neighbors = [];
+  neighbors.push(neighbor(geohash, "north"));
+  neighbors.push(neighbor(geohash, "south"));
+  neighbors.push(neighbor(geohash, "east"));
+  neighbors.push(neighbor(geohash, "west"));
+  neighbors.push(neighbor(neighbors[0], "east"));
+  neighbors.push(neighbor(neighbors[0], "west"));
+  neighbors.push(neighbor(neighbors[1], "east"));
+  neighbors.push(neighbor(neighbors[1], "west"));
+  return neighbors;
 };
 
 /**
@@ -326,14 +398,20 @@ var dist = function(loc1, loc2) {
  * from the [latitude, longitude] pair, specified as an array.
  */
 var encodeGeohash = function(latLon, precision) {
-  var latRange = { "min": -90, "max": 90 },
-    lonRange = { "min": -180, "max": 180 };
-  var lat = latLon[0],
-    lon = latLon[1],
-    hash = "",
-    hashVal = 0,
-    bits = 0,
-    even = 1;
+  var latRange = {
+    min: -90,
+    max: 90
+  };
+  var lonRange = {
+    min: -180,
+    max: 180
+  };
+  var lat = latLon[0];
+  var lon = latLon[1];
+  var hash = "";
+  var hashVal = 0;
+  var bits = 0;
+  var even = 1;
 
   // TODO: should precesion just use the global flag?
   precision = Math.min(precision || 12, 22);
@@ -370,7 +448,7 @@ var encodeGeohash = function(latLon, precision) {
     }
     else {
       bits = 0;
-      hash += "0123456789bcdefghjkmnpqrstuvwxyz"[hashVal];
+      hash += BASE32[hashVal];
       hashVal = 0;
     }
   }
@@ -440,15 +518,16 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // Save the query criteria
     _center = newQueryCriteria.center || _center;
-    _centerHash = encodeGeohash(_center, g_GEOHASH_LENGTH);
     _radius = newQueryCriteria.radius || _radius;
   }
 
 
-  function _fireCallbacks(key, location) {
+  // TODO: function description/comment
+  function _fireKeyEnteredAndMovedCallbacks(key, location) {
     var distanceFromCenter = dist(location, _center);
     var wasAlreadyInQuery = (_locationsInQuery[key] !== undefined);
     var isNowInQuery = (distanceFromCenter <= _radius);
+
     if (!wasAlreadyInQuery && isNowInQuery) {
       _callbacks.key_entered.forEach(function(callback) {
         callback(key, location, distanceFromCenter);
@@ -457,7 +536,24 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // Add the current location key to our list of location keys within this GeoQuery
       _locationsInQuery[key] = location;
     }
-    else if (wasAlreadyInQuery && !isNowInQuery) {
+    else if (wasAlreadyInQuery && isNowInQuery) {
+      _callbacks.key_moved.forEach(function(callback) {
+        callback(key, location, distanceFromCenter);
+      });
+
+      // Update the current location's location
+      _locationsInQuery[key] = location;
+    }
+  }
+
+  // TODO: function description/comment
+  function _fireKeyExitedCallbacks(key, location) {
+    var wasAlreadyInQuery = (_locationsInQuery[key] !== undefined);
+    var distanceFromCenter = (location === null) ? null : dist(location, _center);
+    var isNowInQuery = (location === null) ? false : (distanceFromCenter <= _radius);
+
+    if (wasAlreadyInQuery && !isNowInQuery) {
+      console.log(_callbacks.key_exited);
       _callbacks.key_exited.forEach(function(callback) {
         callback(key, location, distanceFromCenter);
       });
@@ -465,13 +561,81 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // Remove the current location key from our list of location keys within this GeoQuery
       delete _locationsInQuery[key];
     }
-    else if (wasAlreadyInQuery) {
-      _callbacks.key_moved.forEach(function(callback) {
-        callback(key, location, distanceFromCenter);
-      });
+  }
 
-      // Update the current location's location
-      _locationsInQuery[key] = location;
+  /**
+     * Find all data points within the specified radius, in kilometers,
+     * from the point with the specified geohash.
+     * The matching points are passed to the callback function in distance sorted order.
+     * If the setAlert flag is set, the callback function is called each time the search results change i.e.
+     * if the set of data points that are within the radius changes.
+     */
+  function _listenForKeys() {
+    // An approximation of the bounding box dimension per hash length.
+    var boundingBoxShortestEdgeByHashLength = [
+      null,
+      5003.771699005143,
+      625.4714623756429,
+      156.36786559391072,
+      19.54598319923884,
+      4.88649579980971,
+      0.6108119749762138
+    ];
+    var zoomLevel = 6;
+    while (_radius > boundingBoxShortestEdgeByHashLength[zoomLevel]) {
+      zoomLevel -= 1;
+    }
+
+    // Reduce the length of the query center's hash
+    var centerHash = encodeGeohash(_center, g_GEOHASH_LENGTH).substring(0, zoomLevel);
+
+    // TODO: Be smarter about this, and only zoom out if actually optimal.
+    // Get the neighboring geohashes to query
+    var neighborGeohashes = neighbors(centerHash);
+
+    // Make sure we also query the center geohash
+    neighborGeohashes.push(centerHash);
+
+    // Remove any duplicate or empty neighboring geohashes
+    neighborGeohashes = neighborGeohashes.filter(function(item, i){
+      return (item.length > 0 && neighborGeohashes.indexOf(item) === i);
+    });
+
+    // Listen for added and removed geohashes which have the same prefix as the neighboring geohashes
+    for (var i = 0, numNeighbors = neighborGeohashes.length; i < numNeighbors; ++i) {
+      // Set the start prefix as a subset of the current neighbor's geohash
+      var startPrefix = neighborGeohashes[i].substring(0, zoomLevel);
+
+      // Set the end prefix as the start prefix plus a ~ to put it last in alphabetical order
+      var endPrefix = startPrefix + "~";
+
+      // Query firebase for any matching geohashes
+      var firebaseQuery = _firebaseRef.child("indices").startAt(null, startPrefix).endAt(null, endPrefix);
+
+      var childAddedCallback = firebaseQuery.on("child_added", function(indicesChildSnapshot) {
+        console.log("child_added: " + indicesChildSnapshot.name());
+        var key = indicesChildSnapshot.name().slice(g_GEOHASH_LENGTH);
+
+        _firebaseRef.child("locations/" + key).once("value", function(locationsDataSnapshot) {
+          var location = locationsDataSnapshot.val().split(",").map(Number);
+
+          _fireKeyEnteredAndMovedCallbacks(key, location, "child_added");
+        });
+      });
+      _firebaseChildAddedCallbacks.push(childAddedCallback);
+
+      var childRemovedCallback = firebaseQuery.on("child_removed", function(indicesChildSnapshot) {
+        console.log("child_removed: " + indicesChildSnapshot.name());
+        var key = indicesChildSnapshot.name().slice(g_GEOHASH_LENGTH);
+        window.setTimeout(function() {
+          _firebaseRef.child("locations/" + key).once("value", function(locationsDataSnapshot) {
+            var location = locationsDataSnapshot.val() ? locationsDataSnapshot.val().split(",").map(Number) : null;
+
+            _fireKeyExitedCallbacks(key, location);
+          });
+        }, 100);
+      });
+      _firebaseChildRemovedCallbacks.push(childRemovedCallback);
     }
   }
 
@@ -557,12 +721,26 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   this.updateCriteria = function(newQueryCriteria) {
     _saveCriteria(newQueryCriteria);
 
-    // Loop through all of the locations and fire the "key_entered" or "key_exited" callbacks if necessary
-    for (var key in _allLocations) {
-      if (_allLocations.hasOwnProperty(key)) {
-        _fireCallbacks(key, _allLocations[key]);
+    // Turn off all Firebase listeners for the previous query criteria
+    _firebaseChildAddedCallbacks.forEach(function(childAddedCallback) {
+      _firebaseRef.child("indices").off("child_added", childAddedCallback);
+    });
+    _firebaseChildRemovedCallbacks.forEach(function(childRemovedCallback) {
+      _firebaseRef.child("indices").off("child_removed", childRemovedCallback);
+    });
+
+    _firebaseChildAddedCallbacks = [];
+    _firebaseChildRemovedCallbacks = [];
+
+    // Loop through all of the locations in the query and fire the "key_exited" callbacks if necessary
+    for (var key in _locationsInQuery) {
+      if (_locationsInQuery.hasOwnProperty(key)) {
+        _fireKeyExitedCallbacks(key, _locationsInQuery[key]);
       }
     }
+
+    // Listen for keys being added and removed from GeoFire and fire the appropriate event callbacks
+    _listenForKeys();
   };
 
   /**
@@ -594,9 +772,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     key_exited: [],
     key_moved: []
   };
+  var _firebaseChildAddedCallbacks = [];
+  var _firebaseChildRemovedCallbacks = [];
   var _locationsInQuery = {};
-  var _allLocations = {};
-  var _center, _radius, _centerHash;
+  var _center, _radius;
 
   // Verify the query criteria
   if (typeof queryCriteria.center === "undefined") {
@@ -607,46 +786,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
   _saveCriteria(queryCriteria);
 
-  // Fire any key events for new or existing indices
-  _firebaseRef.child("indices").on("child_added", function(indicesChildSnapshot) {
-    console.log("child_added");
-    var key = indicesChildSnapshot.name().slice(g_GEOHASH_LENGTH);
-
-    _firebaseRef.child("locations/" + key).once("value", function(locationsDataSnapshot) {
-      var location = locationsDataSnapshot.val().split(",").map(Number);
-
-      _allLocations[key] = location;
-
-      _fireCallbacks(key, location);
-    });
-  });
-
-  // Fire the "ready" event once the data is loaded
-  _firebaseRef.child("indices").once("value", function(snapshot) {
-    console.log("value");
-    _callbacks.ready.forEach(function(callback) {
-      callback();
-    });
-  });
-
-  // Fire the "key_exited" callbacks if a location in the query is removed entirely from GeoFire
-  _firebaseRef.child("locations").on("child_removed", function(locationsChildSnapshot) {
-    // Get the key of the location being removed
-    var key = locationsChildSnapshot.name();
-
-    // If the removed location is in this query, fire the "key_exited" callbacks for it and remove
-    // it from the locations in query dictionary
-    if (_locationsInQuery[key] !== undefined) {
-      var distanceFromCenter = dist(_locationsInQuery[key], _center);
-      _callbacks.key_exited.forEach(function(callback) {
-        callback(key, _locationsInQuery[key], distanceFromCenter);
-      });
-      delete _locationsInQuery[key];
-    }
-
-    // Remove the location from the all locations dictionary
-    delete _allLocations[key];
-  });
+  // Listen for keys being added and removed from GeoFire and fire the appropriate event callbacks
+  _listenForKeys();
 };
   return GeoFire;
 })();

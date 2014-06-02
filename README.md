@@ -219,6 +219,8 @@ Valid `eventType` values are `key_entered`, `key_exited`, and `key_moved`.
 
 `key_moved` is fired when a key which is already in this query moves to another location inside of it.
 
+// TODO: add not saying that for "key_exited", distance will be null if the key was completely removed from Firebase. Should add a test for this...
+
 Returns a `GeoCallbackRegistration` which can be used to cancel the `callback`. You can add as many callbacks as you would like by repeatedly calling `on()`. Each one will get called when its corresponding `eventType` fires. Each `callback` must be cancelled individually.
 
 ```JavaScript

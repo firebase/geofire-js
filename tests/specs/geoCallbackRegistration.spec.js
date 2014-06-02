@@ -41,7 +41,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         onKeyMovedRegistration.cancel();
         cl.x("p3");
@@ -50,7 +50,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       }).then(function() {
         cl.x("p4");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p5");
       });
@@ -72,7 +72,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         onKeyEnteredRegistration.cancel();
         cl.x("p2");
@@ -81,7 +81,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       }).then(function() {
         cl.x("p3");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p4");
       });
@@ -107,7 +107,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         onKeyExitedRegistration.cancel();
         cl.x("p3");
@@ -116,7 +116,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       }).then(function() {
         cl.x("p4");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p5");
       });
@@ -145,7 +145,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         onKeyMovedRegistration1.cancel();
         cl.x("p3");
@@ -154,7 +154,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       }).then(function() {
         cl.x("p4");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p5");
       });
@@ -179,7 +179,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         onKeyEnteredRegistration1.cancel();
         cl.x("p2");
@@ -188,7 +188,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       }).then(function() {
         cl.x("p3");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p4");
       });
@@ -217,7 +217,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         onKeyExitedRegistration1.cancel();
         cl.x("p3");
@@ -226,7 +226,7 @@ describe("GeoCallbackRegistration Tests:", function() {
       }).then(function() {
         cl.x("p4");
 
-        return wait(5);
+        return wait(100);
       }).then(function() {
         cl.x("p5");
       });

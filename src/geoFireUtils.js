@@ -1,3 +1,44 @@
+var BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
+
+var NEIGHBORS = {
+  north: {
+    even: "p0r21436x8zb9dcf5h7kjnmqesgutwvy",
+    odd: "bc01fg45238967deuvhjyznpkmstqrwx",
+  },
+  east: {
+    even: "bc01fg45238967deuvhjyznpkmstqrwx",
+    odd: "p0r21436x8zb9dcf5h7kjnmqesgutwvy"
+  },
+  south: {
+    even: "14365h7k9dcfesgujnmqp0r2twvyx8zb",
+    odd: "238967debc01fg45kmstqrwxuvhjyznp"
+  },
+  west: {
+    even: "238967debc01fg45kmstqrwxuvhjyznp",
+    odd: "14365h7k9dcfesgujnmqp0r2twvyx8zb"
+  }
+};
+
+var BORDERS = {
+  north: {
+    even: "prxz",
+    odd: "bcfguvyz"
+  },
+  east: {
+    even: "bcfguvyz",
+    odd: "prxz"
+  },
+  south:{
+    even: "028b",
+    odd: "0145hjnp"
+  },
+  west: {
+    even: "0145hjnp",
+    odd: "028b"
+  }
+};
+
+
 var deg2rad = function(deg) {
   return deg * Math.PI / 180;
 };
@@ -7,23 +48,54 @@ var deg2rad = function(deg) {
  * formula, in kilometers. This is approximate due to the nature of the
  * Earth's radius varying between 6356.752 km through 6378.137 km.
  */
-var dist = function(loc1, loc2) {
-  var lat1 = loc1[0],
-    lon1 = loc1[1],
-    lat2 = loc2[0],
-    lon2 = loc2[1];
+var dist = function(location1, location2) {
+  var radius = 6371; // km
+  var latDelta = deg2rad(location2[0] - location1[0]);
+  var lonDelta = deg2rad(location2[1] - location1[1]);
 
-  var radius = 6371, // km
-    dlat = deg2rad(lat2 - lat1),
-    dlon = deg2rad(lon2 - lon1),
-    a, c;
+  var a = (Math.sin(latDelta / 2) * Math.sin(latDelta / 2)) +
+          (Math.cos(deg2rad(location1[0])) * Math.cos(deg2rad(location2[0])) *
+          Math.sin(lonDelta / 2) * Math.sin(lonDelta / 2));
 
-  a = Math.sin(dlat / 2) * Math.sin(dlat / 2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dlon / 2) * Math.sin(dlon / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return radius * c;
+};
+
+
+/**
+ * Return the geohash of the neighboring bounding box in the
+ * direction specified,
+ */
+var neighbor = function(geohash, direction) {
+  var lastChar = geohash.charAt(geohash.length - 1);
+  var type = (geohash.length % 2) ? "odd" : "even";
+  var base = geohash.substring(0, geohash.length - 1);
+
+  if (BORDERS[direction][type].indexOf(lastChar) !== -1) {
+    if (base.length <= 0) {
+      return "";
+    }
+    base = neighbor(base, direction);
+  }
+
+  return base + BASE32[NEIGHBORS[direction][type].indexOf(lastChar)];
+};
+
+/**
+ * Return the geohashes of all neighboring bounding boxes.
+ */
+var neighbors = function(geohash) {
+  var neighbors = [];
+  neighbors.push(neighbor(geohash, "north"));
+  neighbors.push(neighbor(geohash, "south"));
+  neighbors.push(neighbor(geohash, "east"));
+  neighbors.push(neighbor(geohash, "west"));
+  neighbors.push(neighbor(neighbors[0], "east"));
+  neighbors.push(neighbor(neighbors[0], "west"));
+  neighbors.push(neighbor(neighbors[1], "east"));
+  neighbors.push(neighbor(neighbors[1], "west"));
+  return neighbors;
 };
 
 /**
@@ -31,14 +103,20 @@ var dist = function(loc1, loc2) {
  * from the [latitude, longitude] pair, specified as an array.
  */
 var encodeGeohash = function(latLon, precision) {
-  var latRange = { "min": -90, "max": 90 },
-    lonRange = { "min": -180, "max": 180 };
-  var lat = latLon[0],
-    lon = latLon[1],
-    hash = "",
-    hashVal = 0,
-    bits = 0,
-    even = 1;
+  var latRange = {
+    min: -90,
+    max: 90
+  };
+  var lonRange = {
+    min: -180,
+    max: 180
+  };
+  var lat = latLon[0];
+  var lon = latLon[1];
+  var hash = "";
+  var hashVal = 0;
+  var bits = 0;
+  var even = 1;
 
   // TODO: should precesion just use the global flag?
   precision = Math.min(precision || 12, 22);
@@ -75,7 +153,7 @@ var encodeGeohash = function(latLon, precision) {
     }
     else {
       bits = 0;
-      hash += "0123456789bcdefghjkmnpqrstuvwxyz"[hashVal];
+      hash += BASE32[hashVal];
       hashVal = 0;
     }
   }

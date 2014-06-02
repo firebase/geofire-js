@@ -6,6 +6,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
 // Get a reference to a random demo Firebase
 var demoFirebaseUrl = "https://" + generateRandomString() + ".firebaseio-demo.com";
+console.log(demoFirebaseUrl);
 
 // Create global variables to hold the firebase ref and the GeoFire instance
 var firebaseRef, geoFire, geoQueries;
