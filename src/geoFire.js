@@ -1,9 +1,6 @@
 /*************/
 /*  GLOBALS  */
 /*************/
-// TODO: Investigate the correct value for this
-var g_GEOHASH_LENGTH = 12;
-
 /**
  * Creates a GeoFire instance.
  *
@@ -18,8 +15,8 @@ var GeoFire = function(firebaseRef) {
   /**
    * Returns a promise that is fulfilled after the inputted key has been verified.
    *
-   * @param {string/number} key A GeoFire key.
-   * @return {promise} A promise that is fulfilled when the verification is complete.
+   * @param {string/number} key The key to be verified.
+   * @return {RSVP.Promise} A promise that is fulfilled when the verification is complete.
    */
   function _validateKey(key) {
     return new RSVP.Promise(function(resolve, reject) {
@@ -41,8 +38,8 @@ var GeoFire = function(firebaseRef) {
   /**
    * Returns a promise that is fulfilled after the inputted location has been verified.
    *
-   * @param {array} location A latitude/longitude pair.
-   * @return {promise} A promise that is fulfilled when the verification is complete.
+   * @param {array} location The [latitude, longitude] pair to be verified.
+   * @return {RSVP.Promise} A promise that is fulfilled when the verification is complete.
    */
   function _validateLocation(location) {
     return new RSVP.Promise(function(resolve, reject) {
@@ -84,13 +81,14 @@ var GeoFire = function(firebaseRef) {
   }
 
   /**
-   * Returns a promise that is fulfilled after key's previous location has been removed from the /indices/
-   * node in Firebase. If the key's previous location is the same as its new location, Firebase is not
-   * updated.
+   * Returns a promise that is fulfilled after the provided key's previous location has been removed
+   * from the /indices/ node in Firebase.
+   *
+   * If the provided key's previous location is the same as its new location, Firebase is not updated.
    *
    * @param {string/number} key The key of the location to add.
-   * @param {array} location A latitude/longitude pair.
-   * @return {promise} A promise that is fulfilled when the write is over.
+   * @param {array} location The provided key's new [latitude, longitude] pair.
+   * @return {RSVP.Promise} A promise that is fulfilled when the write is over.
    */
   function _removePreviousIndex(key, location) {
     return new RSVP.Promise(function(resolve, reject) {
@@ -124,12 +122,12 @@ var GeoFire = function(firebaseRef) {
   }
 
   /**
-   * Returns a promise that is fulfilled after key-location pair has been added to the /locations/ node
-   * in Firebase.
+   * Returns a promise that is fulfilled after the provided key-location pair has been added to the
+   * /locations/ node in Firebase.
    *
    * @param {string/number} key The key of the location to add.
-   * @param {array} location A latitude/longitude pair.
-   * @return {promise} A promise that is fulfilled when the write is over.
+   * @param {array} location The provided key's new [latitude, longitude] pair.
+   * @return {RSVP.Promise} A promise that is fulfilled when the write is over.
    */
   function _updateLocationsNode(key, location) {
     return new RSVP.Promise(function(resolve, reject) {
@@ -145,12 +143,14 @@ var GeoFire = function(firebaseRef) {
   }
 
   /**
-   * Returns a promise that is fulfilled after key-location pair has been added to the /indices/ node
-   * in Firebase. If the location is null, Firebase is not updated.
+   * Returns a promise that is fulfilled after provided key-location pair has been added to the
+   * /indices/ node in Firebase.
+   *
+   * If the provided location is null, Firebase is not updated.
    *
    * @param {string/number} key The key of the location to add.
-   * @param {array} location A latitude/longitude pair.
-   * @return {promise} A promise that is fulfilled when the write is over.
+   * @param {array} location The provided key's new [latitude, longitude] pair.
+   * @return {RSVP.Promise} A promise that is fulfilled when the write is over.
    */
   function _updateIndicesNode(key, location) {
     return new RSVP.Promise(function(resolve, reject) {
@@ -172,11 +172,12 @@ var GeoFire = function(firebaseRef) {
   }
 
   /**
-   * Returns a promise that is fulfilled with the location corresponding to the given key.
-   * Note: If the key does not exist, null is returned.
+   * Returns a promise fulfilled with the location corresponding to the provided key.
    *
-   * @param {string/number} key The key of the location to retrieve.
-   * @return {promise} A promise that is fulfilled with the location of the given key.
+   * If the key does not exist, the returned promise is fulfilled with null.
+   *
+   * @param {string/number} key The key whose location should be retrieved.
+   * @return {RSVP.Promise} A promise that is fulfilled with the location of the provided key.
    */
   function _getLocation(key) {
     return new RSVP.Promise(function(resolve, reject) {
@@ -193,11 +194,13 @@ var GeoFire = function(firebaseRef) {
   /*  PUBLIC METHODS  */
   /********************/
   /**
-   * Returns a promise after adding the key-location pair.
+   * Adds the provided key - location pair to Firebase. Returns an empty promise which is fulfilled when the write is complete.
    *
-   * @param {string/number} key The key of the location to add.
-   * @param {array} location A latitude/longitude pair.
-   * @return {promise} A promise that is fulfilled when the write is complete.
+   * If the provided key already exists in this GeoFire, it will be overwritten with the new location value.
+   *
+   * @param {string/number} key The key representing the location to add.
+   * @param {array} location The [latitude, longitude] pair to add.
+   * @return {RSVP.Promise} A promise that is fulfilled when the write is complete.
    */
   this.set = function(key, location) {
     return new RSVP.all([_validateKey(key), _validateLocation(location)]).then(function() {
@@ -214,11 +217,12 @@ var GeoFire = function(firebaseRef) {
   };
 
   /**
-   * Returns a promise that is fulfilled with the location corresponding to the given key.
-   * Note: If the key does not exist, null is returned.
+   * Returns a promise fulfilled with the location corresponding to the provided key.
+   *
+   * If the provided key does not exist, the returned promise is fulfilled with null.
    *
    * @param {string/number} key The key of the location to retrieve.
-   * @return {promise} A promise that is fulfilled with the location of the given key.
+   * @return {RSVP.Promise} A promise that is fulfilled with the location of the given key.
    */
   this.get = function(key) {
     return _validateKey(key).then(function() {
@@ -227,20 +231,22 @@ var GeoFire = function(firebaseRef) {
   };
 
   /**
-   * Returns a promise that is fulfilled after the location corresponding to the given key is removed.
+   * Removes the provided key from this GeoFire. Returns an empty promise fulfilled when the key has been removed.
+   *
+   * If the provided key is not in this GeoFire, the promise will still successfully resolve.
    *
    * @param {string/number} key The key of the location to remove.
-   * @return {promise} A promise that is fulfilled after the inputted key is removed.
+   * @return {RSVP.Promise} A promise that is fulfilled after the inputted key is removed.
    */
   this.remove = function(key) {
     return this.set(key, null);
   };
 
   /**
-   * Creates and returns a GeoQuery object.
+   * Returns a new GeoQuery instance with the provided queryCriteria.
    *
-   * @param {object} queryCriteria The criteria which specifies the GeoQuery's type, center, and radius.
-   * @return {GeoQuery} The new GeoQuery object.
+   * @param {object} queryCriteria The criteria which specifies the GeoQuery's center and radius.
+   * @return {GeoQuery} A new GeoQuery object.
    */
   this.query = function(queryCriteria) {
     return new GeoQuery(_firebaseRef, queryCriteria);

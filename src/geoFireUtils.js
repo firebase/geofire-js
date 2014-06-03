@@ -1,6 +1,6 @@
-var BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
+var g_BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
 
-var NEIGHBORS = {
+var g_NEIGHBORS = {
   north: {
     even: "p0r21436x8zb9dcf5h7kjnmqesgutwvy",
     odd: "bc01fg45238967deuvhjyznpkmstqrwx",
@@ -19,7 +19,7 @@ var NEIGHBORS = {
   }
 };
 
-var BORDERS = {
+var g_BORDERS = {
   north: {
     even: "prxz",
     odd: "bcfguvyz"
@@ -38,6 +38,8 @@ var BORDERS = {
   }
 };
 
+// TODO: Investigate the correct value for this
+var g_GEOHASH_LENGTH = 12;
 
 var deg2rad = function(deg) {
   return deg * Math.PI / 180;
@@ -72,14 +74,14 @@ var neighbor = function(geohash, direction) {
   var type = (geohash.length % 2) ? "odd" : "even";
   var base = geohash.substring(0, geohash.length - 1);
 
-  if (BORDERS[direction][type].indexOf(lastChar) !== -1) {
+  if (g_BORDERS[direction][type].indexOf(lastChar) !== -1) {
     if (base.length <= 0) {
       return "";
     }
     base = neighbor(base, direction);
   }
 
-  return base + BASE32[NEIGHBORS[direction][type].indexOf(lastChar)];
+  return base + g_BASE32[g_NEIGHBORS[direction][type].indexOf(lastChar)];
 };
 
 /**
@@ -153,7 +155,7 @@ var encodeGeohash = function(latLon, precision) {
     }
     else {
       bits = 0;
-      hash += BASE32[hashVal];
+      hash += g_BASE32[hashVal];
       hashVal = 0;
     }
   }

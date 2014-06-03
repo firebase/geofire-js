@@ -72,7 +72,9 @@ geoFire.set("some_key", [37.79, -122.41]).then(function() {
 
 #### GeoFire.get(key)
 
-Returns a promise fulfilled with the `location` corresponding to the provided `key`. If the `key` does not exist, the returned promise is fulfilled with `null`.
+Returns a promise fulfilled with the `location` corresponding to the provided `key`.
+
+If the provided `key` does not exist, the returned promise is fulfilled with `null`.
 
 The returned location will have the form `[latitude, longitude]`.
 
@@ -131,7 +133,7 @@ A standing query that tracks a set of keys matching a criteria. A new `GeoQuery`
 
 #### GeoQuery.center()
 
-Returns the `location` which marks the center of this query.
+Returns the `location` signifying the center of this query.
 
 The returned `location` will have the form `[latitude, longitude]`.
 
@@ -252,7 +254,7 @@ These are useful when you want to stop firing a callback for a certain `eventTyp
 
 #### GeoCallbackRegistration.cancel()
 
-Cancels this `GeoCallbackRegistration` so that it no longer fires its callback. This has no effect on any other callback registration you may have created.
+Cancels this callback registration so that it no longer fires its callback. This has no effect on any other callback registrations you may have created.
 
 ```JavaScript
 // This example stops listening for new keys entering the query once the

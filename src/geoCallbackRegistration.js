@@ -2,15 +2,16 @@
  * Creates a GeoCallbackRegistration instance.
  *
  * @constructor
- * @this {GeoFire}
- * @param {function} cancelCallback Function to call when the callback is cancelled.
+ * @this {GeoCallbackRegistration}
+ * @param {function} cancelCallback Callback to run when this callback registration is cancelled.
  */
 var GeoCallbackRegistration = function(cancelCallback) {
   /********************/
   /*  PUBLIC METHODS  */
   /********************/
   /**
-   * Cancels this GeoCallbackRegistration so that it no longer fires callbacks.
+   * Cancels this callback registration so that it no longer fires its callback. This
+   * has no effect on any other callback registrations you may have created.
    */
   this.cancel = function() {
     if (typeof _cancelCallback !== "undefined") {
