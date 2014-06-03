@@ -38,7 +38,7 @@ var g_BORDERS = {
   }
 };
 
-// TODO: Investigate the correct value for this
+// TODO: Investigate the correct value for this and maybe make it user configurable
 var g_GEOHASH_LENGTH = 12;
 
 var deg2rad = function(deg) {
