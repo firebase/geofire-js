@@ -8,12 +8,13 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 var demoFirebaseUrl = "https://" + generateRandomString() + ".firebaseio-demo.com";
 console.log(demoFirebaseUrl);
 
-// Create global variables to hold the firebase ref and the GeoFire instance
+// Create global variables to hold the Firebase and GeoFire variables
 var firebaseRef, geoFire, geoQueries;
 
 /**********************/
 /*  HELPER FUNCTIONS  */
 /**********************/
+/* Helper function which runs before each Jasmine test has started */
 function beforeEachHelper(done) {
   // Create a new firebase ref with a new context
   firebaseRef = new Firebase(demoFirebaseUrl, Firebase.Context());
@@ -33,33 +34,23 @@ function beforeEachHelper(done) {
   });
 }
 
+/* Helper function which runs after each Jasmine test has completed */
 function afterEachHelper(done) {
   // Cancel each outstanding GeoQuery
   geoQueries.forEach(function(geoQuery) {
     geoQuery.cancel();
   })
 
-  // Wait for 50 milliseconds after each test to give enough time for old
-  // query events to expire
+  // Wait for 50 milliseconds after each test to give enough time for old query events to expire
   wait(50).then(function() {
     done();
   });
 }
 
+/* Returns a random alphabetic string of variable length */
 function generateRandomString() {
   return (Math.random() + 1).toString(36).substring(7);
 }
-
-/* Clears all Firebase event handlers and resets the Firebase; runs before each test to ensure there is no pollution between tests */
-function resetFirebase() {
-  return new RSVP.Promise(function(resolve, reject) {
-    //firebaseRef.child("indices").off("child_added");
-    //firebaseRef.child("locations").off("child_removed");
-    firebaseRef.remove(function() {
-      resolve();
-    });
-  });
-};
 
 /* Returns the current data in the Firebase */
 function getFirebaseData() {
@@ -93,20 +84,27 @@ function wait(milliseconds) {
 function Checklist(items, expect, done) {
   var eventsToComplete = items;
 
+  /* Removes a task from the events list */
   this.x = function(item) {
     var index = eventsToComplete.indexOf(item);
-    if (index == -1) {
+    if (index === -1) {
       expect("Attempting to delete unexpected item '" + item + "' from Checklist").toBeFalsy();
     }
     else {
       eventsToComplete.splice(index, 1);
-      if (eventsToComplete.length == 0) {
+      if (eventsToComplete.length === 0) {
         done();
       }
     }
   };
 
+  /* Returns the length of the events list */
+  this.length = function() {
+    return eventsToComplete.length;
+  };
+
+  /* Returns true if the events list is empty */
   this.isEmpty = function() {
-    return (eventsToComplete.length == 0);
+    return (eventsToComplete.length === 0);
   };
 };

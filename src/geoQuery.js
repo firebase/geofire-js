@@ -71,21 +71,41 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     var wasAlreadyInQuery = (_locationsInQuery[key] !== undefined);
     var isNowInQuery = (distanceFromCenter <= _radius);
 
-    if (!wasAlreadyInQuery && isNowInQuery) {
-      _callbacks.key_entered.forEach(function(callback) {
-        callback(key, location, distanceFromCenter);
-      });
+    if (isNowInQuery) {
+      if (wasAlreadyInQuery) {
+        _callbacks.key_moved.forEach(function(callback) {
+          callback(key, location, distanceFromCenter);
+        });
 
-      // Add the current location key to our list of location keys within this GeoQuery
-      _locationsInQuery[key] = location;
+        // Update the current location's location
+        _locationsInQuery[key] = location;
+      }
+      else {
+        _callbacks.key_entered.forEach(function(callback) {
+          callback(key, location, distanceFromCenter);
+        });
+
+        // Add the current location key to our list of location keys within this GeoQuery
+        _locationsInQuery[key] = location;
+      }
+
+      // When the key's location changes, check if the "key_exited" event should fire
+      var keyExitedCallback = _firebaseRef.child("locations/" + key).on("value", function(locationsDataSnapshot) {
+        var updatedLocation = locationsDataSnapshot.val() ? locationsDataSnapshot.val().split(",").map(Number) : null;
+        if (updatedLocation === null || updatedLocation[0] !== location[0] || updatedLocation[1] !== location[1]) {
+          _firebaseRef.child("locations/" + key).off("value", keyExitedCallback);
+          _fireKeyExitedCallbacks(key, updatedLocation);
+        }
+      });
     }
-    else if (wasAlreadyInQuery && isNowInQuery) {
-      _callbacks.key_moved.forEach(function(callback) {
-        callback(key, location, distanceFromCenter);
-      });
 
-      // Update the current location's location
-      _locationsInQuery[key] = location;
+    if (_numChildAddedEventsToProcess > 0) {
+      _numChildAddedEventsToProcess--;
+      if (_valueEventFired && _numChildAddedEventsToProcess === 0) {
+        _callbacks.ready.forEach(function(callback) {
+          callback();
+        });
+      }
     }
   }
 
@@ -96,7 +116,6 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     var isNowInQuery = (location === null) ? false : (distanceFromCenter <= _radius);
 
     if (wasAlreadyInQuery && !isNowInQuery) {
-      console.log(_callbacks.key_exited);
       _callbacks.key_exited.forEach(function(callback) {
         callback(key, location, distanceFromCenter);
       });
@@ -144,6 +163,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       return (item.length > 0 && neighborGeohashes.indexOf(item) === i);
     });
 
+    var numNeighborGeohashesProcessed = 0;
+
     // Listen for added and removed geohashes which have the same prefix as the neighboring geohashes
     for (var i = 0, numNeighbors = neighborGeohashes.length; i < numNeighbors; ++i) {
       // Set the start prefix as a subset of the current neighbor's geohash
@@ -156,57 +177,30 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       var firebaseQuery = _firebaseRef.child("indices").startAt(null, startPrefix).endAt(null, endPrefix);
 
       var childAddedCallback = firebaseQuery.on("child_added", function(indicesChildSnapshot) {
-        console.log("child_added: " + indicesChildSnapshot.name());
+        if (!_valueEventFired) {
+          _numChildAddedEventsToProcess++;
+        }
         var key = indicesChildSnapshot.name().slice(g_GEOHASH_LENGTH);
 
         _firebaseRef.child("locations/" + key).once("value", function(locationsDataSnapshot) {
           var location = locationsDataSnapshot.val().split(",").map(Number);
-
           _fireKeyEnteredAndMovedCallbacks(key, location, "child_added");
         });
       });
       _firebaseChildAddedCallbacks.push(childAddedCallback);
 
-      var childRemovedCallback = firebaseQuery.on("child_removed", function(indicesChildSnapshot) {
-        console.log("child_removed: " + indicesChildSnapshot.name());
-        var key = indicesChildSnapshot.name().slice(g_GEOHASH_LENGTH);
-        window.setTimeout(function() {
-          _firebaseRef.child("locations/" + key).once("value", function(locationsDataSnapshot) {
-            var location = locationsDataSnapshot.val() ? locationsDataSnapshot.val().split(",").map(Number) : null;
-
-            _fireKeyExitedCallbacks(key, location);
-          });
-        }, 100);
+      firebaseQuery.once("value", function(dataSnapshot) {
+        numNeighborGeohashesProcessed++;
+        if (numNeighborGeohashesProcessed === neighborGeohashes.length) {
+          _valueEventFired = true;
+        }
       });
-      _firebaseChildRemovedCallbacks.push(childRemovedCallback);
     }
   }
 
   /********************/
   /*  PUBLIC METHODS  */
   /********************/
-  /**
-   * Returns a promise fulfilled with the locations inside of this GeoQuery.
-   *
-   * @return {promise} A promise that is fulfilled with an array of locations which are inside of this
-   *                   GeoQuery. The array takes the form of { key1: location1, key2: location2, ... }.
-   */
-  this.results = function() {
-    return new RSVP.Promise(function(resolve) {
-      var results = [];
-      for (var key in _locationsInQuery) {
-        if (_locationsInQuery.hasOwnProperty(key)) {
-          results.push({
-            key: key,
-            location: _locationsInQuery[key]
-            // TODO: add distance
-          });
-        }
-      }
-      resolve(results);
-    });
-  };
-
   /**
    * Attaches a callback to this GeoQuery for a given event type.
    *
@@ -234,6 +228,12 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       }
     }
 
+    if (eventType === "ready") {
+      if (_valueEventFired) {
+        callback();
+      }
+    }
+
     // Return an event registration which can be used to cancel the callback
     return new GeoCallbackRegistration(function() {
       _callbacks[eventType].splice(_callbacks[eventType].indexOf(callback), 1);
@@ -251,9 +251,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       key_moved: []
     };
 
-    // TODO: only cancel this particular instance of the callback; add test for this
-    _firebaseRef.child("indices").off("child_added");
-    _firebaseRef.child("locations").off("child_removed");
+    // Turn off all Firebase listeners for this query
+    _firebaseChildAddedCallbacks.forEach(function(childAddedCallback) {
+      _firebaseRef.child("indices").off("child_added", childAddedCallback);
+    });
+    _firebaseChildAddedCallbacks = [];
   };
 
   /**
@@ -262,18 +264,16 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {object} newQueryCriteria The criteria which specifies the GeoQuery's type, center, and radius.
    */
   this.updateCriteria = function(newQueryCriteria) {
+    _valueEventFired = false;
+    _numChildAddedEventsToProcess = 0;
+
     _saveCriteria(newQueryCriteria);
 
     // Turn off all Firebase listeners for the previous query criteria
     _firebaseChildAddedCallbacks.forEach(function(childAddedCallback) {
       _firebaseRef.child("indices").off("child_added", childAddedCallback);
     });
-    _firebaseChildRemovedCallbacks.forEach(function(childRemovedCallback) {
-      _firebaseRef.child("indices").off("child_removed", childRemovedCallback);
-    });
-
     _firebaseChildAddedCallbacks = [];
-    _firebaseChildRemovedCallbacks = [];
 
     // Loop through all of the locations in the query and fire the "key_exited" callbacks if necessary
     for (var key in _locationsInQuery) {
@@ -315,8 +315,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     key_exited: [],
     key_moved: []
   };
+  _valueEventFired = false;
+  _numChildAddedEventsToProcess = 0;
   var _firebaseChildAddedCallbacks = [];
-  var _firebaseChildRemovedCallbacks = [];
   var _locationsInQuery = {};
   var _center, _radius;
 
