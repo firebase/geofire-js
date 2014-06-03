@@ -3,8 +3,8 @@
 GeoFire is a JavaScript library that allows you to store and query a set
 of keys based on their geographic location. GeoFire uses Firebase for data
 storage, allowing query results to be updated in realtime as they change.
-GeoFire does more than just measure the distance between locations; it allows
-you to selectively load only the data within certain locations, keeping your
+GeoFire does more than just measure the distance between locations; it
+selectively loads only the data near certain locations, keeping your
 applications light and responsive.
 
 ## Downloading
@@ -24,13 +24,15 @@ In order to use GeoFire in your project, you need to include the following files
 
 You can find each of these files in the `/dest/` directory of this GitHub repository. For debugging purposes, there is also a non-minified `geofire.js` file in the `/dest/` directory.
 
-You can also download all of these files via Bower [__Note__: geofire is currently not available via Bower]:
+You can also download all of these files via npm or Bower:
 
 ```bash
-$ bower install rsvp firebase [geofire]
+$ npm install rsvp firebase geofire --save-dev
 ```
 
-By the time GeoFire version 2.0 is officially released, it will be available via both npm and Bower.
+```bash
+$ bower install rsvp firebase geofire
+```
 
 ## API Reference
 
@@ -40,7 +42,7 @@ A `GeoFire` instance is used to read and write geolocation data to your Firebase
 
 #### new GeoFire(firebaseRef)
 
-Returns a new `GeoFire` instance. The data for this `GeoFire` will be written to your `firebaseRef` but will not overwrite all of your data at that location. Note that this `firebaseRef` can point to anywhere in your Firebase.
+Returns a new `GeoFire` instance. The data for this `GeoFire` will be stored at your `firebaseRef` but will not overwrite all of your data at that location. Note that this `firebaseRef` can point to anywhere in your Firebase.
 
 ```JavaScript
 // Create a Firebase reference where GeoFire will store its information
@@ -54,7 +56,7 @@ var geoFire = new GeoFire(dataRef);
 
 Adds the provided `key` - `location` pair to Firebase. Returns an empty promise which is fulfilled when the write is complete.
 
-If the provided `key` already exists in this `GeoFire`, it will be overwritten.
+If the provided `key` already exists in this `GeoFire`, it will be overwritten with the new `location` value.
 
 `location` must have the form `[latitude, longitude]`.
 
@@ -62,9 +64,9 @@ If the provided `key` already exists in this `GeoFire`, it will be overwritten.
 
 ```JavaScript
 geoFire.set("some_key", [37.79, -122.41]).then(function() {
-  alert("Location has been added to GeoFire");
+  console.log("Provided key has been added to GeoFire");
 }, function(error) {
-  // Handle error case
+  console.log("Error: " + error);
 });
 ```
 
@@ -78,17 +80,22 @@ The returned location will have the form `[latitude, longitude]`.
 
 ```JavaScript
 geoFire.get("some_key").then(function(location) {
-  alert("Provided key has a location of " + location);
+  if (location === null) {
+    console.log("Provided key is not in GeoFire");
+  }
+  else {
+    console.log("Provided key has a location of " + location);
+  }
 }, function(error) {
-  // Handle error case
+  console.log("Error: " + error);
 });
 ```
 
 #### GeoFire.remove(key)
 
-Ensures the `key` will be removed from this `GeoFire` index. Returns an empty promise fulfilled when the `key` has been removed.
+Removes the provided `key` from this `GeoFire`. Returns an empty promise fulfilled when the `key` has been removed.
 
-If the provided `key` is not in this `GeoFire` index, the promise will still successfully resolve.
+If the provided `key` is not in this `GeoFire`, the promise will still successfully resolve.
 
 This is equivalent to calling `set(key, null)`.
 
@@ -96,20 +103,20 @@ This is equivalent to calling `set(key, null)`.
 
 ```JavaScript
 geoFire.remove("some_key").then(function() {
-  alert("Location has been removed from GeoFire");
+  console.log("Provided key has been removed from GeoFire");
 }, function(error) {
-  // Handle error case
+  console.log("Error: " + error);
 });
 ```
 
 #### GeoFire.query(queryCriteria)
 
-Returns a new `GeoQuery` instance with the provide `queryCriteria`.
+Returns a new `GeoQuery` instance with the provided `queryCriteria`.
 
-The `queryCriteria` must be a dictionary containing the following keys:
+The `queryCriteria` describe a circular query and must be an associative array with the following keys:
 
 * `center` - the center of this query, with the form `[latitude, longitude]`
-* `radius` - the radius, in kilometers, of this query
+* `radius` - the radius, in kilometers, from the center of this query in which to include results
 
 ```JavaScript
 var geoQuery = geoFire.query({
@@ -154,7 +161,7 @@ var radius = geoQuery.radius();  // radius === 10.5
 
 Updates the criteria for this query.
 
-`newQueryCriteria` must be a dictionary containing `center`, `radius`, or both.
+`newQueryCriteria` must be an associative array containing `center`, `radius`, or both.
 
 ```JavaScript
 var geoQuery = geoFire.query({
@@ -181,55 +188,35 @@ center = geoQuery.center();  // center === [-50.83, 100.19]
 radius = geoQuery.radius();  // radius === 7
 ```
 
-#### GeoQuery.results()
-
-Returns a promise fulfilled with a list of dictionaries containing the `key` - `location` pairs which are currently within this query.
-
-The returned list will have the following form:
-
-```JavaScript
-[
-  { key: "key1", location: [latitude1, longitude1], distance: distance1 },
-  ...
-  { key: "keyN", location: [latitudeN, longitudeN], distance: distanceN }
-]
-```
-
-If there are no keys currently within this query, an empty list will be returned.
-
-```JavaScript
-geoQuery.results().then(function(results) {
-  results.forEach(function(result) {
-    console.log(result.key + " currently in query at " + result.location + " (" + result.distance + " km from center)");
-  });
-}, function(error) {
-  // Handle error case
-});
-```
-
 #### GeoQuery.on(eventType, callback)
 
-Attaches a `callback` to this query for a given `eventType`. The `callback` will be passed three parameters, the location's key, the location's [latitude, longitude] pair, and this distance from the location to this query's center, in km.
+Attaches a `callback` to this query which will be run when the provided `eventType` fires. Valid `eventType` values are `ready`, `key_entered`, `key_exited`, and `key_moved`. The `ready` event `callback` is passed no parameters. All other `callbacks` will be passed three parameters:
 
-Valid `eventType` values are `key_entered`, `key_exited`, and `key_moved`.
+1. the location's key
+2. the location's [latitude, longitude] pair
+3. the distance, in kilometers, from the location to this query's center
 
-`key_entered` is fired when a key enters this query. This can happen when a key moves from a location outside of this query to one inside of it or when a key is written to `GeoFire` for the first time and it falls within this query.
+`ready` is used to signify that this query has loaded its initial state and is up-to-date with its corresponding `GeoFire` instance. `ready` fires when this query has loaded all of the initial data from `GeoFire` and fired all other events for that data. It also fires every time `updateQuery()` is called, after all other events have fired for the updated query.
 
-`key_exited` is fired when a key moves from a location inside of this query to one outside of it.
+`key_entered` fires when a key enters this query. This can happen when a key moves from a location outside of this query to one inside of it or when a key is written to `GeoFire` for the first time and it falls within this query.
 
-`key_moved` is fired when a key which is already in this query moves to another location inside of it.
+`key_exited` fires when a key moves from a location inside of this query to one outside of it. If the key was entirely removed from `GeoFire`, both the location and distance passed to the `callback` will be `null`.
 
-// TODO: add not saying that for "key_exited", distance will be null if the key was completely removed from Firebase. Should add a test for this...
+`key_moved` fires when a key which is already in this query moves to another location inside of it.
 
-Returns a `GeoCallbackRegistration` which can be used to cancel the `callback`. You can add as many callbacks as you would like by repeatedly calling `on()`. Each one will get called when its corresponding `eventType` fires. Each `callback` must be cancelled individually.
+Returns a `GeoCallbackRegistration` which can be used to cancel the `callback`. You can add as many callbacks as you would like for the same `eventType` by repeatedly calling `on()`. Each one will get called when its corresponding `eventType` fires. Each `callback` must be cancelled individually.
 
 ```JavaScript
+var onReadyRegistration = geoQuery.on("ready", function() {
+  console.log("GeoQuery has loaded and fired all other events for initial data");
+});
+
 var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
   console.log(key + " entered query at " + location + " (" + distance + " km from center)");
 });
 
 var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
-  console.log(key + " left query to " + location + " (" + distance + " km from center)");
+  console.log(key + " exited query to " + location + " (" + distance + " km from center)");
 });
 
 var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location, distance) {
@@ -250,7 +237,7 @@ var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location
 });
 
 var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
-  console.log(key + " left query to " + location + " (" + distance + " km from center)");
+  console.log(key + " exited query to " + location + " (" + distance + " km from center)");
 
   // Cancel all of the query's callbacks
   geoQuery.cancel();
@@ -276,49 +263,11 @@ var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location
 });
 
 var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
-  console.log(key + " left query to " + location + " (" + distance + " km from center)");
+  console.log(key + " exited query to " + location + " (" + distance + " km from center)");
 
   // Cancel the "key_entered" callback
   onKeyEnteredRegistration.cancel();
 });
-```
-## Example Usage
-
-```JavaScript
-// Create a Firebase reference where GeoFire will store its information
-var dataRef = new Firebase("https://my-firebase.firebaseio-demo.com/");
-
-// Create a GeoFire index
-var geoFire = new GeoFire(dataRef);
-
-// Add a key to GeoFire
-geoFire.set("some_key", [37.78, -122.41]).then(function() {
-  // Retrieve the key that was just added to GeoFire
-  return geoFire.get("some_key");
-}).then(function(location) {
-  // location === [37.78, -122.41]
-});
-
-// Create a location query for a circle with a 10.5 km radius
-var geoQuery = geoFire.query({
-  center: [37.60, -121.98],
-  radius: 10.5
-});
-
-// Get the keys currently in the query
-geoQuery.results().then(function(results) {
-  results.forEach(function(result) {
-    console.log(result.key + " currently in query at " + result.location);
-  });
-});
-
-// Log the results (both initial items and new items that enter into the query)
-var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
-  console.log(key + " entered query at " + location + " (" + distance + " km from center)");
-});
-
-// Terminate the query (we will no longer receive location updates from the server for this query)
-geoQuery.cancel();
 ```
 
 ## Promises
@@ -329,9 +278,9 @@ GeoFire uses the lightweight [RSVP.js](https://github.com/tildeio/rsvp.js/) libr
 
 ```JavaScript
 promise.then(function(result) {
-  // Will be called if the promise was sucessfully resolved / fulfilled
+  console.log("Promise was successfully resolved with the following value: " + result);
 }, function(error) {
-  // Will be called if the promise was rejected
+  console.log("Promise was rejected with the following error: " + error);
 })
 ```
 

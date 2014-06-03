@@ -905,6 +905,30 @@ describe("GeoQuery Tests:", function() {
       });
     });
 
+    it("\"key_exited\" callback gets passed null for location and distance parameters if the key is entirely removed from GeoFire", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "loc1 exited"], expect, done);
+
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
+
+      geoQueries[0].on("key_exited", function(key, location, distance) {
+        expect(location).toBeNull();
+        expect(distance).toBeNull();
+        cl.x(key + " exited");
+      });
+
+      geoFire.set("loc1", [2, 3]).then(function() {
+        cl.x("p1");
+
+        return geoFire.remove("loc1");
+      }).then(function() {
+        cl.x("p2");
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p3");
+      });
+    });
+
     it("\"key_exited\" callback fires when a location within the GeoQuery is entirely removed from GeoFire", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 exited"], expect, done);
 
