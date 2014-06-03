@@ -205,9 +205,6 @@ var GeoFire = function(firebaseRef) {
     }).then(function(locationChanged) {
       // If the location has actually changed, update Firebase; otherwise, just return an empty promise
       if (locationChanged === true) {
-        //return _updateLocationsNode(key, location).then(function() {
-        //  return _updateIndicesNode(key, location);
-        //})
         return new RSVP.all([_updateLocationsNode(key, location), _updateIndicesNode(key, location)]);
       }
       else {

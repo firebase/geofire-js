@@ -297,6 +297,7 @@ describe("GeoQuery Tests:", function() {
 
         var onReadyCallbackRegistration1 = geoQueries[0].on("ready", function() {
           expect(cl.length()).toBe(6);
+          cl.x("ready1 fired");
 
           onReadyCallbackRegistration1.cancel();
 
