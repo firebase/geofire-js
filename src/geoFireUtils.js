@@ -136,18 +136,16 @@ var encodeGeohash = function(latLon, precision) {
     var range = even ? lonRange : latRange;
 
     var mid = (range.min + range.max) / 2;
+    /* jshint -W016 */
     if (val > mid) {
-      /* jshint -W016 */
       hashVal = (hashVal << 1) + 1;
-      /* jshint +W016 */
       range.min = mid;
     }
     else {
-      /* jshint -W016 */
       hashVal = (hashVal << 1) + 0;
-      /* jshint +W016 */
       range.max = mid;
     }
+    /* jshint +W016 */
 
     even = !even;
     if (bits < 4) {

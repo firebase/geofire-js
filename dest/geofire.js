@@ -438,18 +438,16 @@ var encodeGeohash = function(latLon, precision) {
     var range = even ? lonRange : latRange;
 
     var mid = (range.min + range.max) / 2;
+    /* jshint -W016 */
     if (val > mid) {
-      /* jshint -W016 */
       hashVal = (hashVal << 1) + 1;
-      /* jshint +W016 */
       range.min = mid;
     }
     else {
-      /* jshint -W016 */
       hashVal = (hashVal << 1) + 0;
-      /* jshint +W016 */
       range.max = mid;
     }
+    /* jshint +W016 */
 
     even = !even;
     if (bits < 4) {
@@ -651,6 +649,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // Create the Firebase query
       var firebaseQuery = _firebaseRef.child("indices").startAt(null, startPrefix).endAt(null, endPrefix);
 
+      /* jshint -W083 */
       // For every new matching geohash, determine if we should fire the "key_entered" or "key_moved" events.
       var childAddedCallback = firebaseQuery.on("child_added", function(indicesChildSnapshot) {
         if (!_valueEventFired) {
@@ -668,10 +667,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // Once the current geohash to query is processed, see if it is the last one to be processed
       // and, if so, flip the corresponding variable.
       // The "value" event will fire after every "child_added" event fires.
-      firebaseQuery.once("value", function(dataSnapshot) {
+      firebaseQuery.once("value", function() {
         numGeohashesToQueryProcessed++;
         _valueEventFired = (numGeohashesToQueryProcessed === geohashesToQuery.length);
       });
+      /* jshint +W083 */
     }
   }
 
@@ -821,8 +821,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     key_exited: [],
     key_moved: []
   };
-  _valueEventFired = false;
-  _numChildAddedEventsToProcess = 0;
+  var _valueEventFired = false;
+  var _numChildAddedEventsToProcess = 0;
   var _firebaseChildAddedCallbacks = [];
   var _locationsInQuery = {};
   var _center, _radius;
