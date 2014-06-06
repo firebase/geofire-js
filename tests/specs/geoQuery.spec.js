@@ -148,7 +148,7 @@ describe("GeoQuery Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        geoQueries[0].updateCriteria({center: [90,90], radius: 1000});
+        geoQueries[0].updateCriteria({center: [90, 90], radius: 1000});
 
         return wait(100);
       }).then(function() {
@@ -164,6 +164,102 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p4");
+      });
+    });
+
+    it("updateCriteria() does not cause \"key_moved\" callbacks to fire for keys in both the previous and updated queries", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "loc1 entered", "loc4 entered", "loc4 exited", "loc2 entered"], expect, done);
+
+      geoQueries.push(geoFire.query({center: [1, 2], radius: 1000}));
+      geoQueries[0].on("key_entered", function(key, location, distance) {
+        cl.x(key + " entered");
+      });
+      geoQueries[0].on("key_exited", function(key, location, distance) {
+        cl.x(key + " exited");
+      });
+      geoQueries[0].on("key_moved", function(key, location, distance) {
+        cl.x(key + " moved");
+      });
+
+      batchSet([
+        {key: "loc1", location: [2, 3]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]},
+        {key: "loc4", location: [5, 5]},
+        {key: "loc5", location: [88, 88]}
+      ]).then(function() {
+        cl.x("p1");
+
+        geoQueries[0].updateCriteria({center: [1, 1], radius: 1000});
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p2");
+
+        return batchSet([
+          {key: "loc2", location: [1, 1]},
+          {key: "loc4", location: [89, 90]}
+        ]);
+      }).then(function() {
+        cl.x("p3");
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p4");
+      });
+    });
+
+    it("updateCriteria() does not cause \"key_exited\" callbacks to fire twice for keys in the previous query but not in the updated query and which were moved after the query was updated", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6", "loc1 entered", "loc4 entered", "loc1 exited", "loc4 exited", "loc4 entered", "loc5 entered", "loc5 moved"], expect, done);
+
+      geoQueries.push(geoFire.query({center: [1, 2], radius: 1000}));
+      geoQueries[0].on("key_entered", function(key, location, distance) {
+        cl.x(key + " entered");
+      });
+      geoQueries[0].on("key_exited", function(key, location, distance) {
+        cl.x(key + " exited");
+      });
+      geoQueries[0].on("key_moved", function(key, location, distance) {
+        cl.x(key + " moved");
+      });
+
+
+      batchSet([
+        {key: "loc1", location: [2, 3]},
+        {key: "loc2", location: [50, -7]},
+        {key: "loc3", location: [16, -150]},
+        {key: "loc4", location: [5, 5]},
+        {key: "loc5", location: [88, 88]}
+      ]).then(function() {
+        cl.x("p1");
+
+        geoQueries[0].updateCriteria({center: [90, 90], radius: 1000});
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p2");
+
+        return batchSet([
+          {key: "loc2", location: [1, 1]},
+          {key: "loc4", location: [89, 90]}
+        ]);
+      }).then(function() {
+        cl.x("p3");
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p4");
+
+        return batchSet([
+          {key: "loc2", location: [0, 0]},
+          {key: "loc5", location: [89, 89]}
+        ]);
+      }).then(function() {
+        cl.x("p5");
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p6");
       });
     });
 
@@ -288,15 +384,18 @@ describe("GeoQuery Tests:", function() {
         geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
         geoQueries[0].on("key_entered", function(key, location, distance) {
+          console.log(key + " entered");
           cl.x(key + " entered");
         });
 
         geoQueries[0].on("key_exited", function(key, location, distance) {
+          console.log(key + " exited");
           cl.x(key + " exited");
         });
 
         var onReadyCallbackRegistration1 = geoQueries[0].on("ready", function() {
           expect(cl.length()).toBe(6);
+          console.log("ready1 fired");
           cl.x("ready1 fired");
 
           onReadyCallbackRegistration1.cancel();
@@ -307,6 +406,7 @@ describe("GeoQuery Tests:", function() {
 
           geoQueries[0].on("ready", function() {
             expect(cl.length()).toBe(1);
+            console.log("ready2 fired");
             cl.x("ready2 fired");
           });
         });
@@ -1124,6 +1224,18 @@ describe("GeoQuery Tests:", function() {
         cl.x("p3")
 
         geoQueries[0].cancel();
+
+        return wait(1000);
+      }).then(function() {
+        geoQueries[0].on("key_entered", function(key, location, distance) {
+          cl.x(key + " entered");
+        });
+        geoQueries[0].on("key_exited", function(key, location, distance) {
+          cl.x(key + " exited");
+        });
+        geoQueries[0].on("key_moved", function(key, location, distance) {
+          cl.x(key + " moved");
+        });
 
         return batchSet([
           {key: "loc1", location: [10, -100]},

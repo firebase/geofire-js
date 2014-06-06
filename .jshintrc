@@ -1,6 +1,5 @@
 {
   "predef": [
-    "RSVP",
     "module",
     "console"
   ],

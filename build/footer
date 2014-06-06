@@ -1,7 +1,7 @@
   return GeoFire;
 })();
 
-//Make sure this works in node.
+// Export GeoFire if we are in node
 if (typeof module !== "undefined") {
   module.exports = GeoFire;
 }
