@@ -49,33 +49,34 @@ var GeoFire = function(firebaseRef) {
       if (location === null) {
         resolve();
       }
-
-      if (Object.prototype.toString.call(location) !== "[object Array]" || location.length !== 2) {
-        error = "expected array of length 2, got " + location.length;
-      }
       else {
-        var latitude = location[0];
-        var longitude = location[1];
+        if (Object.prototype.toString.call(location) !== "[object Array]" || location.length !== 2) {
+          error = "expected array of length 2, got " + location.length;
+        }
+        else {
+          var latitude = location[0];
+          var longitude = location[1];
 
-        if (typeof latitude !== "number") {
-          error = "latitude must be a number";
+          if (typeof latitude !== "number") {
+            error = "latitude must be a number";
+          }
+          else if (latitude < -90 || latitude > 90) {
+            error = "latitude must be within the range [-90, 90]";
+          }
+          else if (typeof longitude !== "number") {
+            error = "longitude must be a number";
+          }
+          else if (longitude < -180 || longitude > 180) {
+            error = "longitude must be within the range [-180, 180]";
+          }
         }
-        else if (latitude < -90 || latitude > 90) {
-          error = "latitude must be within the range [-90, 90]";
-        }
-        else if (typeof longitude !== "number") {
-          error = "longitude must be a number";
-        }
-        else if (longitude < -180 || longitude > 180) {
-          error = "longitude must be within the range [-180, 180]";
-        }
-      }
 
-      if (error !== undefined) {
-        reject("Error: Invalid location [" + location + "]: " + error);
-      }
-      else {
-        resolve();
+        if (error !== undefined) {
+          reject("Error: Invalid location [" + location + "]: " + error);
+        }
+        else {
+          resolve();
+        }
       }
     });
   }
@@ -106,14 +107,16 @@ var GeoFire = function(firebaseRef) {
           }
 
           // Otherwise, overwrite the previous index
-          _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_LENGTH) + key).remove(function(error) {
-            if (error) {
-              reject("Error: Firebase synchronization failed: " + error);
-            }
-            else {
-              resolve(true);
-            }
-          });
+          else {
+            _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_LENGTH) + key).remove(function(error) {
+              if (error) {
+                reject("Error: Firebase synchronization failed: " + error);
+              }
+              else {
+                resolve(true);
+              }
+            });
+          }
         }
       }, function(error) {
         reject("Error: Firebase synchronization failed: " + error);

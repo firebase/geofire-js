@@ -21,49 +21,62 @@ var muniFirebaseRef = new Firebase("https://busroutes.firebaseio-demo.com/sf-mun
 var demoFirebaseRef = new Firebase("https://busRoutesGeoFire.firebaseio-demo.com/");
 var geoFire = new GeoFire(demoFirebaseRef);
 
-/*var sourceVehicleIds = [];
+/*
+// SOURCE VEHICLES
+var sourceVehicleIds = [];
 muniFirebaseRef.on("child_added", function(dataSnapshot) {
   var vehicleId = dataSnapshot.name();
   sourceVehicleIds.push(vehicleId);
 });
-demoFirebaseRef.child("indices").on("child_removed", function() {
-  console.assert(false, "source vehicle removed");
+muniFirebaseRef.on("child_removed", function(dataSnapshot) {
+  var vehicleId = dataSnapshot.name();
+  var index = sourceVehicleIds.indexOf(vehicleId);
+  console.assert(index !== -1, "Improperly removing source vehicle " + vehicleId);
+  sourceVehicleIds.splice(index, 1);
 });
 
+// INDICES VEHICLES
 var indicesVehicleIds = [];
 var numIndicesDupes = 0;
-demoFirebaseRef.child("indices").on("child_added", function(dataSnapshot) {
+demoFirebaseRef.child("i").on("child_added", function(dataSnapshot) {
   var vehicleId = dataSnapshot.name().slice(12);
-  if (indicesVehicleIds.indexOf(vehicleId) !== -1) {
-    console.log(vehicleId);
-    numIndicesDupes++;
-  }
+  //if (indicesVehicleIds.indexOf(vehicleId) !== -1) {
+  //  numIndicesDupes++;
+  //}
   indicesVehicleIds.push(vehicleId);
 });
-demoFirebaseRef.child("indices").on("child_removed", function() {
-  console.assert(false, "indices vehicle removed");
+demoFirebaseRef.child("i").on("child_removed", function(dataSnapshot) {
+  var vehicleId = dataSnapshot.name().slice(12);
+  var index = indicesVehicleIds.indexOf(vehicleId);
+  console.assert(index !== -1, "Improperly removing indices vehicle " + vehicleId);
+  indicesVehicleIds.splice(index, 1);
 });
 
+// LOCATIONS VEHICLES
 var locationsVehicleIds = [];
-demoFirebaseRef.child("locations").on("child_added", function(dataSnapshot) {
+demoFirebaseRef.child("l").on("child_added", function(dataSnapshot) {
   var vehicleId = dataSnapshot.name();
   locationsVehicleIds.push(vehicleId);
 });
-demoFirebaseRef.child("locations").on("child_removed", function() {
-  console.assert(false, "locations vehicle removed");
+demoFirebaseRef.child("l").on("child_removed", function(dataSnapshot) {
+  var vehicleId = dataSnapshot.name();
+  var index = locationsVehicleIds.indexOf(vehicleId);
+  console.assert(index !== -1, "Improperly removing locations vehicle " + vehicleId);
+  locationsVehicleIds.splice(index, 1);
 });
 
-window.setTimeout(function() {
+window.setInterval(function() {
   console.log("Number of source vehicles: " + sourceVehicleIds.length);
-  console.log(sourceVehicleIds);
+  //console.log(sourceVehicleIds);
 
   console.log("Number of indices: " + indicesVehicleIds.length);
   console.log("Number of indices dupes: " + numIndicesDupes);
-  console.log(indicesVehicleIds);
+  //console.log(indicesVehicleIds);
 
   console.log("Number of locations: " + locationsVehicleIds.length);
-  console.log(locationsVehicleIds);
-}, 2000);*/
+  //console.log(locationsVehicleIds);
+}, 2000);
+*/
 
 // Create a GeoQuery
 geoQuery = geoFire.query({

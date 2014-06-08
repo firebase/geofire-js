@@ -49,7 +49,7 @@ describe("GeoFire Tests:", function() {
     });
 
     it("set() updates Firebase when changing a pre-existing key", function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3"], expect, done);
 
       batchSet([
         {key: "loc1", location: [0, 0]},
@@ -58,17 +58,9 @@ describe("GeoFire Tests:", function() {
       ]).then(function() {
         cl.x("p1");
 
-        return geoFire.get("loc1");
-      }).then(function(location) {
-        cl.x("p2");
-
         return geoFire.set("loc1", [2, 3]);
       }).then(function() {
-        cl.x("p3");
-
-        return geoFire.get("loc1");
-      }).then(function(location) {
-        cl.x("p4");
+        cl.x("p2");
 
         return getFirebaseData();
       }).then(function(firebaseData) {
@@ -85,7 +77,40 @@ describe("GeoFire Tests:", function() {
           }
         });
 
-        cl.x("p5");
+        cl.x("p3");
+      });
+    });
+
+    it("set() updates Firebase when changing a pre-existing key to the same location", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3"], expect, done);
+
+      batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [50, 50]},
+        {key: "loc3", location: [-90, -90]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return geoFire.set("loc1", [0, 0]);
+      }).then(function() {
+        cl.x("p2");
+
+        return getFirebaseData();
+      }).then(function(firebaseData) {
+        expect(firebaseData).toEqual({
+          i: {
+            "7zzzzzzzzzzzloc1": true,
+            "v0gs3y0zh7w1loc2": true,
+            "1bpbpbpbpbpbloc3": true
+          },
+          l: {
+            "loc1": "0,0",
+            "loc2": "50,50",
+            "loc3": "-90,-90"
+          }
+        });
+
+        cl.x("p3");
       });
     });
 
