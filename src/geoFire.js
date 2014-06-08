@@ -37,7 +37,7 @@ var GeoFire = function(firebaseRef) {
         if (key.indexOf(invalidChar) !== -1) {
           error = "key cannot contain \"" + invalidChar + "\" character";
         }
-      })
+      });
     }
 
     if (typeof error !== "undefined") {

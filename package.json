@@ -1,7 +1,7 @@
 {
   "name": "geofire",
-  "description": "Location-based operations in Firebase",
-  "main": "geofire.js",
+  "description": "Location-based querying and filtering using Firebase",
+  "main": "dist/geofire.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/firebase/geofire.git"
@@ -9,14 +9,14 @@
   "bugs": {
     "url": "https://github.com/firebase/geofire/issues"
   },
-  "private": true,
+  "private": false,
   "licenses": [
     {
       "type": "MIT",
       "url": "http://firebase.mit-license.org/"
     }
   ],
-  "version": "1.0.0",
+  "version": "2.0.0",
   "dependencies": {
     "firebase": "~1.0.17",
     "rsvp": "~3.0.9"
@@ -24,22 +24,15 @@
   "devDependencies": {
     "karma": "^0.12.9",
     "karma-jasmine": "~0.2.0",
-    "karma-script-launcher": "~0.1.0",
-    "karma-firefox-launcher": "~0.1.0",
-    "karma-phantomjs-launcher": "~0.1.0",
+    "karma-coverage": "^0.2.4",
     "karma-chrome-launcher": "~0.1.0",
     "gulp": "^3.5.6",
+    "gulp-karma": "0.0.4",
     "gulp-concat": "^2.2.0",
     "gulp-uglify": "^0.2.1",
     "gulp-jshint": "^1.5.1",
     "gulp-ext-replace": "0.0.5",
     "jshint-stylish": "^0.2.0",
-    "gulp-karma": "0.0.4",
-    "streamqueue": "0.0.5",
-    "connect-livereload": "^0.4.0",
-    "tiny-lr": "0.0.7",
-    "gulp-livereload": "^1.5.0",
-    "express": "^4.2.0",
-    "karma-coverage": "^0.2.4"
+    "streamqueue": "0.0.5"
   }
 }

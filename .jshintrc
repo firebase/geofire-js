@@ -1,7 +1,9 @@
 {
   "predef": [
+    "require",
     "module",
-    "console"
+    "console",
+    "window"
   ],
   "bitwise": true,
   "curly": true,
