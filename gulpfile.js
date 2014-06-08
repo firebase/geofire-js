@@ -14,9 +14,9 @@ var karma = require("gulp-karma");
 
 // Live-reload
 var express = require("express");
-var livereload = require('connect-livereload');
-var refresh = require('gulp-livereload');
-var lrserver = require('tiny-lr')();
+var livereload = require("connect-livereload");
+var refresh = require("gulp-livereload");
+var lrserver = require("tiny-lr")();
 
 /****************/
 /*  FILE PATHS  */
@@ -125,7 +125,7 @@ gulp.task("server", function() {
 /* Re-runs the "scripts" task every time a script file changes */
 gulp.task("watch", function() {
   gulp.watch(paths.scripts.src.dir + "/**/*", ["scripts"]);
-  gulp.watch(["examples/**/*", paths.scripts.dest.dir + "/**/*"], ["reload"]);
+  gulp.watch(["examples/**/*", paths.scripts.dest.dir + "/**/*", "tests/specs/*.spec.js"], ["reload"]);
 });
 
 /* Starts the live-reload server and refreshes it everytime a dest file changes */

@@ -39,7 +39,6 @@
     "connect-livereload": "^0.4.0",
     "tiny-lr": "0.0.7",
     "gulp-livereload": "^1.5.0",
-    "gulp-notify": "^1.2.5",
     "express": "^4.2.0",
     "karma-coverage": "^0.2.4"
   }

@@ -2,14 +2,14 @@
   "name": "geofire",
   "version": "1.0.0",
   "main": [
-    "./build/geofire.min.js"
+    "./dist/geofire.min.js"
   ],
   "ignore": [
     "gulpfile.js",
     "firebase.json",
     "package.json",
     "tests",
-    "site",
+    "src",
     "README.md",
     ".travis.yml"
   ],

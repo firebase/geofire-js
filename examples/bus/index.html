@@ -8,6 +8,15 @@
   <link href="css/font-awesome.min.css" rel="stylesheet">
   <link href="css/buttons.css" rel="stylesheet">
   <link href="css/site.css" rel="stylesheet">
+  <link href="css/leaflet.css" rel="stylesheet">
+  <style>
+    .vehicleMarker {
+      border: solid 2px #000;
+      background: #FF6450;
+      border-radius: 5px;
+      color: #FFF;
+    }
+  </style>
 </head>
 
 <body>
@@ -97,6 +106,9 @@
     <ul></ul>
   </section>
 
+  <div style="z-index: 1000; position: absolute; right: 310px; bottom: 0px; font-size: 10px;">
+    Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.
+  </div>
 
   <!-- SOCIAL BAR -->
   <div id="social-bar">
@@ -121,8 +133,16 @@
   <!-- Google Maps -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANQ0KPuNhYNPwxfX4NRkJZ25jEWGK35q8&sensor=false"></script>
 
+  <!-- Leaflet -->
+  <script src="js/vendor/leaflet.js"></script>
+  <script src="js/vendor/animatedLeafletMarker.js"></script>
+
+  <!-- Stamen map tiles -->
+  <script src="js/vendor/tile.stamen.js"></script>
+
   <!-- Firebase -->
-  <script src="../../bower_components/firebase/firebase.js"></script>
+  <!-- <script src="../../bower_components/firebase/firebase.js"></script> -->
+  <script src="js/vendor/firebase-debug.js"></script>
 
   <!-- RSVP -->
   <script src="../../bower_components/rsvp/rsvp.min.js"></script>
@@ -136,7 +156,7 @@
 
 
   <!-- Custom JS -->
-  <script src="js/busDemo.js"></script>
+  <script src="js/leaflet.js"></script>
 
   <script type="text/javascript">
     google.maps.event.addDomListener(window, "load", initializeMap);

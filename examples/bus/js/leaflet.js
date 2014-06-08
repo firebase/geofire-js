@@ -75,41 +75,55 @@ geoQuery = geoFire.query({
 var vehiclesInQuery = {};
 
 /* Adds new vehicle markers to the map when they enter the query */
-// geoQuery.on("key_entered", function(vehicleId, vehicleLocation) {
-//   //console.log("Vehicle " + vehicleId + " entered the query.");
+geoQuery.on("key_entered", function(vehicleId, vehicleLocation) {
+  //console.log("Vehicle " + vehicleId + " entered the query.");
 
-//   // Verify state
-//   console.assert(typeof vehiclesInQuery[vehicleId] === "undefined", "Vehicle " + vehicleId + " should not already be in the vehicles list.");
+  // Verify state
+  console.assert(typeof vehiclesInQuery[vehicleId] === "undefined", "Vehicle " + vehicleId + " should not already be in the vehicles list.");
 
-//   // Specify that the vehicle has entered this query
-//   vehiclesInQuery[vehicleId] = true;
+  // Specify that the vehicle has entered this query
+  vehiclesInQuery[vehicleId] = true;
 
-//   muniFirebaseRef.child(vehicleId).once("value", function(dataSnapshot) {
-//     // Get the vehicle data from the Open Data Set
-//     vehicle = dataSnapshot.val();
+  muniFirebaseRef.child(vehicleId).once("value", function(dataSnapshot) {
+    // Get the vehicle data from the Open Data Set
+    vehicle = dataSnapshot.val();
 
-//     // Verify the vehicle data is accurate
-//     console.assert(vehicle !== null, "Vehicle " + vehicleId + " should exist in the Open Data Set.");
-//     console.assert(parseInt(vehicle.id) === parseInt(vehicleId), "Vehicle " + vehicleId + " does not match the ID of vehicle " + vehicle.id + " stored in the Open Data Set.");
-//     console.assert(parseFloat(vehicle.lat) === parseFloat(vehicleLocation[0]), "Vehicle " + vehicleId + " has inaccurate latitude.");
-//     console.assert(parseFloat(vehicle.lon) === parseFloat(vehicleLocation[1]), "Vehicle " + vehicleId + " has inaccurate longitude.");
+    // Verify the vehicle data is accurate
+    console.assert(vehicle !== null, "Vehicle " + vehicleId + " should exist in the Open Data Set.");
+    console.assert(parseInt(vehicle.id) === parseInt(vehicleId), "Vehicle " + vehicleId + " does not match the ID of vehicle " + vehicle.id + " stored in the Open Data Set.");
+    console.assert(parseFloat(vehicle.lat) === parseFloat(vehicleLocation[0]), "Vehicle " + vehicleId + " has inaccurate latitude.");
+    console.assert(parseFloat(vehicle.lon) === parseFloat(vehicleLocation[1]), "Vehicle " + vehicleId + " has inaccurate longitude.");
 
-//     // If the vehicle has not already exited this query in the time it took to look up its data in the Open Data
-//     // Set, add it to the map.
-//     if (vehiclesInQuery[vehicleId] === true) {
-//       // Add the vehicle to the list of vehicles in the query
-//       vehiclesInQuery[vehicleId] = vehicle;
+    // If the vehicle has not already exited this query in the time it took to look up its data in the Open Data
+    // Set, add it to the map.
+    if (vehiclesInQuery[vehicleId] === true) {
+      // Add the vehicle to the list of vehicles in the query
+      vehiclesInQuery[vehicleId] = vehicle;
 
-//       // Create a new marker for the vehicle
-//       vehicle.marker = createVehicleMarker(vehicle, getVehicleColor(vehicle));
+      // Create a new marker for the vehicle
+      //vehicle.marker = createVehicleMarker(vehicle, getVehicleColor(vehicle));
+      var line = L.polyline([vehicleLocation]);
+      vehicle.marker = L.animatedMarker(line.getLatLngs(), {
+        icon: L.divIcon({
+          // Specify a class name we can refer to in CSS.
+          className: 'vehicleMarker',
+          // Define what HTML goes in each marker.
+          html: "<div>" + vehicleId + "</div>",
+          // Set a markers width and height.
+          iconSize: [40, 20]
+        }),
+        //distance: 300,  // meters
+        interval: 500, // milliseconds
+        autoStart: false
+      }).addTo(map);
 
-//       // Add the vehicle to the location console
-//       $("#location-console ul").append("<li id='vehicle" + vehicleId + "'>" + vehicle.routeTag + "</li>");
-//     }
-//   });
-// });
+      // Add the vehicle to the location console
+      $("#location-console ul").append("<li id='vehicle" + vehicleId + "'>" + vehicle.routeTag + "</li>");
+    }
+  });
+});
 
-// /* Moves vehicles markers on the map when their location within the query changes */
+/* Moves vehicles markers on the map when their location within the query changes */
 // geoQuery.on("key_moved", function(vehicleId, vehicleLocation) {
 //   //console.log("Vehicle " + vehicleId + " moved within the query.");
 
@@ -122,7 +136,10 @@ var vehiclesInQuery = {};
 //   console.assert(typeof vehicle.marker !== "undefined", "Vehicle " + vehicleId + " should already have a marker.");
 
 //   // Animate the vehicle's marker
-//   vehicle.marker.animatedMoveTo(vehicleLocation);
+//   //vehicle.marker.animatedMoveTo(vehicleLocation);
+//   var line = L.polyline([vehicle.marker.getLatLng(), vehicleLocation]);
+//   vehicle.marker.setLatLng(line);
+//   vehicle.marker.start();
 // });
 
 // /* Removes vehicle markers from the map when the exit the query */
@@ -161,22 +178,49 @@ var vehiclesInQuery = {};
 //vehicle.marker.setIcon("http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=" + vehicle.vtype + "|bbT|" + vehicle.routeTag + "|BF5FFF|eee");
 
 function initializeMap() {
-  loc = new google.maps.LatLng(center[0], center[1]);
-  var layer = "watercolor";
-  var mapOptions = {
-    center: loc,
-    zoom: 14,
-    mapTypeId: layer,
-    //mapTypeId: google.maps.MapTypeId.ROADMAP,
-    mapTypeControlOptions: {
-      mapTypeIds: layer
-    }
-  };
+  map = L.map("map-canvas", {
+    center: center,
+    zoom: 14
+  });
 
-  map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-  map.mapTypes.set(layer, new google.maps.StamenMapType(layer));
+  var layer = new L.StamenTileLayer("watercolor");
+  map.addLayer(layer);
 
-  circleLoc = new google.maps.LatLng(center[0], center[1]);
+  var line = L.polyline([center, locations["Caltrain"]]);
+  var animatedMarker = L.animatedMarker(line.getLatLngs(), {
+    icon: L.divIcon({
+      // Specify a class name we can refer to in CSS.
+      className: 'vehicleMarker',
+      // Define what HTML goes in each marker.
+      html: "<div>JAW</div>",
+      // Set a markers width and height.
+      iconSize: [40, 20]
+    }),
+    //distance: 300,  // meters
+    interval: 500, // milliseconds
+    autoStart: false
+  }).addTo(map);
+
+  window.setTimeout(function() {
+    animatedMarker.start()
+  }, 2000);
+
+  circle = L.circleMarker(center, {
+    color: "#6D3099",
+    opacity: 0.7,
+    weight: 1,
+    fillColor: "#B650FF",
+    fillOpacity: 0.35,
+    draggable: true
+  }).addTo(map);
+  circle.setRadius(100);
+  circle.dragging.enable();
+
+  //var draggable = new L.Draggable(circle);
+  //console.log(draggable);
+  //draggable.enable();
+
+  /*circleLoc = new google.maps.LatLng(center[0], center[1]);
   var circleOptions = {
     strokeColor: "#6D3099",
     strokeOpacity: 0.7,
@@ -189,53 +233,6 @@ function initializeMap() {
     draggable: true
   };
 
-  var lineCoordinates = [
-    new google.maps.LatLng(37.785326, -122.405696),
-    new google.maps.LatLng(37.7789, -122.3917)
-  ];
-
-  // Create the polyline and add the symbol to it via the 'icons' property.
-  var marker = new google.maps.Marker({
-    icon: "http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|JAW|50B1FF|eee",
-    position: new google.maps.LatLng(37.785326, -122.405696),
-    optimized: true,
-    map: map
-  });
-
-  // Define the symbol, using one of the predefined paths ('CIRCLE')
-  // supplied by the Google Maps JavaScript API.
-  var lineSymbol = {
-    path: google.maps.SymbolPath.CIRCLE,
-    //path: marker,
-    scale: 8,
-    strokeColor: '#393'
-  };
-
-  line = new google.maps.Polyline({
-    path: lineCoordinates,
-    icons: [{
-      icon: lineSymbol,
-      //icon: "http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|JAW|50B1FF|eee",
-      offset: '100%'
-    }],
-    map: map
-  });
-
-  animateCircle();
-
-  // Use the DOM setInterval() function to change the offset of the symbol
-  // at fixed intervals.
-  function animateCircle() {
-      var count = 0;
-      window.setInterval(function() {
-        count = (count + 1) % 200;
-
-        var icons = line.get('icons');
-        icons[0].offset = (count / 2) + '%';
-        line.set('icons', icons);
-    }, 20);
-  }
-
   circle = new google.maps.Circle(circleOptions);
 
   var updateCriteria = _.debounce(function() {
@@ -247,7 +244,7 @@ function initializeMap() {
     });
   }, 10);
 
-  google.maps.event.addListener(circle, "drag", updateCriteria);
+  google.maps.event.addListener(circle, "drag", updateCriteria);*/
 }
 
 /**********************/

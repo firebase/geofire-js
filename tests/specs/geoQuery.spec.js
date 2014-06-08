@@ -384,18 +384,15 @@ describe("GeoQuery Tests:", function() {
         geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
         geoQueries[0].on("key_entered", function(key, location, distance) {
-          console.log(key + " entered");
           cl.x(key + " entered");
         });
 
         geoQueries[0].on("key_exited", function(key, location, distance) {
-          console.log(key + " exited");
           cl.x(key + " exited");
         });
 
         var onReadyCallbackRegistration1 = geoQueries[0].on("ready", function() {
           expect(cl.length()).toBe(6);
-          console.log("ready1 fired");
           cl.x("ready1 fired");
 
           onReadyCallbackRegistration1.cancel();
@@ -406,7 +403,6 @@ describe("GeoQuery Tests:", function() {
 
           geoQueries[0].on("ready", function() {
             expect(cl.length()).toBe(1);
-            console.log("ready2 fired");
             cl.x("ready2 fired");
           });
         });
