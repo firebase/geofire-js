@@ -143,52 +143,35 @@ describe("GeoFire Tests:", function() {
       });
     });
 
-    it("set() throws errors on invalid keys" ,function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], expect, done);
+    it("set() does not throw errors given valid keys", function() {
+      var validKeys = ["a", "loc1", "(e@Xi4t>*E2)hc<5oa1s/6{B0d?u", Array(743).join("a")];
 
-      var promises = {
-        "p1": geoFire.set(1, [0, 0]),
-        "p2": geoFire.set(true, [0, 0]),
-        "p3": geoFire.set([0, 0], [0, 0]),
-        "p4": geoFire.set({"a": 1}, [0, 0]),
-        "p5": geoFire.set(null, [[0, 0], 0]),
-        "p6": geoFire.set(undefined, [0, [0, 0]])
-      };
-
-      RSVP.hashSettled(promises).then(function(resultsHash) {
-        for (var key in resultsHash) {
-          expect(resultsHash[key].state).toEqual("rejected");
-          cl.x(key);
-        }
+      validKeys.forEach(function(validKey) {
+        expect(function() { geoFire.set(validKey, [0, 0]).catch(function(error) { console.log(error) }); }).not.toThrow();
       });
     });
 
-    it("set() throws errors on invalid locations" ,function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15"], expect, done);
+    it("set() throws errors given invalid keys", function() {
+      var invalidKeys = ["", 1, true, [1, 2], {a: 1}, null, undefined, "loc.1", "loc$1", "[loc1", "loc1]", "loc#1", "a#i]$da[s", Array(744).join("a")];
 
-      var promises = {
-        "p1": geoFire.set("loc1", [-91, 0]),
-        "p2": geoFire.set("loc2", [91, 0]),
-        "p3": geoFire.set("loc3", [0, 181]),
-        "p4": geoFire.set("loc4", [0, -181]),
-        "p5": geoFire.set("loc5", [[0, 0], 0]),
-        "p6": geoFire.set("loc6", [0, [0, 0]]),
-        "p7": geoFire.set("loc7", ["text", 0]),
-        "p8": geoFire.set("loc8", [0, "text"]),
-        "p9": geoFire.set("loc9", ["text", "text"]),
-        "p10": geoFire.set("loc10", [null, 0]),
-        "p11": geoFire.set("loc11", [0, null]),
-        "p12": geoFire.set("loc12", [null, null]),
-        "p13": geoFire.set("loc13", [undefined, 0]),
-        "p14": geoFire.set("loc14", [0, undefined]),
-        "p15": geoFire.set("loc15", [undefined, undefined])
-      };
+      invalidKeys.forEach(function(invalidKey) {
+        expect(function() { geoFire.set(invalidKey, [0, 0]); }).toThrow();
+      });
+    });
 
-      RSVP.hashSettled(promises).then(function(resultsHash) {
-        for (var key in resultsHash) {
-          expect(resultsHash[key].state).toEqual("rejected");
-          cl.x(key);
-        }
+    it("set() does not throw errors given valid locations", function() {
+      var validLocations = [[0, 0], [-90, 180], [90, -180], [23, 74], [47.235124363, 127.2379654226]];
+
+      validLocations.forEach(function(validLocation, i) {
+        expect(function() { geoFire.set("loc" + i, validLocation); }).not.toThrow();
+      });
+    });
+
+    it("set() throws errors given invalid locations", function() {
+      var invalidLocations = [[-91, 0], [91, 0], [0, 181], [0, -181], [[0, 0], 0], [0, [0, 0]], ["a", 0], [0, "a"], ["a", "a"], [null, 0], [0, null], [null, null], [undefined, 0], [0, undefined], [undefined, undefined]];
+
+      invalidLocations.forEach(function(invalidLocation, i) {
+        expect(function() { geoFire.set("loc" + i, invalidLocation); }).toThrow();
       });
     });
   });
@@ -239,23 +222,19 @@ describe("GeoFire Tests:", function() {
       });
     });
 
-    it("get() throws errors on invalid keys" ,function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], expect, done);
+    it("get() does not throw errors given valid keys", function() {
+      var validKeys = ["a", "loc1", "(e@Xi4t>*E2)hc<5oa1s/6{B0d?u", Array(743).join("a")];
 
-      var promises = {
-        "p1": geoFire.get(1),
-        "p2": geoFire.get(true),
-        "p3": geoFire.get([1, 2]),
-        "p4": geoFire.get({"a": 1}),
-        "p5": geoFire.get(null),
-        "p6": geoFire.get(undefined)
-      };
+      validKeys.forEach(function(validKey) {
+        expect(function() { geoFire.get(validKey); }).not.toThrow();
+      });
+    });
 
-      RSVP.hashSettled(promises).then(function(resultsHash) {
-        for (var key in resultsHash) {
-          expect(resultsHash[key].state).toEqual("rejected");
-          cl.x(key);
-        }
+    it("get() throws errors given invalid keys", function() {
+      var invalidKeys = ["", 1, true, [1, 2], {a: 1}, null, undefined, "loc.1", "loc$1", "[loc1", "loc1]", "loc#1", "a#i]$da[s", Array(744).join("a")];
+
+      invalidKeys.forEach(function(invalidKey) {
+        expect(function() { geoFire.get(invalidKey); }).toThrow();
       });
     });
   });
