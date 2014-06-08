@@ -32,12 +32,12 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "indices": {
+          i: {
             "7zzzzzzzzzzzloc1": true,
             "v0gs3y0zh7w1loc2": true,
             "1bpbpbpbpbpbloc3": true
           },
-          "locations": {
+          l: {
             "loc1": "0,0",
             "loc2": "50,50",
             "loc3": "-90,-90"
@@ -73,12 +73,12 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "indices": {
+          i: {
             "s065kk0dc540loc1": true,
             "v0gs3y0zh7w1loc2": true,
             "1bpbpbpbpbpbloc3": true
           },
-          "locations": {
+          l: {
             "loc1": "2,3",
             "loc2": "50,50",
             "loc3": "-90,-90"
@@ -102,12 +102,12 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "indices": {
+          i: {
             "7zzzzzzzzzzzloc1": true,
             "7zzzzzzzzzzzloc2": true,
             "7zzzzzzzzzzzloc3": true
           },
-          "locations": {
+          l: {
             "loc1": "0,0",
             "loc2": "0,0",
             "loc3": "0,0"
@@ -119,14 +119,15 @@ describe("GeoFire Tests:", function() {
     });
 
     it("set() throws errors on invalid keys" ,function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], expect, done);
 
       var promises = {
-        "p1": geoFire.set(true, [0, 0]),
-        "p2": geoFire.set([0, 0], [0, 0]),
-        "p3": geoFire.set({"a": 1}, [0, 0]),
-        "p4": geoFire.set(null, [[0, 0], 0]),
-        "p5": geoFire.set(undefined, [0, [0, 0]])
+        "p1": geoFire.set(1, [0, 0]),
+        "p2": geoFire.set(true, [0, 0]),
+        "p3": geoFire.set([0, 0], [0, 0]),
+        "p4": geoFire.set({"a": 1}, [0, 0]),
+        "p5": geoFire.set(null, [[0, 0], 0]),
+        "p6": geoFire.set(undefined, [0, [0, 0]])
       };
 
       RSVP.hashSettled(promises).then(function(resultsHash) {
@@ -214,14 +215,15 @@ describe("GeoFire Tests:", function() {
     });
 
     it("get() throws errors on invalid keys" ,function(done) {
-      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], expect, done);
 
       var promises = {
-        "p1": geoFire.get(true),
-        "p2": geoFire.get([1, 2]),
-        "p3": geoFire.get({"a": 1}),
-        "p4": geoFire.get(null),
-        "p5": geoFire.get(undefined)
+        "p1": geoFire.get(1),
+        "p2": geoFire.get(true),
+        "p3": geoFire.get([1, 2]),
+        "p4": geoFire.get({"a": 1}),
+        "p5": geoFire.get(null),
+        "p6": geoFire.get(undefined)
       };
 
       RSVP.hashSettled(promises).then(function(resultsHash) {
@@ -262,10 +264,10 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "indices": {
+          i: {
             "s065kk0dc540loc2": true
           },
-          "locations": {
+          l: {
             "loc2": "2,3"
           }
         });
@@ -299,10 +301,10 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "indices": {
+          i: {
             "7zzzzzzzzzzzloc1": true
           },
-          "locations": {
+          l: {
             "loc1": "0,0"
           }
         });
@@ -339,10 +341,10 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "indices": {
+          i: {
             "s065kk0dc540loc2": true
           },
-          "locations": {
+          l: {
             "loc2": "2,3"
           }
         });
@@ -376,10 +378,10 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "indices": {
+          i: {
             "7zzzzzzzzzzzloc1": true
           },
-          "locations": {
+          l: {
             "loc1": "0,0"
           }
         });

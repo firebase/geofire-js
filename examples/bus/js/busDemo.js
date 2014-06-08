@@ -75,90 +75,84 @@ geoQuery = geoFire.query({
 var vehiclesInQuery = {};
 
 /* Adds new vehicle markers to the map when they enter the query */
-// geoQuery.on("key_entered", function(vehicleId, vehicleLocation) {
-//   //console.log("Vehicle " + vehicleId + " entered the query.");
+geoQuery.on("key_entered", function(vehicleId, vehicleLocation) {
+  //console.log("Vehicle " + vehicleId + " entered the query.");
 
-//   // Verify state
-//   console.assert(typeof vehiclesInQuery[vehicleId] === "undefined", "Vehicle " + vehicleId + " should not already be in the vehicles list.");
+  // Verify state
+  console.assert(typeof vehiclesInQuery[vehicleId] === "undefined", "Vehicle " + vehicleId + " should not already be in the vehicles list.");
 
-//   // Specify that the vehicle has entered this query
-//   vehiclesInQuery[vehicleId] = true;
+  // Specify that the vehicle has entered this query
+  vehiclesInQuery[vehicleId] = true;
 
-//   muniFirebaseRef.child(vehicleId).once("value", function(dataSnapshot) {
-//     // Get the vehicle data from the Open Data Set
-//     vehicle = dataSnapshot.val();
+  muniFirebaseRef.child(vehicleId).once("value", function(dataSnapshot) {
+    // Get the vehicle data from the Open Data Set
+    vehicle = dataSnapshot.val();
 
-//     // Verify the vehicle data is accurate
-//     console.assert(vehicle !== null, "Vehicle " + vehicleId + " should exist in the Open Data Set.");
-//     console.assert(parseInt(vehicle.id) === parseInt(vehicleId), "Vehicle " + vehicleId + " does not match the ID of vehicle " + vehicle.id + " stored in the Open Data Set.");
-//     console.assert(parseFloat(vehicle.lat) === parseFloat(vehicleLocation[0]), "Vehicle " + vehicleId + " has inaccurate latitude.");
-//     console.assert(parseFloat(vehicle.lon) === parseFloat(vehicleLocation[1]), "Vehicle " + vehicleId + " has inaccurate longitude.");
+    // Verify the vehicle data is accurate
+    console.assert(vehicle !== null, "Vehicle " + vehicleId + " should exist in the Open Data Set.");
+    console.assert(parseInt(vehicle.id) === parseInt(vehicleId), "Vehicle " + vehicleId + " does not match the ID of vehicle " + vehicle.id + " stored in the Open Data Set.");
+    console.assert(parseFloat(vehicle.lat) === parseFloat(vehicleLocation[0]), "Vehicle " + vehicleId + " has inaccurate latitude.");
+    console.assert(parseFloat(vehicle.lon) === parseFloat(vehicleLocation[1]), "Vehicle " + vehicleId + " has inaccurate longitude.");
 
-//     // If the vehicle has not already exited this query in the time it took to look up its data in the Open Data
-//     // Set, add it to the map.
-//     if (vehiclesInQuery[vehicleId] === true) {
-//       // Add the vehicle to the list of vehicles in the query
-//       vehiclesInQuery[vehicleId] = vehicle;
+    // If the vehicle has not already exited this query in the time it took to look up its data in the Open Data
+    // Set, add it to the map.
+    if (vehiclesInQuery[vehicleId] === true) {
+      // Add the vehicle to the list of vehicles in the query
+      vehiclesInQuery[vehicleId] = vehicle;
 
-//       // Create a new marker for the vehicle
-//       vehicle.marker = createVehicleMarker(vehicle, getVehicleColor(vehicle));
+      // Create a new marker for the vehicle
+      vehicle.marker = createVehicleMarker(vehicle, getVehicleColor(vehicle));
 
-//       // Add the vehicle to the location console
-//       $("#location-console ul").append("<li id='vehicle" + vehicleId + "'>" + vehicle.routeTag + "</li>");
-//     }
-//   });
-// });
+      // Add the vehicle to the location console
+      $("#location-console ul").append("<li id='vehicle" + vehicleId + "'>" + vehicle.routeTag + "</li>");
+    }
+  });
+});
 
-// /* Moves vehicles markers on the map when their location within the query changes */
-// geoQuery.on("key_moved", function(vehicleId, vehicleLocation) {
-//   //console.log("Vehicle " + vehicleId + " moved within the query.");
+/* Moves vehicles markers on the map when their location within the query changes */
+geoQuery.on("key_moved", function(vehicleId, vehicleLocation) {
+  //console.log("Vehicle " + vehicleId + " moved within the query.");
 
-//   // Get the vehicle from the list of vehicles in the query
-//   var vehicle = vehiclesInQuery[vehicleId];
+  // Get the vehicle from the list of vehicles in the query
+  var vehicle = vehiclesInQuery[vehicleId];
 
-//   // Verify state
-//   console.assert(typeof vehicle !== "undefined", "Vehicle " + vehicleId + " should already be in the vehicles list.");
-//   console.assert(parseInt(vehicle.id) === parseInt(vehicleId), "Vehicle " + vehicleId + " does not match the ID of vehicle " + vehicle.id + " stored in the list of vehicles in the query.");
-//   console.assert(typeof vehicle.marker !== "undefined", "Vehicle " + vehicleId + " should already have a marker.");
+  // Verify state
+  console.assert(typeof vehicle !== "undefined", "Vehicle " + vehicleId + " should already be in the vehicles list.");
+  console.assert(parseInt(vehicle.id) === parseInt(vehicleId), "Vehicle " + vehicleId + " does not match the ID of vehicle " + vehicle.id + " stored in the list of vehicles in the query.");
+  console.assert(typeof vehicle.marker !== "undefined", "Vehicle " + vehicleId + " should already have a marker.");
 
-//   // Animate the vehicle's marker
-//   vehicle.marker.animatedMoveTo(vehicleLocation);
-// });
+  // Animate the vehicle's marker
+  vehicle.marker.animatedMoveTo(vehicleLocation);
+});
 
-// /* Removes vehicle markers from the map when the exit the query */
-// geoQuery.on("key_exited", function(vehicleId, vehicleLocation) {
-//   //console.log("Vehicle " + vehicleId + " exited the query.");
+/* Removes vehicle markers from the map when the exit the query */
+geoQuery.on("key_exited", function(vehicleId, vehicleLocation) {
+  //console.log("Vehicle " + vehicleId + " exited the query.");
 
-//   // Get the vehicle from the list of vehicles in the query
-//   var vehicle = vehiclesInQuery[vehicleId];
+  // Get the vehicle from the list of vehicles in the query
+  var vehicle = vehiclesInQuery[vehicleId];
 
-//   // Verify state
-//   console.assert(typeof vehicle !== "undefined", "Vehicle " + vehicleId + " should already be in the vehicles list.");
+  // Verify state
+  console.assert(typeof vehicle !== "undefined", "Vehicle " + vehicleId + " should already be in the vehicles list.");
 
-//   // If the vehicle's data has already been loaded from the Open Data Set, remove its marker from the map
-//   // and remove it from the location console
-//   if (vehicle !== true) {
-//     // Verify state
-//     console.assert(parseInt(vehicle.id) === parseInt(vehicleId), "Vehicle " + vehicleId + " does not match the ID of vehicle " + vehicle.id + " stored in the list of vehicles in the query.");
-//     console.assert(typeof vehicle.marker !== "undefined", "Vehicle " + vehicleId + " should already have a marker.");
+  // If the vehicle's data has already been loaded from the Open Data Set, remove its marker from the map
+  // and remove it from the location console
+  if (vehicle !== true) {
+    // Verify state
+    console.assert(parseInt(vehicle.id) === parseInt(vehicleId), "Vehicle " + vehicleId + " does not match the ID of vehicle " + vehicle.id + " stored in the list of vehicles in the query.");
+    console.assert(typeof vehicle.marker !== "undefined", "Vehicle " + vehicleId + " should already have a marker.");
 
-//     // Remove the vehicle's marker from the map
-//     vehicle.marker.setMap(null);
-//     // vehicle.marker = null;
+    // Remove the vehicle's marker from the map
+    vehicle.marker.setMap(null);
+    // vehicle.marker = null;
 
-//     // Remove the vehicle from the location console
-//     $("#vehicle" + vehicleId).remove();
-//   }
+    // Remove the vehicle from the location console
+    $("#vehicle" + vehicleId).remove();
+  }
 
-//   // Remove the vehicle from the list of vehicles in the query
-//   delete vehiclesInQuery[vehicleId];
-// });
-
-//vehicle.marker.setIcon("http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=" + vehicle.vtype + "|bbT|" + vehicle.routeTag + "|BF5FFF|eee");
-//vehicle.marker.setMap(null);
-//vehicle.marker = createVehicleMarker(vehicle, "BF5FFF");
-
-//vehicle.marker.setIcon("http://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=" + vehicle.vtype + "|bbT|" + vehicle.routeTag + "|BF5FFF|eee");
+  // Remove the vehicle from the list of vehicles in the query
+  delete vehiclesInQuery[vehicleId];
+});
 
 function initializeMap() {
   loc = new google.maps.LatLng(center[0], center[1]);
@@ -189,7 +183,7 @@ function initializeMap() {
     draggable: true
   };
 
-  var lineCoordinates = [
+  /*var lineCoordinates = [
     new google.maps.LatLng(37.785326, -122.405696),
     new google.maps.LatLng(37.7789, -122.3917)
   ];
@@ -234,7 +228,7 @@ function initializeMap() {
         icons[0].offset = (count / 2) + '%';
         line.set('icons', icons);
     }, 20);
-  }
+  }*/
 
   circle = new google.maps.Circle(circleOptions);
 

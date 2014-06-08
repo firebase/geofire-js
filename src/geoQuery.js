@@ -104,7 +104,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
 
   function _attachValueCallbackIfInQuery(key) {
-    var locationValueCallback = _firebaseRef.child("locations/" + key).on("value", function(locationsDataSnapshot) {
+    var locationValueCallback = _firebaseRef.child("l/" + key).on("value", function(locationsDataSnapshot) {
       // Get the key's current location
       var location = locationsDataSnapshot.val() ? locationsDataSnapshot.val().split(",").map(Number) : null;
 
@@ -112,7 +112,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // "key_entered" event
       if (typeof _locationsQueried[key] === "undefined" || _locationsQueried[key].isInQuery === false) {
         if (location === null) {
-          _firebaseRef.child("locations/" + key).off("value", _locationsQueried[key].valueCallback);
+          _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
           delete _locationsQueried[key];
         }
         else {
@@ -128,7 +128,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
           _fireKeyEnteredCallbacks(key, location);
 
           //if (!_locationsQueried[key].isInQuery) {
-          //  _firebaseRef.child("locations/" + key).off("value", _locationsQueried[key].valueCallback);
+          //  _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
           //}
         }
       }
@@ -155,7 +155,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
             });
 
             if (location === null) {
-              _firebaseRef.child("locations/" + key).off("value", _locationsQueried[key].valueCallback);
+              _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
               delete _locationsQueried[key];
             }
           }
@@ -219,10 +219,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         var index = geohashesToQuery.indexOf(startPrefixKey);
         if (index === -1) {
           window.setTimeout(function() {
-            _firebaseRef.child("indices").off("child_added", _currentGeohashesQueried[startPrefixKey]);
+            _firebaseRef.child("i").off("child_added", _currentGeohashesQueried[startPrefixKey]);
           });
           // TODO: cancel all _locationsQueried[key] listeners with that startprefix
-          //_firebaseRef.child("indices").off("child_added");
+          //_firebaseRef.child("i").off("child_added");
           delete _currentGeohashesQueried[startPrefixKey];
         }
         else {
@@ -255,7 +255,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
       console.time("Get firebase query");
       // Create the Firebase query
-      var firebaseQuery = _firebaseRef.child("indices").startAt(null, startPrefix).endAt(null, endPrefix);
+      var firebaseQuery = _firebaseRef.child("i").startAt(null, startPrefix).endAt(null, endPrefix);
       console.timeEnd("Get firebase query");
 
       console.time("childAddedCallback");
@@ -340,7 +340,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     _saveCriteria(newQueryCriteria);
     console.timeEnd("_saveCriteria()");
 
-    console.time("Fire \"key_exited\"");
+    console.time("Fire \"key_exited\" and \"key_entered\"");
     // Loop through all of the locations in the query and fire the "key_exited" callbacks if necessary
     for (var key in _locationsQueried) {
       if (_locationsQueried.hasOwnProperty(key)) {
@@ -359,28 +359,20 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
             });
             /* jshint +W083 */
 
-            //_firebaseRef.child("locations/" + key).off("value", locationDict.valueCallback);
+            //_firebaseRef.child("l/" + key).off("value", locationDict.valueCallback);
 
             // TODO: update comment - Remove the provided key from our list of locations currently within this query
             _locationsQueried[key].isInQuery = false;
           }
         }
-      }
-    }
-    console.timeEnd("Fire \"key_exited\"");
 
-    // Loop through all the locations which were queried and fire the "key_entered" callbacks if necessary
-    console.time("Fire \"key_entered\"");
-    for (key in _locationsQueried) {
-      if (_locationsQueried.hasOwnProperty(key)) {
-        if (!_locationsQueried[key].isInQuery) {
-          //_attachValueCallbackIfInQuery(key);
+        // Fire the "key_entered" callbacks if necessary
+        else {
           _fireKeyEnteredCallbacks(key, _locationsQueried[key].location);
         }
       }
     }
-    console.timeEnd("Fire \"key_entered\"");
-
+    console.timeEnd("Fire \"key_exited\" and \"key_entered\"");
 
     // Reset the variables which control when the "ready" event fires
     console.time("_listenForNewGeohashes()");
@@ -476,17 +468,17 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     };
 
     // Turn off all Firebase listeners for this query
-    //_firebaseRef.child("indices").off("child_added");
-    for (var key in _currentGeohashesQueried) {
-      if (_currentGeohashesQueried.hasOwnProperty(key)) {
-        _firebaseRef.child("indices").off("child_added", _currentGeohashesQueried[key]);
+    //_firebaseRef.child("i").off("child_added");
+    for (var geohashStartPrefix in _currentGeohashesQueried) {
+      if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
+        _firebaseRef.child("i").off("child_added", _currentGeohashesQueried[geohashStartPrefix]);
       }
     }
 
     // Loop through all of the locations in the query and cancel their value change event callbacks
     for (var key in _locationsQueried) {
       if (_locationsQueried.hasOwnProperty(key)) {
-        _firebaseRef.child("locations/" + key).off("value", _locationsQueried[key].valueCallback);
+        _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
         delete _locationsQueried[key];
       }
     }

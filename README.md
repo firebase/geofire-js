@@ -119,7 +119,7 @@ geoFire.remove("some_key").then(function() {
 
 #### GeoFire.query(queryCriteria)
 
-Returns a new `GeoQuery` instance with the provided `queryCriteria`.
+Creates and returns a new `GeoQuery` instance with the provided `queryCriteria`.
 
 The `queryCriteria` describe a circular query and must be an object with the following keys:
 
@@ -135,7 +135,7 @@ var geoQuery = geoFire.query({
 
 ### GeoQuery
 
-A standing query that tracks a set of keys matching a criteria. A new `GeoQuery` is returned every time you call `GeoFire.query()`.
+A standing query that tracks a set of keys matching a criteria. A new `GeoQuery` is created every time you call `GeoFire.query()`.
 
 #### GeoQuery.center()
 

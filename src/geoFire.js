@@ -15,15 +15,15 @@ var GeoFire = function(firebaseRef) {
   /**
    * Returns a promise that is fulfilled after the inputted key has been verified.
    *
-   * @param {string/number} key The key to be verified.
+   * @param {string} key The key to be verified.
    * @return {RSVP.Promise} A promise that is fulfilled when the verification is complete.
    */
   function _validateKey(key) {
     return new RSVP.Promise(function(resolve, reject) {
       var error;
 
-      if (typeof key !== "string" && typeof key !== "number") {
-        error = "key must be a string or a number";
+      if (typeof key !== "string") {
+        error = "key must be a string";
       }
 
       if (error !== undefined) {
@@ -86,13 +86,13 @@ var GeoFire = function(firebaseRef) {
    *
    * If the provided key's previous location is the same as its new location, Firebase is not updated.
    *
-   * @param {string/number} key The key of the location to add.
+   * @param {string} key The key of the location to add.
    * @param {array} location The provided key's new [latitude, longitude] pair.
    * @return {RSVP.Promise} A promise that is fulfilled when the write is over.
    */
   function _removePreviousIndex(key, location) {
     return new RSVP.Promise(function(resolve, reject) {
-      _firebaseRef.child("locations/" + key).once("value", function(locationsChildSnapshot) {
+      _firebaseRef.child("l/" + key).once("value", function(locationsChildSnapshot) {
         // If the key is not in GeoFire, there is no old index to remove
         var previousLocation = locationsChildSnapshot.val();
         if (previousLocation === null) {
@@ -106,7 +106,7 @@ var GeoFire = function(firebaseRef) {
           }
 
           // Otherwise, overwrite the previous index
-          _firebaseRef.child("indices/" + encodeGeohash(previousLocation, g_GEOHASH_LENGTH) + key).remove(function(error) {
+          _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_LENGTH) + key).remove(function(error) {
             if (error) {
               reject("Error: Firebase synchronization failed: " + error);
             }
@@ -125,13 +125,13 @@ var GeoFire = function(firebaseRef) {
    * Returns a promise that is fulfilled after the provided key-location pair has been added to the
    * /locations/ node in Firebase.
    *
-   * @param {string/number} key The key of the location to add.
+   * @param {string} key The key of the location to add.
    * @param {array} location The provided key's new [latitude, longitude] pair.
    * @return {RSVP.Promise} A promise that is fulfilled when the write is over.
    */
   function _updateLocationsNode(key, location) {
     return new RSVP.Promise(function(resolve, reject) {
-      _firebaseRef.child("locations/" + key).set(location ? location.toString() : null, function(error) {
+      _firebaseRef.child("l/" + key).set(location ? location.toString() : null, function(error) {
         if (error) {
           reject("Error: Firebase synchronization failed: " + error);
         }
@@ -148,7 +148,7 @@ var GeoFire = function(firebaseRef) {
    *
    * If the provided location is null, Firebase is not updated.
    *
-   * @param {string/number} key The key of the location to add.
+   * @param {string} key The key of the location to add.
    * @param {array} location The provided key's new [latitude, longitude] pair.
    * @return {RSVP.Promise} A promise that is fulfilled when the write is over.
    */
@@ -159,7 +159,7 @@ var GeoFire = function(firebaseRef) {
         resolve();
       }
       else {
-        _firebaseRef.child("indices/" + encodeGeohash(location, g_GEOHASH_LENGTH) + key).set(true, function(error) {
+        _firebaseRef.child("i/" + encodeGeohash(location, g_GEOHASH_LENGTH) + key).set(true, function(error) {
           if (error) {
             reject("Error: Firebase synchronization failed: " + error);
           }
@@ -176,12 +176,12 @@ var GeoFire = function(firebaseRef) {
    *
    * If the key does not exist, the returned promise is fulfilled with null.
    *
-   * @param {string/number} key The key whose location should be retrieved.
+   * @param {string} key The key whose location should be retrieved.
    * @return {RSVP.Promise} A promise that is fulfilled with the location of the provided key.
    */
   function _getLocation(key) {
     return new RSVP.Promise(function(resolve, reject) {
-      _firebaseRef.child("locations/" + key.toString()).once("value", function(dataSnapshot) {
+      _firebaseRef.child("l/" + key).once("value", function(dataSnapshot) {
         resolve(dataSnapshot.val() ? dataSnapshot.val().split(",").map(Number) : null);
       }, function(error) {
         reject("Error: Firebase synchronization failed: " + error);
@@ -198,7 +198,7 @@ var GeoFire = function(firebaseRef) {
    *
    * If the provided key already exists in this GeoFire, it will be overwritten with the new location value.
    *
-   * @param {string/number} key The key representing the location to add.
+   * @param {string} key The key representing the location to add.
    * @param {array} location The [latitude, longitude] pair to add.
    * @return {RSVP.Promise} A promise that is fulfilled when the write is complete.
    */
@@ -221,7 +221,7 @@ var GeoFire = function(firebaseRef) {
    *
    * If the provided key does not exist, the returned promise is fulfilled with null.
    *
-   * @param {string/number} key The key of the location to retrieve.
+   * @param {string} key The key of the location to retrieve.
    * @return {RSVP.Promise} A promise that is fulfilled with the location of the given key.
    */
   this.get = function(key) {
@@ -235,7 +235,7 @@ var GeoFire = function(firebaseRef) {
    *
    * If the provided key is not in this GeoFire, the promise will still successfully resolve.
    *
-   * @param {string/number} key The key of the location to remove.
+   * @param {string} key The key of the location to remove.
    * @return {RSVP.Promise} A promise that is fulfilled after the inputted key is removed.
    */
   this.remove = function(key) {

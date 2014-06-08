@@ -22,7 +22,7 @@ var lrserver = require("tiny-lr")();
 /*  FILE PATHS  */
 /****************/
 var paths = {
-  destDir: "dest",
+  destDir: "dist",
 
   scripts: {
     src: {
@@ -32,7 +32,7 @@ var paths = {
       ]
     },
     dest: {
-      dir: "dest",
+      dir: "dist",
       files: {
         unminified: "geofire.js",
         minified: "geofire.min.js"
