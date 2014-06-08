@@ -1,15 +1,19 @@
 # GeoFire — Realtime location queries with Firebase
 
 GeoFire is a JavaScript library that allows you to store and query a set
-of keys based on their geographic location. GeoFire uses Firebase for data
+of keys based on their geographic location. GeoFire uses [Firebase](https://www.firebase.com/) for data
 storage, allowing query results to be updated in realtime as they change.
 GeoFire does more than just measure the distance between locations; it
 selectively loads only the data near certain locations, keeping your
-applications light and responsive.
+applications light and responsive even with extremely large datasets.
 
-## Downloading
+## Live Examples
 
-In order to use GeoFire in your project, you need to include the following files in your HTML file:
+TODO: FILL ME IN!
+
+## Downloading GeoFire
+
+In order to use GeoFire in your project, you need to include the following files in your HTML:
 
 ```html
 <!-- RSVP -->
@@ -22,31 +26,38 @@ In order to use GeoFire in your project, you need to include the following files
 <script src="geofire.min.js"></script>
 ```
 
-You can find each of these files in the `/dest/` directory of this GitHub repository. For debugging purposes, there is also a non-minified `geofire.js` file in the `/dest/` directory.
+You can download both minified and non-minified versions of GeoFire from the
+`/dist/` directory of this GitHub repository. [Firebase](https://www.firebase.com/docs/web-quickstart.html)
+and [RSVP](https://github.com/tildeio/rsvp.js/) can be downloaded directly from their respective websites as well.
 
-You can also download all of these files via npm or Bower:
+You can also install geoFire via npm or Bower and the dependencies will be downloaded automatically as well:
 
 ```bash
-$ npm install rsvp firebase geofire --save-dev
+$ npm install geofire --save-dev
 ```
 
 ```bash
-$ bower install rsvp firebase geofire
+$ bower install geofire
 ```
+
+## Getting Started with Firebase
+
+GeoFire requires Firebase in order to store location data. You can [sign up here](https://www.firebase.com/signup/) for a free account.
 
 ## API Reference
 
 ### GeoFire
 
-A `GeoFire` instance is used to read and write geolocation data to your Firebase. You can also use to it create `GeoQuery` objects.
+A `GeoFire` instance is used to read and write geolocation data to your Firebase and to create queries.
 
 #### new GeoFire(firebaseRef)
 
-Returns a new `GeoFire` instance. The data for this `GeoFire` will be stored at your `firebaseRef` but will not overwrite all of your data at that location. Note that this `firebaseRef` can point to anywhere in your Firebase.
+Creates and returns a new `GeoFire` instance to manage your location data. Data will stored at
+the location pointed to by `firebaseRef`. Note that this `firebaseRef` can point to anywhere in your Firebase.
 
 ```JavaScript
 // Create a Firebase reference where GeoFire will store its information
-var dataRef = new Firebase("https://my-firebase.firebaseio-demo.com/");
+var dataRef = new Firebase("https://<my_firebase>.firebaseio.com/");
 
 // Create a GeoFire index
 var geoFire = new GeoFire(dataRef);
@@ -54,13 +65,13 @@ var geoFire = new GeoFire(dataRef);
 
 #### GeoFire.set(key, location)
 
-Adds the provided `key` - `location` pair to Firebase. Returns an empty promise which is fulfilled when the write is complete.
+Adds the specified `key` - `location` pair to Firebase. If the provided `key`
+already exists in this `GeoFire`, it will be overwritten with the new `location`
+value. `location` must have the form `[latitude, longitude]`.
 
-If the provided `key` already exists in this `GeoFire`, it will be overwritten with the new `location` value.
+Returns a promise which is fulfilled when the new location has been synchronized with the Firebase servers.
 
-`location` must have the form `[latitude, longitude]`.
-
-`key` must be a string or number.
+`key` must be a string TODO: DOES IT NEED TO BE A [VALID FIREBASE KEY NAME](https://www.firebase.com/docs/creating-references.html)?
 
 ```JavaScript
 geoFire.set("some_key", [37.79, -122.41]).then(function() {
@@ -72,13 +83,10 @@ geoFire.set("some_key", [37.79, -122.41]).then(function() {
 
 #### GeoFire.get(key)
 
+Fetches the location stored for `key`.
+
 Returns a promise fulfilled with the `location` corresponding to the provided `key`.
-
-If the provided `key` does not exist, the returned promise is fulfilled with `null`.
-
-The returned location will have the form `[latitude, longitude]`.
-
-`key` must be a string or number.
+If `key` does not exist, the returned promise is fulfilled with `null`.
 
 ```JavaScript
 geoFire.get("some_key").then(function(location) {
@@ -95,13 +103,11 @@ geoFire.get("some_key").then(function(location) {
 
 #### GeoFire.remove(key)
 
-Removes the provided `key` from this `GeoFire`. Returns an empty promise fulfilled when the `key` has been removed.
-
-If the provided `key` is not in this `GeoFire`, the promise will still successfully resolve.
+Removes the provided `key` from this `GeoFire`. Returns a promise fulfilled when
+the removal of `key` has been synchronized with the Firebase servers. If the provided
+`key` is not present in this `GeoFire`, the promise will still successfully resolve.
 
 This is equivalent to calling `set(key, null)`.
-
-`key` must be a string or number.
 
 ```JavaScript
 geoFire.remove("some_key").then(function() {
@@ -115,7 +121,7 @@ geoFire.remove("some_key").then(function() {
 
 Returns a new `GeoQuery` instance with the provided `queryCriteria`.
 
-The `queryCriteria` describe a circular query and must be an associative array with the following keys:
+The `queryCriteria` describe a circular query and must be an object with the following keys:
 
 * `center` - the center of this query, with the form `[latitude, longitude]`
 * `radius` - the radius, in kilometers, from the center of this query in which to include results
@@ -163,7 +169,7 @@ var radius = geoQuery.radius();  // radius === 10.5
 
 Updates the criteria for this query.
 
-`newQueryCriteria` must be an associative array containing `center`, `radius`, or both.
+`newQueryCriteria` must be an object containing `center`, `radius`, or both.
 
 ```JavaScript
 var geoQuery = geoFire.query({
@@ -198,7 +204,9 @@ Attaches a `callback` to this query which will be run when the provided `eventTy
 2. the location's [latitude, longitude] pair
 3. the distance, in kilometers, from the location to this query's center
 
-`ready` is used to signify that this query has loaded its initial state and is up-to-date with its corresponding `GeoFire` instance. `ready` fires when this query has loaded all of the initial data from `GeoFire` and fired all other events for that data. It also fires every time `updateQuery()` is called, after all other events have fired for the updated query.
+`ready` fires once when this query's initial state has been loaded from the server.
+The `ready` event will fire after all other events associated with the loaded data
+have been triggered. `ready` will fire again once each time `updateQuery()` is called, after all new data is loaded and all other new events have been fired.
 
 `key_entered` fires when a key enters this query. This can happen when a key moves from a location outside of this query to one inside of it or when a key is written to `GeoFire` for the first time and it falls within this query.
 
@@ -250,7 +258,7 @@ var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, 
 
 An event registration which is used to cancel a `GeoQuery.on()` callback when it is no longer needed. A new `GeoCallbackRegistration` is returned every time you call `GeoQuery.on()`.
 
-These are useful when you want to stop firing a callback for a certain `eventType` but do not want to cancel all of the query's event callback.
+These are useful when you want to stop firing a callback for a certain `eventType` but do not want to cancel all of the query's event callbacks.
 
 #### GeoCallbackRegistration.cancel()
 

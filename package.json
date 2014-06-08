@@ -18,7 +18,8 @@
   ],
   "version": "1.0.0",
   "dependencies": {
-    "firebase": "~1.0.11"
+    "firebase": "~1.0.11",
+    "rsvp": "~3.0.6"
   },
   "devDependencies": {
     "karma": "^0.12.9",
