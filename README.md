@@ -28,12 +28,12 @@ In order to use GeoFire in your project, you need to include the following files
 
 You can download both minified and non-minified versions of GeoFire from the
 `/dist/` directory of this GitHub repository. [Firebase](https://www.firebase.com/docs/web-quickstart.html)
-and [RSVP](https://github.com/tildeio/rsvp.js/) can be downloaded directly from their respective websites as well.
+and [RSVP](https://github.com/tildeio/rsvp.js/) can be downloaded directly from their respective websites.
 
-You can also install geoFire via npm or Bower and the dependencies will be downloaded automatically as well:
+You can also install GeoFire via npm or Bower and the dependencies will be downloaded automatically:
 
 ```bash
-$ npm install geofire --save-dev
+$ npm install geofire --save
 ```
 
 ```bash
@@ -284,7 +284,7 @@ var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, 
 
 GeoFire uses promises when writing and retrieving data. Promises represent the result of a potentially long-running operation and allow code to run asynchronously. Upon completion of the operation, the promise will be "resolved" / "fulfilled" with the operation's result. This result will be passed to the function defined in the promise's `then()` method.
 
-GeoFire uses the lightweight [RSVP.js](https://github.com/tildeio/rsvp.js/) library to provide an implementation of JavaScript promises. If you are unfamiliar with promises, please refer to the [RSVP.js documentation](https://github.com/tildeio/rsvp.js/). Here is a quick example of how to consume a promise:
+GeoFire uses the lightweight RSVP.js library to provide an implementation of JavaScript promises. If you are unfamiliar with promises, please refer to the [RSVP.js documentation](https://github.com/tildeio/rsvp.js/). Here is a quick example of how to consume a promise:
 
 ```JavaScript
 promise.then(function(result) {
@@ -296,16 +296,15 @@ promise.then(function(result) {
 
 ## Contributing
 
-If you'd like to contribute to GeoFire, you'll need to run the following
-commands to get your environment set up.
+If you'd like to contribute to GeoFire, you'll need to run the following commands to get your environment set up:
 
 ```bash
-$ git clone https://github.com/firebase/GeoFire.git
-$ npm install    # install local npm build /test dependencies
+$ git clone https://github.com/firebase/geofire.git
+$ npm install    # install local npm build / test dependencies
 $ bower install  # install local JavaScript dependencies
-$ gulp serve     # watch for file changes and start server
+$ gulp watch     # watch for source file changes
 ```
 
-`gulp serve` will watch for changes in the `/src/` directory and lint, concatenate, and minify the source files when a change occurs. It also starts a server running GeoFire at `http://localhost:6060`.
+`gulp watch` will watch for changes in the `/src/` directory and lint, concatenate, and minify the source files when a change occurs. The output files - `geofire.js` and `geofire.min.js` - are written to the `/dist/` directory.
 
-During development, you can run the test suite by navigating to `http://localhost:6060/tests/TestRunner.html` or run the tests via the command line using `gulp test`.
+You can run the test suite by navigating to `file:///path/to/tests/TestRunner.html` or run the tests via the command line using `gulp test`.
