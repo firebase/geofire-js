@@ -1,7 +1,6 @@
 (function() {
   // Generate a random Firebase location
   var firebaseRef = new Firebase("https://" + generateRandomString(10) + ".firebaseio-demo.com/");
-  console.log(firebaseRef.toString());
 
   // Create a new GeoFire instance at the random Firebase location
   var geoFire = new GeoFire(firebaseRef);
@@ -79,6 +78,12 @@
     };
 
     geoFire.set(selectedFishKey, newLocations[selectedFishKey][selectedLocation]);
+  });
+
+  // Cancel the "key_moved" callback when the corresponding button is clicked
+  document.getElementById("cancelKeyMovedCallbackButton").addEventListener("click", function() {
+    log("*** 'key_moved' callback cancelled ***");
+    onKeyMovedRegistration.cancel();
   });
 
 

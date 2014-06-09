@@ -13,7 +13,7 @@ To run the following examples locally, clone this entire `geofire` repository
 and then simply open the example's respective `index.html` file in the browser
 of your choice.
 
-## fish1
+## fish1 - Writing To and Reading From GeoFire
 
 This is a very basic example which shows you how to read from and write to GeoFire
 and how to handle the promises returned by the `set()`, `get()`, and `remove()`
@@ -21,14 +21,23 @@ methods.
 
 You can check out a live demo of this example [here](TODO).
 
-## fish2
+## fish2 - Using a GeoQuery
 
 This is a more complex example which shows you how to create a `GeoQuery` and
-respond to keys moving into, out of, and within the query.
+respond to keys moving into, out of, and within the query. It also shows how
+to cancel event callback registrations.
 
 You can check out a live demo of this example [here](TODO).
 
-## sfVehicles
+## fish3 - Loading Initial Data
+
+This example shows you how to achieve a common use case: loading only initial
+data. This is accomplished in GeoFire by canceling a `GeoQuery` once its `ready`
+event has fired.
+
+You can check out a live demo of this example [here](TODO).
+
+## sfVehicles - Fully-featured example
 
 This is a fully-featured, complex example which combines GeoFire, Google Maps,
 and the [Firebase transit Open Data Set](https://www.firebase.com/docs/data/real-time-transit-data.html).
