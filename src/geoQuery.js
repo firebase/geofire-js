@@ -199,9 +199,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       if (_currentGeohashesQueried.hasOwnProperty(startPrefixKey)) {
         var index = geohashesToQuery.indexOf(startPrefixKey);
         if (index === -1) {
-          window.setTimeout(function() {
+          /* jshint -W083 */
+          setTimeout(function() {
             _firebaseRef.child("i").off("child_added", _currentGeohashesQueried[startPrefixKey]);
-          });
+          }, 1000);
+          /* jshint +W083 */
           // TODO: cancel all _locationsQueried[key] listeners with that startprefix
           //_firebaseRef.child("i").off("child_added");
           delete _currentGeohashesQueried[startPrefixKey];
