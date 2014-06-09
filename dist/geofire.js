@@ -59,79 +59,6 @@ var GeoFire = function(firebaseRef) {
   /*  PRIVATE METHODS  */
   /*********************/
   /**
-   * Validates the inputted key and throws an error if it is invalid.
-   *
-   * @param {string} key The key to be verified.
-   */
-  function _validateKey(key) {
-    var error;
-
-    if (typeof key !== "string") {
-      error = "key must be a string";
-    }
-    else if (key.length === 0) {
-      error = "key cannot be the empty string";
-    }
-    else if (1 + g_GEOHASH_LENGTH + key.length > 755) { // TODO: is 755 correct
-      // Firebase can only stored child paths up to 768 characters
-      // The child path for this key is at the least: "i/<geohash>key"
-      error = "key is too long to be stored in Firebase";
-    }
-    else {
-      // Firebase does not allow child paths to contain the following characters
-      [".", "$", "[", "]", "#"].forEach(function(invalidChar) {
-        if (key.indexOf(invalidChar) !== -1) {
-          error = "key cannot contain \"" + invalidChar + "\" character";
-        }
-      });
-    }
-
-    if (typeof error !== "undefined") {
-      throw new Error("Invalid GeoFire key \"" + key + "\": " + error);
-    }
-  }
-
-  /**
-   * Validates the inputted location and throws an error if it is invalid.
-   *
-   * @param {array} location The [latitude, longitude] pair to be verified.
-   */
-  function _validateLocation(location) {
-    var error;
-
-    // Setting location to null is valid since it will remove the location key from Firebase
-    if (location !== null) {
-      if (Object.prototype.toString.call(location) !== "[object Array]") {
-        error = "location must be an array";
-      }
-      else if (location.length !== 2) {
-        error = "expected array of length 2, got length " + location.length;
-      }
-      else {
-        var latitude = location[0];
-        var longitude = location[1];
-
-        if (typeof latitude !== "number") {
-          error = "latitude must be a number";
-        }
-        else if (latitude < -90 || latitude > 90) {
-          error = "latitude must be within the range [-90, 90]";
-        }
-        else if (typeof longitude !== "number") {
-          error = "longitude must be a number";
-        }
-        else if (longitude < -180 || longitude > 180) {
-          error = "longitude must be within the range [-180, 180]";
-        }
-      }
-    }
-
-    if (typeof error !== "undefined") {
-      throw new Error("Invalid GeoFire location \"[" + location + "]\": " + error);
-    }
-  }
-
-  /**
    * Returns a promise that is fulfilled after the provided key's previous location has been removed
    * from the /indices/ node in Firebase.
    *
@@ -158,7 +85,7 @@ var GeoFire = function(firebaseRef) {
 
           // Otherwise, overwrite the previous index
           else {
-            _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_LENGTH) + key).remove(function(error) {
+            _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_PRECISION) + key).remove(function(error) {
               if (error) {
                 reject("Error: Firebase synchronization failed: " + error);
               }
@@ -212,7 +139,7 @@ var GeoFire = function(firebaseRef) {
         resolve();
       }
       else {
-        _firebaseRef.child("i/" + encodeGeohash(location, g_GEOHASH_LENGTH) + key).set(true, function(error) {
+        _firebaseRef.child("i/" + encodeGeohash(location, g_GEOHASH_PRECISION) + key).set(true, function(error) {
           if (error) {
             reject("Error: Firebase synchronization failed: " + error);
           }
@@ -256,8 +183,11 @@ var GeoFire = function(firebaseRef) {
    * @return {RSVP.Promise} A promise that is fulfilled when the write is complete.
    */
   this.set = function(key, location) {
-    _validateKey(key);
-    _validateLocation(location);
+    validateKey(key);
+    if (location !== null) {
+      // Setting location to null is valid since it will remove the key
+      validateLocation(location);
+    }
 
     return _removePreviousIndex(key, location).then(function(locationChanged) {
       // If the location has actually changed, update Firebase; otherwise, just return an empty promise
@@ -279,7 +209,7 @@ var GeoFire = function(firebaseRef) {
    * @return {RSVP.Promise} A promise that is fulfilled with the location of the given key.
    */
   this.get = function(key) {
-    _validateKey(key);
+    validateKey(key);
 
     return _getLocation(key);
   };
@@ -313,8 +243,14 @@ var GeoFire = function(firebaseRef) {
   var _firebaseRef = firebaseRef;
 };
 
+// TODO: Investigate the correct value for this and maybe make it user configurable
+// Default geohash length
+var g_GEOHASH_PRECISION = 12;
+
+// Characters used in location geohashes
 var g_BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
 
+// Arrays used to determine neighboring geohashes
 var g_NEIGHBORS = {
   north: {
     even: "p0r21436x8zb9dcf5h7kjnmqesgutwvy",
@@ -333,7 +269,6 @@ var g_NEIGHBORS = {
     odd: "14365h7k9dcfesgujnmqp0r2twvyx8zb"
   }
 };
-
 var g_BORDERS = {
   north: {
     even: "prxz",
@@ -353,25 +288,137 @@ var g_BORDERS = {
   }
 };
 
-// TODO: Investigate the correct value for this and maybe make it user configurable
-var g_GEOHASH_LENGTH = 12;
+/**
+ * Validates the inputted key and throws an error if it is invalid.
+ *
+ * @param {string} key The key to be verified.
+ */
+var validateKey = function(key) {
+  var error;
 
-var deg2rad = function(deg) {
-  return deg * Math.PI / 180;
+  if (typeof key !== "string") {
+    error = "key must be a string";
+  }
+  else if (key.length === 0) {
+    error = "key cannot be the empty string";
+  }
+  else if (1 + g_GEOHASH_PRECISION + key.length > 755) { // TODO: is 755 correct
+    // Firebase can only stored child paths up to 768 characters
+    // The child path for this key is at the least: "i/<geohash>key"
+    error = "key is too long to be stored in Firebase";
+  }
+  else {
+    // Firebase does not allow child paths to contain the following characters
+    [".", "$", "[", "]", "#"].forEach(function(invalidChar) {
+      if (key.indexOf(invalidChar) !== -1) {
+        error = "key cannot contain \"" + invalidChar + "\" character";
+      }
+    });
+  }
+
+  if (typeof error !== "undefined") {
+    throw new Error("Invalid GeoFire key \"" + key + "\": " + error);
+  }
 };
 
 /**
- * Calculate the distance between two points on a globe, via Haversine
- * formula, in kilometers. This is approximate due to the nature of the
- * Earth's radius varying between 6356.752 km through 6378.137 km.
+ * Validates the inputted location and throws an error if it is invalid.
+ *
+ * @param {array} location The [latitude, longitude] pair to be verified.
  */
+var validateLocation = function(location) {
+  var error;
+
+  if (Object.prototype.toString.call(location) !== "[object Array]") {
+    error = "location must be an array";
+  }
+  else if (location.length !== 2) {
+    error = "expected array of length 2, got length " + location.length;
+  }
+  else {
+    var latitude = location[0];
+    var longitude = location[1];
+
+    if (typeof latitude !== "number") {
+      error = "latitude must be a number";
+    }
+    else if (latitude < -90 || latitude > 90) {
+      error = "latitude must be within the range [-90, 90]";
+    }
+    else if (typeof longitude !== "number") {
+      error = "longitude must be a number";
+    }
+    else if (longitude < -180 || longitude > 180) {
+      error = "longitude must be within the range [-180, 180]";
+    }
+  }
+
+  if (typeof error !== "undefined") {
+    throw new Error("Invalid GeoFire location \"[" + location + "]\": " + error);
+  }
+};
+
+/**
+ * Validates the inputted geohash and throws an error if it is invalid.
+ *
+ * @param {string} geohash The geohash to be validated.
+ */
+var validateGeohash = function(geohash) {
+  var error;
+
+  if (typeof geohash !== "string") {
+    error = "geohash must be a string";
+  }
+  else if (geohash.length === 0) {
+    error = "geohash cannot be the empty string";
+  }
+  else {
+    for (var i = 0, length = geohash.length; i < length; ++i) {
+      if (g_BASE32.indexOf(geohash[i]) === -1) {
+        error = "geohash cannot contain \"" + geohash[i] + "\"";
+      }
+    }
+  }
+
+  if (typeof error !== "undefined") {
+    throw new Error("Invalid GeoFire geohash \"" + geohash + "\": " + error);
+  }
+};
+
+
+/**
+ * Converts degrees to radians.
+ *
+ * @param {number} degrees The number of degrees to be converted to radians.
+ * @return {number} The number of radians equal to the inputted number of degrees.
+ */
+var degreesToRadians = function(degrees) {
+  if (typeof degrees !== "number") {
+    throw new Error("Error: degrees must be a number");
+  }
+
+  return (degrees * Math.PI / 180);
+};
+
+/**
+* Calculates the distance, in kilometers, between two locations, via the
+* Haversine formula. Note that this is approximate due to the fact that
+* the Earth's radius varies between 6356.752 km through 6378.137 km.
+*
+* @param {array} location1 The [latitude, longitude] pair of the first location.
+* @param {array} location2 The [latitude, longitude] pair of the second location.
+* @return {number} The distance, in kilometers, between the inputted locations.
+*/
 var dist = function(location1, location2) {
-  var radius = 6371; // km
-  var latDelta = deg2rad(location2[0] - location1[0]);
-  var lonDelta = deg2rad(location2[1] - location1[1]);
+  validateLocation(location1);
+  validateLocation(location2);
+
+  var radius = 6371; // Earth's radius in kilometers
+  var latDelta = degreesToRadians(location2[0] - location1[0]);
+  var lonDelta = degreesToRadians(location2[1] - location1[1]);
 
   var a = (Math.sin(latDelta / 2) * Math.sin(latDelta / 2)) +
-          (Math.cos(deg2rad(location1[0])) * Math.cos(deg2rad(location2[0])) *
+          (Math.cos(degreesToRadians(location1[0])) * Math.cos(degreesToRadians(location2[0])) *
           Math.sin(lonDelta / 2) * Math.sin(lonDelta / 2));
 
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
@@ -379,78 +426,54 @@ var dist = function(location1, location2) {
   return radius * c;
 };
 
-
 /**
- * Return the geohash of the neighboring bounding box in the
- * direction specified,
+ * Generates a geohash of the specified precision/string length
+ * from the [latitude, longitude] pair, specified as an array.
+ *
+ * @param {array} location The [latitude, longitude] pair to encode into
+ * a geohash.
+ * @param {number} precision The length of the geohash to create. If no
+ * precision is specified, the global default is used.
+ * @return {string} The geohash of the inputted location.
  */
-var neighbor = function(geohash, direction) {
-  var lastChar = geohash.charAt(geohash.length - 1);
-  var type = (geohash.length % 2) ? "odd" : "even";
-  var base = geohash.substring(0, geohash.length - 1);
-
-  if (g_BORDERS[direction][type].indexOf(lastChar) !== -1) {
-    if (base.length <= 0) {
-      return "";
+var encodeGeohash = function(location, precision) {
+  validateLocation(location);
+  if (typeof precision !== "undefined") {
+    if (typeof precision !== "number") {
+      throw new Error("precision must be a number");
     }
-    base = neighbor(base, direction);
+    else if (precision <= 0) {
+      throw new Error("precision must be greater than 0");
+    }
+    else if (precision > 22) {
+      throw new Error("precision cannot be greater than 22");
+    }
+    else if (Math.round(precision) !== precision) {
+      throw new Error("precision must be an integer");
+    }
   }
 
-  return base + g_BASE32[g_NEIGHBORS[direction][type].indexOf(lastChar)];
-};
+  // Use the global precision default if no precision is specified
+  precision = precision || g_GEOHASH_PRECISION;
 
-/**
- * Return the geohashes of all neighboring bounding boxes.
- */
-var neighbors = function(geohash) {
-  var neighbors = [];
-  neighbors.push(neighbor(geohash, "north"));
-  neighbors.push(neighbor(geohash, "south"));
-  neighbors.push(neighbor(geohash, "east"));
-  neighbors.push(neighbor(geohash, "west"));
-  neighbors.push(neighbor(neighbors[0], "east"));
-  neighbors.push(neighbor(neighbors[0], "west"));
-  neighbors.push(neighbor(neighbors[1], "east"));
-  neighbors.push(neighbor(neighbors[1], "west"));
-  return neighbors;
-};
-
-/**
- * Generate a geohash of the specified precision/string length
- * from the [latitude, longitude] pair, specified as an array.
- */
-var encodeGeohash = function(latLon, precision) {
-  var latRange = {
+  var latitudeRange = {
     min: -90,
     max: 90
   };
-  var lonRange = {
+  var longitudeRange = {
     min: -180,
     max: 180
   };
-  var lat = latLon[0];
-  var lon = latLon[1];
   var hash = "";
   var hashVal = 0;
   var bits = 0;
   var even = 1;
 
-  // TODO: should precesion just use the global flag?
-  precision = Math.min(precision || 12, 22);
-
-  // TODO: more error checking here?
-  if (lat < latRange.min || lat > latRange.max) {
-    throw new Error("Invalid latitude specified in encodeGeohash(): " + lat);
-  }
-  if (lon < lonRange.min || lon > lonRange.max) {
-    throw new Error("Invalid longitude specified in encodeGeohash(): " + lon);
-  }
-
   while (hash.length < precision) {
-    var val = even ? lon : lat;
-    var range = even ? lonRange : latRange;
-
+    var val = even ? location[1] : location[0];
+    var range = even ? longitudeRange : latitudeRange;
     var mid = (range.min + range.max) / 2;
+
     /* jshint -W016 */
     if (val > mid) {
       hashVal = (hashVal << 1) + 1;
@@ -474,6 +497,62 @@ var encodeGeohash = function(latLon, precision) {
   }
 
   return hash;
+};
+
+/**
+ * Returns the geohash of the neighboring bounding box in the direction
+ * specified.
+ *
+ * @param {string} geohash The geohash whose neighbor we are calculating.
+ * @param {string} direction The direction from the inputted geohash in
+ * which we should find the neighboring geohash.
+ * @return {string} The geohash of the neighboring bounding box in the
+ * direction specified.
+ */
+var neighborByDirection = function(geohash, direction) {
+  validateGeohash(geohash);
+  if (["north", "south", "east", "west"].indexOf(direction) === -1) {
+    throw new Error("Error: direction must be one of \"north\", \"south\", \"east\", or \"west\"");
+  }
+
+  var lastChar = geohash.charAt(geohash.length - 1);
+  var type = (geohash.length % 2) ? "odd" : "even";
+  var base = geohash.substring(0, geohash.length - 1);
+
+  if (g_BORDERS[direction][type].indexOf(lastChar) !== -1) {
+    if (base.length <= 0) {
+      return "";
+    }
+    base = neighborByDirection(base, direction);
+  }
+
+  return base + g_BASE32[g_NEIGHBORS[direction][type].indexOf(lastChar)];
+};
+
+/**
+ * Returns the geohashes of all neighboring bounding boxes.
+ *
+ * @param {string} geohash The geohash whose neighbors we are calculating.
+ * @return {array} An array of geohashes representing the bounding boxes
+ * around the inputted geohash.
+ */
+var neighbors = function(geohash) {
+  validateGeohash(geohash);
+
+  var neighbors = [];
+  neighbors.push(neighborByDirection(geohash, "north"));
+  neighbors.push(neighborByDirection(geohash, "south"));
+  neighbors.push(neighborByDirection(geohash, "east"));
+  neighbors.push(neighborByDirection(geohash, "west"));
+  if (neighbors[0] !== "") {
+    neighbors.push(neighborByDirection(neighbors[0], "east"));
+    neighbors.push(neighborByDirection(neighbors[0], "west"));
+  }
+  if (neighbors[1] !== "") {
+    neighbors.push(neighborByDirection(neighbors[1], "east"));
+    neighbors.push(neighborByDirection(neighbors[1], "west"));
+  }
+  return neighbors;
 };
 /**
  * Creates a GeoQuery instance.
@@ -504,26 +583,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // Validate the "center" attribute
     if (typeof newQueryCriteria.center !== "undefined") {
-      if (Object.prototype.toString.call(newQueryCriteria.center) !== "[object Array]" || newQueryCriteria.center.length !== 2) {
-        throw new Error("Invalid \"center\" attribute specified for query criteria. Expected array of length 2, got " + newQueryCriteria._center.length);
-      }
-      else {
-        var latitude = newQueryCriteria.center[0];
-        var longitude = newQueryCriteria.center[1];
-
-        if (typeof latitude !== "number") {
-          throw new Error("Invalid \"center\" attribute specified for query criteria. Latitude must be a number.");
-        }
-        else if (latitude < -90 || latitude > 90) {
-          throw new Error("Invalid \"center\" attribute specified for query criteria. Latitude must be within the range [-90, 90].");
-        }
-        else if (typeof longitude !== "number") {
-          throw new Error("Invalid \"center\" attribute specified for query criteria. Longitude must be a number.");
-        }
-        else if (longitude < -180 || longitude > 180) {
-          throw new Error("Invalid \"center\" attribute specified for query criteria. Longitude must be within the range [-180, 180].");
-        }
-      }
+      validateLocation(newQueryCriteria.center);
     }
 
     // Validate the "radius" attribute
@@ -666,7 +726,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     }
 
     // Get the geohash for this query's center at the determined zoom level
-    var centerHash = encodeGeohash(_center, g_GEOHASH_LENGTH).substring(0, zoomLevel);
+    var centerHash = encodeGeohash(_center, g_GEOHASH_PRECISION).substring(0, zoomLevel);
     console.timeEnd("Get center hash at zoom level");
 
     // TODO: Be smarter about this, and only zoom out if actually optimal.
@@ -743,7 +803,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
           _numChildAddedEventsToProcess++;
         }
 
-        var key = indicesChildSnapshot.name().slice(g_GEOHASH_LENGTH);
+        var key = indicesChildSnapshot.name().slice(g_GEOHASH_PRECISION);
 
         // If the key is not already in this query, check if it should be added
         if (typeof _locationsQueried[key] === "undefined") {

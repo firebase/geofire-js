@@ -48,6 +48,35 @@ describe("GeoFire Tests:", function() {
       });
     });
 
+    it("set() handles decimal latitudes and longitudes", function(done) {
+      var cl = new Checklist(["p1", "p2"], expect, done);
+
+      batchSet([
+        {key: "loc1", location: [0.254, 0]},
+        {key: "loc2", location: [50, 50.293403]},
+        {key: "loc3", location: [-82.614, -90.938]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return getFirebaseData();
+      }).then(function(firebaseData) {
+        expect(firebaseData).toEqual({
+          i: {
+            "ebpcrypzxvpcloc1": true,
+            "v0gu2qnx15x3loc2": true,
+            "1cr648sfx40wloc3": true
+          },
+          l: {
+            "loc1": "0.254,0",
+            "loc2": "50,50.293403",
+            "loc3": "-82.614,-90.938"
+          }
+        });
+
+        cl.x("p2");
+      });
+    });
+
     it("set() updates Firebase when changing a pre-existing key", function(done) {
       var cl = new Checklist(["p1", "p2", "p3"], expect, done);
 
@@ -143,35 +172,86 @@ describe("GeoFire Tests:", function() {
       });
     });
 
-    it("set() does not throw errors given valid keys", function() {
-      var validKeys = ["a", "loc1", "(e@Xi4t>*E2)hc<5oa1s/6{B0d?u", Array(743).join("a")];
+    it("set() updates Firebase after complex operations", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], expect, done);
 
+      batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [50, 50]},
+        {key: "loc3", location: [-90, -90]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return geoFire.remove("loc2");
+      }).then(function() {
+        cl.x("p2");
+
+        return batchSet([
+          {key: "loc2", location: [0.2358, -72.621]},
+          {key: "loc4", location: [87.6, -130]},
+          {key: "loc5", location: [5, 55.555]},
+        ]);
+      }).then(function() {
+        cl.x("p3");
+
+        return geoFire.set("loc5", null);
+      }).then(function() {
+        cl.x("p4");
+
+        return batchSet([
+          {key: "loc1", location: [87.6, -130]},
+          {key: "loc6", location: [-72.258, 0.953215]},
+        ]);
+      }).then(function() {
+        cl.x("p5");
+
+        return getFirebaseData();
+      }).then(function(firebaseData) {
+        expect(firebaseData).toEqual({
+          i: {
+            "cped3g0furw4loc1": true,
+            "d2h376zj8h39loc2": true,
+            "1bpbpbpbpbpbloc3": true,
+            "cped3g0furw4loc4": true,
+            "h50svty4es88loc6": true
+          },
+          l: {
+            "loc1": "87.6,-130",
+            "loc2": "0.2358,-72.621",
+            "loc3": "-90,-90",
+            "loc4": "87.6,-130",
+            "loc6": "-72.258,0.953215"
+          }
+        });
+
+        cl.x("p6");
+      });
+    });
+
+    it("set() does not throw errors given valid keys", function() {
       validKeys.forEach(function(validKey) {
-        expect(function() { geoFire.set(validKey, [0, 0]).catch(function(error) { console.log(error) }); }).not.toThrow();
+        expect(function() { geoFire.set(validKey, [0, 0]); }).not.toThrow();
       });
     });
 
     it("set() throws errors given invalid keys", function() {
-      var invalidKeys = ["", 1, true, [1, 2], {a: 1}, null, undefined, "loc.1", "loc$1", "[loc1", "loc1]", "loc#1", "a#i]$da[s", Array(744).join("a")];
-
       invalidKeys.forEach(function(invalidKey) {
         expect(function() { geoFire.set(invalidKey, [0, 0]); }).toThrow();
       });
     });
 
     it("set() does not throw errors given valid locations", function() {
-      var validLocations = [[0, 0], [-90, 180], [90, -180], [23, 74], [47.235124363, 127.2379654226]];
-
       validLocations.forEach(function(validLocation, i) {
         expect(function() { geoFire.set("loc" + i, validLocation); }).not.toThrow();
       });
     });
 
     it("set() throws errors given invalid locations", function() {
-      var invalidLocations = [[-91, 0], [91, 0], [0, 181], [0, -181], [[0, 0], 0], [0, [0, 0]], ["a", 0], [0, "a"], ["a", "a"], [null, 0], [0, null], [null, null], [undefined, 0], [0, undefined], [undefined, undefined]];
-
       invalidLocations.forEach(function(invalidLocation, i) {
-        expect(function() { geoFire.set("loc" + i, invalidLocation); }).toThrow();
+        // Setting location to null is valid since it will remove the key
+        if (invalidLocation !== null) {
+          expect(function() { geoFire.set("loc" + i, invalidLocation); }).toThrow();
+        }
       });
     });
   });
@@ -195,7 +275,7 @@ describe("GeoFire Tests:", function() {
       });
     });
 
-    it("get() retrieves locations given valid keys", function(done) {
+    it("get() retrieves locations given existing keys", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4"], expect, done);
 
       batchSet([
@@ -223,16 +303,12 @@ describe("GeoFire Tests:", function() {
     });
 
     it("get() does not throw errors given valid keys", function() {
-      var validKeys = ["a", "loc1", "(e@Xi4t>*E2)hc<5oa1s/6{B0d?u", Array(743).join("a")];
-
       validKeys.forEach(function(validKey) {
         expect(function() { geoFire.get(validKey); }).not.toThrow();
       });
     });
 
     it("get() throws errors given invalid keys", function() {
-      var invalidKeys = ["", 1, true, [1, 2], {a: 1}, null, undefined, "loc.1", "loc$1", "[loc1", "loc1]", "loc#1", "a#i]$da[s", Array(744).join("a")];
-
       invalidKeys.forEach(function(invalidKey) {
         expect(function() { geoFire.get(invalidKey); }).toThrow();
       });
@@ -391,6 +467,49 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p5");
+      });
+    });
+
+    it("remove() only removes one key if multiple keys are at the same location", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3"], expect, done);
+
+      batchSet([
+        {key: "loc1", location: [0, 0]},
+        {key: "loc2", location: [2, 3]},
+        {key: "loc3", location: [0, 0]},
+      ]).then(function() {
+        cl.x("p1");
+
+        return geoFire.remove("loc1");
+      }).then(function() {
+        cl.x("p2");
+
+        return getFirebaseData();
+      }).then(function(firebaseData) {
+        expect(firebaseData).toEqual({
+          i: {
+            "s065kk0dc540loc2": true,
+            "7zzzzzzzzzzzloc3": true
+          },
+          l: {
+            "loc2": "2,3",
+            "loc3": "0,0"
+          }
+        });
+
+        cl.x("p3");
+      });
+    });
+
+    it("remove() does not throw errors given valid keys", function() {
+      validKeys.forEach(function(validKey) {
+        expect(function() { geoFire.remove(validKey); }).not.toThrow();
+      });
+    });
+
+    it("remove() throws errors given invalid keys", function() {
+      invalidKeys.forEach(function(invalidKey) {
+        expect(function() { geoFire.remove(invalidKey); }).toThrow();
       });
     });
   });

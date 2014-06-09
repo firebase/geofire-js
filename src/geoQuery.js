@@ -27,26 +27,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // Validate the "center" attribute
     if (typeof newQueryCriteria.center !== "undefined") {
-      if (Object.prototype.toString.call(newQueryCriteria.center) !== "[object Array]" || newQueryCriteria.center.length !== 2) {
-        throw new Error("Invalid \"center\" attribute specified for query criteria. Expected array of length 2, got " + newQueryCriteria._center.length);
-      }
-      else {
-        var latitude = newQueryCriteria.center[0];
-        var longitude = newQueryCriteria.center[1];
-
-        if (typeof latitude !== "number") {
-          throw new Error("Invalid \"center\" attribute specified for query criteria. Latitude must be a number.");
-        }
-        else if (latitude < -90 || latitude > 90) {
-          throw new Error("Invalid \"center\" attribute specified for query criteria. Latitude must be within the range [-90, 90].");
-        }
-        else if (typeof longitude !== "number") {
-          throw new Error("Invalid \"center\" attribute specified for query criteria. Longitude must be a number.");
-        }
-        else if (longitude < -180 || longitude > 180) {
-          throw new Error("Invalid \"center\" attribute specified for query criteria. Longitude must be within the range [-180, 180].");
-        }
-      }
+      validateLocation(newQueryCriteria.center);
     }
 
     // Validate the "radius" attribute
@@ -189,7 +170,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     }
 
     // Get the geohash for this query's center at the determined zoom level
-    var centerHash = encodeGeohash(_center, g_GEOHASH_LENGTH).substring(0, zoomLevel);
+    var centerHash = encodeGeohash(_center, g_GEOHASH_PRECISION).substring(0, zoomLevel);
     console.timeEnd("Get center hash at zoom level");
 
     // TODO: Be smarter about this, and only zoom out if actually optimal.
@@ -266,7 +247,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
           _numChildAddedEventsToProcess++;
         }
 
-        var key = indicesChildSnapshot.name().slice(g_GEOHASH_LENGTH);
+        var key = indicesChildSnapshot.name().slice(g_GEOHASH_PRECISION);
 
         // If the key is not already in this query, check if it should be added
         if (typeof _locationsQueried[key] === "undefined") {

@@ -13,79 +13,6 @@ var GeoFire = function(firebaseRef) {
   /*  PRIVATE METHODS  */
   /*********************/
   /**
-   * Validates the inputted key and throws an error if it is invalid.
-   *
-   * @param {string} key The key to be verified.
-   */
-  function _validateKey(key) {
-    var error;
-
-    if (typeof key !== "string") {
-      error = "key must be a string";
-    }
-    else if (key.length === 0) {
-      error = "key cannot be the empty string";
-    }
-    else if (1 + g_GEOHASH_LENGTH + key.length > 755) { // TODO: is 755 correct
-      // Firebase can only stored child paths up to 768 characters
-      // The child path for this key is at the least: "i/<geohash>key"
-      error = "key is too long to be stored in Firebase";
-    }
-    else {
-      // Firebase does not allow child paths to contain the following characters
-      [".", "$", "[", "]", "#"].forEach(function(invalidChar) {
-        if (key.indexOf(invalidChar) !== -1) {
-          error = "key cannot contain \"" + invalidChar + "\" character";
-        }
-      });
-    }
-
-    if (typeof error !== "undefined") {
-      throw new Error("Invalid GeoFire key \"" + key + "\": " + error);
-    }
-  }
-
-  /**
-   * Validates the inputted location and throws an error if it is invalid.
-   *
-   * @param {array} location The [latitude, longitude] pair to be verified.
-   */
-  function _validateLocation(location) {
-    var error;
-
-    // Setting location to null is valid since it will remove the location key from Firebase
-    if (location !== null) {
-      if (Object.prototype.toString.call(location) !== "[object Array]") {
-        error = "location must be an array";
-      }
-      else if (location.length !== 2) {
-        error = "expected array of length 2, got length " + location.length;
-      }
-      else {
-        var latitude = location[0];
-        var longitude = location[1];
-
-        if (typeof latitude !== "number") {
-          error = "latitude must be a number";
-        }
-        else if (latitude < -90 || latitude > 90) {
-          error = "latitude must be within the range [-90, 90]";
-        }
-        else if (typeof longitude !== "number") {
-          error = "longitude must be a number";
-        }
-        else if (longitude < -180 || longitude > 180) {
-          error = "longitude must be within the range [-180, 180]";
-        }
-      }
-    }
-
-    if (typeof error !== "undefined") {
-      throw new Error("Invalid GeoFire location \"[" + location + "]\": " + error);
-    }
-  }
-
-  /**
    * Returns a promise that is fulfilled after the provided key's previous location has been removed
    * from the /indices/ node in Firebase.
    *
@@ -112,7 +39,7 @@ var GeoFire = function(firebaseRef) {
 
           // Otherwise, overwrite the previous index
           else {
-            _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_LENGTH) + key).remove(function(error) {
+            _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_PRECISION) + key).remove(function(error) {
               if (error) {
                 reject("Error: Firebase synchronization failed: " + error);
               }
@@ -166,7 +93,7 @@ var GeoFire = function(firebaseRef) {
         resolve();
       }
       else {
-        _firebaseRef.child("i/" + encodeGeohash(location, g_GEOHASH_LENGTH) + key).set(true, function(error) {
+        _firebaseRef.child("i/" + encodeGeohash(location, g_GEOHASH_PRECISION) + key).set(true, function(error) {
           if (error) {
             reject("Error: Firebase synchronization failed: " + error);
           }
@@ -210,8 +137,11 @@ var GeoFire = function(firebaseRef) {
    * @return {RSVP.Promise} A promise that is fulfilled when the write is complete.
    */
   this.set = function(key, location) {
-    _validateKey(key);
-    _validateLocation(location);
+    validateKey(key);
+    if (location !== null) {
+      // Setting location to null is valid since it will remove the key
+      validateLocation(location);
+    }
 
     return _removePreviousIndex(key, location).then(function(locationChanged) {
       // If the location has actually changed, update Firebase; otherwise, just return an empty promise
@@ -233,7 +163,7 @@ var GeoFire = function(firebaseRef) {
    * @return {RSVP.Promise} A promise that is fulfilled with the location of the given key.
    */
   this.get = function(key) {
-    _validateKey(key);
+    validateKey(key);
 
     return _getLocation(key);
   };
