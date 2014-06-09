@@ -1,88 +1,84 @@
 (function() {
   // Generate a random Firebase location
-  var firebaseRef = new Firebase("https://" + randomString(10) + ".firebaseio-demo.com/");
+  var firebaseRef = new Firebase("https://" + generateRandomString(10) + ".firebaseio-demo.com/");
   console.log(firebaseRef.toString());
 
-  // Create a new geoFire instance at the random Firebase location
+  // Create a new GeoFire instance at the random Firebase location
   var geoFire = new GeoFire(firebaseRef);
-
-  // Create four Fish objects
-  var fishList = [
-    new Fish("fish1", "Salmon", "Pink"),
-    new Fish("fish2", "Rainbow", "White"),
-    new Fish("fish3", "Chocolate", "Red"),
-    new Fish("fish4", "Goldfish", "Green")
-  ];
 
   // Create the locations for each fish
   var fishLocations = [
-    [-16.130262, 153.605347],   // Coral Sea
-    [-66.722541, -167.019653],  // Southern Ocean
-    [-41.112469, 159.054565],   // Tasman Sea
-    [30.902225, -166.66809]     // North Pacific Ocean
+    [-40, 159],
+    [90, 70],
+    [-46, 160],
+    [0, 0]
   ];
 
-  // Create a geo query centered at fish3
+  // Create a GeoQuery centered at fish2
   var geoQuery = geoFire.query({
     center: fishLocations[2],
     radius: 3000
   });
 
-  // Set events on the geo query
+  // Attach event callbacks to the query
   var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location) {
-    log(key + " entered our query. Hi " + key + "!");
+    log(key + " entered the query. Hi " + key + "!");
 
     document.getElementById(key + "Inside").style.display = "block";
     document.getElementById(key + "Outside").style.display = "none";
   });
 
-  var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location) {
-    log(key + " moved to somewere else within our query.");
-  });
-
   var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location) {
-    log(key + " migrated out of our query. Bye bye :(");
+    log(key + " migrated out of the query. Bye bye :(");
 
     document.getElementById(key + "Inside").style.display = "none";
     document.getElementById(key + "Outside").style.display = "block";
   });
 
-  // Set the initial locations of each fish in geoFire
+  var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location) {
+    log(key + " moved to somewere else within the query.");
+  });
+
+  // Set the initial locations of the fish in GeoFire
   log("*** Setting initial locations ***");
-  var promises = fishList.map(function(fish, index) {
-    document.getElementById(fish.key + "Inside").style.display = "none";
-    return geoFire.set(fish.key, fishLocations[index]);
+  var promises = fishLocations.map(function(location, index) {
+    return geoFire.set("fish" + index, location);
   });
 
-  // Once all the fish are in geoFire, update some of their positions
+  // Once all the fish are in GeoFire, log a message that the user can now move fish around
   RSVP.allSettled(promises).then(function() {
-    log("*** Updating locations ***");
+    log("*** Use the controls above to move the fish in and out of the query ***");
   });
 
+  // Move the selected fish when the move fish button is clicked
   document.getElementById("moveFishButton").addEventListener("click", function() {
-    var selectedFish = document.getElementById("fishSelect").value;
+    var selectedFishKey = document.getElementById("fishSelect").value;
     var selectedLocation = document.getElementById("locationSelect").value;
 
     var newLocations = {
-      "fish1": {
-        "inside": [-40, 159],
-        "outside": [60, 80]
+      fish0: {
+        inside: [-40, 159],
+        outside: [60, 80],
+        within: [-40, 150]
       },
-      "fish2": {
-        "inside": [-44, 170],
-        "outside": [90, 70]
+      fish1: {
+        inside: [-44, 170],
+        outside: [90, 70],
+        within: [-42, 155]
       },
-      "fish3": {
-        "inside": [-46, 160],
-        "outside": [88, 88]
+      fish2: {
+        inside: [-46, 160],
+        outside: [88, 88],
+        within: [-47, 150]
       },
-      "fish4": {
-        "inside": [-43, 145],
-        "outside": [0, 0]
+      fish3: {
+        inside: [-43, 145],
+        outside: [0, 0],
+        within: [-43, 150]
       }
     };
 
-    geoFire.set(selectedFish, newLocations[selectedFish][selectedLocation]);
+    geoFire.set(selectedFishKey, newLocations[selectedFishKey][selectedLocation]);
   });
 
 
@@ -90,7 +86,7 @@
   /*  HELPERS  */
   /*************/
   /* Returns a random string of the inputted length */
-  function randomString(length) {
+  function generateRandomString(length) {
       var text = "";
       var validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -101,13 +97,7 @@
       return text;
   }
 
-  /* Creates a new Fish object */
-  function Fish(key, type, color) {
-      this.key = key;
-      this.type = type;
-      this.color = color;
-  }
-
+  /* Logs to the page instead of the console */
   function log(message) {
     var childDiv = document.createElement("div");
     var textNode = document.createTextNode(message);

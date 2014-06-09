@@ -13,11 +13,6 @@ var radiusInKm = 0.75;
 var muniFirebaseRef = new Firebase("https://busroutes.firebaseio-demo.com/sf-muni/");
 
 // For the search
-// TODO: use a firebase at my account and have vikrum lift limits
-// TODO: add index.html in examples dir with notes about the
-// rename dest to dist
-// take out vendor files from dest
-// make keys be strings instead or numbers or strings
 var demoFirebaseRef = new Firebase("https://busRoutesGeoFire.firebaseio-demo.com/");
 var geoFire = new GeoFire(demoFirebaseRef);
 

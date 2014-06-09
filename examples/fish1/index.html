@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>GeoFire fish1 Example</title>
+
+    <!-- Firebase -->
+    <script src="../../bower_components/firebase/firebase.js"></script>
+
+    <!-- RSVP -->
+    <script src="../../bower_components/rsvp/rsvp.min.js"></script>
+
+    <!-- GeoFire -->
+    <script src="../../dist/geofire.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="fish1.js" defer></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="fish1.css">
+  </head>
+
+  <body>
+    <!-- Fish controls -->
+    <div id="fishControls">
+      <p>Get location of</p>
+
+      <select id="fishSelect">
+        <option value="fish0">Fish 0</option>
+        <option value="fish1">Fish 1</option>
+        <option value="fish2">Fish 2</option>
+        <option value="fish3">Fish 3</option>
+      </select>
+
+      <input id="getFishLocation" type="button" value="Get Location" />
+    </div>
+
+    <!-- Message log -->
+    <div id="log"></div>
+  </body>
+</html>

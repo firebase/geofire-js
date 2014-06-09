@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>geoFire Fish Example</title>
+    <title>GeoFire fish2 Example</title>
 
     <!-- Firebase -->
     <script src="../../bower_components/firebase/firebase.js"></script>
@@ -23,17 +23,17 @@
     <div id="fishViewer">
       <div id="outsideGeoQuery">
         <p>Outside geo query</p>
+        <p id="fish0Outside">Fish 0</p>
         <p id="fish1Outside">Fish 1</p>
         <p id="fish2Outside">Fish 2</p>
         <p id="fish3Outside">Fish 3</p>
-        <p id="fish4Outside">Fish 4</p>
       </div>
       <div id="insideGeoQuery">
         <p>Inside geo query</p>
+        <p id="fish0Inside">Fish 0</p>
         <p id="fish1Inside">Fish 1</p>
         <p id="fish2Inside">Fish 2</p>
         <p id="fish3Inside">Fish 3</p>
-        <p id="fish4Inside">Fish 4</p>
       </div>
     </div>
 
@@ -41,22 +41,24 @@
       <p>Move</p>
 
       <select id="fishSelect">
+        <option value="fish0">Fish 0</option>
         <option value="fish1">Fish 1</option>
         <option value="fish2">Fish 2</option>
         <option value="fish3">Fish 3</option>
-        <option value="fish4">Fish 4</option>
       </select>
 
       <select id="locationSelect">
         <option value="inside">inside</option>
         <option value="outside">outside</option>
+        <option value="within">within</option>
       </select>
 
-      <p>of geo query</p>
+      <p>of query</p>
 
       <input id="moveFishButton" type="button" value="Move Fish" />
     </div>
 
+    <!-- Message log -->
     <div id="log"></div>
   </body>
 </html>

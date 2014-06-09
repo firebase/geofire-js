@@ -2,7 +2,6 @@
   box-sizing: border-box;
 }
 
-
 #fishViewer {
   display: inline-block;
   height: 200px;
@@ -27,6 +26,14 @@
 
 #insideGeoQuery {
   border: solid 3px green;
+}
+
+#insideGeoQuery > p {
+  display: none;
+}
+
+#insideGeoQuery > p:first-of-type {
+  display: block;
 }
 
 #fishControls > * {
