@@ -3,6 +3,8 @@
 <head>
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 
+  <title>GeoFire SF Muni Demo</title>
+
   <!-- STYLESHEETS -->
   <link href="css/animate.min.css" rel="stylesheet">
   <link href="css/font-awesome.min.css" rel="stylesheet">
@@ -28,86 +30,61 @@
   <article id="sidebar" class="animated bounceInUp">
     <header>
       <h1><i class="icon-globe"></i> GeoFire</h1>
-      <h2><a target="_blank" href="http://www.firebase.com">powered by <strong>Firebase</strong></a></h2>
+      <h2><a target="_blank" href="https://www.firebase.com">powered by <strong>Firebase</strong></a></h2>
     </header>
 
     <section class="content">
       <h3>What is GeoFire?</h3>
       <p>
-        GeoFire is a helper library for location-based operations in <a target="_blank" href="http://www.firebase.com">Firebase</a>. It provides functions to store data for location querying in Firebase, and perform location queries such as location updates and localized searches.
+        <a target="_blank" href="https://www.github.com/firebase/geofire/">GeoFire</a>
+        is a JavaScript library that allows you to store and query a set
+        of keys based on their geographic location. GeoFire uses
+        <a target="_blank" href="https://www.firebase.com">Firebase</a>
+        for data storage, allowing query results to be updated in realtime as they
+        change. GeoFire does more than just measure the distance between locations;
+        it selectively loads only the data near certain locations, keeping your
+        applications light and responsive, even with extremely large datasets.
       </p>
 
       <h3>About the demo</h3>
       <p>
-        The example is using GeoFire's <strong>onKeyEntered()</strong> event to get the list of buses within the highlighted area of the map in real-time.
+        Firebase provides a
+        <a target="_blank" href="https://www.firebase.com/docs/data/real-time-transit-data.html">transit Open Data Set</a>
+        which contains the realtime locations of every MUNI vehicle in San Francisco. Using
+        GeoFire in combination with that data, we created a demo which allows you to drag
+        around the circle and view all of the vehicles within its radius. GeoFire handles
+        all of the hard work, telling you exactly when vehicles enter and exit the circle.
+        It also selectively loads only the data inside the radius, keeping the demo fast
+        and responsive despite the large overall data set.
       </p>
 
-      <h3>API Functions</h3>
-      <h4>GeoFire</h4>
-      <dl>
-        <a href="TODO" target="_blank"><dt>new GeoFire(firebaseRef)</dt></a>
-        <dd>Takes in a reference to the Firebase location where you want the geoFire location data to be stored.</dd>
-
-        <a href="TODO" target="_blank"><dt>set(key, location)</dt></a>
-        <dd>Returns a promise after adding the key-location pair.</dd>
-
-        <a href="TODO" target="_blank"><dt>get(key)</dt></a>
-        <dd>Returns a promise that is fulfilled with the location corresponding to the given key.</dd>
-
-        <a href="TODO" target="_blank"><dt>remove(key)</dt></a>
-        <dd>Returns a promise that is fulfilled after the location corresponding to the given key is removed.</dd>
-
-        <a href="TODO" target="_blank"><dt>query(queryCriteria)</dt></a>
-        <dd>Takes in a reference to the Firebase location where you want the geoFire location data to be stored.</dd>
-      </dl>
-
-      <h4>GeoQuery</h4>
-      <dl>
-        <a href="TODO" target="_blank"><dt>new GeoQuery(firebaseRef, queryCriteria)</dt></a>
-        <dd>Takes in a reference to the Firebase location where the geoFire location data is stored and the query criteria for this GeoQuery.</dd>
-
-        <a href="TODO" target="_blank"><dt>getResults()</dt></a>
-        <dd>Returns a promise fulfilled with the current key-location pairs within this GeoQuery.</dd>
-
-        <a href="TODO" target="_blank"><dt>onKeyMoved(callback)</dt></a>
-        <dd>Sets the callback that will fire when a key within this GeoQuery is moved to another location within this GeoQuery.</dd>
-
-        <a href="TODO" target="_blank"><dt>onKeyEntered(callback)</dt></a>
-        <dd>Sets the callback that will fire when a key enters the GeoQuery.</dd>
-
-        <a href="TODO" target="_blank"><dt>onKeyLeft(callback)</dt></a>
-        <dd>Sets the callback that willl fire when a key leaves the GeoQuery.</dd>
-
-        <a href="TODO" target="_blank"><dt>cancel()</dt></a>
-        <dd>Terminates this GeoQuery so that it no longer sends location updates.</dd>
-
-        <a href="TODO" target="_blank"><dt>updateQueryCriteria(queryCriteria)</dt></a>
-        <dd>Overwrites this GeoQuery's current query criteria with the inputted one.</dd>
-      </dl>
-
-      <h4>GeoCallbackRegistration</h4>
-      <dl>
-        <a href="TODO" target="_blank"><dt>cancel()</dt></a>
-        <dd>Cancels the callback for the given onKey*() event.</dd>
-      </dl>
+      <h3>Download GeoFire</h3>
+      <p>
+        GeoFire is ready for your production app and plays nicely with the full
+        suite of products offered by
+        <a target="_blank" href="https://www.firebase.com">Firebase</a>.
+        You can read the full reference API, view demos, and find download
+        instructions for GeoFire on
+        <a target="_blank" href="https://www.github.com/firebase/geofire/">GitHub</a>.
+      </p>
     </section>
 
     <footer>
-      <a target="_blank" href="https://github.com/firebase/geoFire" class="button button-large button-block button-primary button-rounded"><i class="icon-github"></i> Download</a>
+      <a target="_blank" href="https://github.com/firebase/geofire/" class="button button-large button-block button-primary button-rounded"><i class="icon-github"></i> Download</a>
     </footer>
   </article>
 
 
   <!-- LOCATION CONSOLE -->
-  <section id="location-console" class="animated bounceInUp">
+  <!-- <section id="location-console" class="animated bounceInUp">
 
     <h3><i class="icon-circle-blank"></i>&nbsp;&nbsp;Vehicles currently in the circle</h3>
 
     <ul></ul>
-  </section>
+  </section> -->
 
   <div style="z-index: 1000; position: absolute; right: 310px; bottom: 0px; font-size: 10px;">
-    Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.
+    Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.
   </div>
 
   <!-- SOCIAL BAR -->
@@ -141,6 +118,7 @@
   <script src="js/vendor/tile.stamen.js"></script>
 
   <!-- Firebase -->
+  <!-- TODO: use non-debug version -->
   <!-- <script src="../../bower_components/firebase/firebase.js"></script> -->
   <script src="js/vendor/firebase-debug.js"></script>
 

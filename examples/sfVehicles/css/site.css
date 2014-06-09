@@ -239,6 +239,7 @@ html, body, #map-canvas {
   z-index: 2;
   overflow: auto;
   color: #41403E;
+  text-align: justify;
 }
 /* line 184, ../scss/site.scss */
 #sidebar .content a {
@@ -268,7 +269,7 @@ html, body, #map-canvas {
 /* line 209, ../scss/site.scss */
 #sidebar .content p {
   margin-bottom: 40px;
-  line-height: 24px;
+  line-height: 20px;
   font-size: 14px;
 }
 /* line 216, ../scss/site.scss */
