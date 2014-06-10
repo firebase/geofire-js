@@ -143,7 +143,7 @@ var validateGeohash = function(geohash) {
  */
 var validateCriteria = function(newQueryCriteria, requireCenterAndRadius) {
   if (typeof newQueryCriteria !== "object") {
-    throw new Error("query criteria must be an object")
+    throw new Error("query criteria must be an object");
   }
   else if (typeof newQueryCriteria.center === "undefined" && typeof newQueryCriteria.radius === "undefined") {
     throw new Error("radius and/or center must be specified");
