@@ -1,4 +1,4 @@
 {
   "firebase": "geofire-demos",
-  "public": "."
+  "public": "examples"
 }

@@ -74,8 +74,14 @@ gulp.task("scripts", function() {
     // Rename file
     .pipe(concat(paths.scripts.dest.files.minified))
 
-    // Write minified version
-    .pipe(gulp.dest(paths.scripts.dest.dir));
+    // Write minified version to the distribution directory
+    .pipe(gulp.dest(paths.scripts.dest.dir))
+
+    // Write minified version to the examples directories
+    .pipe(gulp.dest("examples/fish1/js/vendor/"))
+    .pipe(gulp.dest("examples/fish2/js/vendor/"))
+    .pipe(gulp.dest("examples/fish3/js/vendor/"))
+    .pipe(gulp.dest("examples/sfVehicles/js/vendor/"));
 });
 
 /* Uses the Karma test runner to run the Jasmine tests */
@@ -92,7 +98,7 @@ gulp.task("test", function() {
 
 /* Re-runs the "scripts" task every time a script file changes */
 gulp.task("watch", function() {
-  gulp.watch(paths.scripts.src.dir + "/**/*", ["scripts"]);
+  gulp.watch(["build/*", paths.scripts.src.dir + "/**/*"], ["scripts"]);
 });
 
 /* Runs the "test" and "scripts" tasks by default */

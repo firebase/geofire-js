@@ -62,13 +62,9 @@ var validateKey = function(key) {
     // The child path for this key is at the least: "i/<geohash>key"
     error = "key is too long to be stored in Firebase";
   }
-  else {
-    // Firebase does not allow child paths to contain the following characters
-    [".", "$", "[", "]", "#"].forEach(function(invalidChar) {
-      if (key.indexOf(invalidChar) !== -1) {
-        error = "key cannot contain \"" + invalidChar + "\" character";
-      }
-    });
+  else if (/[\[\].#$\/\u0000-\u001F\u007F]/.test(key)) {
+    // Firebase does not allow node keys to contain the following characters
+    error = "key cannot contain any of the following characters: . # $ ] [ /";
   }
 
   if (typeof error !== "undefined") {

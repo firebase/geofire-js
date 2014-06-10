@@ -6,7 +6,7 @@
 //   https://github.com/firebase/geofire/
 //   License: MIT
 
-// Include RSVP if we are in node
+// Include RSVP if this is being run in node
 if (typeof module !== "undefined" && typeof process !== "undefined") {
   var RSVP = require("RSVP");
 }
@@ -307,13 +307,9 @@ var validateKey = function(key) {
     // The child path for this key is at the least: "i/<geohash>key"
     error = "key is too long to be stored in Firebase";
   }
-  else {
-    // Firebase does not allow child paths to contain the following characters
-    [".", "$", "[", "]", "#"].forEach(function(invalidChar) {
-      if (key.indexOf(invalidChar) !== -1) {
-        error = "key cannot contain \"" + invalidChar + "\" character";
-      }
-    });
+  else if (/[\[\].#$\/\u0000-\u001F\u007F]/.test(key)) {
+    // Firebase does not allow node keys to contain the following characters
+    error = "key cannot contain any of the following characters: . # $ ] [ /";
   }
 
   if (typeof error !== "undefined") {
@@ -1067,7 +1063,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   return GeoFire;
 })();
 
-// Export GeoFire if we are in node
-if (typeof module !== "undefined") {
+// Export GeoFire if this is being run in node
+if (typeof module !== "undefined" && typeof process !== "undefined") {
   module.exports = GeoFire;
 }
