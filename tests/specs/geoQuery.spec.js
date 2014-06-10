@@ -263,22 +263,20 @@ describe("GeoQuery Tests:", function() {
       });
     });
 
-    it("updateCriteria() throws error on invalid query criteria", function() {
+    it("updateCriteria() does not throw errors given valid query criteria", function() {
       geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      expect(function() { geoFire.updateCriteria({}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({random: 100}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({center: [91,2], radius: 1000}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({center: [1,-181], radius: 1000}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({center: ["text",2], radius: 1000}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({center: [1,[1,2]], radius: 1000}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({center: [null,2], radius: 1000}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({center: [1,undefined], radius: 1000}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({center: [1,2], radius: -10}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({center: [1,2], radius: "text"}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({center: [1,2], radius: [1,2]}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({center: [1,2], radius: null}) }).toThrow();
-      expect(function() { geoFire.updateCriteria({center: [1,2], radius: undefined}) }).toThrow();
+      validQueryCriterias.forEach(function(validQueryCriteria) {
+        expect(function() { geoQueries[0].updateCriteria(validQueryCriteria); }).not.toThrow();
+      });
+    });
+
+    it("updateCriteria() throws errors given invalid query criteria", function() {
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
+
+      invalidQueryCriterias.forEach(function(invalidQueryCriteria) {
+        expect(function() { geoQueries[0].updateCriteria(invalidQueryCriteria); }).toThrow();
+      });
     });
   });
 

@@ -408,6 +408,47 @@ var validateGeohash = function(geohash) {
 };
 
 /**
+ * Validates the inputted query criteria and throws an error if it is invalid.
+ *
+ * @param {object} newQueryCriteria The criteria which specifies the query's center and/or radius.
+ */
+var validateCriteria = function(newQueryCriteria, requireCenterAndRadius) {
+  if (typeof newQueryCriteria !== "object") {
+    throw new Error("query criteria must be an object")
+  }
+  else if (typeof newQueryCriteria.center === "undefined" && typeof newQueryCriteria.radius === "undefined") {
+    throw new Error("radius and/or center must be specified");
+  }
+  else if (requireCenterAndRadius && (typeof newQueryCriteria.center === "undefined" || typeof newQueryCriteria.radius === "undefined")) {
+    throw new Error("query criteria for a new query must contain both a center and a radius");
+  }
+
+  // Throw an error if there are any extraneous attributes
+  for (var key in newQueryCriteria) {
+    if (newQueryCriteria.hasOwnProperty(key)) {
+      if (key !== "center" && key !== "radius") {
+        throw new Error("Unexpected attribute \"" + key + "\" found in query criteria");
+      }
+    }
+  }
+
+  // Validate the "center" attribute
+  if (typeof newQueryCriteria.center !== "undefined") {
+    validateLocation(newQueryCriteria.center);
+  }
+
+  // Validate the "radius" attribute
+  if (typeof newQueryCriteria.radius !== "undefined") {
+    if (typeof newQueryCriteria.radius !== "number") {
+      throw new Error("radius must be a number");
+    }
+    else if (newQueryCriteria.radius < 0) {
+      throw new Error("radius must be greater than or equal to 0");
+    }
+  }
+};
+
+/**
  * Converts degrees to radians.
  *
  * @param {number} degrees The number of degrees to be converted to radians.
@@ -562,42 +603,6 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   /*  PRIVATE METHODS  */
   /*********************/
   /**
-   * Overwrites this query's current query criteria with the inputted one.
-   *
-   * @param {object} newQueryCriteria The criteria which specifies the query's center and radius.
-   */
-  function _saveCriteria(newQueryCriteria) {
-    // Throw an error if there are any extraneous attributes
-    for (var key in newQueryCriteria) {
-      if (newQueryCriteria.hasOwnProperty(key)) {
-        if (key !== "center" && key !== "radius") {
-          throw new Error("Unexpected \"" + key + "\" attribute found in query criteria.");
-        }
-      }
-    }
-
-    // Validate the "center" attribute
-    if (typeof newQueryCriteria.center !== "undefined") {
-      validateLocation(newQueryCriteria.center);
-    }
-
-    // Validate the "radius" attribute
-    if (typeof newQueryCriteria.radius !== "undefined") {
-      if (typeof newQueryCriteria.radius !== "number") {
-        throw new Error("Invalid \"radius\" attribute specified for query criteria. Radius must be a number.");
-      }
-      else if (newQueryCriteria.radius < 0) {
-        throw new Error("Invalid \"radius\" attribute specified for query criteria. Radius must be greater than or equal to 0.");
-      }
-    }
-
-    // Save the query criteria
-    _center = newQueryCriteria.center || _center;
-    _radius = newQueryCriteria.radius || _radius;
-  }
-
-
-  /**
    * Fires the "key_entered" callback for the provided key-location pair if the key has just entered this query.
    * Also attaches a callback to this key's value event which will fire the "key_moved" or "key_exited" events
    * when necessary.
@@ -606,9 +611,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {array} location The [latitude, longitude] pair of the location to check.
    */
   function _fireKeyEnteredCallbacks(key, location) {
-    console.assert(typeof _locationsQueried[key] !== "undefined", "Location should be in location queried dictionary");
+    console.assert(typeof _locationsQueried[key] !== "undefined", "Location should be in locations queried dictionary");
 
-    // Determine if the location was and now is within this query
+    // Determine if the location was and is now within this query
     var distanceFromCenter = GeoFire.distance(location, _center);
     var wasAlreadyInQuery = (_locationsQueried[key].isInQuery === true);
     var isNowInQuery = (distanceFromCenter <= _radius);
@@ -871,7 +876,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     //console.time("TOTAL updateCriteria()");
     // Save the new query criteria
     //console.time("_saveCriteria()");
-    _saveCriteria(newQueryCriteria);
+    // Validate and save the new query criteria
+    validateCriteria(newQueryCriteria);
+    _center = newQueryCriteria.center || _center;
+    _radius = newQueryCriteria.radius || _radius;
     //console.timeEnd("_saveCriteria()");
 
     //console.time("Fire \"key_exited\" and \"key_entered\"");
@@ -1047,14 +1055,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   // Query criteria
   var _center, _radius;
 
-  // Verify and save the query criteria
-  if (typeof queryCriteria.center === "undefined") {
-    throw new Error("No \"center\" attribute specified for query criteria.");
-  }
-  if (typeof queryCriteria.radius === "undefined") {
-    throw new Error("No \"radius\" attribute specified for query criteria.");
-  }
-  _saveCriteria(queryCriteria);
+  // Validate and save the query criteria
+  validateCriteria(queryCriteria, /* requireCenterAndRadius */ true);
+  _center = queryCriteria.center;
+  _radius = queryCriteria.radius;
 
   // Listen for new geohashes being added to GeoFire and fire the appropriate events
   _listenForNewGeohashes();

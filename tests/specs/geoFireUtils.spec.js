@@ -48,6 +48,34 @@ describe("geoFireUtils Tests:", function() {
         expect(function() { validateGeohash(invalidGeohash); }).toThrow();
       });
     });
+
+    it("validateCriteria(criteria, true) does not throw errors given valid query criteria", function() {
+      validQueryCriterias.forEach(function(validQueryCriteria) {
+        if (typeof validQueryCriteria.center !== "undefined" && typeof validQueryCriteria.radius !== "undefined") {
+          expect(function() { validateCriteria(validQueryCriteria, true); }).not.toThrow();
+        }
+      });
+    });
+
+    it("validateCriteria(criteria) does not throw errors given valid query criteria", function() {
+      validQueryCriterias.forEach(function(validQueryCriteria) {
+        expect(function() { validateCriteria(validQueryCriteria); }).not.toThrow();
+      });
+    });
+
+    it("validateCriteria(criteria, true) throws errors given invalid query criteria", function() {
+      invalidQueryCriterias.forEach(function(invalidQueryCriteria) {
+        expect(function() { validateCriteria(invalidQueryCriteria, true); }).toThrow();
+      });
+      expect(function() { validateCriteria({center: [0, 0]}, true); }).toThrow();
+      expect(function() { validateCriteria({radius: 1000}, true); }).toThrow();
+    });
+
+    it("validateCriteria(criteria) throws errors given invalid query criteria", function() {
+      invalidQueryCriterias.forEach(function(invalidQueryCriteria) {
+        expect(function() { validateCriteria(invalidQueryCriteria); }).toThrow();
+      });
+    });
   });
 
   describe("Distance calculations:", function() {

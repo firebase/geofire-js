@@ -87,7 +87,7 @@ var vehiclesInQuery = {};
 
 /* Adds new vehicle markers to the map when they enter the query */
 geoQuery.on("key_entered", function(vehicleId, vehicleLocation) {
-  //console.log("Vehicle " + vehicleId + " entered the query.");
+  console.log("Vehicle " + vehicleId + " entered the query.");
 
   // Verify state
   console.assert(typeof vehiclesInQuery[vehicleId] === "undefined", "Vehicle " + vehicleId + " should not already be in the vehicles list.");
@@ -102,12 +102,13 @@ geoQuery.on("key_entered", function(vehicleId, vehicleLocation) {
     // Verify the vehicle data is accurate
     console.assert(vehicle !== null, "Vehicle " + vehicleId + " should exist in the Open Data Set.");
     console.assert(parseInt(vehicle.id) === parseInt(vehicleId), "Vehicle " + vehicleId + " does not match the ID of vehicle " + vehicle.id + " stored in the Open Data Set.");
-    console.assert(parseFloat(vehicle.lat) === parseFloat(vehicleLocation[0]), "Vehicle " + vehicleId + " has inaccurate latitude.");
-    console.assert(parseFloat(vehicle.lon) === parseFloat(vehicleLocation[1]), "Vehicle " + vehicleId + " has inaccurate longitude.");
 
     // If the vehicle has not already exited this query in the time it took to look up its data in the Open Data
     // Set, add it to the map.
     if (vehiclesInQuery[vehicleId] === true) {
+      console.assert(parseFloat(vehicle.lat) === parseFloat(vehicleLocation[0]), "Vehicle " + vehicleId + " has inaccurate latitude.");
+      console.assert(parseFloat(vehicle.lon) === parseFloat(vehicleLocation[1]), "Vehicle " + vehicleId + " has inaccurate longitude.");
+
       // Add the vehicle to the list of vehicles in the query
       vehiclesInQuery[vehicleId] = vehicle;
 
@@ -122,7 +123,7 @@ geoQuery.on("key_entered", function(vehicleId, vehicleLocation) {
 
 /* Moves vehicles markers on the map when their location within the query changes */
 geoQuery.on("key_moved", function(vehicleId, vehicleLocation) {
-  //console.log("Vehicle " + vehicleId + " moved within the query.");
+  console.log("Vehicle " + vehicleId + " moved within the query.");
 
   // Get the vehicle from the list of vehicles in the query
   var vehicle = vehiclesInQuery[vehicleId];
@@ -138,7 +139,7 @@ geoQuery.on("key_moved", function(vehicleId, vehicleLocation) {
 
 /* Removes vehicle markers from the map when the exit the query */
 geoQuery.on("key_exited", function(vehicleId, vehicleLocation) {
-  //console.log("Vehicle " + vehicleId + " exited the query.");
+  console.log("Vehicle " + vehicleId + " exited the query.");
 
   // Get the vehicle from the list of vehicles in the query
   var vehicle = vehiclesInQuery[vehicleId];

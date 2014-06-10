@@ -137,6 +137,47 @@ var validateGeohash = function(geohash) {
 };
 
 /**
+ * Validates the inputted query criteria and throws an error if it is invalid.
+ *
+ * @param {object} newQueryCriteria The criteria which specifies the query's center and/or radius.
+ */
+var validateCriteria = function(newQueryCriteria, requireCenterAndRadius) {
+  if (typeof newQueryCriteria !== "object") {
+    throw new Error("query criteria must be an object")
+  }
+  else if (typeof newQueryCriteria.center === "undefined" && typeof newQueryCriteria.radius === "undefined") {
+    throw new Error("radius and/or center must be specified");
+  }
+  else if (requireCenterAndRadius && (typeof newQueryCriteria.center === "undefined" || typeof newQueryCriteria.radius === "undefined")) {
+    throw new Error("query criteria for a new query must contain both a center and a radius");
+  }
+
+  // Throw an error if there are any extraneous attributes
+  for (var key in newQueryCriteria) {
+    if (newQueryCriteria.hasOwnProperty(key)) {
+      if (key !== "center" && key !== "radius") {
+        throw new Error("Unexpected attribute \"" + key + "\" found in query criteria");
+      }
+    }
+  }
+
+  // Validate the "center" attribute
+  if (typeof newQueryCriteria.center !== "undefined") {
+    validateLocation(newQueryCriteria.center);
+  }
+
+  // Validate the "radius" attribute
+  if (typeof newQueryCriteria.radius !== "undefined") {
+    if (typeof newQueryCriteria.radius !== "number") {
+      throw new Error("radius must be a number");
+    }
+    else if (newQueryCriteria.radius < 0) {
+      throw new Error("radius must be greater than or equal to 0");
+    }
+  }
+};
+
+/**
  * Converts degrees to radians.
  *
  * @param {number} degrees The number of degrees to be converted to radians.

@@ -520,5 +520,19 @@ describe("GeoFire Tests:", function() {
 
       expect(geoQueries[0] instanceof GeoQuery).toBeTruthy();
     });
+
+    it("query() does not throw errors given valid query criteria", function() {
+      validQueryCriterias.forEach(function(validQueryCriteria) {
+        if (typeof validQueryCriteria.center !== "undefined" && typeof validQueryCriteria.radius !== "undefined") {
+          expect(function() { geoFire.query(validQueryCriteria); }).not.toThrow();
+        }
+      });
+    });
+
+    it("query() throws errors given invalid query criteria", function() {
+      invalidQueryCriterias.forEach(function(invalidQueryCriteria) {
+        expect(function() { geoFire.query(invalidQueryCriteria); }).toThrow();
+      });
+    });
   });
 });
