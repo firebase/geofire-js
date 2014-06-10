@@ -35,9 +35,9 @@ var indicesVehicleIds = [];
 var numIndicesDupes = 0;
 geoFireFirebaseRef.child("i").on("child_added", function(dataSnapshot) {
   var vehicleId = dataSnapshot.name().slice(12);
-  //if (indicesVehicleIds.indexOf(vehicleId) !== -1) {
-  //  numIndicesDupes++;
-  //}
+  if (indicesVehicleIds.indexOf(vehicleId) !== -1) {
+    numIndicesDupes++;
+  }
   indicesVehicleIds.push(vehicleId);
 });
 geoFireFirebaseRef.child("i").on("child_removed", function(dataSnapshot) {
@@ -62,14 +62,17 @@ geoFireFirebaseRef.child("l").on("child_removed", function(dataSnapshot) {
 
 window.setInterval(function() {
   console.log("Number of source vehicles: " + sourceVehicleIds.length);
-  //console.log(sourceVehicleIds);
-
   console.log("Number of indices: " + indicesVehicleIds.length);
-  console.log("Number of indices dupes: " + numIndicesDupes);
-  //console.log(indicesVehicleIds);
-
   console.log("Number of locations: " + locationsVehicleIds.length);
-  //console.log(locationsVehicleIds);
+
+  console.assert(numIndicesDupes === 0, "Duplicate indices found");
+
+  if (sourceVehicleIds.length === indicesVehicleIds.length && sourceVehicleIds.length === locationsVehicleIds.length) {
+    sourceVehicleIds.forEach(function(vehicleId) {
+      console.assert(indicesVehicleIds.indexOf(vehicleId) !== -1, "Vehicle " + vehicleId + " not in indices locations");
+      console.assert(locationsVehicleIds.indexOf(vehicleId) !== -1, "Vehicle " + vehicleId + " not in locations locations");
+    })
+  }
 }, 2000);
 */
 
@@ -246,7 +249,7 @@ function initializeMap() {
       center: [latLng.lat(), latLng.lng()],
       radius: radiusInKm
     });
-  }, 10);
+  }, 15);
 
   google.maps.event.addListener(circle, "drag", updateCriteria);
 }

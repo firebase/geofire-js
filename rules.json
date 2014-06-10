@@ -1,0 +1,23 @@
+{
+  "rules": {
+    ".read": true,
+    //".write": "newData.hasChildren(['i', 'l'])",
+    ".write": true,
+
+    "i": {
+      ".validate": "newData.hasChildren()",
+      "$geohash+key": {
+        ".validate": "newData.val() == true"
+      }
+    },
+    "l": {
+      ".validate": "newData.hasChildren()",
+      "$key": {
+        ".validate": "newData.isString() && newData.val().contains(',')"
+      }
+    },
+    "$other": {
+      ".validate": false
+    }
+  }
+}
