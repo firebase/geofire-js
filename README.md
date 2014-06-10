@@ -280,6 +280,21 @@ var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, 
 });
 ```
 
+### Helper Methods
+
+#### GeoFire.distance(location1, location2)
+
+Static helper method which returns the distance, in kilometers, between `location1` and `location2`.
+
+`location1` and `location1` must have the form `[latitude, longitude]`.
+
+```JavaScript
+var location1 = [10.3, -55.3];
+var location2 = [-78.3, 105.6];
+
+var distance = GeoFire.distance(location1, location2);  // distance === 12378.536597423461
+```
+
 ## Promises
 
 GeoFire uses promises when writing and retrieving data. Promises represent the result of a potentially long-running operation and allow code to run asynchronously. Upon completion of the operation, the promise will be "resolved" / "fulfilled" with the operation's result. This result will be passed to the function defined in the promise's `then()` method.

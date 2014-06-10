@@ -77,28 +77,28 @@ describe("geoFireUtils Tests:", function() {
     });
 
     it("dist() calculates the distance between locations", function() {
-      expect(dist(locations[1][0], locations[1][0])).toEqual(0);
-      expect(dist(locations[0][0], locations[1][0])).toBeCloseTo(20015, 0);
-      expect(dist(locations[0][0], locations[2][0])).toEqual(0);
-      expect(dist(locations[0][0], locations[3][0])).toBeCloseTo(20015, 0);
-      expect(dist(locations[4][0], locations[7][0])).toBeCloseTo(6818, 0);
-      expect(dist(locations[5][0], locations[6][0])).toBeCloseTo(10531, 0);
-      expect(dist(locations[5][0], locations[8][0])).toBeCloseTo(10484, 0);
-      expect(dist(locations[6][0], locations[8][0])).toBeCloseTo(14250, 0);
-      expect(dist(locations[8][0], locations[9][0])).toBeCloseTo(111, 0);
+      expect(GeoFire.distance(locations[1][0], locations[1][0])).toEqual(0);
+      expect(GeoFire.distance(locations[0][0], locations[1][0])).toBeCloseTo(20015, 0);
+      expect(GeoFire.distance(locations[0][0], locations[2][0])).toEqual(0);
+      expect(GeoFire.distance(locations[0][0], locations[3][0])).toBeCloseTo(20015, 0);
+      expect(GeoFire.distance(locations[4][0], locations[7][0])).toBeCloseTo(6818, 0);
+      expect(GeoFire.distance(locations[5][0], locations[6][0])).toBeCloseTo(10531, 0);
+      expect(GeoFire.distance(locations[5][0], locations[8][0])).toBeCloseTo(10484, 0);
+      expect(GeoFire.distance(locations[6][0], locations[8][0])).toBeCloseTo(14250, 0);
+      expect(GeoFire.distance(locations[8][0], locations[9][0])).toBeCloseTo(111, 0);
     });
 
     it("dist() does not throw errors given valid locations", function() {
       validLocations.forEach(function(validLocation, i) {
-        expect(function() { dist(validLocation, [0, 0]); }).not.toThrow();
-        expect(function() { dist([0, 0], validLocation); }).not.toThrow();
+        expect(function() { GeoFire.distance(validLocation, [0, 0]); }).not.toThrow();
+        expect(function() { GeoFire.distance([0, 0], validLocation); }).not.toThrow();
       });
     });
 
     it("dist() throws errors given invalid locations", function() {
       invalidLocations.forEach(function(invalidLocation, i) {
-        expect(function() { dist(invalidLocation, [0, 0]); }).toThrow();
-        expect(function() { dist([0, 0], invalidLocation); }).toThrow();
+        expect(function() { GeoFire.distance(invalidLocation, [0, 0]); }).toThrow();
+        expect(function() { GeoFire.distance([0, 0], invalidLocation); }).toThrow();
       });
     });
   });

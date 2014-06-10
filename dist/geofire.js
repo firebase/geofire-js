@@ -243,6 +243,32 @@ var GeoFire = function(firebaseRef) {
   var _firebaseRef = firebaseRef;
 };
 
+/**
+ * Static method which calculates the distance, in kilometers, between two locations,
+ * via the Haversine formula. Note that this is approximate due to the fact that the
+ * Earth's radius varies between 6356.752 km and 6378.137 km.
+ *
+ * @param {array} location1 The [latitude, longitude] pair of the first location.
+ * @param {array} location2 The [latitude, longitude] pair of the second location.
+ * @return {number} The distance, in kilometers, between the inputted locations.
+ */
+GeoFire.distance = function(location1, location2) {
+  validateLocation(location1);
+  validateLocation(location2);
+
+  var radius = 6371; // Earth's radius in kilometers
+  var latDelta = degreesToRadians(location2[0] - location1[0]);
+  var lonDelta = degreesToRadians(location2[1] - location1[1]);
+
+  var a = (Math.sin(latDelta / 2) * Math.sin(latDelta / 2)) +
+          (Math.cos(degreesToRadians(location1[0])) * Math.cos(degreesToRadians(location2[0])) *
+          Math.sin(lonDelta / 2) * Math.sin(lonDelta / 2));
+
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return radius * c;
+};
+
 // TODO: Investigate the correct value for this and maybe make it user configurable
 // Default geohash length
 var g_GEOHASH_PRECISION = 12;
@@ -381,7 +407,6 @@ var validateGeohash = function(geohash) {
   }
 };
 
-
 /**
  * Converts degrees to radians.
  *
@@ -394,32 +419,6 @@ var degreesToRadians = function(degrees) {
   }
 
   return (degrees * Math.PI / 180);
-};
-
-/**
-* Calculates the distance, in kilometers, between two locations, via the
-* Haversine formula. Note that this is approximate due to the fact that
-* the Earth's radius varies between 6356.752 km through 6378.137 km.
-*
-* @param {array} location1 The [latitude, longitude] pair of the first location.
-* @param {array} location2 The [latitude, longitude] pair of the second location.
-* @return {number} The distance, in kilometers, between the inputted locations.
-*/
-var dist = function(location1, location2) {
-  validateLocation(location1);
-  validateLocation(location2);
-
-  var radius = 6371; // Earth's radius in kilometers
-  var latDelta = degreesToRadians(location2[0] - location1[0]);
-  var lonDelta = degreesToRadians(location2[1] - location1[1]);
-
-  var a = (Math.sin(latDelta / 2) * Math.sin(latDelta / 2)) +
-          (Math.cos(degreesToRadians(location1[0])) * Math.cos(degreesToRadians(location2[0])) *
-          Math.sin(lonDelta / 2) * Math.sin(lonDelta / 2));
-
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-  return radius * c;
 };
 
 /**
@@ -610,7 +609,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     console.assert(typeof _locationsQueried[key] !== "undefined", "Location should be in location queried dictionary");
 
     // Determine if the location was and now is within this query
-    var distanceFromCenter = dist(location, _center);
+    var distanceFromCenter = GeoFire.distance(location, _center);
     var wasAlreadyInQuery = (_locationsQueried[key].isInQuery === true);
     var isNowInQuery = (distanceFromCenter <= _radius);
 
@@ -669,7 +668,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         if (location === null || location[0] !== _locationsQueried[key].location[0] || location[1] !== _locationsQueried[key].location[1]) {
           // If the updated location has changed, calculate if it is still in this query
           _locationsQueried[key].location = location;
-          _locationsQueried[key].distanceFromCenter = (location === null) ? null : dist(location, _center);
+          _locationsQueried[key].distanceFromCenter = (location === null) ? null : GeoFire.distance(location, _center);
           _locationsQueried[key].isInQuery = (location === null) ? false : (_locationsQueried[key].distanceFromCenter <= _radius);
 
           // If the updated location is still in the query, fire the "key_moved" event and save the key's updated
@@ -883,7 +882,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
         if (locationDict.isInQuery) {
           // Update the location's distance from the new center
-          locationDict.distanceFromCenter = dist(locationDict.location, _center);
+          locationDict.distanceFromCenter = GeoFire.distance(locationDict.location, _center);
 
           var isNowInQuery = (locationDict.distanceFromCenter <= _radius);
           if (!isNowInQuery) {

@@ -58,7 +58,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     console.assert(typeof _locationsQueried[key] !== "undefined", "Location should be in location queried dictionary");
 
     // Determine if the location was and now is within this query
-    var distanceFromCenter = dist(location, _center);
+    var distanceFromCenter = GeoFire.distance(location, _center);
     var wasAlreadyInQuery = (_locationsQueried[key].isInQuery === true);
     var isNowInQuery = (distanceFromCenter <= _radius);
 
@@ -117,7 +117,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         if (location === null || location[0] !== _locationsQueried[key].location[0] || location[1] !== _locationsQueried[key].location[1]) {
           // If the updated location has changed, calculate if it is still in this query
           _locationsQueried[key].location = location;
-          _locationsQueried[key].distanceFromCenter = (location === null) ? null : dist(location, _center);
+          _locationsQueried[key].distanceFromCenter = (location === null) ? null : GeoFire.distance(location, _center);
           _locationsQueried[key].isInQuery = (location === null) ? false : (_locationsQueried[key].distanceFromCenter <= _radius);
 
           // If the updated location is still in the query, fire the "key_moved" event and save the key's updated
@@ -331,7 +331,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
         if (locationDict.isInQuery) {
           // Update the location's distance from the new center
-          locationDict.distanceFromCenter = dist(locationDict.location, _center);
+          locationDict.distanceFromCenter = GeoFire.distance(locationDict.location, _center);
 
           var isNowInQuery = (locationDict.distanceFromCenter <= _radius);
           if (!isNowInQuery) {
