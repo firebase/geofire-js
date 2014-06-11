@@ -1,23 +1,17 @@
 {
   "rules": {
-    ".read": true,
-    //".write": "newData.hasChildren(['i', 'l'])",
-    ".write": true,
-
     "i": {
-      ".validate": "newData.hasChildren()",
-      "$geohash+key": {
-        ".validate": "newData.val() == true"
+      ".read": true,
+      "$geohashkey": {
+        //".write": "$geohashkey.isString() && $geohashkey.endsWith(newData.val()) && newData.parent().parent().child('l').child(newData.val()).exists()"
+        ".write": "newData.val() == null || newData.val() == true"
       }
     },
     "l": {
-      ".validate": "newData.hasChildren()",
       "$key": {
-        ".validate": "newData.isString() && newData.val().contains(',')"
+        ".read": true,
+        ".write": "newData.val() == null || (newData.isString() && newData.val().contains(','))"
       }
-    },
-    "$other": {
-      ".validate": false
     }
   }
 }

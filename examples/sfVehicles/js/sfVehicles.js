@@ -16,7 +16,6 @@ var muniFirebaseRef = new Firebase("https://busroutes.firebaseio-demo.com/sf-mun
 var geoFireFirebaseRef = new Firebase("https://geofire-demos.firebaseio.com/");
 var geoFire = new GeoFire(geoFireFirebaseRef);
 
-/*
 // SOURCE VEHICLES
 var sourceVehicleIds = [];
 muniFirebaseRef.on("child_added", function(dataSnapshot) {
@@ -74,7 +73,6 @@ window.setInterval(function() {
     })
   }
 }, 2000);
-*/
 
 // Create a GeoQuery
 geoQuery = geoFire.query({
