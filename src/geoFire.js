@@ -193,7 +193,6 @@ var GeoFire = function(firebaseRef) {
   /*****************/
   /*  CONSTRUCTOR  */
   /*****************/
-  // Private variables
   var _firebaseRef = firebaseRef;
 };
 

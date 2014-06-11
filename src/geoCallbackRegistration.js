@@ -24,7 +24,7 @@ var GeoCallbackRegistration = function(cancelCallback) {
   /*  CONSTRUCTOR  */
   /*****************/
   if (typeof cancelCallback !== "function") {
-    throw new Error("GeoCallbackRegistration.cancel() callback must be a function.");
+    throw new Error("callback must be a function");
   }
 
   var _cancelCallback = cancelCallback;
