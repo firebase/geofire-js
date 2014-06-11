@@ -42,88 +42,97 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    *
    * @param {string} key The key for which to attach the value callback.
    */
-  function _attachValueCallback(key) {
-    var locationValueCallback = _firebaseRef.child("l/" + key).on("value", function(locationsDataSnapshot) {
-      // Get the key's current location
-      var location = locationsDataSnapshot.val() ? locationsDataSnapshot.val().split(",").map(Number) : null;
+  function _attachValueCallback(indicesChildSnapshot) {
+    // If the below "value" event has not fired yet, we should wait to the the "ready" event until
+    // this child added event is completely processed
+    if (_valueEventFired === false) {
+      _numChildAddedEventsToProcess++;
+    }
 
-      // If this is the first time we are receiving the location for this key, check if we should fire the
-      // "key_entered" event
-      if (typeof _locationsQueried[key] === "undefined" || _locationsQueried[key].isInQuery === false) {
-        if (location === null) {
-          _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
-          delete _locationsQueried[key];
-        }
-        else {
-          // Determine if the location was and is now within this query
-          var distanceFromCenter = GeoFire.distance(location, _center);
-          var isInQuery = (distanceFromCenter <= _radius);
+    // Get the key from the child snapshot's name, which has the form "<geohash><key>"
+    var key = indicesChildSnapshot.name().slice(g_GEOHASH_PRECISION);
 
-          // Add this location to the all locations queried dictionary even if it is not added to the list of
-          // locations within this query
-          _locationsQueried[key] = {
-            location: location,
-            distanceFromCenter: distanceFromCenter,
-            isInQuery: isInQuery,
-            valueCallback: locationValueCallback
-          };
+    // If the key is not already being queried, attach a "value" callback to it
+    if (typeof _locationsQueried[key] === "undefined") {
+      var locationValueCallback = _firebaseRef.child("l/" + key).on("value", function(locationsDataSnapshot) {
+        // Get the key's current location
+        var location = locationsDataSnapshot.val() ? locationsDataSnapshot.val().split(",").map(Number) : null;
 
-          // Fire the "key_entered" event if the provided key has entered this query
-          if (isInQuery) {
-            _fireCallbacksForKey("key_entered", key);
+        // If this is the first time we are receiving the location for this key, check if we should fire the
+        // "key_entered" event
+        if (typeof _locationsQueried[key] === "undefined" || _locationsQueried[key].isInQuery === false) {
+          if (location === null) {
+            _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
+            delete _locationsQueried[key];
           }
-
-          // Fire the "key_ready" event if we have processed all the "child_added" events and the "value" event has fired
-          if (_numChildAddedEventsToProcess > 0) {
-            _numChildAddedEventsToProcess--;
-            if (_valueEventFired && _numChildAddedEventsToProcess === 0) {
-              _fireReadyEventCallbacks();
-            }
-          }
-
-          // TODO: should I do this?
-          //if (!_locationsQueried[key].isInQuery) {
-          //  _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
-          //}
-        }
-      }
-
-      // Otherwise,
-      else {
-        if (location === null || location[0] !== _locationsQueried[key].location[0] || location[1] !== _locationsQueried[key].location[1]) {
-          // If the updated location has changed, calculate if it is still in this query
-          _locationsQueried[key].location = location;
-          _locationsQueried[key].distanceFromCenter = (location === null) ? null : GeoFire.distance(location, _center);
-          _locationsQueried[key].isInQuery = (location === null) ? false : (_locationsQueried[key].distanceFromCenter <= _radius);
-
-          // If the updated location is still in the query, fire the "key_moved" event and save the key's updated
-          // location in the list of keys in this query
-          if (_locationsQueried[key].isInQuery) {
-            _fireCallbacksForKey("key_moved", key);
-          }
-
-          // Otherwise, fire the "key_exited" event, cancel the key's value callback, and remove it from the list of
-          // locations in this query
           else {
-            _fireCallbacksForKey("key_exited", key);
+            // Determine if the location was and is now within this query
+            var distanceFromCenter = GeoFire.distance(location, _center);
+            var isInQuery = (distanceFromCenter <= _radius);
 
-            if (location === null) {
-              _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
-              delete _locationsQueried[key];
+            // Add this location to the all locations queried dictionary even if it is not added to the list of
+            // locations within this query
+            _locationsQueried[key] = {
+              location: location,
+              distanceFromCenter: distanceFromCenter,
+              isInQuery: isInQuery,
+              valueCallback: locationValueCallback
+            };
+
+            // Fire the "key_entered" event if the provided key has entered this query
+            if (isInQuery) {
+              _fireCallbacksForKey("key_entered", key);
+            }
+
+            // Fire the "key_ready" event if we have processed all the "child_added" events and the "value" event has fired
+            if (_numChildAddedEventsToProcess > 0) {
+              _numChildAddedEventsToProcess--;
+              if (_valueEventFired && _numChildAddedEventsToProcess === 0) {
+                _fireReadyEventCallbacks();
+              }
+            }
+
+            // TODO: should I do this?
+            //if (!_locationsQueried[key].isInQuery) {
+            //  _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
+            //}
+          }
+        }
+
+        // Otherwise,
+        else {
+          if (location === null || location[0] !== _locationsQueried[key].location[0] || location[1] !== _locationsQueried[key].location[1]) {
+            // If the updated location has changed, calculate if it is still in this query
+            _locationsQueried[key].location = location;
+            _locationsQueried[key].distanceFromCenter = (location === null) ? null : GeoFire.distance(location, _center);
+            _locationsQueried[key].isInQuery = (location === null) ? false : (_locationsQueried[key].distanceFromCenter <= _radius);
+
+            // If the updated location is still in the query, fire the "key_moved" event and save the key's updated
+            // location in the list of keys in this query
+            if (_locationsQueried[key].isInQuery) {
+              _fireCallbacksForKey("key_moved", key);
+            }
+
+            // Otherwise, fire the "key_exited" event, cancel the key's value callback, and remove it from the list of
+            // locations in this query
+            else {
+              _fireCallbacksForKey("key_exited", key);
+
+              if (location === null) {
+                _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
+                delete _locationsQueried[key];
+              }
             }
           }
         }
-      }
-    });
+      });
+    }
   }
 
   /**
    * Attaches listeners to Firebase which track when new keys are added near this query.
    */
   function _listenForNewGeohashes() {
-    //console.groupCollapsed("_listenForNewGeohashes()");
-    //console.time("TOTAL _listenForNewGeohashes()");
-    //console.time("Get center hash at zoom level");
     // Determine a zoom level at which to find neighboring geohashes
     var zoomLevel = 6;
     while (_radius > g_BOUNDING_BOX_SHORTEST_EDGE_BY_GEOHASH_LENGTH[zoomLevel]) {
@@ -132,100 +141,59 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // Get the geohash for this query's center at the determined zoom level
     var centerHash = encodeGeohash(_center, g_GEOHASH_PRECISION).substring(0, zoomLevel);
-    //console.timeEnd("Get center hash at zoom level");
 
     // Get the list of geohashes to query
-    //console.time("neighbors()");
     var geohashesToQuery = neighbors(centerHash);
     geohashesToQuery.push(centerHash);
-    //console.timeEnd("neighbors()");
 
-    // Filter out empty geohashes and duplicate geohashes
-    //console.time("Filter out duplicates");
+    // Filter out empty and duplicate geohashes
     geohashesToQuery = geohashesToQuery.filter(function(geohash, i){
       return (geohash !== "" && geohashesToQuery.indexOf(geohash) === i);
     });
-    //console.timeEnd("Filter out duplicates");
 
     // For all of the geohashes that we are already currently querying, check if they are still
-    // supposed to be queried. If so, don't re-query them. Otherwise, stop querying them and remove
-    // them from the current geohashes queried dictionary.
-    console.time("Compare to current geohashes queried");
-    //console.log(geohashesToQuery.length);
-    //console.log(geohashesToQuery);
-    //console.log(_currentGeohashesQueried);
+    // supposed to be queried. If so, don't re-query them. Otherwise, mark them to be un-queried
+    // next time we clean up the current geohashes queried dictionary.
     for (var geohashStartPrefix in _currentGeohashesQueried) {
       if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
         var index = geohashesToQuery.indexOf(geohashStartPrefix);
         if (index === -1) {
-          // TODO: cancel all _locationsQueried[key] listeners with that startprefix
-          //_firebaseRef.child("i").off("child_added");
-          _currentGeohashesQueried[geohashStartPrefix].shouldDelete = true;
-          //_firebaseRef.child("i").off("child_added", _currentGeohashesQueried[geohashStartPrefix].childAddedCallback);
-          //delete _currentGeohashesQueried[geohashStartPrefix];
-          // TODO: I'm deleting it right awway and then trying to deref it
+          _currentGeohashesQueried[geohashStartPrefix] = false;
         }
         else {
+          _currentGeohashesQueried[geohashStartPrefix] = true;
           geohashesToQuery.splice(index, 1);
         }
       }
     }
-    console.timeEnd("Compare to current geohashes queried");
 
-    //console.groupCollapsed("Query geohashes");
-    //console.log(geohashesToQuery);
-    //console.time("TOTAL Query geohashes");
     // Keep track of how many geohashes have been processed so we know when to fire the "ready" event
     var numGeohashesToQueryProcessed = 0;
 
     // Loop through each geohash to query for and listen for new geohashes which have the same prefix.
-    // For every match, determine if we should fire the "key_entered" or "key_moved" events.
+    // For every match, attach a value callback which will fire the appropriate events.
     // Once every geohash to query is processed, fire the "ready" event.
     for (var i = 0, numGeohashesToQuery = geohashesToQuery.length; i < numGeohashesToQuery; ++i) {
-      //console.groupCollapsed("Querying geohash " + i);
-      //console.time("TOTAL Querying geohash " + i);
-
-      //console.time("Getting prefixes");
       // Set the start prefix as a subset of the current geohash
       var startPrefix = geohashesToQuery[i].substring(0, zoomLevel);
 
-      // Set the end prefix as the start prefix plus a ~ to put it last in alphabetical order
+      // Set the end prefix as the start prefix plus ~ to put it last in alphabetical order
       var endPrefix = startPrefix + "~";
-      //console.timeEnd("Getting prefixes");
 
-      //console.time("Get firebase query");
       // Create the Firebase query
       var firebaseQuery = _firebaseRef.child("i").startAt(null, startPrefix).endAt(null, endPrefix);
-      //console.timeEnd("Get firebase query");
 
-      //console.time("childAddedCallback");
-      /* jshint -W083 */
+      // Add the geohash start prefix to the current geohashes queried dictionary and mark it as not
+      // to be un-queried
+      _currentGeohashesQueried[startPrefix] = true;
+
       // For every new matching geohash, determine if we should fire the "key_entered" event
-      var childAddedCallback = firebaseQuery.on("child_added", function(indicesChildSnapshot) {
-        if (!_valueEventFired) {
-          _numChildAddedEventsToProcess++;
-        }
-
-        var key = indicesChildSnapshot.name().slice(g_GEOHASH_PRECISION);
-
-        // If the key is not already in this query, check if it should be added
-        if (typeof _locationsQueried[key] === "undefined") {
-          _attachValueCallback(key);
-        }
-      });
-      //console.timeEnd("childAddedCallback");
-
-      //console.time("once value");
-
-      // Add the geohash to the current geohashes queried dictionary
-      _currentGeohashesQueried[startPrefix] = {
-        childAddedCallback: childAddedCallback,
-        shouldDelete: false
-      };
+      firebaseQuery.on("child_added", _attachValueCallback);
 
       // Once the current geohash to query is processed, see if it is the last one to be processed
-      // and, if so, flip the corresponding variable.
-      // The "value" event will fire after every "child_added" event fires.
+      // and, if so, mark the value event as fired.
+      // Note that Firebase fires the "value" event after every "child_added" event fires.
+      /* jshint -W083 */
       firebaseQuery.once("value", function() {
         numGeohashesToQueryProcessed++;
         _valueEventFired = (numGeohashesToQueryProcessed === geohashesToQuery.length);
@@ -236,15 +204,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
           _fireReadyEventCallbacks();
         }
       });
-      //console.timeEnd("once value");
       /* jshint +W083 */
-      //console.timeEnd("Querying geohash " + i);
-      //console.groupEnd("Querying geohash " + i);
     }
-    //console.timeEnd("TOTAL Query geohashes");
-    //console.groupEnd("Query geohashes");
-    //console.timeEnd("TOTAL _listenForNewGeohashes()");
-    //console.groupEnd("_listenForNewGeohashes()");
   }
 
   /********************/
@@ -409,11 +370,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       key_moved: []
     };
 
-    // Turn off all Firebase listeners for this query
-    //_firebaseRef.child("i").off("child_added");
+    // Turn off all Firebase listeners for the current geohashes being queried
     for (var geohashStartPrefix in _currentGeohashesQueried) {
       if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
-        _firebaseRef.child("i").off("child_added", _currentGeohashesQueried[geohashStartPrefix].childAddedCallback);
+        _firebaseRef.child("i").off("child_added", _attachValueCallback);
         delete _currentGeohashesQueried[geohashStartPrefix];
       }
     }
@@ -452,17 +412,23 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
   // A dictionary of geohashes which currently have an active "child_added" event callback
   var _currentGeohashesQueried = {};
-  /*setInterval(function() {
+
+  // Every ten seconds, clean up the geohashes we are currently querying for. We keep these around
+  // for a little while since it's likely that they will need to be re-queried shortly after they
+  // move outside of the query's bounding box.
+  setInterval(function() {
     for (var geohashStartPrefix in _currentGeohashesQueried) {
       if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
-        console.log(_currentGeohashesQueried[geohashStartPrefix].shouldDelete);
-        if (_currentGeohashesQueried[geohashStartPrefix].shouldDelete === true) {
-          _firebaseRef.child("i").off("child_added", _currentGeohashesQueried[geohashStartPrefix].childAddedCallback);
+        if (_currentGeohashesQueried[geohashStartPrefix] === false) {
+          _firebaseRef.child("i").off("child_added", _attachValueCallback);
           delete _currentGeohashesQueried[geohashStartPrefix];
+
+          // TODO: cancel all _locationsQueried[key] listeners with that start prefix?
+          //_firebaseRef.child("i").off("child_added");
         }
       }
     }
-  }, 5000);*/
+  }, 10000);
 
   // Validate and save the query criteria
   validateCriteria(queryCriteria, /* requireCenterAndRadius */ true);

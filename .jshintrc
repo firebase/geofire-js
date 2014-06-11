@@ -2,7 +2,7 @@
   "predef": [
     "require",
     "module",
-    "setTimeout"
+    "setInterval"
   ],
   "bitwise": true,
   "curly": true,
