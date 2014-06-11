@@ -130,7 +130,24 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
 
   /**
-   * Attaches listeners to Firebase which track when new keys are added near this query.
+   * Checks if we have processed all of the geohashes to query and fires the ready event if necessary.
+   */
+  function _checkIfShouldFireReadyEvent() {
+    // Increment the number of geohashes processed and set the "value" event as fired if we have
+    // processed all of the geohashes we were expecting to process.
+    _numGeohashesToQueryProcessed++;
+    _valueEventFired = (_numGeohashesToQueryProcessed === _geohashesToQuery.length);
+
+    // It's possible that there are no more child added events to process and that the "ready"
+    // event will therefore not get called. We should call the "ready" event in that case.
+    if (_valueEventFired && _numChildAddedEventsToProcess === 0) {
+      _fireReadyEventCallbacks();
+    }
+  }
+
+  /**
+   * Attaches listeners to Firebase which track when new geohashes are added within this query's
+   * bounding box.
    */
   function _listenForNewGeohashes() {
     // Determine a zoom level at which to find neighboring geohashes
@@ -143,12 +160,12 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     var centerHash = encodeGeohash(_center, g_GEOHASH_PRECISION).substring(0, zoomLevel);
 
     // Get the list of geohashes to query
-    var geohashesToQuery = neighbors(centerHash);
-    geohashesToQuery.push(centerHash);
+    _geohashesToQuery = neighbors(centerHash);
+    _geohashesToQuery.push(centerHash);
 
     // Filter out empty and duplicate geohashes
-    geohashesToQuery = geohashesToQuery.filter(function(geohash, i){
-      return (geohash !== "" && geohashesToQuery.indexOf(geohash) === i);
+    _geohashesToQuery = _geohashesToQuery.filter(function(geohash, i){
+      return (geohash !== "" && _geohashesToQuery.indexOf(geohash) === i);
     });
 
     // For all of the geohashes that we are already currently querying, check if they are still
@@ -156,26 +173,26 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // next time we clean up the current geohashes queried dictionary.
     for (var geohashStartPrefix in _currentGeohashesQueried) {
       if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
-        var index = geohashesToQuery.indexOf(geohashStartPrefix);
+        var index = _geohashesToQuery.indexOf(geohashStartPrefix);
         if (index === -1) {
           _currentGeohashesQueried[geohashStartPrefix] = false;
         }
         else {
           _currentGeohashesQueried[geohashStartPrefix] = true;
-          geohashesToQuery.splice(index, 1);
+          _geohashesToQuery.splice(index, 1);
         }
       }
     }
 
     // Keep track of how many geohashes have been processed so we know when to fire the "ready" event
-    var numGeohashesToQueryProcessed = 0;
+    _numGeohashesToQueryProcessed = 0;
 
     // Loop through each geohash to query for and listen for new geohashes which have the same prefix.
     // For every match, attach a value callback which will fire the appropriate events.
     // Once every geohash to query is processed, fire the "ready" event.
-    for (var i = 0, numGeohashesToQuery = geohashesToQuery.length; i < numGeohashesToQuery; ++i) {
+    for (var i = 0, numGeohashesToQuery = _geohashesToQuery.length; i < numGeohashesToQuery; ++i) {
       // Set the start prefix as a subset of the current geohash
-      var startPrefix = geohashesToQuery[i].substring(0, zoomLevel);
+      var startPrefix = _geohashesToQuery[i].substring(0, zoomLevel);
 
       // Set the end prefix as the start prefix plus ~ to put it last in alphabetical order
       var endPrefix = startPrefix + "~";
@@ -193,18 +210,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // Once the current geohash to query is processed, see if it is the last one to be processed
       // and, if so, mark the value event as fired.
       // Note that Firebase fires the "value" event after every "child_added" event fires.
-      /* jshint -W083 */
-      firebaseQuery.once("value", function() {
-        numGeohashesToQueryProcessed++;
-        _valueEventFired = (numGeohashesToQueryProcessed === geohashesToQuery.length);
-
-        // It's possible that there are no more child added events to process and that the "ready"
-        // event will therefore not get called. We should call the "ready" event in that case.
-        if (_valueEventFired && _numChildAddedEventsToProcess === 0) {
-          _fireReadyEventCallbacks();
-        }
-      });
-      /* jshint +W083 */
+      firebaseQuery.once("value", _checkIfShouldFireReadyEvent);
     }
   }
 
@@ -235,17 +241,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {object} newQueryCriteria The criteria which specifies the query's center and radius.
    */
   this.updateCriteria = function(newQueryCriteria) {
-    //console.group("updateCriteria()");
-    //console.time("TOTAL updateCriteria()");
-    // Save the new query criteria
-    //console.time("_saveCriteria()");
     // Validate and save the new query criteria
     validateCriteria(newQueryCriteria);
     _center = newQueryCriteria.center || _center;
     _radius = newQueryCriteria.radius || _radius;
-    //console.timeEnd("_saveCriteria()");
 
-    //console.time("Fire \"key_exited\" and \"key_entered\"");
     // Loop through all of the locations in the query, update their distance from the center of the
     // query, and fire any appropriate events
     for (var key in _locationsQueried) {
@@ -276,19 +276,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         }
       }
     }
-    //console.timeEnd("Fire \"key_exited\" and \"key_entered\"");
 
     // Reset the variables which control when the "ready" event fires
-    //console.time("_listenForNewGeohashes()");
     _valueEventFired = false;
     _numChildAddedEventsToProcess = 0;
 
     // Listen for new geohashes being added to GeoFire and fire the appropriate events
     _listenForNewGeohashes();
-    //console.timeEnd("_listenForNewGeohashes()");
-
-    //console.timeEnd("TOTAL updateCriteria()");
-    //console.groupEnd("updateCriteria()");
   };
 
   /**
@@ -323,10 +317,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   this.on = function(eventType, callback) {
     // Validate the inputs
     if (["ready", "key_entered", "key_exited", "key_moved"].indexOf(eventType) === -1) {
-      throw new Error("Event type must be \"key_entered\", \"key_exited\", or \"key_moved\"");
+      throw new Error("event type must be \"ready\", \"key_entered\", \"key_exited\", or \"key_moved\"");
     }
     if (typeof callback !== "function") {
-      throw new Error("Event callback must be a function.");
+      throw new Error("callback must be a function");
     }
 
     // Add the callback to this query's callbacks list
@@ -405,6 +399,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   // Variables used to keep track of when to fire the "ready" event
   var _valueEventFired = false;
   var _numChildAddedEventsToProcess = 0;
+  var _geohashesToQuery, _numGeohashesToQueryProcessed;
 
   // A dictionary of keys which were queried for the current criteria
   // Note that not all of these are currently within this query
