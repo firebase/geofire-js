@@ -313,6 +313,17 @@ var g_BORDERS = {
   }
 };
 
+// Approximate bounding box dimensions for certain geohash lengths
+var g_BOUNDING_BOX_SHORTEST_EDGE_BY_GEOHASH_LENGTH = [
+  null,
+  5003.771699005143,
+  625.4714623756429,
+  156.36786559391072,
+  19.54598319923884,
+  4.88649579980971,
+  0.6108119749762138
+];
+
 /**
  * Validates the inputted key and throws an error if it is invalid.
  *
@@ -715,20 +726,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     //console.groupCollapsed("_listenForNewGeohashes()");
     //console.time("TOTAL _listenForNewGeohashes()");
     //console.time("Get center hash at zoom level");
-    // Approximate the bounding box dimensions depending on hash length
-    var boundingBoxShortestEdgeByHashLength = [
-      null,
-      5003.771699005143,
-      625.4714623756429,
-      156.36786559391072,
-      19.54598319923884,
-      4.88649579980971,
-      0.6108119749762138
-    ];
-
     // Determine a zoom level at which to find neighboring geohashes
     var zoomLevel = 6;
-    while (_radius > boundingBoxShortestEdgeByHashLength[zoomLevel]) {
+    while (_radius > g_BOUNDING_BOX_SHORTEST_EDGE_BY_GEOHASH_LENGTH[zoomLevel]) {
       zoomLevel -= 1;
     }
 

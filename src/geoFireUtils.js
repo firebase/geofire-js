@@ -43,6 +43,17 @@ var g_BORDERS = {
   }
 };
 
+// Approximate bounding box dimensions for certain geohash lengths
+var g_BOUNDING_BOX_SHORTEST_EDGE_BY_GEOHASH_LENGTH = [
+  null,
+  5003.771699005143,
+  625.4714623756429,
+  156.36786559391072,
+  19.54598319923884,
+  4.88649579980971,
+  0.6108119749762138
+];
+
 /**
  * Validates the inputted key and throws an error if it is invalid.
  *
