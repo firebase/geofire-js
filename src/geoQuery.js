@@ -53,8 +53,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       _numChildAddedEventsToProcess++;
     }
 
-    // Get the key from the child snapshot's name, which has the form "<geohash><key>"
-    var key = indicesChildSnapshot.name().slice(g_GEOHASH_PRECISION);
+    // Get the key from the child snapshot's name, which has the form "<geohash>:<key>"
+    var key = indicesChildSnapshot.name().split(":")[1];
 
     // If the key is not already being queried, attach a "value" callback to it
     if (typeof _locationsQueried[key] === "undefined") {
@@ -74,7 +74,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   function _locationValueCallback(locationsDataSnapshot) {
     // Get the key and location
     var key = locationsDataSnapshot.name();
-    var location = locationsDataSnapshot.val() ? locationsDataSnapshot.val().split(",").map(Number) : null;
+    var location = locationsDataSnapshot.val();
 
     // If this key is not already in the query, check if we should fire the "key_entered" event
     if (typeof _locationsQueried[key] === "undefined" || _locationsQueried[key].isInQuery === false) {

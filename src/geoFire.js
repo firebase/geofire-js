@@ -32,14 +32,13 @@ var GeoFire = function(firebaseRef) {
         }
         else {
           // If the location is not changing, there is no need to do anything
-          previousLocation = previousLocation.split(",").map(Number);
           if (location !== null && location[0] === previousLocation[0] && location[1] === previousLocation[1]) {
             resolve(false);
           }
 
           // Otherwise, overwrite the previous index
           else {
-            _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_PRECISION) + key).remove(function(error) {
+            _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_PRECISION) + ":" + key).remove(function(error) {
               if (error) {
                 reject("Error: Firebase synchronization failed: " + error);
               }
@@ -65,7 +64,7 @@ var GeoFire = function(firebaseRef) {
    */
   function _updateLocationsNode(key, location) {
     return new RSVP.Promise(function(resolve, reject) {
-      _firebaseRef.child("l/" + key).set(location ? location.toString() : null, function(error) {
+      _firebaseRef.child("l/" + key).set(location, function(error) {
         if (error) {
           reject("Error: Firebase synchronization failed: " + error);
         }
@@ -93,7 +92,7 @@ var GeoFire = function(firebaseRef) {
         resolve();
       }
       else {
-        _firebaseRef.child("i/" + encodeGeohash(location, g_GEOHASH_PRECISION) + key).set(true, function(error) {
+        _firebaseRef.child("i/" + encodeGeohash(location, g_GEOHASH_PRECISION) + ":" + key).set(true, function(error) {
           if (error) {
             reject("Error: Firebase synchronization failed: " + error);
           }
@@ -116,7 +115,7 @@ var GeoFire = function(firebaseRef) {
   function _getLocation(key) {
     return new RSVP.Promise(function(resolve, reject) {
       _firebaseRef.child("l/" + key).once("value", function(dataSnapshot) {
-        resolve(dataSnapshot.val() ? dataSnapshot.val().split(",").map(Number) : null);
+        resolve(dataSnapshot.val());
       }, function(error) {
         reject("Error: Firebase synchronization failed: " + error);
       });

@@ -1,6 +1,6 @@
 // TODO: Investigate the correct value for this and maybe make it user configurable
 // Default geohash length
-var g_GEOHASH_PRECISION = 12;
+var g_GEOHASH_PRECISION = 6;
 
 // Characters used in location geohashes
 var g_BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";

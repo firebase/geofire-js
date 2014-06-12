@@ -33,14 +33,14 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "7zzzzzzzzzzzloc1": true,
-            "v0gs3y0zh7w1loc2": true,
-            "1bpbpbpbpbpbloc3": true
+            "7zzzzz:loc1": true,
+            "v0gs3y:loc2": true,
+            "1bpbpb:loc3": true
           },
           l: {
-            "loc1": "0,0",
-            "loc2": "50,50",
-            "loc3": "-90,-90"
+            "loc1": [0, 0],
+            "loc2": [50, 50],
+            "loc3": [-90, -90]
           }
         });
 
@@ -62,14 +62,14 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "ebpcrypzxvpcloc1": true,
-            "v0gu2qnx15x3loc2": true,
-            "1cr648sfx40wloc3": true
+            "ebpcry:loc1": true,
+            "v0gu2q:loc2": true,
+            "1cr648:loc3": true
           },
           l: {
-            "loc1": "0.254,0",
-            "loc2": "50,50.293403",
-            "loc3": "-82.614,-90.938"
+            "loc1": [0.254, 0],
+            "loc2": [50, 50.293403],
+            "loc3": [-82.614, -90.938]
           }
         });
 
@@ -95,14 +95,14 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "s065kk0dc540loc1": true,
-            "v0gs3y0zh7w1loc2": true,
-            "1bpbpbpbpbpbloc3": true
+            "s065kk:loc1": true,
+            "v0gs3y:loc2": true,
+            "1bpbpb:loc3": true
           },
           l: {
-            "loc1": "2,3",
-            "loc2": "50,50",
-            "loc3": "-90,-90"
+            "loc1": [2, 3],
+            "loc2": [50, 50],
+            "loc3": [-90, -90]
           }
         });
 
@@ -128,14 +128,14 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "7zzzzzzzzzzzloc1": true,
-            "v0gs3y0zh7w1loc2": true,
-            "1bpbpbpbpbpbloc3": true
+            "7zzzzz:loc1": true,
+            "v0gs3y:loc2": true,
+            "1bpbpb:loc3": true
           },
           l: {
-            "loc1": "0,0",
-            "loc2": "50,50",
-            "loc3": "-90,-90"
+            "loc1": [0, 0],
+            "loc2": [50, 50],
+            "loc3": [-90, -90]
           }
         });
 
@@ -157,14 +157,14 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "7zzzzzzzzzzzloc1": true,
-            "7zzzzzzzzzzzloc2": true,
-            "7zzzzzzzzzzzloc3": true
+            "7zzzzz:loc1": true,
+            "7zzzzz:loc2": true,
+            "7zzzzz:loc3": true
           },
           l: {
-            "loc1": "0,0",
-            "loc2": "0,0",
-            "loc3": "0,0"
+            "loc1": [0, 0],
+            "loc2": [0, 0],
+            "loc3": [0, 0]
           }
         });
 
@@ -209,18 +209,18 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "cped3g0furw4loc1": true,
-            "d2h376zj8h39loc2": true,
-            "1bpbpbpbpbpbloc3": true,
-            "cped3g0furw4loc4": true,
-            "h50svty4es88loc6": true
+            "cped3g:loc1": true,
+            "d2h376:loc2": true,
+            "1bpbpb:loc3": true,
+            "cped3g:loc4": true,
+            "h50svt:loc6": true
           },
           l: {
-            "loc1": "87.6,-130",
-            "loc2": "0.2358,-72.621",
-            "loc3": "-90,-90",
-            "loc4": "87.6,-130",
-            "loc6": "-72.258,0.953215"
+            "loc1": [87.6, -130],
+            "loc2": [0.2358, -72.621],
+            "loc3": [-90, -90],
+            "loc4": [87.6, -130],
+            "loc6": [-72.258, 0.953215]
           }
         });
 
@@ -345,10 +345,10 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "s065kk0dc540loc2": true
+            "s065kk:loc2": true
           },
           l: {
-            "loc2": "2,3"
+            "loc2": [2, 3]
           }
         });
 
@@ -382,10 +382,10 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "7zzzzzzzzzzzloc1": true
+            "7zzzzz:loc1": true
           },
           l: {
-            "loc1": "0,0"
+            "loc1": [0, 0]
           }
         });
 
@@ -422,10 +422,10 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "s065kk0dc540loc2": true
+            "s065kk:loc2": true
           },
           l: {
-            "loc2": "2,3"
+            "loc2": [2, 3]
           }
         });
 
@@ -459,10 +459,10 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "7zzzzzzzzzzzloc1": true
+            "7zzzzz:loc1": true
           },
           l: {
-            "loc1": "0,0"
+            "loc1": [0, 0]
           }
         });
 
@@ -488,12 +488,12 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "s065kk0dc540loc2": true,
-            "7zzzzzzzzzzzloc3": true
+            "s065kk:loc2": true,
+            "7zzzzz:loc3": true
           },
           l: {
-            "loc2": "2,3",
-            "loc3": "0,0"
+            "loc2": [2, 3],
+            "loc3": [0, 0]
           }
         });
 

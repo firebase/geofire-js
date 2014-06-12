@@ -78,14 +78,13 @@ var GeoFire = function(firebaseRef) {
         }
         else {
           // If the location is not changing, there is no need to do anything
-          previousLocation = previousLocation.split(",").map(Number);
           if (location !== null && location[0] === previousLocation[0] && location[1] === previousLocation[1]) {
             resolve(false);
           }
 
           // Otherwise, overwrite the previous index
           else {
-            _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_PRECISION) + key).remove(function(error) {
+            _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_PRECISION) + ":" + key).remove(function(error) {
               if (error) {
                 reject("Error: Firebase synchronization failed: " + error);
               }
@@ -111,7 +110,7 @@ var GeoFire = function(firebaseRef) {
    */
   function _updateLocationsNode(key, location) {
     return new RSVP.Promise(function(resolve, reject) {
-      _firebaseRef.child("l/" + key).set(location ? location.toString() : null, function(error) {
+      _firebaseRef.child("l/" + key).set(location, function(error) {
         if (error) {
           reject("Error: Firebase synchronization failed: " + error);
         }
@@ -139,7 +138,7 @@ var GeoFire = function(firebaseRef) {
         resolve();
       }
       else {
-        _firebaseRef.child("i/" + encodeGeohash(location, g_GEOHASH_PRECISION) + key).set(true, function(error) {
+        _firebaseRef.child("i/" + encodeGeohash(location, g_GEOHASH_PRECISION) + ":" + key).set(true, function(error) {
           if (error) {
             reject("Error: Firebase synchronization failed: " + error);
           }
@@ -162,7 +161,7 @@ var GeoFire = function(firebaseRef) {
   function _getLocation(key) {
     return new RSVP.Promise(function(resolve, reject) {
       _firebaseRef.child("l/" + key).once("value", function(dataSnapshot) {
-        resolve(dataSnapshot.val() ? dataSnapshot.val().split(",").map(Number) : null);
+        resolve(dataSnapshot.val());
       }, function(error) {
         reject("Error: Firebase synchronization failed: " + error);
       });
@@ -270,7 +269,7 @@ GeoFire.distance = function(location1, location2) {
 
 // TODO: Investigate the correct value for this and maybe make it user configurable
 // Default geohash length
-var g_GEOHASH_PRECISION = 12;
+var g_GEOHASH_PRECISION = 6;
 
 // Characters used in location geohashes
 var g_BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
@@ -655,8 +654,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       _numChildAddedEventsToProcess++;
     }
 
-    // Get the key from the child snapshot's name, which has the form "<geohash><key>"
-    var key = indicesChildSnapshot.name().slice(g_GEOHASH_PRECISION);
+    // Get the key from the child snapshot's name, which has the form "<geohash>:<key>"
+    var key = indicesChildSnapshot.name().split(":")[1];
 
     // If the key is not already being queried, attach a "value" callback to it
     if (typeof _locationsQueried[key] === "undefined") {
@@ -676,7 +675,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   function _locationValueCallback(locationsDataSnapshot) {
     // Get the key and location
     var key = locationsDataSnapshot.name();
-    var location = locationsDataSnapshot.val() ? locationsDataSnapshot.val().split(",").map(Number) : null;
+    var location = locationsDataSnapshot.val();
 
     // If this key is not already in the query, check if we should fire the "key_entered" event
     if (typeof _locationsQueried[key] === "undefined" || _locationsQueried[key].isInQuery === false) {
