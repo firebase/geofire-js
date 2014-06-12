@@ -1,6 +1,7 @@
 describe("geoFireUtils Tests:", function() {
   describe("Parameter validation:", function() {
     it("validateKey() does not throw errors given valid keys", function() {
+      console.log("!!!!!  geoFireUtils Tests  !!!!!");
       validKeys.forEach(function(validKey) {
         expect(function() { validateKey(validKey); }).not.toThrow();
       });
@@ -127,7 +128,6 @@ describe("geoFireUtils Tests:", function() {
 
   describe("Geohashing:", function() {
     it("encodeGeohash() encodes locations to geohashes given no precision", function() {
-      console.log("!!!!!  geoFireUtils Tests  !!!!!");
       expect(encodeGeohash([-90, -180])).toBe("000000000000".slice(0, g_GEOHASH_PRECISION));
       expect(encodeGeohash([90, 180])).toBe("zzzzzzzzzzzz".slice(0, g_GEOHASH_PRECISION));
       expect(encodeGeohash([-90, 180])).toBe("pbpbpbpbpbpb".slice(0, g_GEOHASH_PRECISION));
@@ -141,7 +141,6 @@ describe("geoFireUtils Tests:", function() {
     });
 
     it("encodeGeohash() encodes locations to geohashes given a custom precision", function() {
-      console.log("!!!!!  geoFireUtils Tests  !!!!!");
       expect(encodeGeohash([-90, -180], 6)).toBe("000000");
       expect(encodeGeohash([90, 180], 20)).toBe("zzzzzzzzzzzzzzzzzzzz");
       expect(encodeGeohash([-90, 180], 1)).toBe("p");
