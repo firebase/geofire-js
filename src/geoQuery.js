@@ -75,6 +75,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Get the key and location
     var key = locationsDataSnapshot.name();
     var location = locationsDataSnapshot.val();
+    var distanceFromCenter, isInQuery;
 
     // If this key is not already in the query, check if we should fire the "key_entered" event
     if (typeof _locationsQueried[key] === "undefined" || _locationsQueried[key].isInQuery === false) {
@@ -88,8 +89,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // necessary
       else {
         // Determine if the location is within this query
-        var distanceFromCenter = GeoFire.distance(location, _center);
-        var isInQuery = (distanceFromCenter <= _radius);
+        distanceFromCenter = GeoFire.distance(location, _center);
+        isInQuery = (distanceFromCenter <= _radius);
 
         // Add this location to the locations queried dictionary even if it is not within this query
         _locationsQueried[key] = {
@@ -126,8 +127,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // Otherwise, if the location has actually changed, fire the "key_moved" or "key_exited" event
       else if (location[0] !== _locationsQueried[key].location[0] || location[1] !== _locationsQueried[key].location[1]) {
         // Calculate if the location is still in this query
-        var distanceFromCenter = GeoFire.distance(location, _center);
-        var isInQuery = (distanceFromCenter <= _radius);
+        distanceFromCenter = GeoFire.distance(location, _center);
+        isInQuery = (distanceFromCenter <= _radius);
 
         // Update the location's data
         _locationsQueried[key] = {
