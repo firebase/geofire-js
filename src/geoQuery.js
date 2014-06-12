@@ -34,13 +34,12 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
   /**
    * Attaches a value callback for the provided key which will update the information about the key
-   * every time its location changes. It also fires any necessary events when the key's location
-   * changes.
+   * and fire any necessary events every time the key's location changes.
    *
-   * When the provided key is removed from GeoFire, this value callback will remove itself and delete
-   * the globally stored information about the key.
+   * When the key is removed from GeoFire, this value callback will remove itself and delete the globally
+   * stored information about the key.
    *
-   * @param {string} key The key for which to attach the value callback.
+   * @param {Firebase DataSnapshot} indicesChildSnapshot A snapshot of the data stored for this geohash.
    */
   function _attachValueCallback(indicesChildSnapshot) {
     // If the below "value" event has not fired yet, we should wait to the the "ready" event until
@@ -54,78 +53,90 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // If the key is not already being queried, attach a "value" callback to it
     if (typeof _locationsQueried[key] === "undefined") {
-      var locationValueCallback = _firebaseRef.child("l/" + key).on("value", function(locationsDataSnapshot) {
-        // Get the key's current location
-        var location = locationsDataSnapshot.val() ? locationsDataSnapshot.val().split(",").map(Number) : null;
+      _firebaseRef.child("l/" + key).on("value", _locationValueCallback);
+    }
+  }
 
-        // If this is the first time we are receiving the location for this key, check if we should fire the
-        // "key_entered" event
-        if (typeof _locationsQueried[key] === "undefined" || _locationsQueried[key].isInQuery === false) {
+  /**
+   * Represents the value callback which will update the information about a key and fire any necessary
+   * events every time the key's location changes.
+   *
+   * When the key is removed from GeoFire, this value callback will remove itself and delete the globally
+   * stored information about the key.
+   *
+   * @param {Firebase DataSnapshot} locationsDataSnapshot A snapshot of the data stored for this location.
+   */
+  function _locationValueCallback(locationsDataSnapshot) {
+    // Get the key and location
+    var key = locationsDataSnapshot.name();
+    var location = locationsDataSnapshot.val() ? locationsDataSnapshot.val().split(",").map(Number) : null;
+
+    // If this key is not already in the query, check if we should fire the "key_entered" event
+    if (typeof _locationsQueried[key] === "undefined" || _locationsQueried[key].isInQuery === false) {
+      // If the location has been removed from GeoFire, so cancel this callback and delete the location
+      if (location === null) {
+        _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
+        delete _locationsQueried[key];
+      }
+
+      // Otherwise, create or update the information for this location and fire the "key_entered" event if
+      // necessary
+      else {
+        // Determine if the location is within this query
+        var distanceFromCenter = GeoFire.distance(location, _center);
+        var isInQuery = (distanceFromCenter <= _radius);
+
+        // Add this location to the locations queried dictionary even if it is not within this query
+        _locationsQueried[key] = {
+          location: location,
+          distanceFromCenter: distanceFromCenter,
+          isInQuery: isInQuery
+        };
+
+        // Fire the "key_entered" event if the provided key has entered this query
+        if (isInQuery) {
+          _fireCallbacksForKey("key_entered", key);
+        }
+
+        // Fire the "key_ready" event if we have processed all the "child_added" events and the "value" event has fired
+        if (_numChildAddedEventsToProcess > 0) {
+          _numChildAddedEventsToProcess--;
+          if (_valueEventFired && _numChildAddedEventsToProcess === 0) {
+            _fireReadyEventCallbacks();
+          }
+        }
+      }
+    }
+
+    // Otherwise, the location is already within our query and we should check if we need to fire the "key_moved" or
+    // "key_exited" event
+    else {
+      // Get the location's data
+      var locationDict = _locationsQueried[key];
+
+      // Only do something if the location has actually changed
+      if (location === null || location[0] !== locationDict.location[0] || location[1] !== locationDict.location[1]) {
+        // If the updated location has changed, calculate if it is still in this query
+        locationDict.location = location;
+        locationDict.distanceFromCenter = (location === null) ? null : GeoFire.distance(location, _center);
+        locationDict.isInQuery = (location === null) ? false : (locationDict.distanceFromCenter <= _radius);
+
+        // If the updated location is still in the query, fire the "key_moved" event
+        if (locationDict.isInQuery) {
+          _fireCallbacksForKey("key_moved", key);
+        }
+
+        // Otherwise, fire the "key_exited" event
+        else {
+          _fireCallbacksForKey("key_exited", key);
+
+          // If the location has been removed from GeoFire, so cancel this callback and delete the location
           if (location === null) {
-            _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
+            _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
             delete _locationsQueried[key];
           }
-          else {
-            // Determine if the location was and is now within this query
-            var distanceFromCenter = GeoFire.distance(location, _center);
-            var isInQuery = (distanceFromCenter <= _radius);
-
-            // Add this location to the all locations queried dictionary even if it is not added to the list of
-            // locations within this query
-            _locationsQueried[key] = {
-              location: location,
-              distanceFromCenter: distanceFromCenter,
-              isInQuery: isInQuery,
-              valueCallback: locationValueCallback
-            };
-
-            // Fire the "key_entered" event if the provided key has entered this query
-            if (isInQuery) {
-              _fireCallbacksForKey("key_entered", key);
-            }
-
-            // Fire the "key_ready" event if we have processed all the "child_added" events and the "value" event has fired
-            if (_numChildAddedEventsToProcess > 0) {
-              _numChildAddedEventsToProcess--;
-              if (_valueEventFired && _numChildAddedEventsToProcess === 0) {
-                _fireReadyEventCallbacks();
-              }
-            }
-
-            // TODO: should I do this?
-            //if (!_locationsQueried[key].isInQuery) {
-            //  _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
-            //}
-          }
         }
-
-        // Otherwise,
-        else {
-          if (location === null || location[0] !== _locationsQueried[key].location[0] || location[1] !== _locationsQueried[key].location[1]) {
-            // If the updated location has changed, calculate if it is still in this query
-            _locationsQueried[key].location = location;
-            _locationsQueried[key].distanceFromCenter = (location === null) ? null : GeoFire.distance(location, _center);
-            _locationsQueried[key].isInQuery = (location === null) ? false : (_locationsQueried[key].distanceFromCenter <= _radius);
-
-            // If the updated location is still in the query, fire the "key_moved" event and save the key's updated
-            // location in the list of keys in this query
-            if (_locationsQueried[key].isInQuery) {
-              _fireCallbacksForKey("key_moved", key);
-            }
-
-            // Otherwise, fire the "key_exited" event, cancel the key's value callback, and remove it from the list of
-            // locations in this query
-            else {
-              _fireCallbacksForKey("key_exited", key);
-
-              if (location === null) {
-                _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
-                delete _locationsQueried[key];
-              }
-            }
-          }
-        }
-      });
+      }
     }
   }
 
@@ -265,9 +276,6 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         // If the location just left the query, fire the "key_exited" callbacks
         if (wasAlreadyInQuery && !locationDict.isInQuery) {
           _fireCallbacksForKey("key_exited", key);
-
-          // TODO: do I need to do this?
-          //_firebaseRef.child("l/" + key).off("value", locationDict.valueCallback);
         }
 
         // If the location just entered the query, fire the "key_entered" callbacks
@@ -375,7 +383,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Loop through all of the locations in the query and cancel their value change event callbacks
     for (var key in _locationsQueried) {
       if (_locationsQueried.hasOwnProperty(key)) {
-        _firebaseRef.child("l/" + key).off("value", _locationsQueried[key].valueCallback);
+        _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
         delete _locationsQueried[key];
       }
     }
@@ -418,8 +426,18 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
           _firebaseRef.child("i").off("child_added", _attachValueCallback);
           delete _currentGeohashesQueried[geohashStartPrefix];
 
-          // TODO: cancel all _locationsQueried[key] listeners with that start prefix?
-          //_firebaseRef.child("i").off("child_added");
+          // TODO: Loop through all of the locations in the query and cancel the delete those
+          // which have the same geohash prefix as the geohash we just deleted
+          /*
+          for (var key in _locationsQueried) {
+            if (_locationsQueried.hasOwnProperty(key)) {
+              if (_locationsQueried[key].geohash.indexOf(geohashStartPrefix) === 0) {
+                _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
+                delete _locationsQueried[key];
+              }
+            }
+          }
+          */
         }
       }
     }
