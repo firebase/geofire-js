@@ -621,7 +621,12 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   function _fireCallbacksForKey(eventType, key) {
     var locationDict = _locationsQueried[key];
     _callbacks[eventType].forEach(function(callback) {
-      callback(key, locationDict.location, locationDict.distanceFromCenter);
+      if (typeof locationDict === "undefined") {
+        callback(key, null, null);
+      }
+      else {
+        callback(key, locationDict.location, locationDict.distanceFromCenter);
+      }
     });
   }
 
@@ -675,7 +680,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // If this key is not already in the query, check if we should fire the "key_entered" event
     if (typeof _locationsQueried[key] === "undefined" || _locationsQueried[key].isInQuery === false) {
-      // If the location has been removed from GeoFire, so cancel this callback and delete the location
+      // If the location has been removed from GeoFire, cancel this callback and delete the location
       if (location === null) {
         _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
         delete _locationsQueried[key];
@@ -713,30 +718,32 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Otherwise, the location is already within our query and we should check if we need to fire the "key_moved" or
     // "key_exited" event
     else {
-      // Get the location's data
-      var locationDict = _locationsQueried[key];
+      // If the location has been removed from GeoFire, cancel this callback and delete the location
+      if (location === null) {
+          _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
+          delete _locationsQueried[key];
+          _fireCallbacksForKey("key_exited", key);
+      }
 
-      // Only do something if the location has actually changed
-      if (location === null || location[0] !== locationDict.location[0] || location[1] !== locationDict.location[1]) {
-        // If the updated location has changed, calculate if it is still in this query
-        locationDict.location = location;
-        locationDict.distanceFromCenter = (location === null) ? null : GeoFire.distance(location, _center);
-        locationDict.isInQuery = (location === null) ? false : (locationDict.distanceFromCenter <= _radius);
+      // Otherwise, if the location has actually changed, fire the "key_moved" or "key_exited" event
+      else if (location[0] !== _locationsQueried[key].location[0] || location[1] !== _locationsQueried[key].location[1]) {
+        // Calculate if the location is still in this query
+        var distanceFromCenter = GeoFire.distance(location, _center);
+        var isInQuery = (distanceFromCenter <= _radius);
 
-        // If the updated location is still in the query, fire the "key_moved" event
-        if (locationDict.isInQuery) {
+        // Update the location's data
+        _locationsQueried[key] = {
+          location: location,
+          distanceFromCenter: distanceFromCenter,
+          isInQuery: isInQuery
+        };
+
+        // Fire the "key_moved" or "key_exited" event
+        if (isInQuery) {
           _fireCallbacksForKey("key_moved", key);
         }
-
-        // Otherwise, fire the "key_exited" event
         else {
           _fireCallbacksForKey("key_exited", key);
-
-          // If the location has been removed from GeoFire, so cancel this callback and delete the location
-          if (location === null) {
-            _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
-            delete _locationsQueried[key];
-          }
         }
       }
     }
