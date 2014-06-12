@@ -267,7 +267,6 @@ GeoFire.distance = function(location1, location2) {
   return radius * c;
 };
 
-// TODO: Investigate the correct value for this and maybe make it user configurable
 // Default geohash length
 var g_GEOHASH_PRECISION = 6;
 
@@ -337,7 +336,7 @@ var validateKey = function(key) {
   else if (key.length === 0) {
     error = "key cannot be the empty string";
   }
-  else if (1 + g_GEOHASH_PRECISION + key.length > 755) { // TODO: is 755 correct
+  else if (1 + g_GEOHASH_PRECISION + key.length > 755) {
     // Firebase can only stored child paths up to 768 characters
     // The child path for this key is at the least: "i/<geohash>key"
     error = "key is too long to be stored in Firebase";
