@@ -1,5 +1,4 @@
-var map, circle;
-var geoQuery;
+var map;
 
 var locations = {
   "FirebaseHQ": [37.785326, -122.405696],
@@ -77,7 +76,7 @@ window.setInterval(function() {
 */
 
 // Create a GeoQuery
-geoQuery = geoFire.query({
+var geoQuery = geoFire.query({
   center: center,
   radius: radiusInKm
 });
@@ -114,9 +113,6 @@ geoQuery.on("key_entered", function(vehicleId, vehicleLocation) {
 
       // Create a new marker for the vehicle
       vehicle.marker = createVehicleMarker(vehicle, getVehicleColor(vehicle));
-
-      // Add the vehicle to the location console
-      $("#location-console ul").append("<li id='vehicle" + vehicleId + "'>" + vehicle.routeTag + "</li>");
     }
   });
 });
@@ -137,7 +133,7 @@ geoQuery.on("key_moved", function(vehicleId, vehicleLocation) {
   vehicle.marker.animatedMoveTo(vehicleLocation);
 });
 
-/* Removes vehicle markers from the map when the exit the query */
+/* Removes vehicle markers from the map when they exit the query */
 geoQuery.on("key_exited", function(vehicleId, vehicleLocation) {
   //console.log("Vehicle " + vehicleId + " exited the query.");
 
@@ -157,32 +153,26 @@ geoQuery.on("key_exited", function(vehicleId, vehicleLocation) {
     // Remove the vehicle's marker from the map
     vehicle.marker.setMap(null);
     // vehicle.marker = null;
-
-    // Remove the vehicle from the location console
-    $("#vehicle" + vehicleId).remove();
   }
 
   // Remove the vehicle from the list of vehicles in the query
   delete vehiclesInQuery[vehicleId];
 });
 
+/* Initializes the Google Map */
 function initializeMap() {
-  loc = new google.maps.LatLng(center[0], center[1]);
-  var layer = "watercolor";
-  var mapOptions = {
+  // Get the location as a Google Maps latitude-longitude object
+  var loc = new google.maps.LatLng(center[0], center[1]);
+
+  // Create the Google Map
+  map = new google.maps.Map(document.getElementById("map-canvas"), {
     center: loc,
     zoom: 15,
-    mapTypeId: layer,
-    //mapTypeId: google.maps.MapTypeId.ROADMAP,
-    mapTypeControlOptions: {
-      mapTypeIds: layer
-    }
-  };
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  });
 
-  map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-  map.mapTypes.set(layer, new google.maps.StamenMapType(layer));
-
-  var circleOptions = {
+  // Create a draggable circle centered on the map
+  var circle = new google.maps.Circle({
     strokeColor: "#6D3099",
     strokeOpacity: 0.7,
     strokeWeight: 1,
@@ -192,66 +182,16 @@ function initializeMap() {
     center: loc,
     radius: ((radiusInKm) * 1000),
     draggable: true
-  };
-
-  /*var lineCoordinates = [
-    new google.maps.LatLng(37.785326, -122.405696),
-    new google.maps.LatLng(37.7789, -122.3917)
-  ];
-
-  // Create the polyline and add the symbol to it via the 'icons' property.
-  var marker = new google.maps.Marker({
-    icon: "https://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|JAW|50B1FF|eee",
-    position: new google.maps.LatLng(37.785326, -122.405696),
-    optimized: true,
-    map: map
   });
 
-  // Define the symbol, using one of the predefined paths ('CIRCLE')
-  // supplied by the Google Maps JavaScript API.
-  var lineSymbol = {
-    path: google.maps.SymbolPath.CIRCLE,
-    //path: marker,
-    scale: 8,
-    strokeColor: '#393'
-  };
-
-  line = new google.maps.Polyline({
-    path: lineCoordinates,
-    icons: [{
-      icon: lineSymbol,
-      //icon: "https://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bbT|JAW|50B1FF|eee",
-      offset: '100%'
-    }],
-    map: map
-  });
-
-  animateCircle();
-
-  // Use the DOM setInterval() function to change the offset of the symbol
-  // at fixed intervals.
-  function animateCircle() {
-      var count = 0;
-      window.setInterval(function() {
-        count = (count + 1) % 200;
-
-        var icons = line.get('icons');
-        icons[0].offset = (count / 2) + '%';
-        line.set('icons', icons);
-    }, 20);
-  }*/
-
-  circle = new google.maps.Circle(circleOptions);
-
+  // Update the query's criteria every time the circle is dragged
   var updateCriteria = _.debounce(function() {
-    console.log("updating criteria")
     var latLng = circle.getCenter();
     geoQuery.updateCriteria({
       center: [latLng.lat(), latLng.lng()],
       radius: radiusInKm
     });
   }, 10);
-
   google.maps.event.addListener(circle, "drag", updateCriteria);
 }
 
@@ -293,7 +233,7 @@ google.maps.Marker.prototype.animatedMoveTo = function(newLocation) {
     var latDistance = toLat - fromLat;
     var lngDistance = toLng - fromLng;
     var interval = window.setInterval(function () {
-      percent += 0.01;
+      percent += 0.005;
       var curLat = fromLat + (percent * latDistance);
       var curLng = fromLng + (percent * lngDistance);
       var pos = new google.maps.LatLng(curLat, curLng);
@@ -301,6 +241,6 @@ google.maps.Marker.prototype.animatedMoveTo = function(newLocation) {
       if (percent >= 1) {
         window.clearInterval(interval);
       }
-    }.bind(this), 25);
+    }.bind(this), 50);
   }
 };

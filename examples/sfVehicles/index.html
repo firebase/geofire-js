@@ -10,15 +10,6 @@
   <link href="css/font-awesome.min.css" rel="stylesheet">
   <link href="css/buttons.css" rel="stylesheet">
   <link href="css/site.css" rel="stylesheet">
-  <link href="css/leaflet.css" rel="stylesheet">
-  <style>
-    .vehicleMarker {
-      border: solid 2px #000;
-      background: #FF6450;
-      border-radius: 5px;
-      color: #FFF;
-    }
-  </style>
 </head>
 
 <body>
@@ -37,8 +28,8 @@
       <h3>What is GeoFire?</h3>
       <p>
         <a target="_blank" href="https://www.github.com/firebase/geofire/">GeoFire</a>
-        is a JavaScript library that allows you to store and query a set
-        of keys based on their geographic location. GeoFire uses
+        is an open-source JavaScript library that allows you to store and query a set
+        of items based on their geographic location. GeoFire uses
         <a target="_blank" href="https://www.firebase.com">Firebase</a>
         for data storage, allowing query results to be updated in realtime as they
         change. GeoFire does more than just measure the distance between locations;
@@ -48,24 +39,24 @@
 
       <h3>About the demo</h3>
       <p>
-        Firebase provides a
-        <a target="_blank" href="https://www.firebase.com/docs/data/real-time-transit-data.html">transit Open Data Set</a>
-        which contains the realtime locations of every MUNI vehicle in San Francisco. Using
-        GeoFire in combination with that data, we created a demo which allows you to drag
-        around the circle and view all of the vehicles within its radius. GeoFire handles
-        all of the hard work, telling you exactly when vehicles enter and exit the circle.
-        It also selectively loads only the data inside the radius, keeping the demo fast
-        and responsive despite the large overall data set.
+        Firebase provides a <a target="_blank" href="https://www.firebase.com/docs/data/real-time-transit-data.html">Transit Open Data Set</a>
+        which contains the realtime locations of public transit vehicles in several major US cities, including
+        San Francisco MUNI. The data set also contains GeoFire data for each vehicle which we used to create this
+        demo. Drag around the purple circle to the left to see the vehicles which are currently within its radius. The
+        results update in realtime as you move the circle and as vehicles travel around the city. GeoFire handles all
+        of the hard work, telling you exactly when vehicles enter and exit the circle. It also selectively loads
+        only the data geographically close to the circle, meaning GeoFire data for buses in New York or Chicago are not
+        loaded into memory unecessarily.
       </p>
 
       <h3>Download GeoFire</h3>
       <p>
-        GeoFire is ready for your production app and plays nicely with the full
-        suite of products offered by
-        <a target="_blank" href="https://www.firebase.com">Firebase</a>.
-        You can read the full reference API, view demos, and find download
-        instructions for GeoFire on
-        <a target="_blank" href="https://www.github.com/firebase/geofire/">GitHub</a>.
+        GeoFire is ready for your production app and plays nicely with the full suite of products offered by
+        <a target="_blank" href="https://www.firebase.com/">Firebase</a>. Read our
+        <a target="_blank" href="https://www.firebase.com/blog/2014-06-17-geofire-two-point-oh.html">blog post
+        on GeoFire 2.0</a> to get started and then head over to
+        <a target="_blank" href="https://www.github.com/firebase/geofire/">GitHub</a>
+        to read the full API reference, view example code, and find download instructions.
       </p>
     </section>
 
@@ -74,48 +65,27 @@
     </footer>
   </article>
 
-
-  <!-- LOCATION CONSOLE -->
-  <!-- <section id="location-console" class="animated bounceInUp">
-
-    <h3><i class="icon-circle-blank"></i>&nbsp;&nbsp;Vehicles currently in the circle</h3>
-
-    <ul></ul>
-  </section> -->
-
   <div style="z-index: 1000; position: absolute; right: 310px; bottom: 0px; font-size: 10px;">
     Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.
   </div>
 
   <!-- SOCIAL BAR -->
   <div id="social-bar">
-    <!-- TODO: reneble -->
-      <!-- GITHUB STAR BUTTON -->
-      <!--<iframe class="github-button" src="http://ghbtns.com/github-btn.html?user=firebase&repo=geoFire&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>-->
+      <!-- GitHub star button -->
+      <iframe class="github-button" src="http://ghbtns.com/github-btn.html?user=firebase&repo=geofire&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>
 
-      <!-- GITHUB FORK BUTTON -->
-      <!--<iframe class="github-button" src="http://ghbtns.com/github-btn.html?user=firebase&repo=geoFire&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>-->
+      <!-- GitHub fork button -->
+      <iframe class="github-button" src="http://ghbtns.com/github-btn.html?user=firebase&repo=geofire&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>
 
-      <!-- TWITTER TWEET BUTTON -->
-      <!--<a href="https://twitter.com/share" class="twitter-share-button" data-url="https://github.com/firebase/geoFire" data-text="GeoFire is a helper library for location-based operations in @Firebase.">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>-->
-
-      <!-- FACEBOOK LIKE BUTTON -->
-      <!--<div class="fb-like" data-href="https://github.com/firebase/geoFire" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>-->
+      <!-- Twitter tweet button -->
+      <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://github.com/firebase/geofire" data-text="GeoFire is an open-source library for location-based queries in @Firebase.">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
     </section>
   </div>
-
 
   <!-- JAVASCRIPT -->
   <!-- Google Maps -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANQ0KPuNhYNPwxfX4NRkJZ25jEWGK35q8&sensor=false"></script>
-
-  <!-- Leaflet - TODO: remove? -->
-  <script src="js/vendor/leaflet.js"></script>
-  <script src="js/vendor/animatedLeafletMarker.js"></script>
-
-  <!-- Stamen map tiles -->
-  <script src="js/vendor/tile.stamen.js"></script>
 
   <!-- Firebase -->
   <!-- TODO: use non-debug version -->
@@ -130,12 +100,10 @@
   <!-- <script src="../../dist/geofire.js"></script> -->
   <script src="js/vendor/geofire.min.js"></script>
 
-  <!-- Vendors -->
-  <script src="js/vendor/jquery-1.10.2.min.js"></script>
+  <!-- Lo-Dash -->
   <script src="js/vendor/lodash.min.js"></script>
 
-
-  <!-- Custom JS -->
+  <!-- Custom JavaScript -->
   <script src="js/sfVehicles.js"></script>
 
   <script type="text/javascript">
@@ -143,7 +111,7 @@
   </script>
 
   <script>
-    // TODO: re-enable?
+    // TODO: re-enable
     /*var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-37102688-1']);
     _gaq.push(['_trackPageview']);
