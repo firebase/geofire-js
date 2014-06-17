@@ -1,5 +1,8 @@
 # GeoFire — Realtime location queries with Firebase
 
+[![Build Status](https://travis-ci.org/firebase/geofire.svg)](https://travis-ci.org/firebase/geoFire)
+[![Version](https://badge.fury.io/gh/firebase%2FgeoFire.svg)](http://badge.fury.io/gh/firebase%2FgeoFire)
+
 GeoFire is an open-source JavaScript library that allows you to store and query a set
 of items based on their geographic location. GeoFire uses [Firebase](https://www.firebase.com/) for data
 storage, allowing query results to be updated in realtime as they change.

@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+- '0.10'
+branches:
+  only:
+  - master
+install:
+- npm install -g gulp
+- npm install
+- bower install
+script:
+- gulp test
