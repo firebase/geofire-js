@@ -47,32 +47,32 @@ geoFireFirebaseRef.child("i").on("child_removed", function(dataSnapshot) {
 });
 
 // LOCATIONS VEHICLES
-var locationsVehicleIds = [];
-geoFireFirebaseRef.child("l").on("child_added", function(dataSnapshot) {
-  var vehicleId = dataSnapshot.name();
-  locationsVehicleIds.push(vehicleId);
-});
-geoFireFirebaseRef.child("l").on("child_removed", function(dataSnapshot) {
-  var vehicleId = dataSnapshot.name();
-  var index = locationsVehicleIds.indexOf(vehicleId);
-  //console.assert(index !== -1, "Improperly removing locations vehicle " + vehicleId);
-  locationsVehicleIds.splice(index, 1);
-});
+// var locationsVehicleIds = [];
+// geoFireFirebaseRef.child("l").on("child_added", function(dataSnapshot) {
+//   var vehicleId = dataSnapshot.name();
+//   locationsVehicleIds.push(vehicleId);
+// });
+// geoFireFirebaseRef.child("l").on("child_removed", function(dataSnapshot) {
+//   var vehicleId = dataSnapshot.name();
+//   var index = locationsVehicleIds.indexOf(vehicleId);
+//   //console.assert(index !== -1, "Improperly removing locations vehicle " + vehicleId);
+//   locationsVehicleIds.splice(index, 1);
+// });
 
 window.setInterval(function() {
   console.log("Number of source vehicles: " + sourceVehicleIds.length);
   console.log("Number of indices: " + indicesVehicleIds.length);
-  console.log("Number of locations: " + locationsVehicleIds.length);
+  //console.log("Number of locations: " + locationsVehicleIds.length);
 
   //console.assert(numIndicesDupes === 0, "Duplicate indices found");
 
-  if (sourceVehicleIds.length === indicesVehicleIds.length && sourceVehicleIds.length === locationsVehicleIds.length) {
-    sourceVehicleIds.forEach(function(vehicleId) {
+  //if (sourceVehicleIds.length === indicesVehicleIds.length && sourceVehicleIds.length === locationsVehicleIds.length) {
+  //  sourceVehicleIds.forEach(function(vehicleId) {
       //console.assert(indicesVehicleIds.indexOf(vehicleId) !== -1, "Vehicle " + vehicleId + " not in indices locations");
       //console.assert(locationsVehicleIds.indexOf(vehicleId) !== -1, "Vehicle " + vehicleId + " not in locations locations");
-    })
-  }
-}, 2000);
+  //  })
+  //}
+}, 10000);
 */
 
 // Create a GeoQuery

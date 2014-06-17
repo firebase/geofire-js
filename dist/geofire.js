@@ -983,7 +983,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Turn off all Firebase listeners for the current geohashes being queried
     for (var geohashStartPrefix in _currentGeohashesQueried) {
       if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
-        _firebaseRef.child("i").off("child_added", _attachValueCallback);
+        _firebaseRef.child("i").startAt(null, geohashStartPrefix).endAt(null, geohashStartPrefix + "~").off("child_added", _attachValueCallback);
         delete _currentGeohashesQueried[geohashStartPrefix];
       }
     }
@@ -1031,7 +1031,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     for (var geohashStartPrefix in _currentGeohashesQueried) {
       if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
         if (_currentGeohashesQueried[geohashStartPrefix] === false) {
-          _firebaseRef.child("i").off("child_added", _attachValueCallback);
+          _firebaseRef.child("i").startAt(null, geohashStartPrefix).endAt(null, geohashStartPrefix + "~").off("child_added", _attachValueCallback);
           delete _currentGeohashesQueried[geohashStartPrefix];
 
           // TODO: Loop through all of the locations in the query and cancel the delete those
