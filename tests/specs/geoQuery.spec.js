@@ -103,6 +103,31 @@ describe("GeoQuery Tests:", function() {
       });
     });
 
+    it("updateCriteria() fires \"key_entered\" callback for locations with complex keys which now belong to the GeoQuery", function(done) {
+      var cl = new Checklist(["p1", "p2", "loc:^:*1 entered", "loc-+-+-4 entered"], expect, done);
+
+      geoQueries.push(geoFire.query({center: [90,90], radius: 1000}));
+      geoQueries[0].on("key_entered", function(key, location, distance) {
+        cl.x(key + " entered");
+      });
+
+      batchSet([
+        {key: "loc:^:*1", location: [2, 3]},
+        {key: "loc:a:a:a:a:2", location: [50, -7]},
+        {key: "loc%!@3", location: [16, -150]},
+        {key: "loc-+-+-4", location: [5, 5]},
+        {key: "loc:5", location: [67, 55]}
+      ]).then(function() {
+        cl.x("p1");
+
+        geoQueries[0].updateCriteria({center: [1,2], radius: 1000});
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p2");
+      });
+    });
+
     it("updateCriteria() fires \"key_exited\" callback for locations which no longer belong to the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "loc1 exited", "loc4 exited"], expect, done);
 

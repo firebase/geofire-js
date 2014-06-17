@@ -54,7 +54,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     }
 
     // Get the key from the child snapshot's name, which has the form "<geohash>:<key>"
-    var key = indicesChildSnapshot.name().split(":")[1];
+    var key = indicesChildSnapshot.name().split(":").splice(1).join(":");
 
     // If the key is not already being queried, attach a "value" callback to it
     if (typeof _locationsQueried[key] === "undefined") {

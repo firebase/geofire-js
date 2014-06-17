@@ -176,9 +176,9 @@ describe("GeoFire Tests:", function() {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], expect, done);
 
       batchSet([
-        {key: "loc1", location: [0, 0]},
+        {key: "loc:1", location: [0, 0]},
         {key: "loc2", location: [50, 50]},
-        {key: "loc3", location: [-90, -90]}
+        {key: "loc%!A72f()3", location: [-90, -90]}
       ]).then(function() {
         cl.x("p1");
 
@@ -199,7 +199,7 @@ describe("GeoFire Tests:", function() {
         cl.x("p4");
 
         return batchSet([
-          {key: "loc1", location: [87.6, -130]},
+          {key: "loc:1", location: [87.6, -130]},
           {key: "loc6", location: [-72.258, 0.953215]},
         ]);
       }).then(function() {
@@ -209,16 +209,16 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "cped3g:loc1": true,
+            "cped3g:loc:1": true,
             "d2h376:loc2": true,
-            "1bpbpb:loc3": true,
+            "1bpbpb:loc%!A72f()3": true,
             "cped3g:loc4": true,
             "h50svt:loc6": true
           },
           l: {
-            "loc1": [87.6, -130],
+            "loc:1": [87.6, -130],
             "loc2": [0.2358, -72.621],
-            "loc3": [-90, -90],
+            "loc%!A72f()3": [-90, -90],
             "loc4": [87.6, -130],
             "loc6": [-72.258, 0.953215]
           }
@@ -397,22 +397,22 @@ describe("GeoFire Tests:", function() {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
 
       batchSet([
-        {key: "loc1", location: [0, 0]},
+        {key: "loc:^%*1", location: [0, 0]},
         {key: "loc2", location: [2, 3]}
       ]).then(function() {
         cl.x("p1");
 
-        return geoFire.get("loc1");
+        return geoFire.get("loc:^%*1");
       }).then(function(location) {
         expect(location).toEqual([0, 0]);
 
         cl.x("p2");
 
-        return geoFire.remove("loc1");
+        return geoFire.remove("loc:^%*1");
       }).then(function() {
         cl.x("p3");
 
-        return geoFire.get("loc1");
+        return geoFire.get("loc:^%*1");
       }).then(function(location) {
         expect(location).toBeNull();
 
