@@ -75,7 +75,7 @@ describe("geoFireUtils Tests:", function() {
 
   describe("Distance calculations:", function() {
     it("degreesToRadians() converts degrees to radians", function() {
-      expect(degreesToRadians(0)).toEqual(0);
+      expect(degreesToRadians(0)).toBeCloseTo(0);
       expect(degreesToRadians(45)).toBeCloseTo(0.7854, 4);
       expect(degreesToRadians(90)).toBeCloseTo(1.5708, 4);
       expect(degreesToRadians(135)).toBeCloseTo(2.3562, 4);
@@ -100,9 +100,9 @@ describe("geoFireUtils Tests:", function() {
     });
 
     it("dist() calculates the distance between locations", function() {
-      expect(GeoFire.distance([90, 180], [90, 180])).toEqual(0);
+      expect(GeoFire.distance([90, 180], [90, 180])).toBeCloseTo(0, 0);
       expect(GeoFire.distance([-90, -180], [90, 180])).toBeCloseTo(20015, 0);
-      expect(GeoFire.distance([-90, -180], [-90, 180])).toEqual(0);
+      expect(GeoFire.distance([-90, -180], [-90, 180])).toBeCloseTo(0, 0);
       expect(GeoFire.distance([-90, -180], [90, -180])).toBeCloseTo(20015, 0);
       expect(GeoFire.distance([37.7853074, -122.4054274], [78.216667, 15.55])).toBeCloseTo(6818, 0);
       expect(GeoFire.distance([38.98719, -77.250783], [29.3760648, 47.9818853])).toBeCloseTo(10531, 0);
