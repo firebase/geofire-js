@@ -9,7 +9,7 @@ var radiusInKm = 0.75;
 
 // Get a reference to the SF Muni public transit data
 //var muniFirebaseRef = new Firebase("https://publicdata-transit.firebaseio.com/sf-muni/data");
-var muniFirebaseRef = new Firebase("https://busroutes.firebaseio-demo.com/sf-muni/");
+var muniFirebaseRef = new Firebase("https://busroutes.firebaseio-demo.com/sf-muni/vehicles");
 
 // For the search
 var geoFireFirebaseRef = new Firebase("https://geofire-demos.firebaseio.com/");
@@ -92,6 +92,7 @@ geoQuery.on("key_entered", function(vehicleId, vehicleLocation) {
   //console.assert(typeof vehiclesInQuery[vehicleId] === "undefined", "Vehicle " + vehicleId + " should not already be in the vehicles list.");
 
   // Specify that the vehicle has entered this query
+  vehicleId = vehicleId.split(":").splice(1);
   vehiclesInQuery[vehicleId] = true;
 
   muniFirebaseRef.child(vehicleId).once("value", function(dataSnapshot) {
@@ -122,6 +123,7 @@ geoQuery.on("key_moved", function(vehicleId, vehicleLocation) {
   //console.log("Vehicle " + vehicleId + " moved within the query.");
 
   // Get the vehicle from the list of vehicles in the query
+  vehicleId = vehicleId.split(":").splice(1);
   var vehicle = vehiclesInQuery[vehicleId];
 
   // Verify state
@@ -138,6 +140,7 @@ geoQuery.on("key_exited", function(vehicleId, vehicleLocation) {
   //console.log("Vehicle " + vehicleId + " exited the query.");
 
   // Get the vehicle from the list of vehicles in the query
+  vehicleId = vehicleId.split(":").splice(1);
   var vehicle = vehiclesInQuery[vehicleId];
 
   // Verify state
@@ -233,7 +236,7 @@ google.maps.Marker.prototype.animatedMoveTo = function(newLocation) {
     var latDistance = toLat - fromLat;
     var lngDistance = toLng - fromLng;
     var interval = window.setInterval(function () {
-      percent += 0.005;
+      percent += 0.01;
       var curLat = fromLat + (percent * latDistance);
       var curLng = fromLng + (percent * lngDistance);
       var pos = new google.maps.LatLng(curLat, curLng);

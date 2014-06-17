@@ -347,7 +347,7 @@ var validateKey = function(key) {
   }
 
   if (typeof error !== "undefined") {
-    throw new Error("Invalid GeoFire key \"" + key + "\": " + error);
+    throw new Error("Invalid GeoFire key '" + key + "': " + error);
   }
 };
 
@@ -384,7 +384,7 @@ var validateLocation = function(location) {
   }
 
   if (typeof error !== "undefined") {
-    throw new Error("Invalid GeoFire location \"[" + location + "]\": " + error);
+    throw new Error("Invalid GeoFire location '" + location + "': " + error);
   }
 };
 
@@ -411,7 +411,7 @@ var validateGeohash = function(geohash) {
   }
 
   if (typeof error !== "undefined") {
-    throw new Error("Invalid GeoFire geohash \"" + geohash + "\": " + error);
+    throw new Error("Invalid GeoFire geohash '" + geohash + "': " + error);
   }
 };
 
@@ -435,7 +435,7 @@ var validateCriteria = function(newQueryCriteria, requireCenterAndRadius) {
   for (var key in newQueryCriteria) {
     if (newQueryCriteria.hasOwnProperty(key)) {
       if (key !== "center" && key !== "radius") {
-        throw new Error("Unexpected attribute \"" + key + "\" found in query criteria");
+        throw new Error("Unexpected attribute '" + key + "'' found in query criteria");
       }
     }
   }
