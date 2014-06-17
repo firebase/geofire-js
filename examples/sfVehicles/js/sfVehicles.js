@@ -9,7 +9,7 @@ var radiusInKm = 0.75;
 
 // Get a reference to the SF Muni public transit data
 //var muniFirebaseRef = new Firebase("https://publicdata-transit.firebaseio.com/sf-muni/data");
-var muniFirebaseRef = new Firebase("https://busroutes.firebaseio-demo.com/sf-muni/vehicles");
+var muniFirebaseRef = new Firebase("https://jacob-transit.firebaseio.com/sf-muni/vehicles");
 
 // For the search
 var geoFireFirebaseRef = new Firebase("https://geofire-demos.firebaseio.com/");

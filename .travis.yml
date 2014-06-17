@@ -3,6 +3,7 @@ node_js:
 - '0.10'
 install:
 - npm install -g gulp
+- npm install -g bower
 - npm install
 - bower install
 script:
