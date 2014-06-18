@@ -100,7 +100,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         _locationsQueried[key] = {
           location: location,
           distanceFromCenter: distanceFromCenter,
-          isInQuery: isInQuery
+          isInQuery: isInQuery,
+          geohash: encodeGeohash(location, g_GEOHASH_PRECISION)
         };
 
         // Fire the "key_entered" event if the provided key has entered this query
@@ -138,7 +139,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         _locationsQueried[key] = {
           location: location,
           distanceFromCenter: distanceFromCenter,
-          isInQuery: isInQuery
+          isInQuery: isInQuery,
+          geohash: encodeGeohash(location, g_GEOHASH_PRECISION)
         };
 
         // Fire the "key_moved" or "key_exited" event
@@ -440,12 +442,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     for (var geohashStartPrefix in _currentGeohashesQueried) {
       if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
         if (_currentGeohashesQueried[geohashStartPrefix] === false) {
+          // Delete the geohash since it should no longer be queried
           _firebaseRef.child("i").startAt(null, geohashStartPrefix).endAt(null, geohashStartPrefix + "~").off("child_added", _attachValueCallback);
           delete _currentGeohashesQueried[geohashStartPrefix];
 
-          // TODO: Loop through all of the locations in the query and cancel the delete those
-          // which have the same geohash prefix as the geohash we just deleted
-          /*
+          // Delete each location which should no longer be queried
           for (var key in _locationsQueried) {
             if (_locationsQueried.hasOwnProperty(key)) {
               if (_locationsQueried[key].geohash.indexOf(geohashStartPrefix) === 0) {
@@ -454,7 +455,6 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
               }
             }
           }
-          */
         }
       }
     }
