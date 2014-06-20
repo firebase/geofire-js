@@ -268,7 +268,7 @@ GeoFire.distance = function(location1, location2) {
 };
 
 // Default geohash length
-var g_GEOHASH_PRECISION = 6;
+var g_GEOHASH_PRECISION = 10;
 
 // Characters used in location geohashes
 var g_BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";

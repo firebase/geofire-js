@@ -33,9 +33,9 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "7zzzzz:loc1": true,
-            "v0gs3y:loc2": true,
-            "1bpbpb:loc3": true
+            "7zzzzzzzzz:loc1": true,
+            "v0gs3y0zh7:loc2": true,
+            "1bpbpbpbpb:loc3": true
           },
           l: {
             "loc1": [0, 0],
@@ -62,9 +62,9 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "ebpcry:loc1": true,
-            "v0gu2q:loc2": true,
-            "1cr648:loc3": true
+            "ebpcrypzxv:loc1": true,
+            "v0gu2qnx15:loc2": true,
+            "1cr648sfx4:loc3": true
           },
           l: {
             "loc1": [0.254, 0],
@@ -95,9 +95,9 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "s065kk:loc1": true,
-            "v0gs3y:loc2": true,
-            "1bpbpb:loc3": true
+            "s065kk0dc5:loc1": true,
+            "v0gs3y0zh7:loc2": true,
+            "1bpbpbpbpb:loc3": true
           },
           l: {
             "loc1": [2, 3],
@@ -128,9 +128,9 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "7zzzzz:loc1": true,
-            "v0gs3y:loc2": true,
-            "1bpbpb:loc3": true
+            "7zzzzzzzzz:loc1": true,
+            "v0gs3y0zh7:loc2": true,
+            "1bpbpbpbpb:loc3": true
           },
           l: {
             "loc1": [0, 0],
@@ -157,9 +157,9 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "7zzzzz:loc1": true,
-            "7zzzzz:loc2": true,
-            "7zzzzz:loc3": true
+            "7zzzzzzzzz:loc1": true,
+            "7zzzzzzzzz:loc2": true,
+            "7zzzzzzzzz:loc3": true
           },
           l: {
             "loc1": [0, 0],
@@ -209,11 +209,11 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "cped3g:loc:1": true,
-            "d2h376:loc2": true,
-            "1bpbpb:loc%!A72f()3": true,
-            "cped3g:loc4": true,
-            "h50svt:loc6": true
+            "cped3g0fur:loc:1": true,
+            "d2h376zj8h:loc2": true,
+            "1bpbpbpbpb:loc%!A72f()3": true,
+            "cped3g0fur:loc4": true,
+            "h50svty4es:loc6": true
           },
           l: {
             "loc:1": [87.6, -130],
@@ -345,7 +345,7 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "s065kk:loc2": true
+            "s065kk0dc5:loc2": true
           },
           l: {
             "loc2": [2, 3]
@@ -382,7 +382,7 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "7zzzzz:loc1": true
+            "7zzzzzzzzz:loc1": true
           },
           l: {
             "loc1": [0, 0]
@@ -422,7 +422,7 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "s065kk:loc2": true
+            "s065kk0dc5:loc2": true
           },
           l: {
             "loc2": [2, 3]
@@ -459,7 +459,7 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "7zzzzz:loc1": true
+            "7zzzzzzzzz:loc1": true
           },
           l: {
             "loc1": [0, 0]
@@ -488,8 +488,8 @@ describe("GeoFire Tests:", function() {
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
           i: {
-            "s065kk:loc2": true,
-            "7zzzzz:loc3": true
+            "s065kk0dc5:loc2": true,
+            "7zzzzzzzzz:loc3": true
           },
           l: {
             "loc2": [2, 3],
