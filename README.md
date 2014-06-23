@@ -1,7 +1,7 @@
 # GeoFire — Realtime location queries with Firebase
 
-[![Build Status](https://travis-ci.org/firebase/geoFire.svg)](https://travis-ci.org/firebase/geoFire)
-[![Version](https://badge.fury.io/gh/firebase%2FgeoFire.svg)](http://badge.fury.io/gh/firebase%2FgeoFire)
+[![Build Status](https://travis-ci.org/firebase/geofire.svg)](https://travis-ci.org/firebase/geofire)
+[![Version](https://badge.fury.io/gh/firebase%2Fgeofire.svg)](http://badge.fury.io/gh/firebase%2Fgeofire)
 
 GeoFire is an open-source JavaScript library that allows you to store and query a set
 of items based on their geographic location. GeoFire uses [Firebase](https://www.firebase.com/) for data
@@ -15,6 +15,8 @@ applications light and responsive, even with extremely large datasets.
 To see GeoFire in action, you can play around with our fully-featured demo [here](https://geofire.firebaseapp.com/sfVehicles/index.html).
 This demo maps all of the San Francisco MUNI vehicles within a certain search radius. You can
 drag around the search radius and see the vehicles update in realtime.
+
+[![SF MUNI Demo Image](./examples/sfVehicles/images/sf-vehicles.png)
 
 You can find a full list of our demos [here](https://geofire.firebaseapp.com/sfVehicles/index.html)
 and view the code for each of them in the [examples directory](./examples/) of this repository.
