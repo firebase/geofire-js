@@ -32,13 +32,13 @@ In order to use GeoFire in your project, you need to include the following files
 <script src="rsvp.min.js"></script>
 
 <!-- Firebase -->
-<script src="firebase.min.js"></script>
+<script src="https://cdn.firebase.com/js/client/1.0.17/firebase.js"></script>
 
 <!-- GeoFire -->
-<script src="geofire.min.js"></script>
+<script src="https://cdn.firebase.com/libs/geofire/2.0.0/geofire.min.js"></script>
 ```
 
-You can download both minified and non-minified versions of GeoFire from the
+Use the URL above to download both the minified and non-minifed versions of GeoFire from the Firebase CDN. You can also download them from the
 `/dist/` directory of this GitHub repository. [Firebase](https://www.firebase.com/docs/web-quickstart.html)
 and [RSVP](https://github.com/tildeio/rsvp.js/) can be downloaded directly from their respective websites.
 
