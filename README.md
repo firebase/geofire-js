@@ -4,7 +4,9 @@
 [![Version](https://badge.fury.io/gh/firebase%2Fgeofire.svg)](http://badge.fury.io/gh/firebase%2Fgeofire)
 
 GeoFire is an open-source JavaScript library that allows you to store and query a set
-of items based on their geographic location. GeoFire uses [Firebase](https://www.firebase.com/) for data
+of items based on their geographic location. 
+
+GeoFire uses [Firebase](https://www.firebase.com/) for data
 storage, allowing query results to be updated in realtime as they change.
 GeoFire does more than just measure the distance between locations; *it
 selectively loads only the data near certain locations, keeping your
