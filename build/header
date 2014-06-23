@@ -2,7 +2,7 @@
 // keys based on their geographic location. GeoFire uses Firebase for data
 // storage, allowing query results to be updated in realtime as they change.
 //
-//   GeoFire 2.0.0
+//   GeoFire 2.0.1
 //   https://github.com/firebase/geofire/
 //   License: MIT
 

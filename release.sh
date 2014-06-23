@@ -53,6 +53,16 @@ else
   echo
 fi
 
+# Changing the git tag publishes the new version to Bower automatically
+echo "*** v${VERSION} published to Bower ***"
+echo
+
+# Publish the new version to npm
+npm publish
+
+echo "*** v${VERSION} published to npm ***"
+echo
+
 # Check if we already have this as a standalone
 STANDALONE_TARGET_DIR="${STANDALONE_DEST}/${VERSION}/"
 if [[ -e ${STANDALONE_TARGET_DIR} ]]; then

@@ -1,3 +1,9 @@
+v2.0.1
+-------------
+Release Date: 2014-06-23
+
+  * Fixed casing issue when including RSVP via npm require().
+
 v2.0.0
 -------------
 Release Date: 2014-06-23
