@@ -12,7 +12,7 @@ applications light and responsive, even with extremely large datasets.
 
 ## Live Examples
 
-To see GeoFire in action, you can play around with our fully-featured demo [here](https://geofire.firebaseapp.com/sfVehicles/index.html).
+To see GeoFire in action, you can [play around with our fully-featured demo](https://geofire.firebaseapp.com/sfVehicles/index.html).
 This demo maps all of the San Francisco MUNI vehicles within a certain search radius. You can
 drag around the search radius and see the vehicles update in realtime.
 
