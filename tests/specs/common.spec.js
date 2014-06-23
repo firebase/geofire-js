@@ -102,7 +102,7 @@ function Checklist(items, expect, done) {
     }
     else {
       eventsToComplete.splice(index, 1);
-      if (eventsToComplete.length === 0) {
+      if (this.isEmpty()) {
         done();
       }
     }
@@ -115,6 +115,6 @@ function Checklist(items, expect, done) {
 
   /* Returns true if the events list is empty */
   this.isEmpty = function() {
-    return (eventsToComplete.length === 0);
+    return (this.length() === 0);
   };
 };

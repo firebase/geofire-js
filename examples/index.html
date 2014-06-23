@@ -16,7 +16,7 @@
       even with extremely large datasets.
     </p>
 
-    <h2>fish1 - Writing To and Reading From GeoFire</h2>
+    <h2><a href="./fish1/index.html">fish1 - Writing To and Reading From GeoFire</a></h2>
 
     <p>
       This is a very basic example which shows you how to read from and write to GeoFire
@@ -26,7 +26,7 @@
 
     <p>You can check out a live demo of this example <a href="./fish1/index.html">here</a>.</p>
 
-    <h2>fish2 - Using a GeoQuery</h2>
+    <h2><a href="./fish2/index.html">fish2 - Using a GeoQuery</a></h2>
 
     <p>
       This is a more complex example which shows you how to create a GeoQuery and
@@ -36,7 +36,7 @@
 
     <p>You can check out a live demo of this example <a href="./fish2/index.html">here</a>.</p>
 
-    <h2>fish3 - Loading Initial Data</h2>
+    <h2><a href="./fish3/index.html">fish3 - Loading Initial Data</a></h2>
 
     <p>
       This example shows you how to achieve a common use case: loading only initial
@@ -46,7 +46,7 @@
 
     <p>You can check out a live demo of this example <a href="./fish3/index.html">here</a>.</p>
 
-    <h2>securityRules - Security Rules</h2>
+    <h2><a href="./securityRules/rules.json">securityRules - Security Rules</a></h2>
 
     <p>
       This example is just a rules.json file which contains some security rules you
@@ -58,22 +58,23 @@
 
     <p>You can check out the example rules.json file <a href="./securityRules/rules.json">here</a>.</p>
 
-    <h2>sfVehicles - Fully-featured Example</h2>
+    <h2><a href="./sfVehicles/index.html">sfVehicles - Fully-featured Example</a></h2>
 
     <p>
       This is a fully-featured, complex example which combines GeoFire, Google Maps,
       and the <a href="https://www.firebase.com/docs/data/real-time-transit-data.html">Firebase Transit Open Data Set</a>.
-      Firebase provides a public Firebase which contains transit data for dozens of
-      cities in the United States. This data also includes a GeoFire index which is
-      updated in realtime.
+      Firebase provides a public Firebase
+      which contains the realtime locations of public transit vehicles in several major US cities, including
+      San Francisco MUNI. The data set also contains GeoFire data for each vehicle which we used to create this
+      demo.
     </p>
 
     <p>
-      This example uses GeoFire to map all of the vehicles in San Francisco within
-      a certain radius. You can drag around the circle representing the circle and
-      see the vehicles update in realtime. GeoFire allows to have a huge data set
-      like this and only selectively load the data within your query, keeping the
-      example light and responsive.
+      Drag around the purple circle to the left to see the vehicles which are currently within its radius. The
+      results update in realtime as you move the circle and as vehicles travel around the city. GeoFire handles all
+      of the hard work, telling you exactly when vehicles enter and exit the circle. It also selectively loads
+      only the data geographically close to the circle, meaning GeoFire data for buses in New York or Chicago are not
+      loaded into memory unecessarily.
     </p>
 
     <p>You can check out a live demo of this example <a href="./sfVehicles/index.html">here</a></p>

@@ -11,12 +11,11 @@ var center = locations["FirebaseHQ"];
 // Query radius
 var radiusInKm = 0.5;
 
-// Get a reference to the SF Muni public transit data
-var muniFirebaseRef = new Firebase("https://geofire.firebaseio-staging.com/sf-muni/vehicles")
+// Get a reference to the Firebase public transit open data set
+var transitFirebaseRef = new Firebase("https://publicdata-transit.firebaseio.com/sf-muni/vehicles")
 
 // Create a new GeoFire instance, pulling data from the public transit data
-var geoFireFirebaseRef = new Firebase("https://geofire.firebaseio-staging.com/_geofire");
-var geoFire = new GeoFire(geoFireFirebaseRef);
+var geoFire = new GeoFire(transitFirebaseRef.child("_geofire"));
 
 /*************/
 /*  GEOQUERY */
@@ -37,7 +36,7 @@ geoQuery.on("key_entered", function(vehicleId, vehicleLocation) {
   vehiclesInQuery[vehicleId] = true;
 
   // Look up the vehicle's data in the Transit Open Data Set
-  muniFirebaseRef.child(vehicleId).once("value", function(dataSnapshot) {
+  transitFirebaseRef.child("sf-muni").child(vehicleId).once("value", function(dataSnapshot) {
     // Get the vehicle data from the Open Data Set
     vehicle = dataSnapshot.val();
 

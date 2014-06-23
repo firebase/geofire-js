@@ -12,11 +12,11 @@ applications light and responsive, even with extremely large datasets.
 
 ## Live Examples
 
-To see GeoFire in action, you can play around with our fully-featured demo [here](https://geofire-demos.firebaseapp.com/sfVehicles/index.html).
+To see GeoFire in action, you can play around with our fully-featured demo [here](https://geofire.firebaseapp.com/sfVehicles/index.html).
 This demo maps all of the San Francisco MUNI vehicles within a certain search radius. You can
 drag around the search radius and see the vehicles update in realtime.
 
-You can find a full list of our demos [here](https://geofire-demos.firebaseapp.com/sfVehicles/index.html)
+You can find a full list of our demos [here](https://geofire.firebaseapp.com/sfVehicles/index.html)
 and view the code for each of them in the [examples directory](./examples/) of this repository.
 The examples cover some of the common use cases for GeoFire and explain how to protect your data
 using security rules.

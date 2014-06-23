@@ -5,13 +5,16 @@
     "./dist/geofire.min.js"
   ],
   "ignore": [
-    "gulpfile.js",
+    "**/.*",
+    "src",
+    "build",
+    "tests",
+    "node_modules",
+    "bower_components",
     "firebase.json",
     "package.json",
-    "tests",
-    "src",
-    "README.md",
-    ".travis.yml"
+    "gulpfile.js",
+    "examples"
   ],
   "dependencies": {
     "firebase": "~1.0.17",
