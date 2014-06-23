@@ -16,7 +16,7 @@ To see GeoFire in action, you can play around with our fully-featured demo [here
 This demo maps all of the San Francisco MUNI vehicles within a certain search radius. You can
 drag around the search radius and see the vehicles update in realtime.
 
-[![SF MUNI Demo Image](./examples/sfVehicles/images/sf-vehicles.png)
+![SF MUNI Demo Image](./examples/sfVehicles/images/sf-vehicles.png)
 
 You can find a full list of our demos [here](https://geofire.firebaseapp.com/sfVehicles/index.html)
 and view the code for each of them in the [examples directory](./examples/) of this repository.
