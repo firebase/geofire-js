@@ -1,3 +1,9 @@
+v2.0.2
+-------------
+Release Date: 2014-06-23
+
+  * Fixed bug where we cleaned up a location which had not yet been added, resulting in a console error.
+
 v2.0.1
 -------------
 Release Date: 2014-06-23

@@ -4,7 +4,7 @@
 [![Version](https://badge.fury.io/gh/firebase%2Fgeofire.svg)](http://badge.fury.io/gh/firebase%2Fgeofire)
 
 GeoFire is an open-source JavaScript library that allows you to store and query a set
-of items based on their geographic location. 
+of items based on their geographic location.
 
 GeoFire uses [Firebase](https://www.firebase.com/) for data
 storage, allowing query results to be updated in realtime as they change.
@@ -37,7 +37,7 @@ In order to use GeoFire in your project, you need to include the following files
 <script src="https://cdn.firebase.com/js/client/1.0.17/firebase.js"></script>
 
 <!-- GeoFire -->
-<script src="https://cdn.firebase.com/libs/geofire/2.0.1/geofire.min.js"></script>
+<script src="https://cdn.firebase.com/libs/geofire/2.0.2/geofire.min.js"></script>
 ```
 
 Use the URL above to download both the minified and non-minifed versions of GeoFire from the Firebase CDN. You can also download them from the
