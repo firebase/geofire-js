@@ -449,7 +449,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
           // Delete each location which should no longer be queried
           for (var key in _locationsQueried) {
             if (_locationsQueried.hasOwnProperty(key)) {
-              if (_locationsQueried[key].geohash.indexOf(geohashStartPrefix) === 0) {
+              if (typeof _locationsQueried[key].geohash !== "undefined" && _locationsQueried[key].geohash.indexOf(geohashStartPrefix) === 0) {
                 _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
                 delete _locationsQueried[key];
               }

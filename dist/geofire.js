@@ -2,7 +2,7 @@
 // keys based on their geographic location. GeoFire uses Firebase for data
 // storage, allowing query results to be updated in realtime as they change.
 //
-//   GeoFire 2.0.1
+//   GeoFire 2.0.2
 //   https://github.com/firebase/geofire/
 //   License: MIT
 
@@ -1049,7 +1049,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
           // Delete each location which should no longer be queried
           for (var key in _locationsQueried) {
             if (_locationsQueried.hasOwnProperty(key)) {
-              if (_locationsQueried[key].geohash.indexOf(geohashStartPrefix) === 0) {
+              if (typeof _locationsQueried[key].geohash !== "undefined" && _locationsQueried[key].geohash.indexOf(geohashStartPrefix) === 0) {
                 _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
                 delete _locationsQueried[key];
               }
