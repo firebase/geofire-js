@@ -1,0 +1,28 @@
+{
+  "rules": {
+    "myGeoFire": {
+      "i": {
+        ".read": true,
+        "$geohashkey": {
+          ".write": true,
+          ".validate": "newData.val() == true"
+        }
+      },
+      "l": {
+        "$key": {
+          ".read": true,
+          ".write": true,
+          "0" : {
+            ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
+          },
+          "1" : {
+            ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    }
+  }
+}

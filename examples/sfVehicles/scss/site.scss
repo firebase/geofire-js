@@ -1,0 +1,176 @@
+@import "compass/css3";
+@import "compass/reset";
+
+////////////////////////////////////////////////////
+// VARS ////////////////////////////////////////////
+////////////////////////////////////////////////////
+$color-dark: #41403E;
+$color-primary: #50B1FF;
+$color-primary-dark: #408ECC;
+$color-royal: #B650FF;
+$baseline: 24px;
+
+
+////////////////////////////////////////////////////
+// LAYOUT //////////////////////////////////////////
+////////////////////////////////////////////////////
+html, body, #map-canvas {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+
+////////////////////////////////////////////////////
+// SOCIAL BAR //////////////////////////////////////
+////////////////////////////////////////////////////
+#social-bar {
+	position: fixed;
+	top: 20px;
+	right: 300px;
+	z-index: 50;
+}
+
+
+////////////////////////////////////////////////////
+// SIDEBAR /////////////////////////////////////////
+////////////////////////////////////////////////////
+#sidebar-wrapper {
+	@include opacity(.2);
+	background: #FFF;
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	z-index: 500;
+	width: 310px;
+	border-left: 1px solid #FFF;
+}
+
+#sidebar {
+	@include border-radius(3px);
+	@include box-shadow(0px 1px 3px rgba(0, 0, 0, .2));
+	background: #FFF;
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	z-index: 1000;
+	width: 300px;
+
+	header {
+		@include box-shadow(0px 1px 2px rgba(0, 0, 0, .2));
+		background: #F9CE4E;
+		height: 36px;
+		color: #FFF;
+		padding: 15px;
+		border-bottom: 1px solid #eab914;
+		position: relative;
+
+		h1 {
+			font-size: 30px;
+			font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+			line-height: 30px;
+			font-weight: lighter;
+			text-align: center;
+			margin: 0px auto;
+			color: #c39302;
+			text-shadow: 0px 1px 0px rgba(255, 255, 255, .3);
+		}
+		h2 {
+			font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+			font-size: 11px;
+			position: absolute;
+			bottom: 5px;
+			right: 10px;
+			z-index: 1;
+
+			strong {
+				font-weight: bold;
+			}
+
+			a {
+				text-decoration: none;
+				color: #c39302;
+
+				&:hover {
+					text-decoration: underline;
+					color: #50B1FF;
+				}
+			}
+		}
+	}
+
+	.content {
+		padding: 20px 20px;
+		position: absolute;
+		top: 67px;
+		bottom: 61px;
+		left: 0px;
+		right: 0px;
+		z-index: 2;
+		overflow: auto;
+		color: #41403E;
+		text-align: justify;
+
+		a {
+			color: $color-primary-dark;
+		}
+
+		strong {
+			font-weight: bold;
+			color: $color-dark;
+		}
+
+		h3 {
+			font-weight: bold;
+			font-size: 18px;
+			color: $color-dark;
+			margin: 0px 0px 10px 0px;
+			line-height: $baseline;
+		}
+
+		h4 {
+			font-weight: bold;
+			font-size: 16px;
+			color: $color-dark;
+			margin: 0px 0px 10px 0px;
+			line-height: $baseline;
+		}
+
+		p {
+			margin-bottom: 40px;
+			line-height: 20px;
+			font-size: 14px;
+		}
+
+		dl {
+			dt {
+				font-weight: bold;
+				font-size: 13px;
+				color: $color-primary-dark	;
+				line-height: $baseline;
+			}
+
+			dd {
+				line-height: $baseline;
+				margin-bottom: 20px;
+				font-size: 13px;
+			}
+		}
+	}
+
+	footer {
+		@include box-shadow(0px -1px 2px rgba(0, 0, 0, .15));
+		@include border-radius(0px 0px 3px 3px);
+		position: absolute;
+		bottom: 0px;
+		left: 0px;
+		right: 0px;
+		z-index: 1;
+		background: #EFEFEF;
+		padding: 10px;
+		border-top: 1px solid #EEE;
+	}
+}

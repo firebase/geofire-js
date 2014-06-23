@@ -1,243 +1,335 @@
-GeoFire
-=======
-**GeoFire** is a helper library for location-based operations in <a href="https://www.firebase.com/" target="_blank">Firebase.</a> 
+# GeoFire — Realtime location queries with Firebase
 
-It provides functions to store data for location querying in Firebase, 
-and perform location queries such as location updates and localized searches.
-GeoFire stores the location coordinates of a data point as a <a href="http://en.wikipedia.org/wiki/Geohash" target="_blank">geohash</a> in Firebase.
+[![Build Status](https://travis-ci.org/firebase/geoFire.svg)](https://travis-ci.org/firebase/geoFire)
+[![Version](https://badge.fury.io/gh/firebase%2FgeoFire.svg)](http://badge.fury.io/gh/firebase%2FgeoFire)
 
-###<a href="http://firebase.github.io/geoFire/examples/demo/index.html?5" target="_blank">See a live demo of GeoFire here!</a>###
+GeoFire is an open-source JavaScript library that allows you to store and query a set
+of items based on their geographic location. GeoFire uses [Firebase](https://www.firebase.com/) for data
+storage, allowing query results to be updated in realtime as they change.
+GeoFire does more than just measure the distance between locations; it
+selectively loads only the data near certain locations, keeping your
+applications light and responsive, even with extremely large datasets.
 
-<a href="http://firebase.github.io/geoFire/examples/demo/index.html?5" target="_blank"><img src="geofire.png"/></a>
+## Live Examples
 
-Using the GeoFire library
-------------------------
-To use the GeoFire library, include the **geoFire.js** file and create a geoFire object with the Firebase reference your data
-will be stored at:
+To see GeoFire in action, you can play around with our fully-featured demo [here](https://geofire.firebaseapp.com/sfVehicles/index.html).
+This demo maps all of the San Francisco MUNI vehicles within a certain search radius. You can
+drag around the search radius and see the vehicles update in realtime.
 
-    var geoRef = new Firebase('https://abc.firebaseio-demo.com/geodata'),
-        geo = new geoFire(geoRef);
+You can find a full list of our demos [here](https://geofire.firebaseapp.com/sfVehicles/index.html)
+and view the code for each of them in the [examples directory](./examples/) of this repository.
+The examples cover some of the common use cases for GeoFire and explain how to protect your data
+using security rules.
 
-You can see your Firebase data at any time by navigating to the geoRef url.
+## Downloading GeoFire
 
-The GeoFire library provides functions to:  
-  1. [Store/remove data in Firebase for location queries](#storingremoving-data-for-location-queries)
-    - [insertByLoc](#insertbyloclatlon-data-oncomplete)
-    - [insertByLocWithId](#insertbylocwithidlatlon-id-data-oncomplete)  
-    - [removeById](#removebyidid-oncomplete)
+In order to use GeoFire in your project, you need to include the following files in your HTML:
 
-  2. [Perform location queries](#performing-location-queries):  
-    - [getLocById](#getlocbyidid-callback)  
-    - [updateLocForId](#updatelocforidlatlon-id-oncomplete)
+```html
+<!-- RSVP -->
+<script src="rsvp.min.js"></script>
 
-  3. [Perform localized searches] (#performing-localized-searches):  
-    - [getPointsNearLoc](#getpointsnearloclatlon-radius-callback)  
-    - [onPointsNearLoc](#onpointsnearloclatlon-radius-callback)
-    - [offPointsNearLoc](#offpointsnearloclatlon-radius-callback)
-    - [getPointsNearId](#getpointsnearidid-radius-callback)
-    - [onPointsNearId](#onpointsnearidid-radius-callback)
-    - [offPointsNearId](#offpointsnearidid-radius-callback)
+<!-- Firebase -->
+<script src="firebase.min.js"></script>
 
-The library also has helper functions to:  
-  4. [Convert between latitude, longitude pairs and geohashes](#locationgeohash-conversion):  
-    - [encode](#encodelatlon-precision)  
-    - [decode](#decodegeohash)
+<!-- GeoFire -->
+<script src="geofire.min.js"></script>
+```
 
-  5. [Convert between miles and kilometers](#milekilometer-conversion):  
-    - [miles2km](#miles2kmmiles)  
-    - [km2miles](#km2mileskilometers)
+You can download both minified and non-minified versions of GeoFire from the
+`/dist/` directory of this GitHub repository. [Firebase](https://www.firebase.com/docs/web-quickstart.html)
+and [RSVP](https://github.com/tildeio/rsvp.js/) can be downloaded directly from their respective websites.
 
-Storing/removing data for location queries:
-------------------------------------------------------------
-###insertByLoc(latLon, data, [onComplete])
+You can also install GeoFire via npm or Bower and the dependencies will be downloaded automatically:
 
-Inserts data solely by location, specified by a [latitude, longitude] array. On
-completion, the optional callback function (if provided) is called with null on
-success/ Error on failure.
+```bash
+$ npm install geofire --save
+```
 
-    var car1 = { id: 1, make: "Tesla" };
+```bash
+$ bower install geofire
+```
 
-    // No callback function.
-    geo.insertByLoc([37.771393, -122.447104], car1); 
+## Getting Started with Firebase
 
-     // With a callback function.
-    geo.insertByLoc([37.771393, -122.447104], car1, function(error) { if (!error) console.log("Insert done!"); });
+GeoFire requires Firebase in order to store location data. You can [sign up here](https://www.firebase.com/signup/) for a free account.
 
-###insertByLocWithId(latLon, id, data, [onComplete])
+## API Reference
 
-Inserts data by location, specified by a [latitude, longitude] array,  and a client-provided identifer.
-On completion, the optional callback function (if provided) is called with null
-on success/ Error on failure.
-**Data that is inserted using this function can be queried using the client-provided Id.**
+### GeoFire
 
-    var car2 = { id: 2, make: "BMW" };
+A `GeoFire` instance is used to read and write geolocation data to your Firebase and to create queries.
 
-    // No callback function.
-    geo.insertByLocWithId([37.780314, -122.513698], car2.id, car2);
+#### new GeoFire(firebaseRef)
 
-    // With a callback function.
-    geo.insertByLocWithId([37.780314, -122.513698], car2.id, car2, function(error) { if (!error) console.log("Insert done!); });
+Creates and returns a new `GeoFire` instance to manage your location data. Data will stored at
+the location pointed to by `firebaseRef`. Note that this `firebaseRef` can point to anywhere in your Firebase.
 
-###removeById(id, [onComplete])
+```JavaScript
+// Create a Firebase reference where GeoFire will store its information
+var dataRef = new Firebase("https://<my_firebase>.firebaseio.com/");
 
-Removes the data point with the specified Id; the data point must have been inserted using `insertByLocWithId`.
-`removeById` does not return anything; it calls the optional callback function, if provided, with 
-null on success/ Error on failure.
+// Create a GeoFire index
+var geoFire = new GeoFire(dataRef);
+```
 
-    // No callback function.
-    geo.removeById(car2.id);
+#### GeoFire.set(key, location)
 
-    // With a callback function.
-    geo.removeById(car2.id, function(error) { if(!error) console.log("Remove done!"); });
+Adds the specified `key` - `location` pair to Firebase. If the provided `key`
+already exists in this `GeoFire`, it will be overwritten with the new `location`
+value. `location` must have the form `[latitude, longitude]`.
 
-Performing location queries:
-----------------------------
-###getLocById(id, callback)
+Returns a promise which is fulfilled when the new location has been synchronized with the Firebase servers.
 
-Gets the location of the data point with the specified Id; the data point must have been inserted using `insertByLocWithId`.
-`getLocById` does not return anything; the location passed to the callback
-function as a [latitude, longitude] array on success/ Null on failure.  
+`key` must be a string and a [valid Firebase key name](https://www.firebase.com/docs/creating-references.html)
 
-    geo.getLocById(car2.id, function(latLon) { if (latLon) console.log("Lat, Lon = ", latLon[0], latLon[1]); });
+```JavaScript
+geoFire.set("some_key", [37.79, -122.41]).then(function() {
+  console.log("Provided key has been added to GeoFire");
+}, function(error) {
+  console.log("Error: " + error);
+});
+```
 
-###updateLocForId(latLon, id, [onComplete])
+#### GeoFire.get(key)
 
-Updates the location of the data point with the specified Id; the data point must have been inserted using `insertByLocWithId`.
-`updateLocForId` does not return anything. The optional callback function, if provided, is called with null on success/ Error on failure.
-    
-    // No callback.
-    geo.updateLocForId([36.01234, -121.51369], car2.id);
+Fetches the location stored for `key`.
 
-    // With a callback function.
-    geo.updateLocForId([36.01234, -121.51369], car2.id, function(error) { if (!error) console.log("Update done!"); });
+Returns a promise fulfilled with the `location` corresponding to the provided `key`.
+If `key` does not exist, the returned promise is fulfilled with `null`.
 
-Performing localized searches:
------------------------------
-###getPointsNearLoc(latLon, radius, callback)
+```JavaScript
+geoFire.get("some_key").then(function(location) {
+  if (location === null) {
+    console.log("Provided key is not in GeoFire");
+  }
+  else {
+    console.log("Provided key has a location of " + location);
+  }
+}, function(error) {
+  console.log("Error: " + error);
+});
+```
 
-Finds all data points within the specified radius, in kilometers, from the
-source point, specified as a [latitude, longitude] array.
-The function does not return anything; the matching data points are passed
-to the callback function as an array in **distance sorted order**. **The callback function is called once, with the initial set of search results;
-it is not called when the set of search results changes.**
+#### GeoFire.remove(key)
 
-    geo.getPointsNearLoc([37.771393, -122.447104], 5,
-                        function(array) { 
-                            for (var i = 0; i < array.length; i++)
-                                console.log("A found point = ", array[i]);
-                        });
+Removes the provided `key` from this `GeoFire`. Returns a promise fulfilled when
+the removal of `key` has been synchronized with the Firebase servers. If the provided
+`key` is not present in this `GeoFire`, the promise will still successfully resolve.
 
-###onPointsNearLoc(latLon, radius, callback)
+This is equivalent to calling `set(key, null)`.
 
-Finds all data points within the specified radius, in kilometers, from the
-source point, specified as a [latitude, longitude] array.
-The function does not return anything; the matching data points are passed
-to the callback function as an array in **distance sorted order**. **The callback function is called with the initial set of search results and
-each time the set of search results changes.**
+```JavaScript
+geoFire.remove("some_key").then(function() {
+  console.log("Provided key has been removed from GeoFire");
+}, function(error) {
+  console.log("Error: " + error);
+});
+```
 
-    geo.onPointsNearLoc([37.771393, -122.447104], 5,
-                        function(array) {
-                            for (var i = 0; i < array.length; i++)
-                                console.log("A found point = ", array[i]);
-            });
+#### GeoFire.query(queryCriteria)
 
-###offPointsNearLoc(latLon, radius, callback)
+Creates and returns a new `GeoQuery` instance with the provided `queryCriteria`.
 
-Cancels a search that was initiated by `onPointsNearLoc` with the source point, radius and callback specified. If no callback is specified, all
-outstanding searches for the source point-radius pair are cancelled. An `offPointsNearLoc` call cancels one outstanding `onPointsNearLoc` call.
-The function does not return anything.
+The `queryCriteria` describe a circular query and must be an object with the following keys:
 
-    var loc = [37.771393, -122.447104],
-        radius = 5,
-        myCallback = function() { // Do something };
+* `center` - the center of this query, with the form `[latitude, longitude]`
+* `radius` - the radius, in kilometers, from the center of this query in which to include results
 
-    geo.onPointsNearLoc(loc, radius, myCallback);
+```JavaScript
+var geoQuery = geoFire.query({
+  center: [10.38, 2.41],
+  radius: 10.5
+});
+```
 
-    geo.offPointsNearLoc(loc, radius, myCallback);
+### GeoQuery
 
-###getPointsNearId(id, radius, callback)
+A standing query that tracks a set of keys matching a criteria. A new `GeoQuery` is created every time you call `GeoFire.query()`.
 
-Finds all data points within the specified radius, in kilometers, from the
-source point, specified by Id. The source point must have been inserted using `insertByLocWithId`.
-The function does not return anything; the matching data points are passed
-to the callback function as an array in **distance sorted order**. **The callback function is called once, with the initial set of search results;
-it is not called when the set of search results changes.**
+#### GeoQuery.center()
 
-    geo.getPointsNearId(car2.id, 5,
-                       function(array) {
-                        for (var i = 0; i < array.length; i++)
-                            console.log("A found point = ", array[i]);
-                       });
+Returns the `location` signifying the center of this query.
 
-###onPointsNearId(id, radius, callback)
+The returned `location` will have the form `[latitude, longitude]`.
 
-Finds all data points within the specified radius, in kilometers, from the
-source point, specified by Id. The source point must have been inserted using `insertByLocWithId`.
-The function does not return anything; the matching data points are passed
-to the callback function as an array in **distance sorted order**. **The callback function is called with the initial set of search results and
-each time the set of search results changes.**
+```JavaScript
+var geoQuery = geoFire.query({
+  center: [10.38, 2.41],
+  radius: 10.5
+});
 
-    geo.onPointsNearId(car2.id, 5,
-                       function(array) {
-                        for (var i = 0; i < array.length; i++)
-                            console.log("A found point = ", array[i]);
-                       });
+var center = geoQuery.center();  // center === [10.38, 2.41]
+```
 
-###offPointsNearId(id, radius, callback)
+#### GeoQuery.radius()
 
-Cancels a search that was initiated by `onPointsNearId` with the source point, radius and callback specified. If no callback is specified, all
-outstanding searches for the source point-radius pair are cancelled. An `offPointsNearId` call cancels one `onPointsNearId` call.
-The function does not return anything.
+Returns the `radius` of this query, in kilometers.
 
-    var id = car2.id,
-        radius = 5,
-        myCallback = function() { // Do something };
+```JavaScript
+var geoQuery = geoFire.query({
+  center: [10.38, 2.41],
+  radius: 10.5
+});
 
-    geo.onPointsNearId(id, radius, myCallback);
+var radius = geoQuery.radius();  // radius === 10.5
+```
 
-    geo.offPointsNearId(id, radius, myCallback);
+#### GeoQuery.updateCriteria(newQueryCriteria)
 
+Updates the criteria for this query.
 
-**NOTE: You can convert between miles and kilometers with [miles2km](#miles2kmmiles) and [km2miles](#km2mileskilometers).**
+`newQueryCriteria` must be an object containing `center`, `radius`, or both.
 
-Location/geohash conversion:
----------------------------
-**NOTE: You probably don't need the functions in this section.**
+```JavaScript
+var geoQuery = geoFire.query({
+  center: [10.38, 2.41],
+  radius: 10.5
+});
 
-A geohash is a string representation of a location coordinate which is generated by interleaving the
-bit representations of the latitude and longitude pair and base32-encoding the result.  
+var center = geoQuery.center();  // center === [10.38, 2.41]
+var radius = geoQuery.radius();  // radius === 10.5
 
-The *precision* of a geohash is determined by its string length; a longer geohash represents a smaller
-bounding box around the location coordinate.  
+geoQuery.updateCriteria({
+  center: [-50.83, 100.19],
+  radius: 5
+});
 
-Geohashes have a neat property that makes them suitable for localized search: points with similar geohashes are near each other. 
-(It's worth noting that points that are near each other may not have similar geohashes though.)  
+center = geoQuery.center();  // center === [-50.83, 100.19]
+radius = geoQuery.radius();  // radius === 5
 
-You can learn about geohashes at: <a href="http://en.wikipedia.org/wiki/Geohash" target="_blank">the wikipedia page</a> or 
-<a href="http://www.bigfastblog.com/geohash-intro" target="_blank">this blog post</a>.
+geoQuery.updateCriteria({
+  radius: 7
+});
 
-###encode(latLon, precision)
+center = geoQuery.center();  // center === [-50.83, 100.19]
+radius = geoQuery.radius();  // radius === 7
+```
 
-Generates a geohash of the specified [precision](#precision) for the [latitude, longitude] pair, specified as an array.
+#### GeoQuery.on(eventType, callback)
 
-    var loc = [37.757008, -122.421237];
-    var geohash = geo.encode(loc, 12); // geohash = "9q8yy1rwd2mt" 
+Attaches a `callback` to this query which will be run when the provided `eventType` fires. Valid `eventType` values are `ready`, `key_entered`, `key_exited`, and `key_moved`. The `ready` event `callback` is passed no parameters. All other `callbacks` will be passed three parameters:
 
-###decode(geohash)
+1. the location's key
+2. the location's [latitude, longitude] pair
+3. the distance, in kilometers, from the location to this query's center
 
-Returns the location of the center of the bounding box the geohash represents;
-the location is returned as a [latitude, longitude] array.
+`ready` fires once when this query's initial state has been loaded from the server.
+The `ready` event will fire after all other events associated with the loaded data
+have been triggered. `ready` will fire again once each time `updateQuery()` is called, after all new data is loaded and all other new events have been fired.
 
-    var location = geo.decode("q8yy1rwd2mt");
-    var latitude = location[0]; // latitude = 37.757008
-    var longitude = location[1]; // longitude = -122.421237
+`key_entered` fires when a key enters this query. This can happen when a key moves from a location outside of this query to one inside of it or when a key is written to `GeoFire` for the first time and it falls within this query.
 
-Mile/Kilometer conversion:
---------------------------
-###miles2km(miles)
+`key_exited` fires when a key moves from a location inside of this query to one outside of it. If the key was entirely removed from `GeoFire`, both the location and distance passed to the `callback` will be `null`.
 
-Returns kilometers from miles.
+`key_moved` fires when a key which is already in this query moves to another location inside of it.
 
-###km2miles(kilometers)
+Returns a `GeoCallbackRegistration` which can be used to cancel the `callback`. You can add as many callbacks as you would like for the same `eventType` by repeatedly calling `on()`. Each one will get called when its corresponding `eventType` fires. Each `callback` must be cancelled individually.
 
-Returns miles from kilometers.
+```JavaScript
+var onReadyRegistration = geoQuery.on("ready", function() {
+  console.log("GeoQuery has loaded and fired all other events for initial data");
+});
+
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
+  console.log(key + " entered query at " + location + " (" + distance + " km from center)");
+});
+
+var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
+  console.log(key + " exited query to " + location + " (" + distance + " km from center)");
+});
+
+var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location, distance) {
+  console.log(key + " moved within query to " + location + " (" + distance + " km from center)");
+});
+```
+
+#### GeoQuery.cancel()
+
+Terminates this query so that it no longer sends location updates. All callbacks attached to this query via `on()` will be cancelled. This query can no longer be used in the future.
+
+```JavaScript
+// This example stops listening for all key events in the query once the
+// first key leaves the query
+
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
+  console.log(key + " entered query at " + location + " (" + distance + " km from center)");
+});
+
+var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
+  console.log(key + " exited query to " + location + " (" + distance + " km from center)");
+
+  // Cancel all of the query's callbacks
+  geoQuery.cancel();
+});
+```
+
+### GeoCallbackRegistration
+
+An event registration which is used to cancel a `GeoQuery.on()` callback when it is no longer needed. A new `GeoCallbackRegistration` is returned every time you call `GeoQuery.on()`.
+
+These are useful when you want to stop firing a callback for a certain `eventType` but do not want to cancel all of the query's event callbacks.
+
+#### GeoCallbackRegistration.cancel()
+
+Cancels this callback registration so that it no longer fires its callback. This has no effect on any other callback registrations you may have created.
+
+```JavaScript
+// This example stops listening for new keys entering the query once the
+// first key leaves the query
+
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
+  console.log(key + " entered query at " + location + " (" + distance + " km from center)");
+});
+
+var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
+  console.log(key + " exited query to " + location + " (" + distance + " km from center)");
+
+  // Cancel the "key_entered" callback
+  onKeyEnteredRegistration.cancel();
+});
+```
+
+### Helper Methods
+
+#### GeoFire.distance(location1, location2)
+
+Static helper method which returns the distance, in kilometers, between `location1` and `location2`.
+
+`location1` and `location1` must have the form `[latitude, longitude]`.
+
+```JavaScript
+var location1 = [10.3, -55.3];
+var location2 = [-78.3, 105.6];
+
+var distance = GeoFire.distance(location1, location2);  // distance === 12378.536597423461
+```
+
+## Promises
+
+GeoFire uses promises when writing and retrieving data. Promises represent the result of a potentially long-running operation and allow code to run asynchronously. Upon completion of the operation, the promise will be "resolved" / "fulfilled" with the operation's result. This result will be passed to the function defined in the promise's `then()` method.
+
+GeoFire uses the lightweight RSVP.js library to provide an implementation of JavaScript promises. If you are unfamiliar with promises, please refer to the [RSVP.js documentation](https://github.com/tildeio/rsvp.js/). Here is a quick example of how to consume a promise:
+
+```JavaScript
+promise.then(function(result) {
+  console.log("Promise was successfully resolved with the following value: " + result);
+}, function(error) {
+  console.log("Promise was rejected with the following error: " + error);
+})
+```
+
+## Contributing
+
+If you'd like to contribute to GeoFire, you'll need to run the following commands to get your environment set up:
+
+```bash
+$ git clone https://github.com/firebase/geofire.git
+$ npm install    # install local npm build / test dependencies
+$ bower install  # install local JavaScript dependencies
+$ gulp watch     # watch for source file changes
+```
+
+`gulp watch` will watch for changes in the `/src/` directory and lint, concatenate, and minify the source files when a change occurs. The output files - `geofire.js` and `geofire.min.js` - are written to the `/dist/` directory.
+
+You can run the test suite by navigating to `file:///path/to/tests/TestRunner.html` or run the tests via the command line using `gulp test`.

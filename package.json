@@ -1,16 +1,37 @@
 {
-  "name": "geoFire",
-  "title": "geoFire",
-  "description": "Location based operations in Firebase",
-  "private": true,
+  "name": "geofire",
+  "description": "Location-based querying and filtering using Firebase",
+  "version": "2.0.0",
+  "main": "dist/geofire.min.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/firebase/geofire.git"
+  },
+  "bugs": {
+    "url": "https://github.com/firebase/geofire/issues"
+  },
   "licenses": [
     {
       "type": "MIT",
       "url": "http://firebase.mit-license.org/"
     }
   ],
-  "version": "0.1.0",
   "dependencies": {
-    "firebase": "~0.6.0"
+    "firebase": "~1.0.17",
+    "rsvp": "~3.0.9"
+  },
+  "devDependencies": {
+    "karma": "^0.12.9",
+    "karma-jasmine": "~0.2.0",
+    "karma-coverage": "^0.2.4",
+    "karma-phantomjs-launcher": "~0.1.4",
+    "gulp": "^3.5.6",
+    "gulp-karma": "0.0.4",
+    "gulp-concat": "^2.2.0",
+    "gulp-uglify": "^0.2.1",
+    "gulp-jshint": "^1.5.1",
+    "gulp-ext-replace": "0.0.5",
+    "jshint-stylish": "^0.2.0",
+    "streamqueue": "0.0.5"
   }
 }

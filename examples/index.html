@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GeoFire Examples</title>
+  </head>
+
+  <body style="width: 800px; margin: auto;">
+    <h1 style="text-align: center;">GeoFire Examples</h1>
+
+    <p>
+      <a href="https://www.github.com/firebase/geofire/">GeoFire</a> is an open-source JavaScript library
+      that allows you to store and query a set of items based on their geographic location. GeoFire uses
+      <a href="https://www.firebase.com/">Firebase</a> for data storage, allowing query results to be
+      updated in realtime as they change. GeoFire does more than just measure the distance between locations;
+      it selectively loads only the data near certain locations, keeping your applications light and responsive
+      even with extremely large datasets.
+    </p>
+
+    <h2><a href="./fish1/index.html">fish1 - Writing To and Reading From GeoFire</a></h2>
+
+    <p>
+      This is a very basic example which shows you how to read from and write to GeoFire
+      and how to handle the promises returned by the set(), get(), and remove()
+      methods.
+    </p>
+
+    <p>You can check out a live demo of this example <a href="./fish1/index.html">here</a>.</p>
+
+    <h2><a href="./fish2/index.html">fish2 - Using a GeoQuery</a></h2>
+
+    <p>
+      This is a more complex example which shows you how to create a GeoQuery and
+      respond to keys moving into, out of, and within the query. It also shows how
+      to cancel event callback registrations.
+    </p>
+
+    <p>You can check out a live demo of this example <a href="./fish2/index.html">here</a>.</p>
+
+    <h2><a href="./fish3/index.html">fish3 - Loading Initial Data</a></h2>
+
+    <p>
+      This example shows you how to achieve a common use case: loading only initial
+      data. This is accomplished in GeoFire by canceling a GeoQuery once its "ready"
+      event has fired.
+    </p>
+
+    <p>You can check out a live demo of this example <a href="./fish3/index.html">here</a>.</p>
+
+    <h2><a href="./securityRules/rules.json">securityRules - Security Rules</a></h2>
+
+    <p>
+      This example is just a rules.json file which contains some security rules you
+      can use for your GeoFire node. While this does help to enforce the schema of the data,
+      it does not prevent a malicious user from scraping or overwriting your GeoFire data.
+      You should replace all of the ".write" rules with some custom logic to restrict who
+      can write to that node.
+    </p>
+
+    <p>You can check out the example rules.json file <a href="./securityRules/rules.json">here</a>.</p>
+
+    <h2><a href="./sfVehicles/index.html">sfVehicles - Fully-featured Example</a></h2>
+
+    <p>
+      This is a fully-featured, complex example which combines GeoFire, Google Maps,
+      and the <a href="https://www.firebase.com/docs/data/real-time-transit-data.html">Firebase Transit Open Data Set</a>.
+      Firebase provides a public Firebase
+      which contains the realtime locations of public transit vehicles in several major US cities, including
+      San Francisco MUNI. The data set also contains GeoFire data for each vehicle which we used to create this
+      demo.
+    </p>
+
+    <p>
+      Drag around the purple circle to the left to see the vehicles which are currently within its radius. The
+      results update in realtime as you move the circle and as vehicles travel around the city. GeoFire handles all
+      of the hard work, telling you exactly when vehicles enter and exit the circle. It also selectively loads
+      only the data geographically close to the circle, meaning GeoFire data for buses in New York or Chicago are not
+      loaded into memory unecessarily.
+    </p>
+
+    <p>You can check out a live demo of this example <a href="./sfVehicles/index.html">here</a></p>
+  </body>
+</html>

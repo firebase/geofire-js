@@ -1,0 +1,41 @@
+* {
+  box-sizing: border-box;
+}
+
+#fishViewer {
+  display: inline-block;
+  height: 200px;
+}
+
+#fishViewer > div {
+  display: inline-block;
+  float: left;
+  width: 200px;
+  height: 100%;
+  text-align: center;
+}
+
+#fishViewer > div > p:first-of-type {
+  font-weight: bold;
+}
+
+#outsideGeoQuery {
+  border: solid 3px red;
+  margin-right: 10px;
+}
+
+#insideGeoQuery {
+  border: solid 3px green;
+}
+
+#insideGeoQuery > p {
+  display: none;
+}
+
+#insideGeoQuery > p:first-of-type {
+  display: block;
+}
+
+#fishControls > * {
+  display: inline;
+}
