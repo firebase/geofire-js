@@ -413,6 +413,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   /*  CONSTRUCTOR  */
   /*****************/
   // Firebase reference of the GeoFire which created this query
+  if (firebaseRef instanceof Firebase === false) {
+    throw new Error("firebaseRef must be an instance of Firebase");
+  }
   var _firebaseRef = firebaseRef;
 
   // Event callbacks

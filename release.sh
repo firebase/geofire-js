@@ -26,6 +26,13 @@ if [[ $PARSED_CLIENT_VERSION != $CHANGELOG_VERSION ]]; then
   exit 1
 fi
 
+# Ensure the README has been updated for the newest version
+README_VERSION="$(grep '<script src=\"https://cdn.firebase.com/libs/geofire/' README.md | awk -F '/' '{print $6}')"
+if [[ $PARSED_CLIENT_VERSION != $README_VERSION ]]; then
+  echo "Error: Script tag version in README (${README_VERSION}) does not match version you are releasing (${VERSION})."
+  exit 1
+fi
+
 # Ensure the version number in the package.json is correct
 NPM_VERSION=$(grep "version" package.json | head -1 | awk -F '"' '{print $4}')
 if [[ $PARSED_CLIENT_VERSION != $NPM_VERSION ]]; then
@@ -71,7 +78,7 @@ if [[ -e ${STANDALONE_TARGET_DIR} ]]; then
 fi
 
 # Make the target directory
-mkdir $STANDALONE_DEST/$VERSION
+mkdir $STANDALONE_TARGET_DIR
 
 # Copy the files to the target directory
 cp dist/$STANDALONE_STUB.js $STANDALONE_TARGET_DIR
@@ -88,6 +95,7 @@ echo
 
 # Push the new files to the firebase-clients repo
 cd ${STANDALONE_DEST}/
+git pull
 git add .
 git commit -am "[firebase-release] Updated GeoFire to $VERSION"
 git push
@@ -108,7 +116,7 @@ echo "Manual steps remaining:"
 echo "  1) Deploy firebase-clients to CDN via Jenkins"
 echo "  2) Update the release notes for GeoFire version ${VERSION} on GitHub"
 echo "  3) Update all GeoFire client version numbers specified in firebase-website to ${VERSION}"
-echo "  4) Tweet @FirebaseRelease: 'v${VERSION} of @Firebase GeoFire is available https://cdn.firebase.com/libs/geofire/$VERSION/geofire.min.js Changelog: https://cdn.firebase.com/libs/geofire/changelog.txt'"
+echo "  4) Tweet @FirebaseRelease: 'v${VERSION} of GeoFire is available https://cdn.firebase.com/libs/geofire/$VERSION/geofire.min.js Changelog: https://cdn.firebase.com/libs/geofire/changelog.txt'"
 echo
-echo "Done! Woo!"
+echo "Done! Woot!"
 echo

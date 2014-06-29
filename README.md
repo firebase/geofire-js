@@ -37,7 +37,7 @@ In order to use GeoFire in your project, you need to include the following files
 <script src="https://cdn.firebase.com/js/client/1.0.17/firebase.js"></script>
 
 <!-- GeoFire -->
-<script src="https://cdn.firebase.com/libs/geofire/2.0.2/geofire.min.js"></script>
+<script src="https://cdn.firebase.com/libs/geofire/2.1.0/geofire.min.js"></script>
 ```
 
 Use the URL above to download both the minified and non-minifed versions of GeoFire from the Firebase CDN. You can also download them from the
@@ -51,7 +51,7 @@ $ npm install geofire --save
 ```
 
 ```bash
-$ bower install geofire
+$ bower install geofire --save
 ```
 
 ## Getting Started with Firebase
@@ -71,10 +71,21 @@ the location pointed to by `firebaseRef`. Note that this `firebaseRef` can point
 
 ```JavaScript
 // Create a Firebase reference where GeoFire will store its information
-var dataRef = new Firebase("https://<my_firebase>.firebaseio.com/");
+var firebaseRef = new Firebase("https://<my_firebase>.firebaseio.com/");
 
 // Create a GeoFire index
-var geoFire = new GeoFire(dataRef);
+var geoFire = new GeoFire(firebaseRef);
+```
+
+#### GeoFire.ref()
+
+Returns the `Firebase` instance used to create this `GeoFire` instance.
+
+```JavaScript
+var firebaseRef = new Firebase("https://<my_firebase>.firebaseio.com/");
+var geoFire = new GeoFire(firebaseRef);
+
+var ref = geoFire.ref()  // ref === firebaseRef
 ```
 
 #### GeoFire.set(key, location)
@@ -329,11 +340,12 @@ If you'd like to contribute to GeoFire, you'll need to run the following command
 
 ```bash
 $ git clone https://github.com/firebase/geofire.git
-$ npm install    # install local npm build / test dependencies
-$ bower install  # install local JavaScript dependencies
-$ gulp watch     # watch for source file changes
+$ npm install -g gulp  # globally intall gulp task runnger
+$ npm install          # install local npm build / test dependencies
+$ bower install        # install local JavaScript dependencies
+$ gulp watch           # watch for source file changes
 ```
 
 `gulp watch` will watch for changes in the `/src/` directory and lint, concatenate, and minify the source files when a change occurs. The output files - `geofire.js` and `geofire.min.js` - are written to the `/dist/` directory.
 
-You can run the test suite by navigating to `file:///path/to/tests/TestRunner.html` or run the tests via the command line using `gulp test`.
+You can run the test suite by navigating to `file:///path/to/geofire/tests/TestRunner.html` or via the command line using `gulp test`.

@@ -1,7 +1,8 @@
 {
   "predef": [
-    "require",
     "module",
+    "require",
+    "Firebase",
     "setInterval"
   ],
   "bitwise": true,

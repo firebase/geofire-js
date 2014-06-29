@@ -8,9 +8,28 @@ describe("GeoFire Tests:", function() {
     afterEachHelper(done);
   });
 
+  describe("Constructor:", function() {
+    it("Constructor throws errors given invalid Firebase references", function() {
+      console.log("!!!!!  GeoFire Tests  !!!!!");
+
+      invalidFirebaseRefs.forEach(function(invalidFirebaseRef) {
+        expect(function() { new GeoFire(invalidFirebaseRef); }).toThrow();
+      });
+    });
+
+    it("Constructor does not throw errors given valid Firebase references", function() {
+      expect(function() { new GeoFire(firebaseRef); }).not.toThrow();
+    });
+  });
+
+  describe("ref():", function() {
+    it("ref() returns the Firebase reference used to create a GeoFire instance", function() {
+      expect(geoFire.ref()).toBe(firebaseRef);
+    });
+  });
+
   describe("Adding locations:", function() {
     it("set() returns a promise", function(done) {
-      console.log("!!!!!  GeoFire Tests  !!!!!");
 
       var cl = new Checklist(["p1"], expect, done);
 

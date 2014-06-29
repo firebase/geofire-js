@@ -1,3 +1,10 @@
+v2.1.0
+-------------
+Release Date: 2014-06-29
+
+  * Added GeoFire.ref() method.
+  * Added error checking for firebaseRef parameter.
+
 v2.0.2
 -------------
 Release Date: 2014-06-23

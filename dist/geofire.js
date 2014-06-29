@@ -2,7 +2,7 @@
 // keys based on their geographic location. GeoFire uses Firebase for data
 // storage, allowing query results to be updated in realtime as they change.
 //
-//   GeoFire 2.0.2
+//   GeoFire 2.1.0
 //   https://github.com/firebase/geofire/
 //   License: MIT
 
@@ -173,6 +173,15 @@ var GeoFire = function(firebaseRef) {
   /*  PUBLIC METHODS  */
   /********************/
   /**
+   * Returns the Firebase instance used to create this GeoFire instance.
+   *
+   * @return {Firebase} The Firebase instance used to create this GeoFire instance.
+   */
+  this.ref = function() {
+    return _firebaseRef;
+  };
+
+  /**
    * Adds the provided key - location pair to Firebase. Returns an empty promise which is fulfilled when the write is complete.
    *
    * If the provided key already exists in this GeoFire, it will be overwritten with the new location value.
@@ -238,6 +247,10 @@ var GeoFire = function(firebaseRef) {
   /*****************/
   /*  CONSTRUCTOR  */
   /*****************/
+  if (firebaseRef instanceof Firebase === false) {
+    throw new Error("firebaseRef must be an instance of Firebase");
+  }
+
   var _firebaseRef = firebaseRef;
 };
 
@@ -1013,6 +1026,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   /*  CONSTRUCTOR  */
   /*****************/
   // Firebase reference of the GeoFire which created this query
+  if (firebaseRef instanceof Firebase === false) {
+    throw new Error("firebaseRef must be an instance of Firebase");
+  }
   var _firebaseRef = firebaseRef;
 
   // Event callbacks
