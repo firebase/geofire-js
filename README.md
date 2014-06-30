@@ -85,7 +85,7 @@ Returns the `Firebase` instance used to create this `GeoFire` instance.
 var firebaseRef = new Firebase("https://<my_firebase>.firebaseio.com/");
 var geoFire = new GeoFire(firebaseRef);
 
-var ref = geoFire.ref()  // ref === firebaseRef
+var ref = geoFire.ref();  // ref === firebaseRef
 ```
 
 #### GeoFire.set(key, location)
