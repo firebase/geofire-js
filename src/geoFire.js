@@ -1,12 +1,9 @@
-/*************/
-/*  GLOBALS  */
-/*************/
 /**
  * Creates a GeoFire instance.
  *
  * @constructor
  * @this {GeoFire}
- * @param {object} firebaseRef A Firebase reference where the GeoFire data will be stored.
+ * @param {Firebase} firebaseRef A Firebase reference where the GeoFire data will be stored.
  */
 var GeoFire = function(firebaseRef) {
   /*********************/
