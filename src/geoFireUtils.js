@@ -327,7 +327,7 @@ var boundingBoxBits = function(coordinate, size) {
   var bitsLat = Math.floor(latitudeBitsForResolution(size))*2;
   var bitsLongNorth = Math.floor(longitudeBitsForResolution(size, latitudeNorth))*2-1;
   var bitsLongSouth = Math.floor(longitudeBitsForResolution(size, latitudeSouth))*2-1;
-  return Math.min.apply(null, [bitsLat, bitsLongNorth, bitsLongSouth, g_MAXIMUM_BITS_PRECISION]);
+  return Math.min(bitsLat, bitsLongNorth, bitsLongSouth, g_MAXIMUM_BITS_PRECISION);
 };
 
 /**
