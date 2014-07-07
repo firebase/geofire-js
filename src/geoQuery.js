@@ -230,9 +230,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Loop through each geohash to query for and listen for new geohashes which have the same prefix.
     // For every match, attach a value callback which will fire the appropriate events.
     // Once every geohash to query is processed, fire the "ready" event.
-    for (var i = 0, numGeohashesToQuery = _geohashesToQuery.length; i < numGeohashesToQuery; ++i) {
-      var toQueryStr = _geohashesToQuery[i];
-
+    _geohashesToQuery.forEach(function(toQueryStr) {
       // decode the geohash query string
       var query = _stringToQuery(toQueryStr);
 
@@ -250,7 +248,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // and, if so, mark the value event as fired.
       // Note that Firebase fires the "value" event after every "child_added" event fires.
       firebaseQuery.once("value", _checkIfShouldFireReadyEvent);
-    }
+    });
   }
 
   /********************/
@@ -450,7 +448,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   // Note that not all of these are currently within this query
   var _locationsQueried = {};
 
-  // A dictionary oflocationsQueried[key].geohash <= query[1] geohashes which currently have an active "child_added" event callback
+  // A dictionary of locationsQueried[key].geohash <= query[1] geohashes which currently have an active "child_added" event callback
   var _currentGeohashesQueried = {};
 
   // Every ten seconds, clean up the geohashes we are currently querying for. We keep these around

@@ -192,6 +192,9 @@ describe("geoFireUtils Tests:", function() {
       expect(metersToLongitudeDegrees(55800, 60)).toBeCloseTo(1, 5);
       expect(metersToLongitudeDegrees(28902, 75)).toBeCloseTo(1, 5);
       expect(metersToLongitudeDegrees(0, 90)).toBeCloseTo(0, 5);
+      expect(metersToLongitudeDegrees(1000, 90)).toBeCloseTo(360, 5);
+      expect(metersToLongitudeDegrees(1000, 89.9999)).toBeCloseTo(360, 5);
+      expect(metersToLongitudeDegrees(1000, 89.995)).toBeCloseTo(102.594208, 5);
     });
 
     it("wrapLongitude wraps correctly", function() {
@@ -229,8 +232,8 @@ describe("geoFireUtils Tests:", function() {
       expect(boundingBoxBits([45,0], 1000)).toBe(27);
       expect(boundingBoxBits([75,0], 1000)).toBe(25);
       expect(boundingBoxBits([75,0], 2000)).toBe(23);
-      expect(boundingBoxBits([90,0], 1000)).toBe(3);
-      expect(boundingBoxBits([90,0], 2000)).toBe(3);
+      expect(boundingBoxBits([90,0], 1000)).toBe(1);
+      expect(boundingBoxBits([90,0], 2000)).toBe(1);
     });
   });
 

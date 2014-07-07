@@ -4,16 +4,29 @@ var g_GEOHASH_PRECISION = 10;
 // Characters used in location geohashes
 var g_BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
 
+// The equatorial circumference of the earth in meters
 var g_EARTH_MERI_CIRCUMFERENCE = 40007860;
+
+// Length of a degree latitude at the equator
 var g_METERS_PER_DEGREE_LATITUDE = 110574;
-var g_MAXIMUM_BITS_PRECISION = 22*5;
+
+// Number of bits per geohash character
 var g_BITS_PER_CHAR = 5;
+
+// Maximum length of a geohash in bits
+var g_MAXIMUM_BITS_PRECISION = 22*g_BITS_PER_CHAR;
+
+// Equatorial radius of the earth in meters
 var g_EARTH_EQ_RADIUS = 6378137.0;
+
+// The following value assumes a polar radius of
 // var g_EARTH_POL_RADIUS = 6356752.3;
+// The formulate to calculate g_E2 is
 // g_E2 == (g_EARTH_EQ_RADIUS^2-g_EARTH_POL_RADIUS^2)/(g_EARTH_EQ_RADIUS^2)
-// Use exact value to avoid rounding errors
+// The exact value is used here to avoid rounding errors
 var g_E2 = 0.00669447819799;
 
+// Cutoff for rounding errors on double calculations
 var g_EPSILON = 1e-12;
 
 Math.log2 = Math.log2 || function(x) {
@@ -248,15 +261,15 @@ var encodeGeohash = function(location, precision) {
  * @return {number} The number of degrees the distance corresponds to
  */
 var metersToLongitudeDegrees = function(distance, latitude) {
-  //var circ = Math.cos(degreesToRadians(latitude))*g_EARTH_EQ_CIRCUMFERENCE;
   var radians = degreesToRadians(latitude);
   var num = Math.cos(radians)*g_EARTH_EQ_RADIUS*Math.PI/180;
   var denom = 1/Math.sqrt(1-g_E2*Math.sin(radians)*Math.sin(radians));
   var deltaDeg = num*denom;
   if (deltaDeg  < g_EPSILON) {
-    return 0;
-  } else {
-    return distance/deltaDeg;
+    return distance > 0 ? 360 : 0;
+  }
+  else {
+    return Math.min(360, distance/deltaDeg);
   }
 };
 
@@ -269,12 +282,12 @@ var metersToLongitudeDegrees = function(distance, latitude) {
  */
 var longitudeBitsForResolution = function(resolution, latitude) {
   var degs = metersToLongitudeDegrees(resolution, latitude);
-  return (Math.abs(degs) > 0.000001) ?  Math.log2(360/degs) : g_MAXIMUM_BITS_PRECISION;
+  return (Math.abs(degs) > 0.000001) ?  Math.max(1, Math.log2(360/degs)) : 1;
 };
 
 /**
  * Calculates the bits necessary to reach a given resolution in meters for
- * the longitude
+ * the latitude
  * @param {number} resolution
  */
 var latitudeBitsForResolution = function(resolution) {
@@ -282,7 +295,7 @@ var latitudeBitsForResolution = function(resolution) {
 };
 
 /**
- * Wraps the longitude to [-180,180];
+ * Wraps the longitude to [-180,180]
  * @param {number} longitude
  * @return {number} longitude
  */
@@ -292,8 +305,9 @@ var wrapLongitude = function(longitude) {
   }
   var adjusted = longitude + 180;
   if (adjusted > 0) {
-    return adjusted % 360 - 180;
-  } else {
+    return (adjusted % 360) - 180;
+  }
+  else {
     return 180 - (-adjusted % 360);
   }
 };
@@ -318,7 +332,7 @@ var boundingBoxBits = function(coordinate, size) {
 
 /**
  * Calculates 8 points on the bounding box and the center of a given circle.
- * At least one geohashe of these 9 coordinates, truncated to a precision of
+ * At least one geohash of these 9 coordinates, truncated to a precision of
  * at most radius, are guaranteed to be prefixes of any geohash that lies
  * within the circle.
  * @param {array} center The center given as [latitude, longitude]
@@ -372,7 +386,8 @@ var geohashQuery = function(geohash, bits) {
   /*jshint bitwise: true*/
   if (endValue > 31) {
     return [base+g_BASE32[startValue], base+"~"];
-  } else {
+  }
+  else {
     return [base+g_BASE32[startValue], base+g_BASE32[endValue]];
   }
 };
