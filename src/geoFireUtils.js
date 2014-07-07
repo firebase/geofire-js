@@ -4,7 +4,7 @@ var g_GEOHASH_PRECISION = 10;
 // Characters used in location geohashes
 var g_BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
 
-// The equatorial circumference of the earth in meters
+// The meridional circumference of the earth in meters
 var g_EARTH_MERI_CIRCUMFERENCE = 40007860;
 
 // Length of a degree latitude at the equator
