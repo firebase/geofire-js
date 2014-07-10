@@ -340,7 +340,7 @@ If you'd like to contribute to GeoFire, you'll need to run the following command
 
 ```bash
 $ git clone https://github.com/firebase/geofire.git
-$ npm install -g gulp  # globally intall gulp task runnger
+$ npm install -g gulp  # globally intall gulp task runner
 $ npm install          # install local npm build / test dependencies
 $ bower install        # install local JavaScript dependencies
 $ gulp watch           # watch for source file changes
