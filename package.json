@@ -2,7 +2,8 @@
   "name": "geofire",
   "description": "Location-based querying and filtering using Firebase",
   "version": "2.1.0",
-  "main": "./dist/geofire.min.js",
+  "author": "Firebase <support@firebase.com> (https://www.firebase.com/)",
+  "homepage": "https://github.com/firebase/geofire/",
   "repository": {
     "type": "git",
     "url": "https://github.com/firebase/geofire.git"
@@ -15,6 +16,19 @@
       "type": "MIT",
       "url": "http://firebase.mit-license.org/"
     }
+  ],
+  "keywords": [
+    "geoquery",
+    "location",
+    "firebase",
+    "realtime",
+    "geolocation"
+  ],
+  "main": "dist/geofire.min.js",
+  "files": [
+    "dist/**",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "dependencies": {
     "firebase": "1.0.x",
