@@ -44,15 +44,12 @@ var GeoCallbackRegistration = function(cancelCallback) {
 
   var _cancelCallback = cancelCallback;
 };
-/*************/
-/*  GLOBALS  */
-/*************/
 /**
  * Creates a GeoFire instance.
  *
  * @constructor
  * @this {GeoFire}
- * @param {object} firebaseRef A Firebase reference where the GeoFire data will be stored.
+ * @param {Firebase} firebaseRef A Firebase reference where the GeoFire data will be stored.
  */
 var GeoFire = function(firebaseRef) {
   /*********************/
@@ -616,7 +613,7 @@ var neighbors = function(geohash) {
  *
  * @constructor
  * @this {GeoQuery}
- * @param {object} firebaseRef A Firebase reference.
+ * @param {Firebase} firebaseRef A Firebase reference.
  * @param {object} queryCriteria The criteria which specifies the query's center and radius.
  */
 var GeoQuery = function (firebaseRef, queryCriteria) {

@@ -3,7 +3,7 @@
  *
  * @constructor
  * @this {GeoQuery}
- * @param {object} firebaseRef A Firebase reference.
+ * @param {Firebase} firebaseRef A Firebase reference.
  * @param {object} queryCriteria The criteria which specifies the query's center and radius.
  */
 var GeoQuery = function (firebaseRef, queryCriteria) {
