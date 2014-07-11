@@ -340,11 +340,12 @@ If you'd like to contribute to GeoFire, you'll need to run the following command
 
 ```bash
 $ git clone https://github.com/firebase/geofire.git
-$ cd geofire           # go to the geofire directory
-$ npm install -g gulp  # globally install gulp task runner
-$ npm install          # install local npm build / test dependencies
-$ bower install        # install local JavaScript dependencies
-$ gulp watch           # watch for source file changes
+$ cd geofire            # go to the geofire directory
+$ npm install -g gulp   # globally install gulp task runner
+$ npm install -g bower  # globally install Bower package manager
+$ npm install           # install local npm build / test dependencies
+$ bower install         # install local JavaScript dependencies
+$ gulp watch            # watch for source file changes
 ```
 
 `gulp watch` will watch for changes in the `/src/` directory and lint, concatenate, and minify the source files when a change occurs. The output files - `geofire.js` and `geofire.min.js` - are written to the `/dist/` directory.
