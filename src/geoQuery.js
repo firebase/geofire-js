@@ -448,7 +448,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   // Note that not all of these are currently within this query
   var _locationsQueried = {};
 
-  // A dictionary of locationsQueried[key].geohash <= query[1] geohashes which currently have an active "child_added" event callback
+  // A dictionary of geohash queries which currently have an active "child_added" event callback
   var _currentGeohashesQueried = {};
 
   // Every ten seconds, clean up the geohashes we are currently querying for. We keep these around

@@ -250,25 +250,25 @@ describe("geoFireUtils Tests:", function() {
     });
 
     it("Queries from geohashQueries must contain points in circle", function() {
+      function inQuery(queries, hash) {
+        for (var i = 0; i < queries.length; i++) {
+          if (hash >= queries[i][0] && hash < queries[i][1]) {
+            return true;
+          }
+        }
+        return false;
+      }
       for (var i = 0; i < 1000; i++) {
         var centerLat = Math.random()*160-80;
         var centerLong = Math.random()*360-180;
         var radius = Math.random()*Math.random()*100000;
-        var degreeRadius = metersToLongitudeDegrees(radius, centerLat)*2;
+        var degreeRadius = metersToLongitudeDegrees(radius, centerLat);
         var queries = geohashQueries([centerLat, centerLong], radius);
-        function inQuery(hash) {
-          for (var k = 0; k < queries.length; k++) {
-            if (hash > queries[k][0] && hash < queries[k][1]) {
-              return true;
-            }
-          }
-          return false;
-        }
         for (var j = 0; j < 1000; j++) {
           var pointLat = Math.max(-89.9, Math.min(89.9, centerLat + Math.random()*degreeRadius));
           var pointLong = wrapLongitude(centerLong + Math.random()*degreeRadius);
           if (GeoFire.distance([centerLat, centerLong], [pointLat, pointLong]) < radius/1000) {
-            expect(inQuery(encodeGeohash([pointLat, pointLong]))).toBe(true);
+            expect(inQuery(queries, encodeGeohash([pointLat, pointLong]))).toBe(true);
           }
         }
       }

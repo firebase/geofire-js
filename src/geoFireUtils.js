@@ -409,12 +409,9 @@ var geohashQueries = function(center, radius) {
     return geohashQuery(encodeGeohash(coordinate, geohashPrecision), queryBits);
   });
   // remove duplicates
-  return queries.filter(function(query) {
-    for (var i = 0; i < queries.length; i++) {
-      if (queries[i][0] === query[0] && queries[i][1] === query[1]) {
-        return true;
-      }
-    }
-    return false;
+  return queries.filter(function(query, index) {
+    return !queries.some(function(other, otherIndex) {
+      return index > otherIndex && query[0] === other[0] && query[1] === other[1];
+    });
   });
 };
