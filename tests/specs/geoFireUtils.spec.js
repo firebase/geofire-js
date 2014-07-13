@@ -258,9 +258,9 @@ describe("geoFireUtils Tests:", function() {
         }
         return false;
       }
-      for (var i = 0; i < 1000; i++) {
-        var centerLat = Math.random()*160-80;
-        var centerLong = Math.random()*360-180;
+      for (var i = 0; i < 200; i++) {
+        var centerLat = Math.pow(Math.random(),5)*160-80;
+        var centerLong = Math.pow(Math.random(),5)*360-180;
         var radius = Math.random()*Math.random()*100000;
         var degreeRadius = metersToLongitudeDegrees(radius, centerLat);
         var queries = geohashQueries([centerLat, centerLong], radius);
