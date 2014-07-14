@@ -350,4 +350,4 @@ $ gulp watch            # watch for source file changes
 
 `gulp watch` will watch for changes in the `/src/` directory and lint, concatenate, and minify the source files when a change occurs. The output files - `geofire.js` and `geofire.min.js` - are written to the `/dist/` directory.
 
-You can run the test suite by navigating to `file:///path/to/geofire/tests/TestRunner.html` or via the command line using `gulp test`.
+You can run the test suite by navigating to `file:///path/to/geofire/tests/index.html` or via the command line using `gulp test`.

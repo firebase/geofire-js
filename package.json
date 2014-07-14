@@ -29,7 +29,8 @@
     "dist/**",
     "LICENSE",
     "README.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "package.json"
   ],
   "dependencies": {
     "firebase": "1.0.x",
@@ -39,6 +40,7 @@
     "karma": "^0.12.9",
     "karma-jasmine": "~0.2.0",
     "karma-coverage": "^0.2.4",
+    "karma-failed-reporter": "0.0.2",
     "karma-phantomjs-launcher": "~0.1.4",
     "gulp": "^3.5.6",
     "gulp-karma": "0.0.4",
