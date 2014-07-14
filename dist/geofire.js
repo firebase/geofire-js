@@ -283,54 +283,34 @@ var g_GEOHASH_PRECISION = 10;
 // Characters used in location geohashes
 var g_BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
 
-// Arrays used to determine neighboring geohashes
-var g_NEIGHBORS = {
-  north: {
-    even: "p0r21436x8zb9dcf5h7kjnmqesgutwvy",
-    odd: "bc01fg45238967deuvhjyznpkmstqrwx",
-  },
-  east: {
-    even: "bc01fg45238967deuvhjyznpkmstqrwx",
-    odd: "p0r21436x8zb9dcf5h7kjnmqesgutwvy"
-  },
-  south: {
-    even: "14365h7k9dcfesgujnmqp0r2twvyx8zb",
-    odd: "238967debc01fg45kmstqrwxuvhjyznp"
-  },
-  west: {
-    even: "238967debc01fg45kmstqrwxuvhjyznp",
-    odd: "14365h7k9dcfesgujnmqp0r2twvyx8zb"
-  }
-};
-var g_BORDERS = {
-  north: {
-    even: "prxz",
-    odd: "bcfguvyz"
-  },
-  east: {
-    even: "bcfguvyz",
-    odd: "prxz"
-  },
-  south:{
-    even: "028b",
-    odd: "0145hjnp"
-  },
-  west: {
-    even: "0145hjnp",
-    odd: "028b"
-  }
-};
+// The meridional circumference of the earth in meters
+var g_EARTH_MERI_CIRCUMFERENCE = 40007860;
 
-// Approximate bounding box dimensions for certain geohash lengths
-var g_BOUNDING_BOX_SHORTEST_EDGE_BY_GEOHASH_LENGTH = [
-  null,
-  5003.771699005143,
-  625.4714623756429,
-  156.36786559391072,
-  19.54598319923884,
-  4.88649579980971,
-  0.6108119749762138
-];
+// Length of a degree latitude at the equator
+var g_METERS_PER_DEGREE_LATITUDE = 110574;
+
+// Number of bits per geohash character
+var g_BITS_PER_CHAR = 5;
+
+// Maximum length of a geohash in bits
+var g_MAXIMUM_BITS_PRECISION = 22*g_BITS_PER_CHAR;
+
+// Equatorial radius of the earth in meters
+var g_EARTH_EQ_RADIUS = 6378137.0;
+
+// The following value assumes a polar radius of
+// var g_EARTH_POL_RADIUS = 6356752.3;
+// The formulate to calculate g_E2 is
+// g_E2 == (g_EARTH_EQ_RADIUS^2-g_EARTH_POL_RADIUS^2)/(g_EARTH_EQ_RADIUS^2)
+// The exact value is used here to avoid rounding errors
+var g_E2 = 0.00669447819799;
+
+// Cutoff for rounding errors on double calculations
+var g_EPSILON = 1e-12;
+
+Math.log2 = Math.log2 || function(x) {
+  return Math.log(x)/Math.log(2);
+};
 
 /**
  * Validates the inputted key and throws an error if it is invalid.
@@ -554,60 +534,167 @@ var encodeGeohash = function(location, precision) {
 };
 
 /**
- * Returns the geohash of the neighboring bounding box in the direction
- * specified.
- *
- * @param {string} geohash The geohash whose neighbor we are calculating.
- * @param {string} direction The direction from the inputted geohash in
- * which we should find the neighboring geohash.
- * @return {string} The geohash of the neighboring bounding box in the
- * direction specified.
+ * Calculates the number of degrees a given distance is at a given latitude
+ * @param {number} distance
+ * @param {number} latitude
+ * @return {number} The number of degrees the distance corresponds to
  */
-var neighborByDirection = function(geohash, direction) {
-  validateGeohash(geohash);
-  if (["north", "south", "east", "west"].indexOf(direction) === -1) {
-    throw new Error("Error: direction must be one of \"north\", \"south\", \"east\", or \"west\"");
+var metersToLongitudeDegrees = function(distance, latitude) {
+  var radians = degreesToRadians(latitude);
+  var num = Math.cos(radians)*g_EARTH_EQ_RADIUS*Math.PI/180;
+  var denom = 1/Math.sqrt(1-g_E2*Math.sin(radians)*Math.sin(radians));
+  var deltaDeg = num*denom;
+  if (deltaDeg  < g_EPSILON) {
+    return distance > 0 ? 360 : 0;
   }
-
-  var lastChar = geohash.charAt(geohash.length - 1);
-  var type = (geohash.length % 2) ? "odd" : "even";
-  var base = geohash.substring(0, geohash.length - 1);
-
-  if (g_BORDERS[direction][type].indexOf(lastChar) !== -1) {
-    if (base.length <= 0) {
-      return "";
-    }
-    base = neighborByDirection(base, direction);
+  else {
+    return Math.min(360, distance/deltaDeg);
   }
-
-  return base + g_BASE32[g_NEIGHBORS[direction][type].indexOf(lastChar)];
 };
 
 /**
- * Returns the geohashes of all neighboring bounding boxes.
- *
- * @param {string} geohash The geohash whose neighbors we are calculating.
- * @return {array} An array of geohashes representing the bounding boxes
- * around the inputted geohash.
+ * Calculates the bits necessary to reach a given resolution in meters for
+ * the longitude at a given latitude
+ * @param {number} resolution
+ * @param {number} latitude
+ * @return {number}
  */
-var neighbors = function(geohash) {
-  validateGeohash(geohash);
-
-  var neighbors = [];
-  neighbors.push(neighborByDirection(geohash, "north"));
-  neighbors.push(neighborByDirection(geohash, "south"));
-  neighbors.push(neighborByDirection(geohash, "east"));
-  neighbors.push(neighborByDirection(geohash, "west"));
-  if (neighbors[0] !== "") {
-    neighbors.push(neighborByDirection(neighbors[0], "east"));
-    neighbors.push(neighborByDirection(neighbors[0], "west"));
-  }
-  if (neighbors[1] !== "") {
-    neighbors.push(neighborByDirection(neighbors[1], "east"));
-    neighbors.push(neighborByDirection(neighbors[1], "west"));
-  }
-  return neighbors;
+var longitudeBitsForResolution = function(resolution, latitude) {
+  var degs = metersToLongitudeDegrees(resolution, latitude);
+  return (Math.abs(degs) > 0.000001) ?  Math.max(1, Math.log2(360/degs)) : 1;
 };
+
+/**
+ * Calculates the bits necessary to reach a given resolution in meters for
+ * the latitude
+ * @param {number} resolution
+ */
+var latitudeBitsForResolution = function(resolution) {
+  return Math.min(Math.log2(g_EARTH_MERI_CIRCUMFERENCE/2/resolution), g_MAXIMUM_BITS_PRECISION);
+};
+
+/**
+ * Wraps the longitude to [-180,180]
+ * @param {number} longitude
+ * @return {number} longitude
+ */
+var wrapLongitude = function(longitude) {
+  if (longitude <= 180 && longitude >= -180) {
+    return longitude;
+  }
+  var adjusted = longitude + 180;
+  if (adjusted > 0) {
+    return (adjusted % 360) - 180;
+  }
+  else {
+    return 180 - (-adjusted % 360);
+  }
+};
+
+/**
+ * Calculates the maximum number of bits of a geohash to get
+ * a bounding box that is larger than a given size at the given
+ * coordinate.
+ * @param {array} coordinate The coordinate as a [latitude, longitude] pair
+ * @param {number} size The size of the bounding box
+ * @return {number} The number of bits necessary for the geohash
+ */
+var boundingBoxBits = function(coordinate, size) {
+  var latDeltaDegrees = size/g_METERS_PER_DEGREE_LATITUDE;
+  var latitudeNorth = Math.min(90, coordinate[0] + latDeltaDegrees);
+  var latitudeSouth = Math.max(-90, coordinate[0] - latDeltaDegrees);
+  var bitsLat = Math.floor(latitudeBitsForResolution(size))*2;
+  var bitsLongNorth = Math.floor(longitudeBitsForResolution(size, latitudeNorth))*2-1;
+  var bitsLongSouth = Math.floor(longitudeBitsForResolution(size, latitudeSouth))*2-1;
+  return Math.min(bitsLat, bitsLongNorth, bitsLongSouth, g_MAXIMUM_BITS_PRECISION);
+};
+
+/**
+ * Calculates 8 points on the bounding box and the center of a given circle.
+ * At least one geohash of these 9 coordinates, truncated to a precision of
+ * at most radius, are guaranteed to be prefixes of any geohash that lies
+ * within the circle.
+ * @param {array} center The center given as [latitude, longitude]
+ * @param {number} radius The radius of the circle
+ * @return {number} The four bounding box points
+ */
+var boundingBoxCoordinates = function(center, radius) {
+  var latDegrees = radius/g_METERS_PER_DEGREE_LATITUDE;
+  var latitudeNorth = Math.min(90, center[0] + latDegrees);
+  var latitudeSouth = Math.max(-90, center[0] - latDegrees);
+  var longDegsNorth = metersToLongitudeDegrees(radius, latitudeNorth);
+  var longDegsSouth = metersToLongitudeDegrees(radius, latitudeSouth);
+  var longDegs = Math.max(longDegsNorth, longDegsSouth);
+  return [
+    [center[0], center[1]],
+    [center[0], wrapLongitude(center[1] - longDegs)],
+    [center[0], wrapLongitude(center[1] + longDegs)],
+    [latitudeNorth, center[1]],
+    [latitudeNorth, wrapLongitude(center[1] - longDegs)],
+    [latitudeNorth, wrapLongitude(center[1] + longDegs)],
+    [latitudeSouth, center[1]],
+    [latitudeSouth, wrapLongitude(center[1] - longDegs)],
+    [latitudeSouth, wrapLongitude(center[1] + longDegs)]
+  ];
+};
+
+/**
+ * Calculates the bounding box query for a geohash with x bits precision
+ * @param {string} geohash
+ * @param {number} bits
+ * @return {array} A [start,end] pair
+ */
+var geohashQuery = function(geohash, bits) {
+  validateGeohash(geohash);
+  var precision = Math.ceil(bits/g_BITS_PER_CHAR);
+  if (geohash.length < precision) {
+    return [geohash, geohash+"~"];
+  }
+  geohash = geohash.substring(0, precision);
+  var base = geohash.substring(0, geohash.length - 1);
+  var lastValue = g_BASE32.indexOf(geohash.charAt(geohash.length - 1));
+  var significantBits = bits - (base.length*g_BITS_PER_CHAR);
+  if (significantBits === 0) {
+    return [base, base+"~"];
+  }
+  var unusedBits = (g_BITS_PER_CHAR - significantBits);
+  /*jshint bitwise: false*/
+  // delete unused bits
+  var startValue = (lastValue >> unusedBits) << unusedBits;
+  var endValue = startValue + (1 << unusedBits);
+  /*jshint bitwise: true*/
+  if (endValue > 31) {
+    return [base+g_BASE32[startValue], base+"~"];
+  }
+  else {
+    return [base+g_BASE32[startValue], base+g_BASE32[endValue]];
+  }
+};
+
+/**
+ * Calculates a set of queries to fully contain a given circle
+ * A query is a [start,end] pair where any geohash is guaranteed to
+ * be lexiographically larger then start and smaller than end
+ * @param {array} center The center given as [latitude, longitude] pair
+ * @param {number} radius The radius of the circle
+ * @return {array} An array of geohashes containing a [start,end] pair
+ */
+var geohashQueries = function(center, radius) {
+  validateLocation(center);
+  var queryBits = Math.max(1, boundingBoxBits(center, radius));
+  var geohashPrecision = Math.ceil(queryBits/g_BITS_PER_CHAR);
+  var coordinates = boundingBoxCoordinates(center, radius);
+  var queries = coordinates.map(function(coordinate) {
+    return geohashQuery(encodeGeohash(coordinate, geohashPrecision), queryBits);
+  });
+  // remove duplicates
+  return queries.filter(function(query, index) {
+    return !queries.some(function(other, otherIndex) {
+      return index > otherIndex && query[0] === other[0] && query[1] === other[1];
+    });
+  });
+};
+
 /**
  * Creates a GeoQuery instance.
  *
@@ -645,6 +732,68 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     _callbacks.ready.forEach(function(callback) {
       callback();
     });
+  }
+
+  /**
+   * Decodes a query string to a query
+   * @param {string} str The encoded query
+   * @return {array} The decoded query as a [start,end] pair
+   */
+  function _stringToQuery(string) {
+    var decoded = string.split(":");
+    if (decoded.length !== 2) {
+      throw new Error("Invalid internal state! Not a valid geohash query: " + string);
+    }
+    return decoded;
+  }
+
+  /**
+   * Encodes a query as a string for easier indexing and equality
+   * @param {array} query The query to encode
+   * @param {string} The encoded query as string
+   */
+  function _queryToString(query) {
+    if (query.length !== 2) {
+      throw new Error("Not a valid geohash query: " + query);
+    }
+    return query[0]+":"+query[1];
+  }
+
+  /**
+   * Removes unnecessary Firebase queries which are currently being queried.
+   */
+  function _cleanUpCurrentGeohashesQueried() {
+    for (var geohashQueryStr in _currentGeohashesQueried) {
+      if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
+        if (_currentGeohashesQueried[geohashQueryStr] === false) {
+          var query = _stringToQuery(geohashQueryStr);
+          // Delete the geohash since it should no longer be queried
+          _firebaseRef.child("i").startAt(null, query[0]).endAt(null, query[1]).off("child_added", _attachValueCallback);
+          delete _currentGeohashesQueried[geohashQueryStr];
+
+          // Delete each location which should no longer be queried
+          for (var key in _locationsQueried) {
+            if (_locationsQueried.hasOwnProperty(key)) {
+              if (typeof _locationsQueried[key].geohash !== "undefined" &&
+                  _locationsQueried[key].geohash >= query[0] &&
+                  _locationsQueried[key].geohash <= query[1]) {
+                _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
+                delete _locationsQueried[key];
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Specify that this is done cleaning up the current geohashes queried
+    _cleaningUpCurrentGeohashesQueried = false;
+
+    // If this was called from a setTimeout, clear and reset it
+    if (_cleanUpCurrentGeohashesQueriedTimeout !== null) {
+      clearTimeout(_cleanUpCurrentGeohashesQueriedTimeout);
+      _cleanUpCurrentGeohashesQueriedTimeout = null;
+    }
   }
 
   /**
@@ -785,38 +934,35 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * bounding box.
    */
   function _listenForNewGeohashes() {
-    // Determine a zoom level at which to find neighboring geohashes
-    var zoomLevel = 6;
-    while (_radius > g_BOUNDING_BOX_SHORTEST_EDGE_BY_GEOHASH_LENGTH[zoomLevel]) {
-      zoomLevel -= 1;
-    }
-
-    // Get the geohash for this query's center at the determined zoom level
-    var centerHash = encodeGeohash(_center, g_GEOHASH_PRECISION).substring(0, zoomLevel);
-
     // Get the list of geohashes to query
-    _geohashesToQuery = neighbors(centerHash);
-    _geohashesToQuery.push(centerHash);
+    _geohashesToQuery = geohashQueries(_center, _radius*1000).map(_queryToString);
 
-    // Filter out empty and duplicate geohashes
+    // Filter out duplicate geohashes
     _geohashesToQuery = _geohashesToQuery.filter(function(geohash, i){
-      return (geohash !== "" && _geohashesToQuery.indexOf(geohash) === i);
+      return _geohashesToQuery.indexOf(geohash) === i;
     });
 
     // For all of the geohashes that we are already currently querying, check if they are still
     // supposed to be queried. If so, don't re-query them. Otherwise, mark them to be un-queried
     // next time we clean up the current geohashes queried dictionary.
-    for (var geohashStartPrefix in _currentGeohashesQueried) {
-      if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
-        var index = _geohashesToQuery.indexOf(geohashStartPrefix);
+    for (var geohashQueryStr in _currentGeohashesQueried) {
+      if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
+        var index = _geohashesToQuery.indexOf(geohashQueryStr);
         if (index === -1) {
-          _currentGeohashesQueried[geohashStartPrefix] = false;
+          _currentGeohashesQueried[geohashQueryStr] = false;
         }
         else {
-          _currentGeohashesQueried[geohashStartPrefix] = true;
+          _currentGeohashesQueried[geohashQueryStr] = true;
           _geohashesToQuery.splice(index, 1);
         }
       }
+    }
+
+    // If we are not already cleaning up the current geohashes queried and we have more than 25 of them,
+    // kick off a timeout to clean them up so we don't create an infinite number of unneeded queries.
+    if (_cleaningUpCurrentGeohashesQueried === false && Object.keys(_currentGeohashesQueried).length > 25) {
+      _cleaningUpCurrentGeohashesQueried = true;
+      _cleanUpCurrentGeohashesQueriedTimeout = setTimeout(_cleanUpCurrentGeohashesQueried, 10);
     }
 
     // Keep track of how many geohashes have been processed so we know when to fire the "ready" event
@@ -825,19 +971,16 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Loop through each geohash to query for and listen for new geohashes which have the same prefix.
     // For every match, attach a value callback which will fire the appropriate events.
     // Once every geohash to query is processed, fire the "ready" event.
-    for (var i = 0, numGeohashesToQuery = _geohashesToQuery.length; i < numGeohashesToQuery; ++i) {
-      // Set the start prefix as a subset of the current geohash
-      var startPrefix = _geohashesToQuery[i].substring(0, zoomLevel);
-
-      // Set the end prefix as the start prefix plus ~ to put it last in alphabetical order
-      var endPrefix = startPrefix + "~";
+    _geohashesToQuery.forEach(function(toQueryStr) {
+      // decode the geohash query string
+      var query = _stringToQuery(toQueryStr);
 
       // Create the Firebase query
-      var firebaseQuery = _firebaseRef.child("i").startAt(null, startPrefix).endAt(null, endPrefix);
+      var firebaseQuery = _firebaseRef.child("i").startAt(null, query[0]).endAt(null, query[1]);
 
       // Add the geohash start prefix to the current geohashes queried dictionary and mark it as not
       // to be un-queried
-      _currentGeohashesQueried[startPrefix] = true;
+      _currentGeohashesQueried[toQueryStr] = true;
 
       // For every new matching geohash, determine if we should fire the "key_entered" event
       firebaseQuery.on("child_added", _attachValueCallback);
@@ -846,7 +989,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // and, if so, mark the value event as fired.
       // Note that Firebase fires the "value" event after every "child_added" event fires.
       firebaseQuery.once("value", _checkIfShouldFireReadyEvent);
-    }
+    });
   }
 
   /********************/
@@ -1002,10 +1145,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     };
 
     // Turn off all Firebase listeners for the current geohashes being queried
-    for (var geohashStartPrefix in _currentGeohashesQueried) {
-      if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
-        _firebaseRef.child("i").startAt(null, geohashStartPrefix).endAt(null, geohashStartPrefix + "~").off("child_added", _attachValueCallback);
-        delete _currentGeohashesQueried[geohashStartPrefix];
+    for (var geohashQueryStr in _currentGeohashesQueried) {
+      if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
+        var query = _stringToQuery(geohashQueryStr);
+        _firebaseRef.child("i").startAt(null, query[0]).endAt(null, query[1]).off("child_added", _attachValueCallback);
+        delete _currentGeohashesQueried[geohashQueryStr];
       }
     }
 
@@ -1016,6 +1160,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         delete _locationsQueried[key];
       }
     }
+
+    // Turn off the current geohashes queried clean up interval
+    clearInterval(_cleanUpCurrentGeohashesQueriedInterval);
   };
 
 
@@ -1045,32 +1192,17 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   // Note that not all of these are currently within this query
   var _locationsQueried = {};
 
-  // A dictionary of geohashes which currently have an active "child_added" event callback
+  // A dictionary of geohash queries which currently have an active "child_added" event callback
   var _currentGeohashesQueried = {};
 
   // Every ten seconds, clean up the geohashes we are currently querying for. We keep these around
   // for a little while since it's likely that they will need to be re-queried shortly after they
   // move outside of the query's bounding box.
-  setInterval(function() {
-    for (var geohashStartPrefix in _currentGeohashesQueried) {
-      if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
-        if (_currentGeohashesQueried[geohashStartPrefix] === false) {
-          // Delete the geohash since it should no longer be queried
-          _firebaseRef.child("i").startAt(null, geohashStartPrefix).endAt(null, geohashStartPrefix + "~").off("child_added", _attachValueCallback);
-          delete _currentGeohashesQueried[geohashStartPrefix];
-
-          // Delete each location which should no longer be queried
-          for (var key in _locationsQueried) {
-            if (_locationsQueried.hasOwnProperty(key)) {
-              if (typeof _locationsQueried[key].geohash !== "undefined" && _locationsQueried[key].geohash.indexOf(geohashStartPrefix) === 0) {
-                _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
-                delete _locationsQueried[key];
-              }
-            }
-          }
-        }
-      }
-    }
+  var _cleaningUpCurrentGeohashesQueried = false;
+  var _cleanUpCurrentGeohashesQueriedTimeout = null;
+  var _cleanUpCurrentGeohashesQueriedInterval = setInterval(function() {
+    _cleaningUpCurrentGeohashesQueried = true;
+    _cleanUpCurrentGeohashesQueried();
   }, 10000);
 
   // Validate and save the query criteria
@@ -1081,6 +1213,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   // Listen for new geohashes being added around this query and fire the appropriate events
   _listenForNewGeohashes();
 };
+
   return GeoFire;
 })();
 
