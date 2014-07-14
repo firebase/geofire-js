@@ -503,12 +503,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   // move outside of the query's bounding box.
   var _geohashCleanupScheduled = false;
   var _cleanUpCurrentGeohashesQueriedTimeout = null;
-  var _cleanUpCurrentGeohashesQueriedInterval = setInterval(function() {
-    if (_geohashCleanupScheduled === false) {
-      _geohashCleanupScheduled = true;
-      _cleanUpCurrentGeohashesQueried();
-    }
-  }, 10000);
+  var _cleanUpCurrentGeohashesQueriedInterval = setInterval(_cleanUpCurrentGeohashesQueried, 10000);
 
   // Validate and save the query criteria
   validateCriteria(queryCriteria, /* requireCenterAndRadius */ true);
