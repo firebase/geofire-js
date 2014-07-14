@@ -182,73 +182,96 @@ describe("geoFireUtils Tests:", function() {
     });
   });
 
-  describe("Neighboring geohashes:", function() {
-    it("neighborByDirection() returns the neighboring geohash in the specified direction", function() {
-      var geohash = "000000000000";
-      expect(neighborByDirection(geohash, "north")).toEqual("000000000001");
-      expect(neighborByDirection(geohash, "south")).toEqual("pbpbpbpbpbp");
-      expect(neighborByDirection(geohash, "east")).toEqual("000000000002");
-      expect(neighborByDirection(geohash, "west")).toEqual("bpbpbpbpbpb");
-
-      geohash = "d62dtu"
-      expect(neighborByDirection(geohash, "north")).toEqual("d62dtv");
-      expect(neighborByDirection(geohash, "south")).toEqual("d62dtg");
-      expect(neighborByDirection(geohash, "east")).toEqual("d62dwh");
-      expect(neighborByDirection(geohash, "west")).toEqual("d62dts");
-
-      geohash = "5";
-      expect(neighborByDirection(geohash, "north")).toEqual("7");
-      expect(neighborByDirection(geohash, "south")).toEqual("");
-      expect(neighborByDirection(geohash, "east")).toEqual("h");
-      expect(neighborByDirection(geohash, "west")).toEqual("4");
+  describe("Coordinate calculations:", function() {
+    it("metersToLongtitudeDegrees calculates correctly", function() {
+      expect(metersToLongitudeDegrees(1000, 0)).toBeCloseTo(0.008983, 5);
+      expect(metersToLongitudeDegrees(111320, 0)).toBeCloseTo(1, 5);
+      expect(metersToLongitudeDegrees(107550, 15)).toBeCloseTo(1, 5);
+      expect(metersToLongitudeDegrees(96486, 30)).toBeCloseTo(1, 5);
+      expect(metersToLongitudeDegrees(78847, 45)).toBeCloseTo(1, 5);
+      expect(metersToLongitudeDegrees(55800, 60)).toBeCloseTo(1, 5);
+      expect(metersToLongitudeDegrees(28902, 75)).toBeCloseTo(1, 5);
+      expect(metersToLongitudeDegrees(0, 90)).toBeCloseTo(0, 5);
+      expect(metersToLongitudeDegrees(1000, 90)).toBeCloseTo(360, 5);
+      expect(metersToLongitudeDegrees(1000, 89.9999)).toBeCloseTo(360, 5);
+      expect(metersToLongitudeDegrees(1000, 89.995)).toBeCloseTo(102.594208, 5);
     });
 
-    it("neighborByDirection() does not throw errors given valid geohashes", function() {
-      validGeohashes.forEach(function(validGeohash) {
-        expect(function() { neighborByDirection(validGeohash, "north"); }).not.toThrow();
-      });
+    it("wrapLongitude wraps correctly", function() {
+      expect(wrapLongitude(0)).toBeCloseTo(0, 6);
+      expect(wrapLongitude(180)).toBeCloseTo(180, 6);
+      expect(wrapLongitude(-180)).toBeCloseTo(-180, 6);
+      expect(wrapLongitude(182)).toBeCloseTo(-178, 6);
+      expect(wrapLongitude(270)).toBeCloseTo(-90, 6);
+      expect(wrapLongitude(360)).toBeCloseTo(0, 6);
+      expect(wrapLongitude(540)).toBeCloseTo(-180, 6);
+      expect(wrapLongitude(630)).toBeCloseTo(-90, 6);
+      expect(wrapLongitude(720)).toBeCloseTo(0, 6);
+      expect(wrapLongitude(810)).toBeCloseTo(90, 6);
+      expect(wrapLongitude(-360)).toBeCloseTo(0, 6);
+      expect(wrapLongitude(-182)).toBeCloseTo(178, 6);
+      expect(wrapLongitude(-270)).toBeCloseTo(90, 6);
+      expect(wrapLongitude(-360)).toBeCloseTo(0, 6);
+      expect(wrapLongitude(-450)).toBeCloseTo(-90, 6);
+      expect(wrapLongitude(-540)).toBeCloseTo(180, 6);
+      expect(wrapLongitude(-630)).toBeCloseTo(90, 6);
+      expect(wrapLongitude(1080)).toBeCloseTo(0, 6);
+      expect(wrapLongitude(-1080)).toBeCloseTo(0, 6);
+    });
+  });
+
+  describe("Bounding box bits:", function() {
+    it("boundingBoxBits must return correct number of bits", function() {
+      expect(boundingBoxBits([35,0], 1000)).toBe(28);
+      expect(boundingBoxBits([35.645,0], 1000)).toBe(27);
+      expect(boundingBoxBits([36,0], 1000)).toBe(27);
+      expect(boundingBoxBits([0,0], 1000)).toBe(28);
+      expect(boundingBoxBits([0,-180], 1000)).toBe(28);
+      expect(boundingBoxBits([0,180], 1000)).toBe(28);
+      expect(boundingBoxBits([0,0], 8000)).toBe(22);
+      expect(boundingBoxBits([45,0], 1000)).toBe(27);
+      expect(boundingBoxBits([75,0], 1000)).toBe(25);
+      expect(boundingBoxBits([75,0], 2000)).toBe(23);
+      expect(boundingBoxBits([90,0], 1000)).toBe(1);
+      expect(boundingBoxBits([90,0], 2000)).toBe(1);
+    });
+  });
+
+  describe("Geohash queries:", function() {
+    it("Geohash queries must be of the right size", function() {
+      expect(geohashQuery("64m9yn96mx",6)).toEqual(["60", "6h"]);
+      expect(geohashQuery("64m9yn96mx",1)).toEqual(["0", "h"]);
+      expect(geohashQuery("64m9yn96mx",10)).toEqual(["64", "65"]);
+      expect(geohashQuery("6409yn96mx",11)).toEqual(["640", "64h"]);
+      expect(geohashQuery("64m9yn96mx",11)).toEqual(["64h", "64~"]);
+      expect(geohashQuery("6",10)).toEqual(["6", "6~"]);
+      expect(geohashQuery("64z178",12)).toEqual(["64s", "64~"]);
+      expect(geohashQuery("64z178",15)).toEqual(["64z", "64~"]);
     });
 
-    it("neighborByDirection() throws errors given invalid geohashes", function() {
-      invalidGeohashes.forEach(function(invalidGeohash) {
-        expect(function() { neighborByDirection(invalidGeohash, "north"); }).toThrow();
-      });
-    });
-
-    it("neighborByDirection() does not throw errors given valid directions", function() {
-      var validDirections = ["north", "south", "east", "west"];
-
-      validDirections.forEach(function(validDirection) {
-        expect(function() { neighborByDirection("000", validDirection); }).not.toThrow();
-      });
-    });
-
-    it("neighborByDirection() throws errors given invalid directions", function() {
-      var invalidDirections = ["", "aaa", "nort", 1, true, false, [], [1], {}, {a:1}, null, undefined];
-
-      invalidDirections.forEach(function(invalidDirection) {
-        expect(function() { neighborByDirection("000", invalidDirection); }).toThrow();
-      });
-    });
-
-    it("neighbors() returns the eight neighboring geohashes", function() {
-      expect(neighbors("000000000000")).toEqual(["000000000001", "pbpbpbpbpbp", "000000000002", "bpbpbpbpbpb", "000000000003", "bpbpbpbpbpc", "0000000000", "pbpbpbpbpbn"]);
-      expect(neighbors("01010101")).toEqual(["01010104", "01010100", "01010103", "cpcpcpc", "01010106", "cpcpcpf", "01010102", "cpcpcpb"]);
-      expect(neighbors("d62dtu")).toEqual(["d62dtv", "d62dtg", "d62dwh", "d62dts", "d62dwj", "d62dtt", "d62dw5", "d62dte"]);
-      expect(neighbors("zw3d9b")).toEqual(["zw3d9c", "zw3d3z", "zw3dd0", "zw3d98", "zw3dd1", "zw3d99", "zw3d6p", "zw3d3x"]);
-      expect(neighbors("5")).toEqual(["7", "", "h", "4", "k", "6"]);
-    });
-
-    it("neighbors() does not throw errors given valid geohashes", function() {
-      validGeohashes.forEach(function(validGeohash) {
-        expect(function() { neighbors(validGeohash); }).not.toThrow();
-      });
-    });
-
-    it("neighbors() throws errors given invalid geohashes", function() {
-      invalidGeohashes.forEach(function(invalidGeohash) {
-        expect(function() { neighbors(invalidGeohash); }).toThrow();
-      });
+    it("Queries from geohashQueries must contain points in circle", function() {
+      function inQuery(queries, hash) {
+        for (var i = 0; i < queries.length; i++) {
+          if (hash >= queries[i][0] && hash < queries[i][1]) {
+            return true;
+          }
+        }
+        return false;
+      }
+      for (var i = 0; i < 200; i++) {
+        var centerLat = Math.pow(Math.random(),5)*160-80;
+        var centerLong = Math.pow(Math.random(),5)*360-180;
+        var radius = Math.random()*Math.random()*100000;
+        var degreeRadius = metersToLongitudeDegrees(radius, centerLat);
+        var queries = geohashQueries([centerLat, centerLong], radius);
+        for (var j = 0; j < 1000; j++) {
+          var pointLat = Math.max(-89.9, Math.min(89.9, centerLat + Math.random()*degreeRadius));
+          var pointLong = wrapLongitude(centerLong + Math.random()*degreeRadius);
+          if (GeoFire.distance([centerLat, centerLong], [pointLat, pointLong]) < radius/1000) {
+            expect(inQuery(queries, encodeGeohash([pointLat, pointLong]))).toBe(true);
+          }
+        }
+      }
     });
   });
 });

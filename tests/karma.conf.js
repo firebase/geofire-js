@@ -9,6 +9,7 @@ module.exports = function(config) {
     coverageReporter: {
       type: "html"
     },
-    browsers: ["PhantomJS"]
+    browsers: ["PhantomJS"],
+    browserNoActivityTimeout: 30000
   });
 };

@@ -4,54 +4,34 @@ var g_GEOHASH_PRECISION = 10;
 // Characters used in location geohashes
 var g_BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz";
 
-// Arrays used to determine neighboring geohashes
-var g_NEIGHBORS = {
-  north: {
-    even: "p0r21436x8zb9dcf5h7kjnmqesgutwvy",
-    odd: "bc01fg45238967deuvhjyznpkmstqrwx",
-  },
-  east: {
-    even: "bc01fg45238967deuvhjyznpkmstqrwx",
-    odd: "p0r21436x8zb9dcf5h7kjnmqesgutwvy"
-  },
-  south: {
-    even: "14365h7k9dcfesgujnmqp0r2twvyx8zb",
-    odd: "238967debc01fg45kmstqrwxuvhjyznp"
-  },
-  west: {
-    even: "238967debc01fg45kmstqrwxuvhjyznp",
-    odd: "14365h7k9dcfesgujnmqp0r2twvyx8zb"
-  }
-};
-var g_BORDERS = {
-  north: {
-    even: "prxz",
-    odd: "bcfguvyz"
-  },
-  east: {
-    even: "bcfguvyz",
-    odd: "prxz"
-  },
-  south:{
-    even: "028b",
-    odd: "0145hjnp"
-  },
-  west: {
-    even: "0145hjnp",
-    odd: "028b"
-  }
-};
+// The meridional circumference of the earth in meters
+var g_EARTH_MERI_CIRCUMFERENCE = 40007860;
 
-// Approximate bounding box dimensions for certain geohash lengths
-var g_BOUNDING_BOX_SHORTEST_EDGE_BY_GEOHASH_LENGTH = [
-  null,
-  5003.771699005143,
-  625.4714623756429,
-  156.36786559391072,
-  19.54598319923884,
-  4.88649579980971,
-  0.6108119749762138
-];
+// Length of a degree latitude at the equator
+var g_METERS_PER_DEGREE_LATITUDE = 110574;
+
+// Number of bits per geohash character
+var g_BITS_PER_CHAR = 5;
+
+// Maximum length of a geohash in bits
+var g_MAXIMUM_BITS_PRECISION = 22*g_BITS_PER_CHAR;
+
+// Equatorial radius of the earth in meters
+var g_EARTH_EQ_RADIUS = 6378137.0;
+
+// The following value assumes a polar radius of
+// var g_EARTH_POL_RADIUS = 6356752.3;
+// The formulate to calculate g_E2 is
+// g_E2 == (g_EARTH_EQ_RADIUS^2-g_EARTH_POL_RADIUS^2)/(g_EARTH_EQ_RADIUS^2)
+// The exact value is used here to avoid rounding errors
+var g_E2 = 0.00669447819799;
+
+// Cutoff for rounding errors on double calculations
+var g_EPSILON = 1e-12;
+
+Math.log2 = Math.log2 || function(x) {
+  return Math.log(x)/Math.log(2);
+};
 
 /**
  * Validates the inputted key and throws an error if it is invalid.
@@ -275,57 +255,163 @@ var encodeGeohash = function(location, precision) {
 };
 
 /**
- * Returns the geohash of the neighboring bounding box in the direction
- * specified.
- *
- * @param {string} geohash The geohash whose neighbor we are calculating.
- * @param {string} direction The direction from the inputted geohash in
- * which we should find the neighboring geohash.
- * @return {string} The geohash of the neighboring bounding box in the
- * direction specified.
+ * Calculates the number of degrees a given distance is at a given latitude
+ * @param {number} distance
+ * @param {number} latitude
+ * @return {number} The number of degrees the distance corresponds to
  */
-var neighborByDirection = function(geohash, direction) {
-  validateGeohash(geohash);
-  if (["north", "south", "east", "west"].indexOf(direction) === -1) {
-    throw new Error("Error: direction must be one of \"north\", \"south\", \"east\", or \"west\"");
+var metersToLongitudeDegrees = function(distance, latitude) {
+  var radians = degreesToRadians(latitude);
+  var num = Math.cos(radians)*g_EARTH_EQ_RADIUS*Math.PI/180;
+  var denom = 1/Math.sqrt(1-g_E2*Math.sin(radians)*Math.sin(radians));
+  var deltaDeg = num*denom;
+  if (deltaDeg  < g_EPSILON) {
+    return distance > 0 ? 360 : 0;
   }
-
-  var lastChar = geohash.charAt(geohash.length - 1);
-  var type = (geohash.length % 2) ? "odd" : "even";
-  var base = geohash.substring(0, geohash.length - 1);
-
-  if (g_BORDERS[direction][type].indexOf(lastChar) !== -1) {
-    if (base.length <= 0) {
-      return "";
-    }
-    base = neighborByDirection(base, direction);
+  else {
+    return Math.min(360, distance/deltaDeg);
   }
-
-  return base + g_BASE32[g_NEIGHBORS[direction][type].indexOf(lastChar)];
 };
 
 /**
- * Returns the geohashes of all neighboring bounding boxes.
- *
- * @param {string} geohash The geohash whose neighbors we are calculating.
- * @return {array} An array of geohashes representing the bounding boxes
- * around the inputted geohash.
+ * Calculates the bits necessary to reach a given resolution in meters for
+ * the longitude at a given latitude
+ * @param {number} resolution
+ * @param {number} latitude
+ * @return {number}
  */
-var neighbors = function(geohash) {
-  validateGeohash(geohash);
+var longitudeBitsForResolution = function(resolution, latitude) {
+  var degs = metersToLongitudeDegrees(resolution, latitude);
+  return (Math.abs(degs) > 0.000001) ?  Math.max(1, Math.log2(360/degs)) : 1;
+};
 
-  var neighbors = [];
-  neighbors.push(neighborByDirection(geohash, "north"));
-  neighbors.push(neighborByDirection(geohash, "south"));
-  neighbors.push(neighborByDirection(geohash, "east"));
-  neighbors.push(neighborByDirection(geohash, "west"));
-  if (neighbors[0] !== "") {
-    neighbors.push(neighborByDirection(neighbors[0], "east"));
-    neighbors.push(neighborByDirection(neighbors[0], "west"));
+/**
+ * Calculates the bits necessary to reach a given resolution in meters for
+ * the latitude
+ * @param {number} resolution
+ */
+var latitudeBitsForResolution = function(resolution) {
+  return Math.min(Math.log2(g_EARTH_MERI_CIRCUMFERENCE/2/resolution), g_MAXIMUM_BITS_PRECISION);
+};
+
+/**
+ * Wraps the longitude to [-180,180]
+ * @param {number} longitude
+ * @return {number} longitude
+ */
+var wrapLongitude = function(longitude) {
+  if (longitude <= 180 && longitude >= -180) {
+    return longitude;
   }
-  if (neighbors[1] !== "") {
-    neighbors.push(neighborByDirection(neighbors[1], "east"));
-    neighbors.push(neighborByDirection(neighbors[1], "west"));
+  var adjusted = longitude + 180;
+  if (adjusted > 0) {
+    return (adjusted % 360) - 180;
   }
-  return neighbors;
+  else {
+    return 180 - (-adjusted % 360);
+  }
+};
+
+/**
+ * Calculates the maximum number of bits of a geohash to get
+ * a bounding box that is larger than a given size at the given
+ * coordinate.
+ * @param {array} coordinate The coordinate as a [latitude, longitude] pair
+ * @param {number} size The size of the bounding box
+ * @return {number} The number of bits necessary for the geohash
+ */
+var boundingBoxBits = function(coordinate, size) {
+  var latDeltaDegrees = size/g_METERS_PER_DEGREE_LATITUDE;
+  var latitudeNorth = Math.min(90, coordinate[0] + latDeltaDegrees);
+  var latitudeSouth = Math.max(-90, coordinate[0] - latDeltaDegrees);
+  var bitsLat = Math.floor(latitudeBitsForResolution(size))*2;
+  var bitsLongNorth = Math.floor(longitudeBitsForResolution(size, latitudeNorth))*2-1;
+  var bitsLongSouth = Math.floor(longitudeBitsForResolution(size, latitudeSouth))*2-1;
+  return Math.min(bitsLat, bitsLongNorth, bitsLongSouth, g_MAXIMUM_BITS_PRECISION);
+};
+
+/**
+ * Calculates 8 points on the bounding box and the center of a given circle.
+ * At least one geohash of these 9 coordinates, truncated to a precision of
+ * at most radius, are guaranteed to be prefixes of any geohash that lies
+ * within the circle.
+ * @param {array} center The center given as [latitude, longitude]
+ * @param {number} radius The radius of the circle
+ * @return {number} The four bounding box points
+ */
+var boundingBoxCoordinates = function(center, radius) {
+  var latDegrees = radius/g_METERS_PER_DEGREE_LATITUDE;
+  var latitudeNorth = Math.min(90, center[0] + latDegrees);
+  var latitudeSouth = Math.max(-90, center[0] - latDegrees);
+  var longDegsNorth = metersToLongitudeDegrees(radius, latitudeNorth);
+  var longDegsSouth = metersToLongitudeDegrees(radius, latitudeSouth);
+  var longDegs = Math.max(longDegsNorth, longDegsSouth);
+  return [
+    [center[0], center[1]],
+    [center[0], wrapLongitude(center[1] - longDegs)],
+    [center[0], wrapLongitude(center[1] + longDegs)],
+    [latitudeNorth, center[1]],
+    [latitudeNorth, wrapLongitude(center[1] - longDegs)],
+    [latitudeNorth, wrapLongitude(center[1] + longDegs)],
+    [latitudeSouth, center[1]],
+    [latitudeSouth, wrapLongitude(center[1] - longDegs)],
+    [latitudeSouth, wrapLongitude(center[1] + longDegs)]
+  ];
+};
+
+/**
+ * Calculates the bounding box query for a geohash with x bits precision
+ * @param {string} geohash
+ * @param {number} bits
+ * @return {array} A [start,end] pair
+ */
+var geohashQuery = function(geohash, bits) {
+  validateGeohash(geohash);
+  var precision = Math.ceil(bits/g_BITS_PER_CHAR);
+  if (geohash.length < precision) {
+    return [geohash, geohash+"~"];
+  }
+  geohash = geohash.substring(0, precision);
+  var base = geohash.substring(0, geohash.length - 1);
+  var lastValue = g_BASE32.indexOf(geohash.charAt(geohash.length - 1));
+  var significantBits = bits - (base.length*g_BITS_PER_CHAR);
+  if (significantBits === 0) {
+    return [base, base+"~"];
+  }
+  var unusedBits = (g_BITS_PER_CHAR - significantBits);
+  /*jshint bitwise: false*/
+  // delete unused bits
+  var startValue = (lastValue >> unusedBits) << unusedBits;
+  var endValue = startValue + (1 << unusedBits);
+  /*jshint bitwise: true*/
+  if (endValue > 31) {
+    return [base+g_BASE32[startValue], base+"~"];
+  }
+  else {
+    return [base+g_BASE32[startValue], base+g_BASE32[endValue]];
+  }
+};
+
+/**
+ * Calculates a set of queries to fully contain a given circle
+ * A query is a [start,end] pair where any geohash is guaranteed to
+ * be lexiographically larger then start and smaller than end
+ * @param {array} center The center given as [latitude, longitude] pair
+ * @param {number} radius The radius of the circle
+ * @return {array} An array of geohashes containing a [start,end] pair
+ */
+var geohashQueries = function(center, radius) {
+  validateLocation(center);
+  var queryBits = Math.max(1, boundingBoxBits(center, radius));
+  var geohashPrecision = Math.ceil(queryBits/g_BITS_PER_CHAR);
+  var coordinates = boundingBoxCoordinates(center, radius);
+  var queries = coordinates.map(function(coordinate) {
+    return geohashQuery(encodeGeohash(coordinate, geohashPrecision), queryBits);
+  });
+  // remove duplicates
+  return queries.filter(function(query, index) {
+    return !queries.some(function(other, otherIndex) {
+      return index > otherIndex && query[0] === other[0] && query[1] === other[1];
+    });
+  });
 };

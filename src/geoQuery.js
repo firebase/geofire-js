@@ -38,6 +38,31 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
 
   /**
+   * Decodes a query string to a query
+   * @param {string} str The encoded query
+   * @return {array} The decoded query as a [start,end] pair
+   */
+  function _stringToQuery(string) {
+    var decoded = string.split(":");
+    if (decoded.length !== 2) {
+      throw new Error("Invalid internal state! Not a valid geohash query: " + string);
+    }
+    return decoded;
+  }
+
+  /**
+   * Encodes a query as a string for easier indexing and equality
+   * @param {array} query The query to encode
+   * @param {string} The encoded query as string
+   */
+  function _queryToString(query) {
+    if (query.length !== 2) {
+      throw new Error("Not a valid geohash query: " + query);
+    }
+    return query[0]+":"+query[1];
+  }
+
+  /**
    * Attaches a value callback for the provided key which will update the information about the key
    * and fire any necessary events every time the key's location changes.
    *
@@ -175,35 +200,25 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * bounding box.
    */
   function _listenForNewGeohashes() {
-    // Determine a zoom level at which to find neighboring geohashes
-    var zoomLevel = 6;
-    while (_radius > g_BOUNDING_BOX_SHORTEST_EDGE_BY_GEOHASH_LENGTH[zoomLevel]) {
-      zoomLevel -= 1;
-    }
-
-    // Get the geohash for this query's center at the determined zoom level
-    var centerHash = encodeGeohash(_center, g_GEOHASH_PRECISION).substring(0, zoomLevel);
-
     // Get the list of geohashes to query
-    _geohashesToQuery = neighbors(centerHash);
-    _geohashesToQuery.push(centerHash);
+    _geohashesToQuery = geohashQueries(_center, _radius*1000).map(_queryToString);
 
     // Filter out empty and duplicate geohashes
     _geohashesToQuery = _geohashesToQuery.filter(function(geohash, i){
-      return (geohash !== "" && _geohashesToQuery.indexOf(geohash) === i);
+      return _geohashesToQuery.indexOf(geohash) === i;
     });
 
     // For all of the geohashes that we are already currently querying, check if they are still
     // supposed to be queried. If so, don't re-query them. Otherwise, mark them to be un-queried
     // next time we clean up the current geohashes queried dictionary.
-    for (var geohashStartPrefix in _currentGeohashesQueried) {
-      if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
-        var index = _geohashesToQuery.indexOf(geohashStartPrefix);
+    for (var geohashQueryStr in _currentGeohashesQueried) {
+      if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
+        var index = _geohashesToQuery.indexOf(geohashQueryStr);
         if (index === -1) {
-          _currentGeohashesQueried[geohashStartPrefix] = false;
+          _currentGeohashesQueried[geohashQueryStr] = false;
         }
         else {
-          _currentGeohashesQueried[geohashStartPrefix] = true;
+          _currentGeohashesQueried[geohashQueryStr] = true;
           _geohashesToQuery.splice(index, 1);
         }
       }
@@ -215,19 +230,16 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Loop through each geohash to query for and listen for new geohashes which have the same prefix.
     // For every match, attach a value callback which will fire the appropriate events.
     // Once every geohash to query is processed, fire the "ready" event.
-    for (var i = 0, numGeohashesToQuery = _geohashesToQuery.length; i < numGeohashesToQuery; ++i) {
-      // Set the start prefix as a subset of the current geohash
-      var startPrefix = _geohashesToQuery[i].substring(0, zoomLevel);
-
-      // Set the end prefix as the start prefix plus ~ to put it last in alphabetical order
-      var endPrefix = startPrefix + "~";
+    _geohashesToQuery.forEach(function(toQueryStr) {
+      // decode the geohash query string
+      var query = _stringToQuery(toQueryStr);
 
       // Create the Firebase query
-      var firebaseQuery = _firebaseRef.child("i").startAt(null, startPrefix).endAt(null, endPrefix);
+      var firebaseQuery = _firebaseRef.child("i").startAt(null, query[0]).endAt(null, query[1]);
 
       // Add the geohash start prefix to the current geohashes queried dictionary and mark it as not
       // to be un-queried
-      _currentGeohashesQueried[startPrefix] = true;
+      _currentGeohashesQueried[toQueryStr] = true;
 
       // For every new matching geohash, determine if we should fire the "key_entered" event
       firebaseQuery.on("child_added", _attachValueCallback);
@@ -236,7 +248,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // and, if so, mark the value event as fired.
       // Note that Firebase fires the "value" event after every "child_added" event fires.
       firebaseQuery.once("value", _checkIfShouldFireReadyEvent);
-    }
+    });
   }
 
   /********************/
@@ -392,10 +404,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     };
 
     // Turn off all Firebase listeners for the current geohashes being queried
-    for (var geohashStartPrefix in _currentGeohashesQueried) {
-      if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
-        _firebaseRef.child("i").startAt(null, geohashStartPrefix).endAt(null, geohashStartPrefix + "~").off("child_added", _attachValueCallback);
-        delete _currentGeohashesQueried[geohashStartPrefix];
+    for (var geohashQueryStr in _currentGeohashesQueried) {
+      if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
+        var query = _stringToQuery(geohashQueryStr);
+        _firebaseRef.child("i").startAt(null, query[0]).endAt(null, query[1]).off("child_added", _attachValueCallback);
+        delete _currentGeohashesQueried[geohashQueryStr];
       }
     }
 
@@ -435,24 +448,27 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   // Note that not all of these are currently within this query
   var _locationsQueried = {};
 
-  // A dictionary of geohashes which currently have an active "child_added" event callback
+  // A dictionary of geohash queries which currently have an active "child_added" event callback
   var _currentGeohashesQueried = {};
 
   // Every ten seconds, clean up the geohashes we are currently querying for. We keep these around
   // for a little while since it's likely that they will need to be re-queried shortly after they
   // move outside of the query's bounding box.
   setInterval(function() {
-    for (var geohashStartPrefix in _currentGeohashesQueried) {
-      if (_currentGeohashesQueried.hasOwnProperty(geohashStartPrefix)) {
-        if (_currentGeohashesQueried[geohashStartPrefix] === false) {
+    for (var geohashQueryStr in _currentGeohashesQueried) {
+      if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
+        if (_currentGeohashesQueried[geohashQueryStr] === false) {
+          var query = _stringToQuery(geohashQueryStr);
           // Delete the geohash since it should no longer be queried
-          _firebaseRef.child("i").startAt(null, geohashStartPrefix).endAt(null, geohashStartPrefix + "~").off("child_added", _attachValueCallback);
-          delete _currentGeohashesQueried[geohashStartPrefix];
+          _firebaseRef.child("i").startAt(null, query[0]).endAt(null, query[1]).off("child_added", _attachValueCallback);
+          delete _currentGeohashesQueried[geohashQueryStr];
 
           // Delete each location which should no longer be queried
           for (var key in _locationsQueried) {
             if (_locationsQueried.hasOwnProperty(key)) {
-              if (typeof _locationsQueried[key].geohash !== "undefined" && _locationsQueried[key].geohash.indexOf(geohashStartPrefix) === 0) {
+              if (typeof _locationsQueried[key].geohash !== "undefined" &&
+                  _locationsQueried[key].geohash >= query[0] &&
+                  _locationsQueried[key].geohash <= query[1]) {
                 _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
                 delete _locationsQueried[key];
               }
