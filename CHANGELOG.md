@@ -1,3 +1,10 @@
+v2.1.1
+-------------
+Release Date: 2014-07-14
+
+  * Improved performance of calculating bounding box around query.
+  * Fixed bug where we created hundreds of outstanding Firebase queries.
+
 v2.1.0
 -------------
 Release Date: 2014-06-29
