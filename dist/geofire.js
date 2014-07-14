@@ -787,7 +787,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     }
 
     // Specify that this is done cleaning up the current geohashes queried
-    _cleaningUpCurrentGeohashesQueried = false;
+    _geohashCleanupScheduled = false;
 
     // If this was called from a setTimeout, clear and reset it
     if (_cleanUpCurrentGeohashesQueriedTimeout !== null) {
@@ -960,8 +960,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // If we are not already cleaning up the current geohashes queried and we have more than 25 of them,
     // kick off a timeout to clean them up so we don't create an infinite number of unneeded queries.
-    if (_cleaningUpCurrentGeohashesQueried === false && Object.keys(_currentGeohashesQueried).length > 25) {
-      _cleaningUpCurrentGeohashesQueried = true;
+    if (_geohashCleanupScheduled === false && Object.keys(_currentGeohashesQueried).length > 25) {
+      _geohashCleanupScheduled = true;
       _cleanUpCurrentGeohashesQueriedTimeout = setTimeout(_cleanUpCurrentGeohashesQueried, 10);
     }
 
@@ -1198,11 +1198,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   // Every ten seconds, clean up the geohashes we are currently querying for. We keep these around
   // for a little while since it's likely that they will need to be re-queried shortly after they
   // move outside of the query's bounding box.
-  var _cleaningUpCurrentGeohashesQueried = false;
+  var _geohashCleanupScheduled = false;
   var _cleanUpCurrentGeohashesQueriedTimeout = null;
   var _cleanUpCurrentGeohashesQueriedInterval = setInterval(function() {
-    _cleaningUpCurrentGeohashesQueried = true;
-    _cleanUpCurrentGeohashesQueried();
+    if (_geohashCleanupScheduled === false) {
+      _geohashCleanupScheduled = true;
+      _cleanUpCurrentGeohashesQueried();
+    }
   }, 10000);
 
   // Validate and save the query criteria
