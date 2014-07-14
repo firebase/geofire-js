@@ -92,7 +92,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Specify that this is done cleaning up the current geohashes queried
     _geohashCleanupScheduled = false;
 
-    // If this was called from a setTimeout, clear and reset it
+    // Cancel any outstanding scheduled cleanup
     if (_cleanUpCurrentGeohashesQueriedTimeout !== null) {
       clearTimeout(_cleanUpCurrentGeohashesQueriedTimeout);
       _cleanUpCurrentGeohashesQueriedTimeout = null;
