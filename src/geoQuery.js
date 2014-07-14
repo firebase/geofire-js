@@ -63,6 +63,43 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
 
   /**
+   * Removes unnecessary Firebase queries which are currently being queried.
+   */
+  function _cleanUpCurrentGeohashesQueried() {
+    for (var geohashQueryStr in _currentGeohashesQueried) {
+      if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
+        if (_currentGeohashesQueried[geohashQueryStr] === false) {
+          var query = _stringToQuery(geohashQueryStr);
+          // Delete the geohash since it should no longer be queried
+          _firebaseRef.child("i").startAt(null, query[0]).endAt(null, query[1]).off("child_added", _attachValueCallback);
+          delete _currentGeohashesQueried[geohashQueryStr];
+
+          // Delete each location which should no longer be queried
+          for (var key in _locationsQueried) {
+            if (_locationsQueried.hasOwnProperty(key)) {
+              if (typeof _locationsQueried[key].geohash !== "undefined" &&
+                  _locationsQueried[key].geohash >= query[0] &&
+                  _locationsQueried[key].geohash <= query[1]) {
+                _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
+                delete _locationsQueried[key];
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Specify that this is done cleaning up the current geohashes queried
+    _geohashCleanupScheduled = false;
+
+    // Cancel any outstanding scheduled cleanup
+    if (_cleanUpCurrentGeohashesQueriedTimeout !== null) {
+      clearTimeout(_cleanUpCurrentGeohashesQueriedTimeout);
+      _cleanUpCurrentGeohashesQueriedTimeout = null;
+    }
+  }
+
+  /**
    * Attaches a value callback for the provided key which will update the information about the key
    * and fire any necessary events every time the key's location changes.
    *
@@ -203,7 +240,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Get the list of geohashes to query
     _geohashesToQuery = geohashQueries(_center, _radius*1000).map(_queryToString);
 
-    // Filter out empty and duplicate geohashes
+    // Filter out duplicate geohashes
     _geohashesToQuery = _geohashesToQuery.filter(function(geohash, i){
       return _geohashesToQuery.indexOf(geohash) === i;
     });
@@ -222,6 +259,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
           _geohashesToQuery.splice(index, 1);
         }
       }
+    }
+
+    // If we are not already cleaning up the current geohashes queried and we have more than 25 of them,
+    // kick off a timeout to clean them up so we don't create an infinite number of unneeded queries.
+    if (_geohashCleanupScheduled === false && Object.keys(_currentGeohashesQueried).length > 25) {
+      _geohashCleanupScheduled = true;
+      _cleanUpCurrentGeohashesQueriedTimeout = setTimeout(_cleanUpCurrentGeohashesQueried, 10);
     }
 
     // Keep track of how many geohashes have been processed so we know when to fire the "ready" event
@@ -419,6 +463,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         delete _locationsQueried[key];
       }
     }
+
+    // Turn off the current geohashes queried clean up interval
+    clearInterval(_cleanUpCurrentGeohashesQueriedInterval);
   };
 
 
@@ -454,30 +501,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   // Every ten seconds, clean up the geohashes we are currently querying for. We keep these around
   // for a little while since it's likely that they will need to be re-queried shortly after they
   // move outside of the query's bounding box.
-  setInterval(function() {
-    for (var geohashQueryStr in _currentGeohashesQueried) {
-      if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
-        if (_currentGeohashesQueried[geohashQueryStr] === false) {
-          var query = _stringToQuery(geohashQueryStr);
-          // Delete the geohash since it should no longer be queried
-          _firebaseRef.child("i").startAt(null, query[0]).endAt(null, query[1]).off("child_added", _attachValueCallback);
-          delete _currentGeohashesQueried[geohashQueryStr];
-
-          // Delete each location which should no longer be queried
-          for (var key in _locationsQueried) {
-            if (_locationsQueried.hasOwnProperty(key)) {
-              if (typeof _locationsQueried[key].geohash !== "undefined" &&
-                  _locationsQueried[key].geohash >= query[0] &&
-                  _locationsQueried[key].geohash <= query[1]) {
-                _firebaseRef.child("l/" + key).off("value", _locationValueCallback);
-                delete _locationsQueried[key];
-              }
-            }
-          }
-        }
+  var _geohashCleanupScheduled = false;
+  var _cleanUpCurrentGeohashesQueriedTimeout = null;
+  var _cleanUpCurrentGeohashesQueriedInterval = setInterval(function() {
+      if (_geohashCleanupScheduled === false) {
+        _cleanUpCurrentGeohashesQueried();
       }
-    }
-  }, 10000);
+    }, 10000);
 
   // Validate and save the query criteria
   validateCriteria(queryCriteria, /* requireCenterAndRadius */ true);

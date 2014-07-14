@@ -3,7 +3,10 @@
     "module",
     "require",
     "Firebase",
-    "setInterval"
+    "setTimeout",
+    "setInterval",
+    "clearTimeout",
+    "clearInterval"
   ],
   "bitwise": true,
   "curly": true,
