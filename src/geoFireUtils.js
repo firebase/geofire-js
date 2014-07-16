@@ -415,3 +415,31 @@ var geohashQueries = function(center, radius) {
     });
   });
 };
+
+/**
+ * Encodes a location and geohash as a geofire object
+ *
+ * @param {array} location The location as [latitude, longitude] pair.
+ * @param {string} geohash The geohash of the location
+ * @return {Object} The location encoded as geofire object
+ */
+function encodeGeofireObject(location, geohash) {
+  return {
+    "g": geohash,
+    "l": location
+  };
+}
+
+/**
+ * Decodes the location given as geofire object. Returns null if decoding fails
+ *
+ * @param {Object} geofireObj The location encoded as geofire object
+ * @return {array} location The location as [latitude, longitude] pair or null if decoding fails
+ */
+function decodeGeofireObject(geofireObj) {
+  if (geofireObj !== null && geofireObj.hasOwnProperty("l") && Array.isArray(geofireObj.l) && geofireObj.l.length === 2) {
+    return geofireObj.l;
+  } else {
+    return null;
+  }
+}

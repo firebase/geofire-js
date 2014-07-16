@@ -51,16 +51,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          i: {
-            "7zzzzzzzzz:loc1": true,
-            "v0gs3y0zh7:loc2": true,
-            "1bpbpbpbpb:loc3": true
-          },
-          l: {
-            "loc1": [0, 0],
-            "loc2": [50, 50],
-            "loc3": [-90, -90]
-          }
+          "loc1": { "l": [0, 0], "g": "7zzzzzzzzz" },
+          "loc2": { "l": [50, 50], "g": "v0gs3y0zh7" },
+          "loc3": { "l": [-90, -90], "g": "1bpbpbpbpb" }
         });
 
         cl.x("p2");
@@ -80,16 +73,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          i: {
-            "ebpcrypzxv:loc1": true,
-            "v0gu2qnx15:loc2": true,
-            "1cr648sfx4:loc3": true
-          },
-          l: {
-            "loc1": [0.254, 0],
-            "loc2": [50, 50.293403],
-            "loc3": [-82.614, -90.938]
-          }
+          "loc1": { "l": [0.254, 0], "g": "ebpcrypzxv" },
+          "loc2": { "l": [50, 50.293403], "g": "v0gu2qnx15" },
+          "loc3": { "l": [-82.614, -90.938], "g": "1cr648sfx4" }
         });
 
         cl.x("p2");
@@ -113,16 +99,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          i: {
-            "s065kk0dc5:loc1": true,
-            "v0gs3y0zh7:loc2": true,
-            "1bpbpbpbpb:loc3": true
-          },
-          l: {
-            "loc1": [2, 3],
-            "loc2": [50, 50],
-            "loc3": [-90, -90]
-          }
+          "loc1": { "l": [2, 3], "g": "s065kk0dc5" },
+          "loc2": { "l": [50, 50], "g": "v0gs3y0zh7" },
+          "loc3": { "l": [-90, -90], "g": "1bpbpbpbpb" }
         });
 
         cl.x("p3");
@@ -146,16 +125,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          i: {
-            "7zzzzzzzzz:loc1": true,
-            "v0gs3y0zh7:loc2": true,
-            "1bpbpbpbpb:loc3": true
-          },
-          l: {
-            "loc1": [0, 0],
-            "loc2": [50, 50],
-            "loc3": [-90, -90]
-          }
+          "loc1": { "l": [0, 0], "g": "7zzzzzzzzz" },
+          "loc2": { "l": [50, 50], "g": "v0gs3y0zh7" },
+          "loc3": { "l": [-90, -90], "g": "1bpbpbpbpb" }
         });
 
         cl.x("p3");
@@ -175,16 +147,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          i: {
-            "7zzzzzzzzz:loc1": true,
-            "7zzzzzzzzz:loc2": true,
-            "7zzzzzzzzz:loc3": true
-          },
-          l: {
-            "loc1": [0, 0],
-            "loc2": [0, 0],
-            "loc3": [0, 0]
-          }
+          "loc1": { "l": [0, 0], "g": "7zzzzzzzzz" },
+          "loc2": { "l": [0, 0], "g": "7zzzzzzzzz" },
+          "loc3": { "l": [0, 0], "g": "7zzzzzzzzz" }
         });
 
         cl.x("p2");
@@ -227,20 +192,11 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          i: {
-            "cped3g0fur:loc:1": true,
-            "d2h376zj8h:loc2": true,
-            "1bpbpbpbpb:loc%!A72f()3": true,
-            "cped3g0fur:loc4": true,
-            "h50svty4es:loc6": true
-          },
-          l: {
-            "loc:1": [87.6, -130],
-            "loc2": [0.2358, -72.621],
-            "loc%!A72f()3": [-90, -90],
-            "loc4": [87.6, -130],
-            "loc6": [-72.258, 0.953215]
-          }
+          "loc:1": { "l": [87.6, -130], "g": "cped3g0fur" },
+          "loc2": { "l": [0.2358, -72.621], "g": "d2h376zj8h" },
+          "loc%!A72f()3": { "l": [-90, -90], "g": "1bpbpbpbpb" },
+          "loc4": { "l": [87.6, -130], "g": "cped3g0fur" },
+          "loc6": { "l": [-72.258, 0.953215], "g": "h50svty4es" }
         });
 
         cl.x("p6");
@@ -363,12 +319,7 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          i: {
-            "s065kk0dc5:loc2": true
-          },
-          l: {
-            "loc2": [2, 3]
-          }
+          "loc2": { "l": [2, 3], "g": "s065kk0dc5" }
         });
 
         cl.x("p5");
@@ -400,12 +351,7 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          i: {
-            "7zzzzzzzzz:loc1": true
-          },
-          l: {
-            "loc1": [0, 0]
-          }
+          "loc1": { "l": [0, 0], "g": "7zzzzzzzzz" }
         });
 
         cl.x("p5");
@@ -440,12 +386,7 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          i: {
-            "s065kk0dc5:loc2": true
-          },
-          l: {
-            "loc2": [2, 3]
-          }
+          "loc2": { "l": [2, 3], "g": "s065kk0dc5" }
         });
 
         cl.x("p5");
@@ -477,12 +418,7 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          i: {
-            "7zzzzzzzzz:loc1": true
-          },
-          l: {
-            "loc1": [0, 0]
-          }
+          "loc1": { "l": [0, 0], "g": "7zzzzzzzzz" }
         });
 
         cl.x("p5");
@@ -506,14 +442,8 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          i: {
-            "s065kk0dc5:loc2": true,
-            "7zzzzzzzzz:loc3": true
-          },
-          l: {
-            "loc2": [2, 3],
-            "loc3": [0, 0]
-          }
+          "loc2": { "l": [2, 3], "g": "s065kk0dc5" },
+          "loc3": { "l": [0, 0], "g": "7zzzzzzzzz" }
         });
 
         cl.x("p3");
