@@ -218,16 +218,17 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
 
   /**
-   * Checks if we have processed all of the geohashes to query and fires the ready event if necessary.
+   * Called once all geohash queries have received all child added events and fires the ready
+   * event if necessary.
    */
-  function _checkIfShouldFireReadyEvent() {
-    // Increment the number of geohashes processed and set the "value" event as fired if we have
-    // processed all of the geohashes we were expecting to process.
-    _numGeohashesToQueryProcessed++;
-    _valueEventFired = (_numGeohashesToQueryProcessed === _geohashesToQuery.length);
+  function _geohashQueryReadyCallback(queryStr) {
+    var index = _outstandingGeohashReadyEvents.indexOf(queryStr);
+    if (index > -1) {
+      _outstandingGeohashReadyEvents.splice(index, 1);
+    }
+    _valueEventFired = _outstandingGeohashReadyEvents.length === 0;
 
-    // It's possible that there are no more child added events to process and that the "ready"
-    // event will therefore not get called. We should call the "ready" event in that case.
+    // If all queries have been processed, fire the ready event
     if (_valueEventFired) {
       _fireReadyEventCallbacks();
     }
@@ -239,11 +240,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    */
   function _listenForNewGeohashes() {
     // Get the list of geohashes to query
-    _geohashesToQuery = geohashQueries(_center, _radius*1000).map(_queryToString);
+    var geohashesToQuery = geohashQueries(_center, _radius*1000).map(_queryToString);
 
     // Filter out duplicate geohashes
-    _geohashesToQuery = _geohashesToQuery.filter(function(geohash, i){
-      return _geohashesToQuery.indexOf(geohash) === i;
+    geohashesToQuery = geohashesToQuery.filter(function(geohash, i){
+      return geohashesToQuery.indexOf(geohash) === i;
     });
 
     // For all of the geohashes that we are already currently querying, check if they are still
@@ -251,13 +252,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // next time we clean up the current geohashes queried dictionary.
     for (var geohashQueryStr in _currentGeohashesQueried) {
       if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
-        var index = _geohashesToQuery.indexOf(geohashQueryStr);
+        var index = geohashesToQuery.indexOf(geohashQueryStr);
         if (index === -1) {
           _currentGeohashesQueried[geohashQueryStr] = false;
         }
         else {
           _currentGeohashesQueried[geohashQueryStr] = true;
-          _geohashesToQuery.splice(index, 1);
+          geohashesToQuery.splice(index, 1);
         }
       }
     }
@@ -269,13 +270,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       _cleanUpCurrentGeohashesQueriedTimeout = setTimeout(_cleanUpCurrentGeohashesQueried, 10);
     }
 
-    // Keep track of how many geohashes have been processed so we know when to fire the "ready" event
-    _numGeohashesToQueryProcessed = 0;
+    // Keep track of which geohashes have been processed so we know when to fire the "ready" event
+    _outstandingGeohashReadyEvents = geohashesToQuery.slice();
 
     // Loop through each geohash to query for and listen for new geohashes which have the same prefix.
     // For every match, attach a value callback which will fire the appropriate events.
     // Once every geohash to query is processed, fire the "ready" event.
-    _geohashesToQuery.forEach(function(toQueryStr) {
+    geohashesToQuery.forEach(function(toQueryStr) {
       // decode the geohash query string
       var query = _stringToQuery(toQueryStr);
 
@@ -294,7 +295,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // Once the current geohash to query is processed, see if it is the last one to be processed
       // and, if so, mark the value event as fired.
       // Note that Firebase fires the "value" event after every "child_added" event fires.
-      firebaseQuery.once("value", _checkIfShouldFireReadyEvent);
+      firebaseQuery.once("value", function() {
+        _geohashQueryReadyCallback(toQueryStr);
+      });
     });
   }
 
@@ -480,7 +483,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
   // Variables used to keep track of when to fire the "ready" event
   var _valueEventFired = false;
-  var _geohashesToQuery, _numGeohashesToQueryProcessed;
+  var _outstandingGeohashReadyEvents;
 
   // A dictionary of locations that a currently active in the queries
   // Note that not all of these are currently within this query
