@@ -93,7 +93,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     for (var key in _locations) {
       if (_locations.hasOwnProperty(key)) {
         if (!_geohashInSomeQuery(_locations[key].geohash)) {
-            delete _locations[key];
+          if (_locations[key].isInQuery) {
+            throw new Error("Internal State error, trying to remove location that is still in query");
+          }
+          delete _locations[key];
         }
       }
     }
@@ -166,6 +169,21 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
 
   /**
+   * Removes the location from the local state and fires any events if necessary
+   *
+   * @param {string} key The key to be removed
+   * @param {array} currentLocation The current location as [latitude, longitude] pair or null if removed
+   */
+  function removeLocation(key, currentLocation) {
+    var locationDict = _locations[key];
+    delete _locations[key];
+    if (locationDict && locationDict.isInQuery) {
+      var distanceFromCenter = (currentLocation) ? GeoFire.distance(currentLocation, _center) : null;
+      _fireCallbacksForKey("key_exited", key, currentLocation, distanceFromCenter);
+    }
+  }
+
+  /**
    * Callback for child added events.
    *
    * @param {Firebase DataSnapshot} locationDataSnapshot A snapshot of the data stored for this location.
@@ -206,12 +224,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         // a key exited event, but a key moved or entered event. These events will be triggered by updates
         // to a different query
         if (!_geohashInSomeQuery(geohash)) {
-          var locationDict = _locations[key];
-          delete _locations[key];
-          if (locationDict && locationDict.isInQuery) {
-            var distanceFromCenter = (location !== null) ? GeoFire.distance(location, _center) : null;
-            _fireCallbacksForKey("key_exited", key, location, distanceFromCenter);
-          }
+          removeLocation(key, location);
         }
       });
     }
