@@ -42,13 +42,13 @@
         center: [lat, lon],
         radius: radius
       });
+
+      geoQuery.on("key_entered", function(key, location, distance) {
+        log(key + " is located " + location + " is within the query (" + distance + " km from center)");
+      });      
     }
 
     log(operation + " a query [" + lat + "," + lon + "] with " + radius + "km radius")
-
-    geoQuery.on("key_entered", function(key, location, distance) {
-      log(key + " is located " + location + " is within the query (" + distance + " km from center)");
-    });
 
     return false;
   });
