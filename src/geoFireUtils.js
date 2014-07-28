@@ -423,7 +423,9 @@ var geohashQueries = function(center, radius) {
  * @param {string} geohash The geohash of the location
  * @return {Object} The location encoded as geofire object
  */
-function encodeGeofireObject(location, geohash) {
+function encodeGeoFireObject(location, geohash) {
+  validateLocation(location);
+  validateGeohash(geohash);
   return {
     "g": geohash,
     "l": location
@@ -436,7 +438,7 @@ function encodeGeofireObject(location, geohash) {
  * @param {Object} geofireObj The location encoded as geofire object
  * @return {array} location The location as [latitude, longitude] pair or null if decoding fails
  */
-function decodeGeofireObject(geofireObj) {
+function decodeGeoFireObject(geofireObj) {
   if (geofireObj !== null && geofireObj.hasOwnProperty("l") && Array.isArray(geofireObj.l) && geofireObj.l.length === 2) {
     return geofireObj.l;
   } else {

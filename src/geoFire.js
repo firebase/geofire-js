@@ -24,7 +24,7 @@ var GeoFire = function(firebaseRef) {
         if (dataSnapshot.val() === null) {
           resolve(null);
         } else {
-          var location = decodeGeofireObject(dataSnapshot.val());
+          var location = decodeGeoFireObject(dataSnapshot.val());
           if (location === null) {
             reject("Error: Not a valid geofire object: " + dataSnapshot.val());
           } else {
@@ -74,12 +74,11 @@ var GeoFire = function(firebaseRef) {
           resolve();
         }
       }
-      // If the new location is null
       if (location === null) {
         _firebaseRef.child(key).remove(onComplete);
       } else {
         var geohash = encodeGeohash(location);
-        _firebaseRef.child(key).setWithPriority(encodeGeofireObject(location, geohash), geohash, onComplete);
+        _firebaseRef.child(key).setWithPriority(encodeGeoFireObject(location, geohash), geohash, onComplete);
       }
     });
   };
