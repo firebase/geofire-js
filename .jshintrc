@@ -2,7 +2,6 @@
   "predef": [
     "module",
     "require",
-    "Firebase",
     "setTimeout",
     "setInterval",
     "clearTimeout",
