@@ -52,38 +52,6 @@ var GeoCallbackRegistration = function(cancelCallback) {
  * @param {Firebase} firebaseRef A Firebase reference where the GeoFire data will be stored.
  */
 var GeoFire = function(firebaseRef) {
-  /*********************/
-  /*  PRIVATE METHODS  */
-  /*********************/
-
-  /**
-   * Returns a promise fulfilled with the location corresponding to the provided key.
-   *
-   * If the key does not exist, the returned promise is fulfilled with null.
-   *
-   * @param {string} key The key whose location should be retrieved.
-   * @return {RSVP.Promise} A promise that is fulfilled with the location of the provided key.
-   */
-  function _getLocation(key) {
-    return new RSVP.Promise(function(resolve, reject) {
-      _firebaseRef.child(key).once("value", function(dataSnapshot) {
-        if (dataSnapshot.val() === null) {
-          resolve(null);
-        } else {
-          var location = decodeGeoFireObject(dataSnapshot.val());
-          if (location === null) {
-            reject("Error: Not a valid geofire object: " + dataSnapshot.val());
-          } else {
-            resolve(location);
-          }
-        }
-      }, function (error) {
-        reject("Error: Firebase synchronization failed: " + error);
-      });
-    });
-  }
-
-
   /********************/
   /*  PUBLIC METHODS  */
   /********************/
@@ -139,8 +107,17 @@ var GeoFire = function(firebaseRef) {
    */
   this.get = function(key) {
     validateKey(key);
-
-    return _getLocation(key);
+    return new RSVP.Promise(function(resolve, reject) {
+      _firebaseRef.child(key).once("value", function(dataSnapshot) {
+        if (dataSnapshot.val() === null) {
+          resolve(null);
+        } else {
+          resolve(decodeGeoFireObject(dataSnapshot.val()));
+        }
+      }, function (error) {
+        reject("Error: Firebase synchronization failed: " + error);
+      });
+    });
   };
 
   /**
@@ -620,11 +597,11 @@ var geohashQueries = function(center, radius) {
 };
 
 /**
- * Encodes a location and geohash as a geofire object
+ * Encodes a location and geohash as a GeoFire object
  *
  * @param {array} location The location as [latitude, longitude] pair.
  * @param {string} geohash The geohash of the location
- * @return {Object} The location encoded as geofire object
+ * @return {Object} The location encoded as GeoFire object
  */
 function encodeGeoFireObject(location, geohash) {
   validateLocation(location);
@@ -636,16 +613,16 @@ function encodeGeoFireObject(location, geohash) {
 }
 
 /**
- * Decodes the location given as geofire object. Returns null if decoding fails
+ * Decodes the location given as GeoFire object. Returns null if decoding fails
  *
- * @param {Object} geofireObj The location encoded as geofire object
+ * @param {Object} geoFireObj The location encoded as GeoFire object
  * @return {array} location The location as [latitude, longitude] pair or null if decoding fails
  */
-function decodeGeoFireObject(geofireObj) {
-  if (geofireObj !== null && geofireObj.hasOwnProperty("l") && Array.isArray(geofireObj.l) && geofireObj.l.length === 2) {
-    return geofireObj.l;
+function decodeGeoFireObject(geoFireObj) {
+  if (geoFireObj !== null && geoFireObj.hasOwnProperty("l") && Array.isArray(geoFireObj.l) && geoFireObj.l.length === 2) {
+    return geoFireObj.l;
   } else {
-    return null;
+    throw new Error("Unexpected GeoFire location object encountered: " + JSON.stringify(geoFireObj));
   }
 }
 
@@ -840,11 +817,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {Firebase DataSnapshot} locationDataSnapshot A snapshot of the data stored for this location.
    */
   function _childAddedCallback(locationDataSnapshot) {
-    var location = decodeGeoFireObject(locationDataSnapshot.val());
-    // Only handle this change if there is no error with the data format
-    if (location !== null) {
-      _updateLocation(locationDataSnapshot.name(), location);
-    }
+    _updateLocation(locationDataSnapshot.name(), decodeGeoFireObject(locationDataSnapshot.val()));
   }
 
   /**
@@ -853,11 +826,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {Firebase DataSnapshot} locationDataSnapshot A snapshot of the data stored for this location.
    */
   function _childChangedCallback(locationDataSnapshot) {
-    var location = decodeGeoFireObject(locationDataSnapshot.val());
-    // Only handle this change if there is no error with the data format
-    if (location !== null) {
-      _updateLocation(locationDataSnapshot.name(), location);
-    }
+    _updateLocation(locationDataSnapshot.name(), decodeGeoFireObject(locationDataSnapshot.val()));
   }
 
   /**
@@ -869,7 +838,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     var key = locationDataSnapshot.name();
     if (_locationsTracked.hasOwnProperty(key)) {
       _firebaseRef.child(key).once("value", function(snapshot) {
-        var location = decodeGeoFireObject(snapshot.val());
+        var location = snapshot.val() === null ? null : decodeGeoFireObject(snapshot.val());
         var geohash = (location !== null) ? encodeGeohash(location) : null;
         // Only notify observers if key is not part of any other geohash query or this actually might not be
         // a key exited event, but a key moved or entered event. These events will be triggered by updates

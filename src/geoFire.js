@@ -6,38 +6,6 @@
  * @param {Firebase} firebaseRef A Firebase reference where the GeoFire data will be stored.
  */
 var GeoFire = function(firebaseRef) {
-  /*********************/
-  /*  PRIVATE METHODS  */
-  /*********************/
-
-  /**
-   * Returns a promise fulfilled with the location corresponding to the provided key.
-   *
-   * If the key does not exist, the returned promise is fulfilled with null.
-   *
-   * @param {string} key The key whose location should be retrieved.
-   * @return {RSVP.Promise} A promise that is fulfilled with the location of the provided key.
-   */
-  function _getLocation(key) {
-    return new RSVP.Promise(function(resolve, reject) {
-      _firebaseRef.child(key).once("value", function(dataSnapshot) {
-        if (dataSnapshot.val() === null) {
-          resolve(null);
-        } else {
-          var location = decodeGeoFireObject(dataSnapshot.val());
-          if (location === null) {
-            reject("Error: Not a valid geofire object: " + dataSnapshot.val());
-          } else {
-            resolve(location);
-          }
-        }
-      }, function (error) {
-        reject("Error: Firebase synchronization failed: " + error);
-      });
-    });
-  }
-
-
   /********************/
   /*  PUBLIC METHODS  */
   /********************/
@@ -93,8 +61,17 @@ var GeoFire = function(firebaseRef) {
    */
   this.get = function(key) {
     validateKey(key);
-
-    return _getLocation(key);
+    return new RSVP.Promise(function(resolve, reject) {
+      _firebaseRef.child(key).once("value", function(dataSnapshot) {
+        if (dataSnapshot.val() === null) {
+          resolve(null);
+        } else {
+          resolve(decodeGeoFireObject(dataSnapshot.val()));
+        }
+      }, function (error) {
+        reject("Error: Firebase synchronization failed: " + error);
+      });
+    });
   };
 
   /**

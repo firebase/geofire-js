@@ -189,11 +189,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {Firebase DataSnapshot} locationDataSnapshot A snapshot of the data stored for this location.
    */
   function _childAddedCallback(locationDataSnapshot) {
-    var location = decodeGeoFireObject(locationDataSnapshot.val());
-    // Only handle this change if there is no error with the data format
-    if (location !== null) {
-      _updateLocation(locationDataSnapshot.name(), location);
-    }
+    _updateLocation(locationDataSnapshot.name(), decodeGeoFireObject(locationDataSnapshot.val()));
   }
 
   /**
@@ -202,11 +198,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {Firebase DataSnapshot} locationDataSnapshot A snapshot of the data stored for this location.
    */
   function _childChangedCallback(locationDataSnapshot) {
-    var location = decodeGeoFireObject(locationDataSnapshot.val());
-    // Only handle this change if there is no error with the data format
-    if (location !== null) {
-      _updateLocation(locationDataSnapshot.name(), location);
-    }
+    _updateLocation(locationDataSnapshot.name(), decodeGeoFireObject(locationDataSnapshot.val()));
   }
 
   /**
@@ -218,7 +210,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     var key = locationDataSnapshot.name();
     if (_locationsTracked.hasOwnProperty(key)) {
       _firebaseRef.child(key).once("value", function(snapshot) {
-        var location = decodeGeoFireObject(snapshot.val());
+        var location = snapshot.val() === null ? null : decodeGeoFireObject(snapshot.val());
         var geohash = (location !== null) ? encodeGeohash(location) : null;
         // Only notify observers if key is not part of any other geohash query or this actually might not be
         // a key exited event, but a key moved or entered event. These events will be triggered by updates

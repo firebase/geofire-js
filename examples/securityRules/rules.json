@@ -1,12 +1,12 @@
 {
   "rules": {
-    "myGeoFire": {
+    "<your-geo-fire-location>": {
       ".read": true,
       ".write": true,
       "$key": {
-        ".validate": "newData.child('g').val() != null && newData.child('l').val() != null && newData.getPriority().length <= 22 && newData.getPriority().length > 0",
+        ".validate": "newData.hasChildren(['g', 'l']) && newData.getPriority().length <= 22 && newData.getPriority().length > 0",
         "g": {
-          ".validate": "newData.isString() && newData.val().length <= 22 && newData.val().length > 0"
+          ".validate": "newData.val() == newData.parent().getPriority()"
         },
         "l": {
           "0" : {

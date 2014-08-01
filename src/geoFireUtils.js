@@ -417,11 +417,11 @@ var geohashQueries = function(center, radius) {
 };
 
 /**
- * Encodes a location and geohash as a geofire object
+ * Encodes a location and geohash as a GeoFire object
  *
  * @param {array} location The location as [latitude, longitude] pair.
  * @param {string} geohash The geohash of the location
- * @return {Object} The location encoded as geofire object
+ * @return {Object} The location encoded as GeoFire object
  */
 function encodeGeoFireObject(location, geohash) {
   validateLocation(location);
@@ -433,15 +433,15 @@ function encodeGeoFireObject(location, geohash) {
 }
 
 /**
- * Decodes the location given as geofire object. Returns null if decoding fails
+ * Decodes the location given as GeoFire object. Returns null if decoding fails
  *
- * @param {Object} geofireObj The location encoded as geofire object
+ * @param {Object} geoFireObj The location encoded as GeoFire object
  * @return {array} location The location as [latitude, longitude] pair or null if decoding fails
  */
-function decodeGeoFireObject(geofireObj) {
-  if (geofireObj !== null && geofireObj.hasOwnProperty("l") && Array.isArray(geofireObj.l) && geofireObj.l.length === 2) {
-    return geofireObj.l;
+function decodeGeoFireObject(geoFireObj) {
+  if (geoFireObj !== null && geoFireObj.hasOwnProperty("l") && Array.isArray(geoFireObj.l) && geoFireObj.l.length === 2) {
+    return geoFireObj.l;
   } else {
-    return null;
+    throw new Error("Unexpected GeoFire location object encountered: " + JSON.stringify(geoFireObj));
   }
 }
