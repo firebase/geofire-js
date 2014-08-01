@@ -8,6 +8,7 @@
 
 // Include RSVP if this is being run in node
 if (typeof module !== "undefined" && typeof process !== "undefined") {
+  var Firebase = require("firebase");
   var RSVP = require("rsvp");
 }
 
