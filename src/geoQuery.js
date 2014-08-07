@@ -66,12 +66,14 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   /**
    * Turns off all callbacks for geo query
    * @param {array} query The geohash query
+   * @param {object} queryState An object storing the current state of the query
    */
-  function _cancelGeohashQuery(query) {
+  function _cancelGeohashQuery(query, queryState) {
     var queryRef = _firebaseRef.startAt(query[0]).endAt(query[1]);
-    queryRef.off("child_added", _childAddedCallback);
-    queryRef.off("child_removed", _childRemovedCallback);
-    queryRef.off("child_changed", _childChangedCallback);
+    queryRef.off("child_added", queryState.childAddedCallback);
+    queryRef.off("child_removed", queryState.childRemovedCallback);
+    queryRef.off("child_changed", queryState.childChangedCallback);
+    queryRef.off("value", queryState.valueCallback);
   }
 
   /**
@@ -80,10 +82,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   function _cleanUpCurrentGeohashesQueried() {
     for (var geohashQueryStr in _currentGeohashesQueried) {
       if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
-        if (_currentGeohashesQueried[geohashQueryStr] === false) {
+        var queryState = _currentGeohashesQueried[geohashQueryStr];
+        if (queryState.active === false) {
           var query = _stringToQuery(geohashQueryStr);
           // Delete the geohash since it should no longer be queried
-          _cancelGeohashQuery(query);
+          _cancelGeohashQuery(query, queryState);
           delete _currentGeohashesQueried[geohashQueryStr];
         }
       }
@@ -259,10 +262,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
         var index = geohashesToQuery.indexOf(geohashQueryStr);
         if (index === -1) {
-          _currentGeohashesQueried[geohashQueryStr] = false;
+          _currentGeohashesQueried[geohashQueryStr].active = false;
         }
         else {
-          _currentGeohashesQueried[geohashQueryStr] = true;
+          _currentGeohashesQueried[geohashQueryStr].active = true;
           geohashesToQuery.splice(index, 1);
         }
       }
@@ -288,21 +291,27 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       // Create the Firebase query
       var firebaseQuery = _firebaseRef.startAt(query[0]).endAt(query[1]);
 
-      // Add the geohash start prefix to the current geohashes queried dictionary and mark it as not
-      // to be un-queried
-      _currentGeohashesQueried[toQueryStr] = true;
-
       // For every new matching geohash, determine if we should fire the "key_entered" event
-      firebaseQuery.on("child_added", _childAddedCallback);
-      firebaseQuery.on("child_removed", _childRemovedCallback);
-      firebaseQuery.on("child_changed", _childChangedCallback);
+      var childAddedCallback = firebaseQuery.on("child_added", _childAddedCallback);
+      var childRemovedCallback = firebaseQuery.on("child_removed", _childRemovedCallback);
+      var childChangedCallback = firebaseQuery.on("child_changed", _childChangedCallback);
 
       // Once the current geohash to query is processed, see if it is the last one to be processed
       // and, if so, mark the value event as fired.
       // Note that Firebase fires the "value" event after every "child_added" event fires.
-      firebaseQuery.once("value", function() {
+      var valueCallback = firebaseQuery.on("value", function() {
+        firebaseQuery.off("value", valueCallback);
         _geohashQueryReadyCallback(toQueryStr);
       });
+
+      // Add the geohash query to the current geohashes queried dictionary and save its state
+      _currentGeohashesQueried[toQueryStr] = {
+        active: true,
+        childAddedCallback: childAddedCallback,
+        childRemovedCallback: childRemovedCallback,
+        childChangedCallback: childChangedCallback,
+        valueCallback: valueCallback
+      };
     });
   }
 
@@ -456,7 +465,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     for (var geohashQueryStr in _currentGeohashesQueried) {
       if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
         var query = _stringToQuery(geohashQueryStr);
-        _cancelGeohashQuery(query);
+        _cancelGeohashQuery(query, _currentGeohashesQueried[geohashQueryStr]);
         delete _currentGeohashesQueried[geohashQueryStr];
       }
     }
@@ -494,7 +503,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   // Note that not all of these are currently within this query
   var _locationsTracked = {};
 
-  // A dictionary of geohash queries which currently have an active "child_added" event callback
+  // A dictionary of geohash queries which currently have an active callbacks
   var _currentGeohashesQueried = {};
 
   // Every ten seconds, clean up the geohashes we are currently querying for. We keep these around
