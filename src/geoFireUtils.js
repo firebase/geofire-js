@@ -80,13 +80,13 @@ var validateLocation = function(location) {
     var latitude = location[0];
     var longitude = location[1];
 
-    if (typeof latitude !== "number") {
+    if (typeof latitude !== "number" || isNaN(latitude)) {
       error = "latitude must be a number";
     }
     else if (latitude < -90 || latitude > 90) {
       error = "latitude must be within the range [-90, 90]";
     }
-    else if (typeof longitude !== "number") {
+    else if (typeof longitude !== "number" || isNaN(longitude)) {
       error = "longitude must be a number";
     }
     else if (longitude < -180 || longitude > 180) {
@@ -158,7 +158,7 @@ var validateCriteria = function(newQueryCriteria, requireCenterAndRadius) {
 
   // Validate the "radius" attribute
   if (typeof newQueryCriteria.radius !== "undefined") {
-    if (typeof newQueryCriteria.radius !== "number") {
+    if (typeof newQueryCriteria.radius !== "number" || isNaN(newQueryCriteria.radius)) {
       throw new Error("radius must be a number");
     }
     else if (newQueryCriteria.radius < 0) {
@@ -174,7 +174,7 @@ var validateCriteria = function(newQueryCriteria, requireCenterAndRadius) {
  * @return {number} The number of radians equal to the inputted number of degrees.
  */
 var degreesToRadians = function(degrees) {
-  if (typeof degrees !== "number") {
+  if (typeof degrees !== "number" || isNaN(degrees)) {
     throw new Error("Error: degrees must be a number");
   }
 
@@ -194,7 +194,7 @@ var degreesToRadians = function(degrees) {
 var encodeGeohash = function(location, precision) {
   validateLocation(location);
   if (typeof precision !== "undefined") {
-    if (typeof precision !== "number") {
+    if (typeof precision !== "number" || isNaN(precision)) {
       throw new Error("precision must be a number");
     }
     else if (precision <= 0) {
