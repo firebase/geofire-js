@@ -1,6 +1,10 @@
 (function() {
   // Generate a random Firebase location
-  var firebaseRef = new Firebase("https://" + generateRandomString(10) + ".firebaseio-demo.com/");
+  var firebaseUrl = "https://" + generateRandomString(10) + ".firebaseio-demo.com/";
+  var firebaseRef = new Firebase(firebaseUrl);
+
+  // Set the URL of the link element to be the Firebase URL
+  document.getElementById("firebaseRef").setAttribute("href", firebaseUrl);
 
   // Create a new GeoFire instance at the random Firebase location
   var geoFire = new GeoFire(firebaseRef);

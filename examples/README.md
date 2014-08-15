@@ -37,6 +37,16 @@ event has fired.
 
 You can check out a live demo of this example [here](https://geofire.firebaseapp.com/fish3/index.html).
 
+## [html5Geolocation - HTML5 Geolocation API](https://geofire.firebaseapp.com/html5Geolocation/index.html)
+
+The [HTML5 Geolocation API](http://diveintohtml5.info/geolocation.html) allows you
+to get the current location of the person who is viewing your site. This demo shows
+how to use it to add their location to GeoFire. In addition, the examples uses
+Firebase's `onDisconnect()` method to remove their location from GeoFire when they
+leave the page (or close the app).
+
+You can check out a live demo of this example [here](https://geofire.firebaseapp.com/html5Geolocation/index.html).
+
 ## [securityRules - Security Rules](https://geofire.firebaseapp.com/securityRules/rules.json)
 
 This example is just a `rules.json` file which contains some security rules you
@@ -51,15 +61,14 @@ You can check out the example rules.json file [here](https://geofire.firebaseapp
 
 This is a fully-featured, complex example which combines GeoFire, Google Maps,
 and the [Firebase Transit Open Data Set](https://www.firebase.com/docs/data/real-time-transit-data.html).
-Firebase provides a public Firebase
-which contains the realtime locations of public transit vehicles in several major US cities, including
-San Francisco MUNI. The data set also contains GeoFire data for each vehicle which we used to create this
-demo.
+Firebase provides a public Firebase which contains the realtime locations of public
+transit vehicles in several major US cities, including San Francisco MUNI. The data
+set also contains GeoFire data for each vehicle which we used to create this demo.
 
 Drag around the purple circle to the left to see the vehicles which are currently within its radius. The
 results update in realtime as you move the circle and as vehicles travel around the city. GeoFire handles all
 of the hard work, telling you exactly when vehicles enter and exit the circle. It also selectively loads
 only the data geographically close to the circle, meaning GeoFire data for buses in New York or Chicago are not
-loaded into memory unecessarily.
+loaded into memory unnecessarily.
 
 You can check out a live demo of this example [here](https://geofire.firebaseapp.com/sfVehicles/index.html).
