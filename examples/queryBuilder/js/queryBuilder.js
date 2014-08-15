@@ -2,14 +2,15 @@
   // Generate a random Firebase location
   var firebaseUrl = "https://" + generateRandomString(10) + ".firebaseio-demo.com/";
   var firebaseRef = new Firebase(firebaseUrl);
+
+  // Set the URL of the link element to be the Firebase URL
+  document.getElementById("firebaseRef").setAttribute("href", firebaseUrl);
+
+  // Create a new GeoFire instance at the random Firebase location
   var geoFire = new GeoFire(firebaseRef);
   var geoQuery;
 
-  // Feel free to watch items being added in Firebase
-  $("#firebaseUrl").html("Observe Firebase in realtime at <a href='" + firebaseUrl + "'>" + firebaseUrl + "</a>");
-
   $("#addfish").on("submit", function() {
-
     var lat = parseFloat($("#addlat").val());
     var lon = parseFloat($("#addlon").val());
     var myID = "fish-" + generateRandomString(10);
@@ -19,7 +20,7 @@
     });
 
     return false;
-  });  
+  });
 
   $("#queryfish").on("submit", function() {
     var lat = parseFloat($("#querylat").val());
@@ -27,8 +28,8 @@
     var radius = parseFloat($("#queryradius").val());
     var operation;
 
-    if(geoQuery != null) {
-      operation = "updating";
+    if (typeof geoQuery !== "undefined") {
+      operation = "Updating";
 
       geoQuery.updateCriteria({
         center: [lat, lon],
@@ -36,7 +37,7 @@
       });
 
     } else {
-      operation = "creating";
+      operation = "Creating";
 
       geoQuery = geoFire.query({
         center: [lat, lon],
@@ -44,11 +45,16 @@
       });
 
       geoQuery.on("key_entered", function(key, location, distance) {
-        log(key + " is located " + location + " is within the query (" + distance + " km from center)");
-      });      
+        log(key + " is located at [" + location + "] which is within the query (" + distance.toFixed(2) + " km from center)");
+      });
+
+      geoQuery.on("key_exited", function(key, location, distance) {
+        console.log(key, location, distance);
+        log(key + " is located at [" + location + "] which is no longer within the query (" + distance.toFixed(2) + " km from center)");
+      });
     }
 
-    log(operation + " a query [" + lat + "," + lon + "] with " + radius + "km radius")
+    log(operation + " the query: centered at [" + lat + "," + lon + "] with radius of " + radius + "km")
 
     return false;
   });

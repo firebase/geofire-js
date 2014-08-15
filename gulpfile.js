@@ -82,6 +82,7 @@ gulp.task("scripts", function() {
     .pipe(gulp.dest("examples/fish2/js/vendor/"))
     .pipe(gulp.dest("examples/fish3/js/vendor/"))
     .pipe(gulp.dest("examples/sfVehicles/js/vendor/"))
+    .pipe(gulp.dest("examples/queryBuilder/js/vendor/"))
     .pipe(gulp.dest("examples/html5Geolocation/js/vendor/"));
 });
 

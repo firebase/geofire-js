@@ -47,6 +47,14 @@ leave the page (or close the app).
 
 You can check out a live demo of this example [here](https://geofire.firebaseapp.com/html5Geolocation/index.html).
 
+## [queryBuilder - Build a Custom GeoQuery](https://geofire.firebaseapp.com/queryBuilder/index.html)
+
+This demo allows you to build custom `GeoQuery` objects and see when fish enter and
+leave the query as it gets updated. Thanks to [@stefek99](https://github.com/stefek99)
+for the contribution!
+
+You can check out a live demo of this example [here](https://geofire.firebaseapp.com/queryBuilder/index.html).
+
 ## [securityRules - Security Rules](https://geofire.firebaseapp.com/securityRules/rules.json)
 
 This example is just a `rules.json` file which contains some security rules you

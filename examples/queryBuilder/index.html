@@ -4,10 +4,10 @@
     <title>Adding and querying example</title>
 
     <!-- jQuery -->
-    <script src="js/vendor/jquery-1.11.1.min.js"></script>    
+    <script src="js/vendor/jquery-1.11.1.min.js"></script>
 
     <!-- Firebase -->
-    <script src="js/vendor/firebase.js"></script>
+    <script src="https://cdn.firebase.com/js/client/1.0.18/firebase.js"></script>
 
     <!-- RSVP -->
     <script src="js/vendor/rsvp.min.js"></script>
@@ -23,9 +23,11 @@
   </head>
 
   <body>
+    <!-- Firebase ref -->
+    <p style="font-weight: bold;">GeoFire data for this example can be found <a id="firebaseRef" href="#" target="_blank">here</a></p>
 
-    <!-- Handy link to Firebase data -->
-    <p id="firebaseUrl"/> 
+    <!-- Contribution -->
+    <p>Contributed by <a id="firebaseRef" href="https://github.com/stefek99" target="_blank">@stefek99</a></p>
 
     <!-- Add fish  -->
     <form id="addfish">
@@ -36,7 +38,7 @@
         Lon: <input id="addlon" type="number" step="any" min="-180" max="180" required>
       </label>
       <input type="submit" value="add fish">
-    </form>    
+    </form>
 
     <!-- Query fish  -->
     <form id="queryfish">
@@ -45,7 +47,7 @@
       </label>
       <label>
         Lon: <input id="querylon" type="number" step="any" min="-180" max="180" required>
-      </label>      
+      </label>
       <label>
         Radius: <input id="queryradius" type="number" step="any" min="0" max="40000" required>
       </label>
