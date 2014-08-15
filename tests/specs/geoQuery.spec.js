@@ -1204,6 +1204,38 @@ describe("GeoQuery Tests:", function() {
         cl.x("p4");
       });
     });
+
+    it ("location moving between geohash queries triggers a key_moved", function(done) {
+      var cl = new Checklist(["loc1 entered", "loc2 entered", "p1", "loc1 moved", "loc2 moved", "p2"], expect, done);
+
+      geoQueries.push(geoFire.query({center: [0,0], radius: 1000}));
+
+      geoQueries[0].on("key_entered", function(key, location, distance) {
+        cl.x(key + " entered");
+      });
+      geoQueries[0].on("key_exited", function(key, location, distance) {
+        cl.x(key + " exited");
+      });
+      geoQueries[0].on("key_moved", function(key, location, distance) {
+        cl.x(key + " moved");
+      });
+
+      batchSet([
+        {key: "loc1", location: [-1, -1]},
+        {key: "loc2", location: [1, 1]},
+      ]).then(function() {
+        cl.x("p1");
+
+        return batchSet([
+          {key: "loc1", location: [1, 1]},
+          {key: "loc2", location: [-1, -1]}
+        ]);
+      }).then(function() {
+        cl.x("p2");
+
+        return wait(100);
+      });
+    });
   });
 
   describe("Cancelling GeoQuery:", function() {

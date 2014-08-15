@@ -81,7 +81,8 @@ gulp.task("scripts", function() {
     .pipe(gulp.dest("examples/fish1/js/vendor/"))
     .pipe(gulp.dest("examples/fish2/js/vendor/"))
     .pipe(gulp.dest("examples/fish3/js/vendor/"))
-    .pipe(gulp.dest("examples/sfVehicles/js/vendor/"));
+    .pipe(gulp.dest("examples/sfVehicles/js/vendor/"))
+    .pipe(gulp.dest("examples/html5Geolocation/js/vendor/"));
 });
 
 /* Uses the Karma test runner to run the Jasmine tests */

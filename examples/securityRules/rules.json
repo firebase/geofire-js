@@ -1,17 +1,14 @@
 {
   "rules": {
-    "myGeoFire": {
-      "i": {
-        ".read": true,
-        "$geohashkey": {
-          ".write": true,
-          ".validate": "newData.val() == true"
-        }
-      },
-      "l": {
-        "$key": {
-          ".read": true,
-          ".write": true,
+    "<your-geo-fire-location>": {
+      ".read": true,
+      ".write": true,
+      "$key": {
+        ".validate": "newData.hasChildren(['g', 'l']) && newData.getPriority().length <= 22 && newData.getPriority().length > 0",
+        "g": {
+          ".validate": "newData.val() == newData.parent().getPriority()"
+        },
+        "l": {
           "0" : {
             ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
           },
@@ -21,6 +18,9 @@
           "$other": {
             ".validate": false
           }
+        },
+        "$other": {
+          ".validate": false
         }
       }
     }
