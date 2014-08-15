@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Adding and querying example</title>
+
+    <!-- jQuery -->
+    <script src="js/vendor/jquery-1.11.1.min.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://cdn.firebase.com/js/client/1.0.18/firebase.js"></script>
+
+    <!-- RSVP -->
+    <script src="js/vendor/rsvp.min.js"></script>
+
+    <!-- GeoFire -->
+    <script src="js/vendor/geofire.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="js/queryBuilder.js" defer></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/queryBuilder.css">
+  </head>
+
+  <body>
+    <!-- Firebase ref -->
+    <p style="font-weight: bold;">GeoFire data for this example can be found <a id="firebaseRef" href="#" target="_blank">here</a></p>
+
+    <!-- Contribution -->
+    <p>Contributed by <a id="firebaseRef" href="https://github.com/stefek99" target="_blank">@stefek99</a></p>
+
+    <!-- Add fish  -->
+    <form id="addfish">
+      <label>
+        Lat: <input id="addlat" type="number" step="any" min="-90" max="90" required>
+      </label>
+      <label>
+        Lon: <input id="addlon" type="number" step="any" min="-180" max="180" required>
+      </label>
+      <input type="submit" value="add fish">
+    </form>
+
+    <!-- Query fish  -->
+    <form id="queryfish">
+      <label>
+        Lat: <input id="querylat" type="number" step="any" min="-90" max="90" required>
+      </label>
+      <label>
+        Lon: <input id="querylon" type="number" step="any" min="-180" max="180" required>
+      </label>
+      <label>
+        Radius: <input id="queryradius" type="number" step="any" min="0" max="40000" required>
+      </label>
+      <input type="submit" value="query">
+    </form>
+
+    <!-- Message log -->
+    <div id="log"></div>
+  </body>
+</html>
