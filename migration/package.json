@@ -1,0 +1,10 @@
+{
+  "name": "geofire-migration",
+  "description": "Migrates GeoFire v2 datasets to v3",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "rsvp": "3.0.9",
+    "firebase": "1.0.x"
+  }
+}

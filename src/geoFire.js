@@ -6,120 +6,6 @@
  * @param {Firebase} firebaseRef A Firebase reference where the GeoFire data will be stored.
  */
 var GeoFire = function(firebaseRef) {
-  /*********************/
-  /*  PRIVATE METHODS  */
-  /*********************/
-  /**
-   * Returns a promise that is fulfilled after the provided key's previous location has been removed
-   * from the /indices/ node in Firebase.
-   *
-   * If the provided key's previous location is the same as its new location, Firebase is not updated.
-   *
-   * @param {string} key The key of the location to add.
-   * @param {array} location The provided key's new [latitude, longitude] pair.
-   * @return {RSVP.Promise} A promise that is fulfilled when the write is over.
-   */
-  function _removePreviousIndex(key, location) {
-    return new RSVP.Promise(function(resolve, reject) {
-      _firebaseRef.child("l/" + key).once("value", function(locationsChildSnapshot) {
-        // If the key is not in GeoFire, there is no old index to remove
-        var previousLocation = locationsChildSnapshot.val();
-        if (previousLocation === null) {
-          resolve(location !== null);
-        }
-        else {
-          // If the location is not changing, there is no need to do anything
-          if (location !== null && location[0] === previousLocation[0] && location[1] === previousLocation[1]) {
-            resolve(false);
-          }
-
-          // Otherwise, overwrite the previous index
-          else {
-            _firebaseRef.child("i/" + encodeGeohash(previousLocation, g_GEOHASH_PRECISION) + ":" + key).remove(function(error) {
-              if (error) {
-                reject("Error: Firebase synchronization failed: " + error);
-              }
-              else {
-                resolve(true);
-              }
-            });
-          }
-        }
-      }, function(error) {
-        reject("Error: Firebase synchronization failed: " + error);
-      });
-    });
-  }
-
-  /**
-   * Returns a promise that is fulfilled after the provided key-location pair has been added to the
-   * /locations/ node in Firebase.
-   *
-   * @param {string} key The key of the location to add.
-   * @param {array} location The provided key's new [latitude, longitude] pair.
-   * @return {RSVP.Promise} A promise that is fulfilled when the write is over.
-   */
-  function _updateLocationsNode(key, location) {
-    return new RSVP.Promise(function(resolve, reject) {
-      _firebaseRef.child("l/" + key).set(location, function(error) {
-        if (error) {
-          reject("Error: Firebase synchronization failed: " + error);
-        }
-        else {
-          resolve();
-        }
-      });
-    });
-  }
-
-  /**
-   * Returns a promise that is fulfilled after provided key-location pair has been added to the
-   * /indices/ node in Firebase.
-   *
-   * If the provided location is null, Firebase is not updated.
-   *
-   * @param {string} key The key of the location to add.
-   * @param {array} location The provided key's new [latitude, longitude] pair.
-   * @return {RSVP.Promise} A promise that is fulfilled when the write is over.
-   */
-  function _updateIndicesNode(key, location) {
-    return new RSVP.Promise(function(resolve, reject) {
-      // If the new location is null, there is no need to update it
-      if (location === null) {
-        resolve();
-      }
-      else {
-        _firebaseRef.child("i/" + encodeGeohash(location, g_GEOHASH_PRECISION) + ":" + key).set(true, function(error) {
-          if (error) {
-            reject("Error: Firebase synchronization failed: " + error);
-          }
-          else {
-            resolve();
-          }
-        });
-      }
-    });
-  }
-
-  /**
-   * Returns a promise fulfilled with the location corresponding to the provided key.
-   *
-   * If the key does not exist, the returned promise is fulfilled with null.
-   *
-   * @param {string} key The key whose location should be retrieved.
-   * @return {RSVP.Promise} A promise that is fulfilled with the location of the provided key.
-   */
-  function _getLocation(key) {
-    return new RSVP.Promise(function(resolve, reject) {
-      _firebaseRef.child("l/" + key).once("value", function(dataSnapshot) {
-        resolve(dataSnapshot.val());
-      }, function(error) {
-        reject("Error: Firebase synchronization failed: " + error);
-      });
-    });
-  }
-
-
   /********************/
   /*  PUBLIC METHODS  */
   /********************/
@@ -147,14 +33,20 @@ var GeoFire = function(firebaseRef) {
       // Setting location to null is valid since it will remove the key
       validateLocation(location);
     }
-
-    return _removePreviousIndex(key, location).then(function(locationChanged) {
-      // If the location has actually changed, update Firebase; otherwise, just return an empty promise
-      if (locationChanged === true) {
-        return new RSVP.all([_updateLocationsNode(key, location), _updateIndicesNode(key, location)]);
+    return new RSVP.Promise(function(resolve, reject) {
+      function onComplete(error) {
+        if (error) {
+          reject("Error: Firebase synchronization failed: " + error);
+        }
+        else {
+          resolve();
+        }
       }
-      else {
-        return new RSVP.Promise(function(resolve) { resolve(); });
+      if (location === null) {
+        _firebaseRef.child(key).remove(onComplete);
+      } else {
+        var geohash = encodeGeohash(location);
+        _firebaseRef.child(key).setWithPriority(encodeGeoFireObject(location, geohash), geohash, onComplete);
       }
     });
   };
@@ -169,8 +61,17 @@ var GeoFire = function(firebaseRef) {
    */
   this.get = function(key) {
     validateKey(key);
-
-    return _getLocation(key);
+    return new RSVP.Promise(function(resolve, reject) {
+      _firebaseRef.child(key).once("value", function(dataSnapshot) {
+        if (dataSnapshot.val() === null) {
+          resolve(null);
+        } else {
+          resolve(decodeGeoFireObject(dataSnapshot.val()));
+        }
+      }, function (error) {
+        reject("Error: Firebase synchronization failed: " + error);
+      });
+    });
   };
 
   /**
