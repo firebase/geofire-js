@@ -25,6 +25,20 @@ and view the code for each of them in the [examples directory](./examples/) of t
 The examples cover some of the common use cases for GeoFire and explain how to protect your data
 using security rules.
 
+## Upgrading from GeoFire 2.x to 3.x
+
+GeoFire 3.x has the same API as 2.x but uses a different underlying data structure to store its
+location data. In order to upgrade to 3.x, you must run the
+[GeoFire 3.x migration script](https://github.com/firebase/geofire/blob/master/migration/migrateToV3.js)
+on your Firebase. This Node.js script only needs to be run one time and should take only a few seconds
+to minutes depending on the size of your data. To run the script, copy the files in this repo's
+`/migration/` folder to your machine and run the following commands:
+
+```bash
+$ npm install        # install local npm dependencies
+$ node migrateToV3   # display usage instructions
+```
+
 ## Downloading GeoFire
 
 In order to use GeoFire in your project, you need to include the following files in your HTML:
