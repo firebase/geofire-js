@@ -1,18 +1,34 @@
-# GeoFire — Realtime location queries with Firebase
+# GeoFire for JavaScript — Realtime location queries with Firebase
 
 [![Build Status](https://travis-ci.org/firebase/geofire.svg)](https://travis-ci.org/firebase/geofire)
 [![Version](https://badge.fury.io/gh/firebase%2Fgeofire.svg)](http://badge.fury.io/gh/firebase%2Fgeofire)
 
-GeoFire is an open-source JavaScript library that allows you to store and query a set
-of items based on their geographic location.
+GeoFire is an open-source library that allows you to store and query a set of keys based on their
+geographic location. At its heart, GeoFire simply stores locations with string keys. Its main
+benefit, however, is the possibility of retrieving only those keys within a given geographic area
+- all in realtime.
 
-GeoFire uses [Firebase](https://www.firebase.com/) for data
-storage, allowing query results to be updated in realtime as they change.
-GeoFire does more than just measure the distance between locations; *it
-selectively loads only the data near certain locations, keeping your
-applications light and responsive*, even with extremely large datasets.
+GeoFire uses [Firebase](https://www.firebase.com/) for data storage, allowing query results to be
+updated in realtime as they change. GeoFire *selectively loads only the data near certain
+locations, keeping your applications light and responsive*, even with extremely large datasets.
 
-## Live Examples
+### Integrating GeoFire with your data
+
+GeoFire is designed as a lightweight add-on to Firebase. To keep things simple, GeoFire stores data
+in its own format and its own location within your Firebase. This allows your existing data format
+and security rules to remain unchanged while still providing you with an easy solution for geo
+queries.
+
+#### Example Usage
+
+Assume you are building an app to rate bars and you store all information for a bar, e.g. name,
+business hours and price range, at `/bars/<bar-id>`. Later, you want to add the possibility for
+users to search for bars in their vicinity. This is where GeoFire comes in. You can store the
+location for each bar using GeoFire, using the bar IDs as GeoFire keys. GeoFire then allows you to
+easily query which bar IDs (the keys) are nearby. To display any additional information about the
+bars, you can load the information for each bar returned by the query at `/bars/<bar-id>`.
+
+## Live Demos
 
 To see GeoFire in action, you can [play around with our fully-featured demo](https://geofire.firebaseapp.com/sfVehicles/index.html). (Drag the purple circle!)
 This demo maps all of the San Francisco MUNI vehicles within a certain search radius. You can
