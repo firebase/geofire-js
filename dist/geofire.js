@@ -1,5 +1,5 @@
-/*! GeoFire is a JavaScript library that allows you to store and query a set of
- *   keys based on their geographic location. GeoFire uses Firebase for data
+/*!  GeoFire is a JavaScript library that allows you to store and query a set
+ *   of keys based on their geographic location. GeoFire uses Firebase for data
  *   storage, allowing query results to be updated in realtime as they change.
  *
  *   GeoFire 3.0.0
