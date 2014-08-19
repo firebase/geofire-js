@@ -5,8 +5,7 @@
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
 // Get a reference to a random demo Firebase
-var demoFirebaseUrl = "https://" + generateRandomString() + ".firebaseio-demo.com";
-console.log(demoFirebaseUrl);
+var demoFirebaseUrl = "https://geofire.firebaseio-demo.com";
 
 // Define examples of valid and invalid parameters
 var invalidFirebaseRefs = [null, undefined, NaN, true, false, [], {}, 0, 5, "", "a", {a:1}, ["hi", 1]];

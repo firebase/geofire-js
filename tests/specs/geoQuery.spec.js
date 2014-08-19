@@ -10,8 +10,6 @@ describe("GeoQuery Tests:", function() {
 
   describe("Constructor:", function() {
     it("Constructor stores query criteria", function() {
-      console.log("!!!!!  GeoQuery Tests  !!!!!");
-
       geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
       expect(geoQueries[0].center()).toEqual([1,2]);

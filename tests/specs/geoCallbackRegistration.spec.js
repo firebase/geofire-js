@@ -10,8 +10,6 @@ describe("GeoCallbackRegistration Tests:", function() {
 
   describe("Constructor:", function() {
     it("Constructor throws error given non-function", function() {
-      console.log("!!!!!  GeoCallbackRegistration Tests  !!!!!");
-
       var createCallbackRegistration = function() {
         GeoCallbackRegistration("nonFunction");
       }
