@@ -1,6 +1,6 @@
 v3.0.0
 -------------
-Release Date: 2014-08-15
+Release Date: 2014-08-19
 
   * __NOTE: GeoFire 3.0 is not compatible with GeoFire 2.x and has been upgraded to be compatible with GeoFire for Java and Objective-C.__
   * Created migration script to update GeoFire index from version 2.x to 3.0.
