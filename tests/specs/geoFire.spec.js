@@ -10,8 +10,6 @@ describe("GeoFire Tests:", function() {
 
   describe("Constructor:", function() {
     it("Constructor throws errors given invalid Firebase references", function() {
-      console.log("!!!!!  GeoFire Tests  !!!!!");
-
       invalidFirebaseRefs.forEach(function(invalidFirebaseRef) {
         expect(function() { new GeoFire(invalidFirebaseRef); }).toThrow();
       });

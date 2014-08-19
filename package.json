@@ -37,18 +37,19 @@
     "rsvp": "~3.0.9"
   },
   "devDependencies": {
+    "gulp": "^3.5.6",
+    "gulp-concat": "^2.2.0",
+    "gulp-ext-replace": "0.0.5",
+    "gulp-jshint": "^1.5.1",
+    "gulp-karma": "0.0.4",
+    "gulp-uglify": "^0.2.1",
+    "jshint-stylish": "^0.2.0",
     "karma": "^0.12.9",
-    "karma-jasmine": "~0.2.0",
     "karma-coverage": "^0.2.4",
     "karma-failed-reporter": "0.0.2",
+    "karma-jasmine": "~0.2.0",
     "karma-phantomjs-launcher": "~0.1.4",
-    "gulp": "^3.5.6",
-    "gulp-karma": "0.0.4",
-    "gulp-concat": "^2.2.0",
-    "gulp-uglify": "^0.2.1",
-    "gulp-jshint": "^1.5.1",
-    "gulp-ext-replace": "0.0.5",
-    "jshint-stylish": "^0.2.0",
+    "karma-spec-reporter": "0.0.13",
     "streamqueue": "0.0.5"
   },
   "scripts": {
