@@ -69,7 +69,9 @@ gulp.task("scripts", function() {
     .pipe(gulp.dest(paths.scripts.dest.dir))
 
     // Minify
-    .pipe(uglify())
+    .pipe(uglify({
+      preserveComments: "some"
+    }))
 
     // Rename file
     .pipe(concat(paths.scripts.dest.files.minified))
