@@ -1,7 +1,6 @@
 describe("geoFireUtils Tests:", function() {
   describe("Parameter validation:", function() {
     it("validateKey() does not throw errors given valid keys", function() {
-      console.log("!!!!!  geoFireUtils Tests  !!!!!");
       validKeys.forEach(function(validKey) {
         expect(function() { validateKey(validKey); }).not.toThrow();
       });

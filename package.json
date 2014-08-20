@@ -1,7 +1,7 @@
 {
   "name": "geofire",
   "description": "Location-based querying and filtering using Firebase",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "author": "Firebase <support@firebase.com> (https://www.firebase.com/)",
   "homepage": "https://github.com/firebase/geofire/",
   "repository": {
@@ -37,20 +37,21 @@
     "rsvp": "~3.0.9"
   },
   "devDependencies": {
-    "karma": "^0.12.9",
-    "karma-jasmine": "~0.2.0",
-    "karma-coverage": "^0.2.4",
-    "karma-failed-reporter": "0.0.2",
-    "karma-phantomjs-launcher": "~0.1.4",
     "gulp": "^3.5.6",
-    "gulp-karma": "0.0.4",
     "gulp-concat": "^2.2.0",
-    "gulp-uglify": "^0.2.1",
-    "gulp-jshint": "^1.5.1",
     "gulp-ext-replace": "0.0.5",
+    "gulp-jshint": "^1.5.1",
+    "gulp-karma": "0.0.4",
+    "gulp-uglify": "^0.2.1",
     "jshint-stylish": "^0.2.0",
     "streamqueue": "0.0.5",
-    "coveralls": "^2.11.1"
+    "coveralls": "^2.11.1",
+    "karma": "^0.12.9",
+    "karma-coverage": "^0.2.4",
+    "karma-failed-reporter": "0.0.2",
+    "karma-jasmine": "~0.2.0",
+    "karma-phantomjs-launcher": "~0.1.4",
+    "karma-spec-reporter": "0.0.13"
   },
   "scripts": {
     "test": "gulp test"

@@ -1,18 +1,34 @@
-# GeoFire — Realtime location queries with Firebase
+# GeoFire for JavaScript — Realtime location queries with Firebase
 
 [![Build Status](https://travis-ci.org/firebase/geofire.svg)](https://travis-ci.org/firebase/geofire)
 [![Version](https://badge.fury.io/gh/firebase%2Fgeofire.svg)](http://badge.fury.io/gh/firebase%2Fgeofire)
 
-GeoFire is an open-source JavaScript library that allows you to store and query a set
-of items based on their geographic location.
+GeoFire is an open-source library that allows you to store and query a set of keys based on their
+geographic location. At its heart, GeoFire simply stores locations with string keys. Its main
+benefit, however, is the possibility of retrieving only those keys within a given geographic
+area - all in realtime.
 
-GeoFire uses [Firebase](https://www.firebase.com/) for data
-storage, allowing query results to be updated in realtime as they change.
-GeoFire does more than just measure the distance between locations; *it
-selectively loads only the data near certain locations, keeping your
-applications light and responsive*, even with extremely large datasets.
+GeoFire uses [Firebase](https://www.firebase.com/) for data storage, allowing query results to be
+updated in realtime as they change. GeoFire *selectively loads only the data near certain
+locations, keeping your applications light and responsive*, even with extremely large datasets.
 
-## Live Examples
+### Integrating GeoFire with your data
+
+GeoFire is designed as a lightweight add-on to Firebase. To keep things simple, GeoFire stores data
+in its own format and its own location within your Firebase. This allows your existing data format
+and security rules to remain unchanged while still providing you with an easy solution for geo
+queries.
+
+#### Example Usage
+
+Assume you are building an app to rate bars and you store all information for a bar, e.g. name,
+business hours and price range, at `/bars/<bar-id>`. Later, you want to add the possibility for
+users to search for bars in their vicinity. This is where GeoFire comes in. You can store the
+location for each bar using GeoFire, using the bar IDs as GeoFire keys. GeoFire then allows you to
+easily query which bar IDs (the keys) are nearby. To display any additional information about the
+bars, you can load the information for each bar returned by the query at `/bars/<bar-id>`.
+
+## Live Demos
 
 To see GeoFire in action, you can [play around with our fully-featured demo](https://geofire.firebaseapp.com/sfVehicles/index.html). (Drag the purple circle!)
 This demo maps all of the San Francisco MUNI vehicles within a certain search radius. You can
@@ -25,6 +41,20 @@ and view the code for each of them in the [examples directory](./examples/) of t
 The examples cover some of the common use cases for GeoFire and explain how to protect your data
 using security rules.
 
+## Upgrading from GeoFire 2.x to 3.x
+
+GeoFire 3.x has the same API as 2.x but uses a different underlying data structure to store its
+location data. If you are currently using 2.x and want to upgrade to 3.x, you must run the
+[GeoFire 3.x migration script](https://github.com/firebase/geofire/blob/master/migration/migrateToV3.js)
+on your Firebase. This Node.js script only needs to be run one time and should take only a few seconds
+to minutes depending on the size of your data. To run the script, copy the files in this repo's
+`/migration/` folder to your machine and run the following commands:
+
+```bash
+$ npm install           # install local npm dependencies
+$ node migrateToV3.js   # display usage instructions
+```
+
 ## Downloading GeoFire
 
 In order to use GeoFire in your project, you need to include the following files in your HTML:
@@ -34,10 +64,10 @@ In order to use GeoFire in your project, you need to include the following files
 <script src="rsvp.min.js"></script>
 
 <!-- Firebase -->
-<script src="https://cdn.firebase.com/js/client/1.0.17/firebase.js"></script>
+<script src="https://cdn.firebase.com/js/client/1.0.19/firebase.js"></script>
 
 <!-- GeoFire -->
-<script src="https://cdn.firebase.com/libs/geofire/2.1.1/geofire.min.js"></script>
+<script src="https://cdn.firebase.com/libs/geofire/3.0.0/geofire.min.js"></script>
 ```
 
 Use the URL above to download both the minified and non-minified versions of GeoFire from the Firebase CDN. You can also download them from the

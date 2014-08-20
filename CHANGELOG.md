@@ -1,3 +1,14 @@
+v3.0.0
+-------------
+Release Date: 2014-08-19
+
+  * __NOTE: GeoFire 3.0 is not compatible with GeoFire 2.x and has been upgraded to be compatible with GeoFire for Java and Objective-C.__
+  * Created migration script to update GeoFire index from version 2.x to 3.0.
+  * Simplified underlying data structure used to improve performance and memory usage.
+  * Fixed issue with missing Firebase dependency when run in Node.js.
+  * Added better error handling for `NaN` inputs.
+  * Added HTML5 geolocation and query builder examples.
+
 v2.1.1
 -------------
 Release Date: 2014-07-14
