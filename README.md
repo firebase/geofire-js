@@ -8,7 +8,7 @@ geographic location. At its heart, GeoFire simply stores locations with string k
 benefit, however, is the possibility of retrieving only those keys within a given geographic
 area - all in realtime.
 
-GeoFire uses [Firebase](https://www.firebase.com/) for data storage, allowing query results to be
+GeoFire uses [Firebase](https://www.firebase.com/?utm_source=geofire-js) for data storage, allowing query results to be
 updated in realtime as they change. GeoFire *selectively loads only the data near certain
 locations, keeping your applications light and responsive*, even with extremely large datasets.
 
@@ -71,7 +71,7 @@ In order to use GeoFire in your project, you need to include the following files
 ```
 
 Use the URL above to download both the minified and non-minified versions of GeoFire from the Firebase CDN. You can also download them from the
-`/dist/` directory of this GitHub repository. [Firebase](https://www.firebase.com/docs/web-quickstart.html)
+`/dist/` directory of this GitHub repository. [Firebase](https://www.firebase.com/docs/web-quickstart.html?utm_source=geofire-js)
 and [RSVP](https://github.com/tildeio/rsvp.js/) can be downloaded directly from their respective websites.
 
 You can also install GeoFire via npm or Bower and the dependencies will be downloaded automatically:
@@ -86,7 +86,7 @@ $ bower install geofire --save
 
 ## Getting Started with Firebase
 
-GeoFire requires Firebase in order to store location data. You can [sign up here](https://www.firebase.com/signup/) for a free account.
+GeoFire requires Firebase in order to store location data. You can [sign up here](https://www.firebase.com/signup/?utm_source=geofire-js) for a free account.
 
 ## API Reference
 
@@ -126,7 +126,7 @@ value. `location` must have the form `[latitude, longitude]`.
 
 Returns a promise which is fulfilled when the new location has been synchronized with the Firebase servers.
 
-`key` must be a string and a [valid Firebase key name](https://www.firebase.com/docs/creating-references.html)
+`key` must be a string and a [valid Firebase key name](https://www.firebase.com/docs/creating-references.html?utm_source=geofire-js)
 
 ```JavaScript
 geoFire.set("some_key", [37.79, -122.41]).then(function() {
