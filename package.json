@@ -49,7 +49,8 @@
     "gulp-jshint": "^1.5.1",
     "gulp-ext-replace": "0.0.5",
     "jshint-stylish": "^0.2.0",
-    "streamqueue": "0.0.5"
+    "streamqueue": "0.0.5",
+    "coveralls": "^2.11.1"
   },
   "scripts": {
     "test": "gulp test"
