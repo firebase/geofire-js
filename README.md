@@ -13,6 +13,9 @@ GeoFire uses [Firebase](https://www.firebase.com/?utm_source=geofire-js) for dat
 updated in realtime as they change. GeoFire *selectively loads only the data near certain
 locations, keeping your applications light and responsive*, even with extremely large datasets.
 
+A compatible GeoFire client is also available for [Objective-C](https://github.com/firebase/geofire-objc)
+and [Java](https://github.com/firebase/geofire-java).
+
 ### Integrating GeoFire with your data
 
 GeoFire is designed as a lightweight add-on to Firebase. To keep things simple, GeoFire stores data
