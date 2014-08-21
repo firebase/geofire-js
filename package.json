@@ -44,13 +44,14 @@
     "gulp-karma": "0.0.4",
     "gulp-uglify": "^0.2.1",
     "jshint-stylish": "^0.2.0",
+    "streamqueue": "0.0.5",
+    "coveralls": "^2.11.1",
     "karma": "^0.12.9",
     "karma-coverage": "^0.2.4",
     "karma-failed-reporter": "0.0.2",
     "karma-jasmine": "~0.2.0",
     "karma-phantomjs-launcher": "~0.1.4",
-    "karma-spec-reporter": "0.0.13",
-    "streamqueue": "0.0.5"
+    "karma-spec-reporter": "0.0.13"
   },
   "scripts": {
     "test": "gulp test"

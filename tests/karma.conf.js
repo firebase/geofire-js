@@ -7,7 +7,16 @@ module.exports = function(config) {
     },
     reporters: ["spec", "failed", "coverage"],
     coverageReporter: {
-      type: "text-summary"
+      reporters: [
+        {
+          type: "lcovonly",
+          dir: "coverage",
+          subdir: "."
+        },
+        {
+          type: "text-summary"
+        }
+      ]
     },
     browsers: ["PhantomJS"],
     browserNoActivityTimeout: 30000
