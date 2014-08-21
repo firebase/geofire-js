@@ -4,19 +4,19 @@ STANDALONE_DEST="../firebase-clients/libs/geofire"
 STANDALONE_STUB="geofire"
 
 
-###########################
-#  VALIDATE geofire REPO  #
-###########################
+##############################
+#  VALIDATE geofire-js REPO  #
+##############################
 # Ensure the checked out geofire branch is master
 CHECKED_OUT_BRANCH="$(git branch | grep "*" | awk -F ' ' '{print $2}')"
 if [[ $CHECKED_OUT_BRANCH != "master" ]]; then
-  echo "Error: Your geofire repo is not on the master branch."
+  echo "Error: Your geofire-js repo is not on the master branch."
   exit 1
 fi
 
 # Make sure the geofire branch does not have existing changes
 if ! git --git-dir=".git" diff --quiet; then
-  echo "Error: Your geofire repo has existing changes on the master branch. Make sure you commit and push the new version before running this release script."
+  echo "Error: Your geofire-js repo has existing changes on the master branch. Make sure you commit and push the new version before running this release script."
   exit 1
 fi
 
@@ -107,24 +107,24 @@ fi
 ######################
 #  PUBLISH TO Bower  #
 ######################
-# Pull any changes to the geofire repo
+# Pull any changes to the geofire-js repo
 git pull origin master
 if [[ $? -ne 0 ]]; then
-  echo "Error: Failed to do 'git pull' from geofire repo."
+  echo "Error: Failed to do 'git pull' from geofire-js repo."
   exit 1
 fi
 
 # Create a git tag for the new version
 git tag v$VERSION
 if [[ $? -ne 0 ]]; then
-  echo "Error: Failed to do 'git tag' from geofire repo."
+  echo "Error: Failed to do 'git tag' from geofire-js repo."
   exit 1
 fi
 
 # Push the new git tag
 git push --tags
 if [[ $? -ne 0 ]]; then
-  echo "Error: Failed to do 'git push --tags' from geofire repo."
+  echo "Error: Failed to do 'git push --tags' from geofire-js repo."
   exit 1
 fi
 

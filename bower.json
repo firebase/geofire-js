@@ -5,10 +5,10 @@
   "authors": [
     "Firebase <support@firebase.com> (https://www.firebase.com/)"
   ],
-  "homepage": "https://github.com/firebase/geofire/",
+  "homepage": "https://github.com/firebase/geofire-js/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/firebase/geofire.git"
+    "url": "https://github.com/firebase/geofire-js.git"
   },
   "license": "MIT",
   "keywords": [
