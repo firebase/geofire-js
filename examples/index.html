@@ -8,12 +8,29 @@
     <h1 style="text-align: center;">GeoFire Examples</h1>
 
     <p>
-      <a href="https://www.github.com/firebase/geofire/">GeoFire</a> is an open-source JavaScript library
-      that allows you to store and query a set of items based on their geographic location. GeoFire uses
-      <a href="https://www.firebase.com/">Firebase</a> for data storage, allowing query results to be
-      updated in realtime as they change. GeoFire does more than just measure the distance between locations;
-      it selectively loads only the data near certain locations, keeping your applications light and responsive
-      even with extremely large datasets.
+      <a href="https://www.github.com/firebase/geofire/">GeoFire</a> is a set of open-source libraries
+      for JavaScript, Objective-C, and Java that allow you to store and query a set of keys based on
+      their geographic location. At its heart, GeoFire simply stores locations with string keys. Its
+      main benefit, however, is the possibility of retrieving only those keys within a given geographic
+      area - all in realtime.
+    </p>
+
+    <p>
+      GeoFire uses <a href="https://www.firebase.com/?utm_source=geofire">Firebase</a> for data storage,
+      allowing query results to be updated in realtime as they change. GeoFire <strong>selectively loads
+      only the data near certain locations, keeping your applications light and responsive</strong>, even
+      with extremely large datasets.
+    </p>
+
+    <p>
+      There are compatible GeoFire clients available for <a href="https://github.com/firebase/geofire-js">JavaScript</a>,
+      <a href="https://github.com/firebase/geofire-objc">Objective-C</a>, and
+      <a href="https://github.com/firebase/geofire-java">Java</a>.
+    </p>
+
+    <p>
+      Note that the demos below are all written in JavaScript. You can find Objective-C and
+      Java examples in their respective GitHub repositories.
     </p>
 
     <h2><a href="./fish1/index.html">fish1 - Writing To and Reading From GeoFire</a></h2>
@@ -84,7 +101,7 @@
 
     <p>
       This is a fully-featured, complex example which combines GeoFire, Google Maps,
-      and the <a href="https://www.firebase.com/docs/data/real-time-transit-data.html">Firebase Transit Open Data Set</a>.
+      and the <a href="https://www.firebase.com/docs/open-data/transit.html?utm_source=geofire">Firebase Transit Open Data Set</a>.
       Firebase provides a public Firebase which contains the realtime locations of public
       transit vehicles in several major US cities, including San Francisco MUNI. The data
       set also contains GeoFire data for each vehicle which we used to create this demo.

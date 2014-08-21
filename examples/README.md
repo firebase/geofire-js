@@ -1,11 +1,17 @@
 # GeoFire Examples
 
-GeoFire is an open-source JavaScript library that allows you to store and query a set
-of items based on their geographic location. GeoFire uses [Firebase](https://www.firebase.com/) for data
-storage, allowing query results to be updated in realtime as they change.
-GeoFire does more than just measure the distance between locations; it
-selectively loads only the data near certain locations, keeping your
-applications light and responsive even with extremely large datasets.
+GeoFire is an open-source library that allows you to store and query a set of keys based on their
+geographic location. At its heart, GeoFire simply stores locations with string keys. Its main
+benefit, however, is the possibility of retrieving only those keys within a given geographic
+area - all in realtime.
+
+GeoFire uses [Firebase](https://www.firebase.com/?utm_source=geofire-js) for data storage, allowing
+query results to be updated in realtime as they change. GeoFire *selectively loads only the data
+near certain locations, keeping your applications light and responsive*, even with extremely large
+datasets.
+
+A compatible GeoFire client is also available for [Objective-C](https://github.com/firebase/geofire-objc)
+and [Java](https://github.com/firebase/geofire-java).
 
 ## Running Locally
 
@@ -68,7 +74,7 @@ You can check out the example rules.json file [here](https://geofire.firebaseapp
 ## [sfVehicles - Fully-featured Example](https://geofire.firebaseapp.com/sfVehicles/index.html)
 
 This is a fully-featured, complex example which combines GeoFire, Google Maps,
-and the [Firebase Transit Open Data Set](https://www.firebase.com/docs/data/real-time-transit-data.html).
+and the [Firebase Transit Open Data Set](https://www.firebase.com/docs/open-data/transit.html?utm_source=geofire).
 Firebase provides a public Firebase which contains the realtime locations of public
 transit vehicles in several major US cities, including San Francisco MUNI. The data
 set also contains GeoFire data for each vehicle which we used to create this demo.
