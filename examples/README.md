@@ -68,7 +68,7 @@ You can check out the example rules.json file [here](https://geofire.firebaseapp
 ## [sfVehicles - Fully-featured Example](https://geofire.firebaseapp.com/sfVehicles/index.html)
 
 This is a fully-featured, complex example which combines GeoFire, Google Maps,
-and the [Firebase Transit Open Data Set](https://www.firebase.com/docs/data/real-time-transit-data.html).
+and the [Firebase Transit Open Data Set](https://www.firebase.com/docs/open-data/transit.html).
 Firebase provides a public Firebase which contains the realtime locations of public
 transit vehicles in several major US cities, including San Francisco MUNI. The data
 set also contains GeoFire data for each vehicle which we used to create this demo.
