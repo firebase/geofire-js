@@ -3,8 +3,6 @@ node_js:
 - '0.10'
 install:
 - npm install -g bower
-- sed -i "" -e "s/XXX_VERSION_XXX/0.0.0/" bower.json
-- sed -i "" -e "s/XXX_VERSION_XXX/0.0.0/" package.json
 - npm install
 - bower install
 script:

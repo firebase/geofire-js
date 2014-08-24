@@ -4,7 +4,7 @@
  *  possibility of retrieving only those keys within a given geographic area -
  *  all in realtime.
  *
- *  GeoFire XXX_VERSION_XXX
+ *  GeoFire 0.0.0
  *  https://github.com/firebase/geofire-js/
  *  License: MIT
  */
