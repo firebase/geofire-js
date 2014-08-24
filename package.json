@@ -53,6 +53,7 @@
     "karma-spec-reporter": "0.0.13"
   },
   "scripts": {
-    "test": "gulp"
+    "test": "gulp test",
+    "travis": "gulp"
   }
 }
