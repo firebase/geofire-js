@@ -50,7 +50,7 @@ using security rules.
 
 GeoFire 3.x has the same API as 2.x but uses a different underlying data structure to store its
 location data. If you are currently using 2.x and want to upgrade to 3.x, you must run the
-[GeoFire 3.x migration script](https://github.com/firebase/geofire/blob/master/migration/migrateToV3.js)
+[GeoFire 3.x migration script](https://github.com/firebase/geofire-js/blob/master/migration/migrateToV3.js)
 on your Firebase. This Node.js script only needs to be run one time and should take only a few seconds
 to minutes depending on the size of your data. To run the script, copy the files in this repo's
 `/migration/` folder to your machine and run the following commands:
@@ -69,17 +69,19 @@ In order to use GeoFire in your project, you need to include the following files
 <script src="rsvp.min.js"></script>
 
 <!-- Firebase -->
-<script src="https://cdn.firebase.com/js/client/1.0.19/firebase.js"></script>
+<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 
 <!-- GeoFire -->
 <script src="https://cdn.firebase.com/libs/geofire/3.0.0/geofire.min.js"></script>
 ```
 
-Use the URL above to download both the minified and non-minified versions of GeoFire from the Firebase CDN. You can also download them from the
-`/dist/` directory of this GitHub repository. [Firebase](https://www.firebase.com/docs/web-quickstart.html?utm_source=geofire-js)
-and [RSVP](https://github.com/tildeio/rsvp.js/) can be downloaded directly from their respective websites.
+Use the URL above to download both the minified and non-minified versions of GeoFire from the
+Firebase CDN. You can also download them from the
+[releases page of this GitHub repository](https://github.com/firebase/geofire-js/releases).
+[Firebase](https://www.firebase.com/docs/web/quickstart.html?utm_source=geofire-js) and
+[RSVP](https://github.com/tildeio/rsvp.js/) can be downloaded directly from their respective websites.
 
-You can also install GeoFire via npm or Bower and the dependencies will be downloaded automatically:
+You can also install GeoFire via npm or Bower and its dependencies will be downloaded automatically:
 
 ```bash
 $ npm install geofire --save
@@ -131,7 +133,8 @@ value. `location` must have the form `[latitude, longitude]`.
 
 Returns a promise which is fulfilled when the new location has been synchronized with the Firebase servers.
 
-`key` must be a string and a [valid Firebase key name](https://www.firebase.com/docs/creating-references.html?utm_source=geofire-js)
+`key` must be a string and a
+[valid Firebase key name](https://www.firebase.com/docs/web/guide/understanding-data.html#section-creating-references?utm_source=geofire-js)
 
 ```JavaScript
 geoFire.set("some_key", [37.79, -122.41]).then(function() {
@@ -374,8 +377,8 @@ promise.then(function(result) {
 If you'd like to contribute to GeoFire, you'll need to run the following commands to get your environment set up:
 
 ```bash
-$ git clone https://github.com/firebase/geofire.git
-$ cd geofire            # go to the geofire directory
+$ git clone https://github.com/firebase/geofire-js.git
+$ cd geofire-js         # go to the geofire directory
 $ npm install -g gulp   # globally install gulp task runner
 $ npm install -g bower  # globally install Bower package manager
 $ npm install           # install local npm build / test dependencies
