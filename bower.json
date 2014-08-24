@@ -1,7 +1,7 @@
 {
   "name": "geofire",
   "description": "Location-based querying and filtering using Firebase",
-  "version": "3.0.0",
+  "version": "XXX_VERSION_XXX",
   "authors": [
     "Firebase <support@firebase.com> (https://www.firebase.com/)"
   ],
@@ -30,7 +30,7 @@
     "firebase.json",
     "package.json",
     "gulpfile.js",
-    "release.sh"
+    "changelog.txt"
   ],
   "dependencies": {
     "firebase": "1.0.x",

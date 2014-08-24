@@ -105,5 +105,8 @@ gulp.task("watch", function() {
   gulp.watch(["build/*", paths.scripts.src.dir + "/**/*"], ["scripts"]);
 });
 
+/* Builds the distribution files */
+gulp.task("build", ["scripts"]);
+
 /* Runs the "test" and "scripts" tasks by default */
 gulp.task("default", ["test", "scripts"]);
