@@ -1,7 +1,7 @@
 {
   "name": "geofire",
   "description": "Location-based querying and filtering using Firebase",
-  "version": "3.0.0",
+  "version": "0.0.0",
   "author": "Firebase <support@firebase.com> (https://www.firebase.com/)",
   "homepage": "https://github.com/firebase/geofire-js/",
   "repository": {
@@ -29,7 +29,6 @@
     "dist/**",
     "LICENSE",
     "README.md",
-    "CHANGELOG.md",
     "package.json"
   ],
   "dependencies": {
@@ -54,6 +53,7 @@
     "karma-spec-reporter": "0.0.13"
   },
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "travis": "gulp"
   }
 }
