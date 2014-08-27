@@ -84,11 +84,11 @@ Firebase CDN. You can also download them from the
 You can also install GeoFire via npm or Bower and its dependencies will be downloaded automatically:
 
 ```bash
-$ npm install geofire --save
+$ npm install geofire-js --save
 ```
 
 ```bash
-$ bower install geofire --save
+$ bower install geofire-js --save
 ```
 
 ## Getting Started with Firebase
