@@ -151,7 +151,7 @@ describe("GeoQuery Tests:", function() {
       });
     });
 
-    it("updateCriteria() does not cause event callbacks to fire on the previous critria", function(done) {
+    it("updateCriteria() does not cause event callbacks to fire on the previous criteria", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "loc1 entered", "loc4 entered", "loc1 exited", "loc4 exited", "loc4 entered", "loc5 entered"], expect, done);
 
       geoQueries.push(geoFire.query({center: [1, 2], radius: 1000}));
@@ -386,6 +386,21 @@ describe("GeoQuery Tests:", function() {
             expect(cl.length()).toBe(1);
             cl.x("ready2 fired");
           });
+        });
+      });
+    });
+
+    it("\"ready\" event fires after increasing the query radius, even if no new geohashes were queried", function(done) {
+      var cl = new Checklist(["ready1 fired","ready2 fired"], expect, done);
+      geoQueries.push(geoFire.query({center: [37.7851382,-122.405893], radius: 6}));
+      var onReadyCallbackRegistration1 = geoQueries[0].on("ready", function() {
+        cl.x("ready1 fired");
+        onReadyCallbackRegistration1.cancel();
+        geoQueries[0].updateCriteria({
+          radius: 7
+        });
+        geoQueries[0].on("ready", function() {
+          cl.x("ready2 fired");
         });
       });
     });

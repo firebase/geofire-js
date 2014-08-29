@@ -313,6 +313,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         valueCallback: valueCallback
       };
     });
+    // Based upon the algorithm to calculate geohashes, it's possible that no "new"
+    // geohashes were queried even if the client updates the radius of the query.
+    // This results in no "READY" event being fired after the .updateQuery() call.
+    // Check to see if this is the case, and trigger the "READY" event.
+    if(geohashesToQuery.length === 0) {
+      _geohashQueryReadyCallback();
+    }
   }
 
   /********************/
