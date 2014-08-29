@@ -1,0 +1,1 @@
+fixed - Fixed bug which caused the `ready` event to not fire in some edge cases when a `GeoQuery` was updated (thanks to @mikepugh for the fix).
