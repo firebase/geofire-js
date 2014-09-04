@@ -88,7 +88,7 @@ $ npm install geofire --save
 ```
 
 ```bash
-$ bower install geofire-js --save
+$ bower install geofire --save
 ```
 
 ## Getting Started with Firebase
