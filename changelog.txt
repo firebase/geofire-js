@@ -1,1 +1,2 @@
 fixed - Fixed bug which caused the `ready` event to not fire in some edge cases when a `GeoQuery` was updated (thanks to @mikepugh for the fix).
+fixed - Fixed bug which prevented GeoFire from working in Node.js.
