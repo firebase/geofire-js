@@ -108,7 +108,7 @@ the location pointed to by `firebaseRef`. Note that this `firebaseRef` can point
 
 ```JavaScript
 // Create a Firebase reference where GeoFire will store its information
-var firebaseRef = new Firebase("https://<my_firebase>.firebaseio.com/");
+var firebaseRef = new Firebase("https://<your-firebase>.firebaseio.com/");
 
 // Create a GeoFire index
 var geoFire = new GeoFire(firebaseRef);
@@ -119,7 +119,7 @@ var geoFire = new GeoFire(firebaseRef);
 Returns the `Firebase` instance used to create this `GeoFire` instance.
 
 ```JavaScript
-var firebaseRef = new Firebase("https://<my_firebase>.firebaseio.com/");
+var firebaseRef = new Firebase("https://<your-firebase>.firebaseio.com/");
 var geoFire = new GeoFire(firebaseRef);
 
 var ref = geoFire.ref();  // ref === firebaseRef
