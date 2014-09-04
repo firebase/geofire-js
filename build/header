@@ -12,6 +12,8 @@
 
 // Include RSVP if this is being run in node
 if (typeof module !== "undefined" && typeof process !== "undefined") {
+  // We need this `Firebase || require("firebase")` hack to get GeoFire to work properly in Node.js
+  // since otherwise, checking for `instanceof Firebase` fails.
   var Firebase = Firebase || require("firebase");
   var RSVP = require("rsvp");
 }
