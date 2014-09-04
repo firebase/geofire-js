@@ -17,14 +17,15 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {string} key The key of the location for which to fire the callbacks.
    * @param {array|null} location The location as latitude longitude pair
    * @param {double|null} distanceFromCenter The distance from the center or null
+   * @param {Object|null} data The optionally stored data object on the index
    */
-  function _fireCallbacksForKey(eventType, key, location, distanceFromCenter) {
+  function _fireCallbacksForKey(eventType, key, location, distanceFromCenter, data) {
     _callbacks[eventType].forEach(function(callback) {
       if (typeof location === "undefined" || location === null) {
-        callback(key, null, null);
+        callback(key, null, null, null);
       }
       else {
-        callback(key, location, distanceFromCenter);
+        callback(key, location, distanceFromCenter, data);
       }
     });
   }
@@ -123,8 +124,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    *
    * @param {string} key The key of the geofire location
    * @param {array|null} location The location as [latitude, longitude] pair
+   * @param {Object|null} data The optional data to store with the location
    */
-  function _updateLocation(key, location) {
+  function _updateLocation(key, location, data) {
     validateLocation(location);
     // Get the key and location
     var distanceFromCenter, isInQuery;
@@ -138,6 +140,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Add this location to the locations queried dictionary even if it is not within this query
     _locationsTracked[key] = {
       location: location,
+      data: data,
       distanceFromCenter: distanceFromCenter,
       isInQuery: isInQuery,
       geohash: encodeGeohash(location, g_GEOHASH_PRECISION)
@@ -145,9 +148,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // Fire the "key_entered" event if the provided key has entered this query
     if (isInQuery && !wasInQuery) {
-      _fireCallbacksForKey("key_entered", key, location, distanceFromCenter);
+      _fireCallbacksForKey("key_entered", key, location, distanceFromCenter, data);
     } else if (isInQuery && oldLocation !== null && (location[0] !== oldLocation[0] || location[1] !== oldLocation[1])) {
-      _fireCallbacksForKey("key_moved", key, location, distanceFromCenter);
+      _fireCallbacksForKey("key_moved", key, location, distanceFromCenter, data);
     } else if (!isInQuery && wasInQuery) {
       _fireCallbacksForKey("key_exited", key, location, distanceFromCenter);
     }
@@ -192,7 +195,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {Firebase DataSnapshot} locationDataSnapshot A snapshot of the data stored for this location.
    */
   function _childAddedCallback(locationDataSnapshot) {
-    _updateLocation(locationDataSnapshot.name(), decodeGeoFireObject(locationDataSnapshot.val()));
+    var val = locationDataSnapshot.val();
+    _updateLocation(locationDataSnapshot.name(), decodeGeoFireObject(val), decodeGeoFireDataObject(val));
   }
 
   /**
@@ -201,7 +205,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {Firebase DataSnapshot} locationDataSnapshot A snapshot of the data stored for this location.
    */
   function _childChangedCallback(locationDataSnapshot) {
-    _updateLocation(locationDataSnapshot.name(), decodeGeoFireObject(locationDataSnapshot.val()));
+    var val = locationDataSnapshot.val();
+    _updateLocation(locationDataSnapshot.name(), decodeGeoFireObject(val), decodeGeoFireDataObject(val));
   }
 
   /**
@@ -377,7 +382,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
         // If the location just entered the query, fire the "key_entered" callbacks
         else if (!wasAlreadyInQuery && locationDict.isInQuery) {
-          _fireCallbacksForKey("key_entered", key, locationDict.location, locationDict.distanceFromCenter);
+          _fireCallbacksForKey("key_entered", key, locationDict.location, locationDict.distanceFromCenter, locationDict.data);
         }
       }
     }
@@ -436,7 +441,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
         if (_locationsTracked.hasOwnProperty(key)) {
           var locationDict = _locationsTracked[key];
           if (locationDict.isInQuery) {
-            callback(key, locationDict.location, locationDict.distanceFromCenter);
+            callback(key, locationDict.location, locationDict.distanceFromCenter, locationDict.data);
           }
         }
       }

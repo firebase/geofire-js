@@ -421,15 +421,33 @@ var geohashQueries = function(center, radius) {
  *
  * @param {array} location The location as [latitude, longitude] pair.
  * @param {string} geohash The geohash of the location
+ * @param {Object} data The optional data to include on the index (keep this small)
  * @return {Object} The location encoded as GeoFire object
  */
-function encodeGeoFireObject(location, geohash) {
+function encodeGeoFireObject(location, geohash, data) {
+  if(typeof data === "undefined") {
+    data = null;
+  }
   validateLocation(location);
   validateGeohash(geohash);
   return {
     "g": geohash,
-    "l": location
+    "l": location,
+    "d": data
   };
+}
+
+/**
+ * Decodes a GeoFire snapshot value to get the optionally stored data object
+ *
+ * @param {Object} geoFireObj The GeoFire snapshot value
+ * @returns {Object} The optionally stored data object, if it exists
+ */
+function decodeGeoFireDataObject(geoFireObj) {
+  if(geoFireObj !== null && geoFireObj.hasOwnProperty("d")) {
+    return geoFireObj.d;
+  }
+  return null;
 }
 
 /**

@@ -25,9 +25,10 @@ var GeoFire = function(firebaseRef) {
    *
    * @param {string} key The key representing the location to add.
    * @param {array} location The [latitude, longitude] pair to add.
+   * @param {object} data The optional data to store in the GeoFire index (keep this small).
    * @return {RSVP.Promise} A promise that is fulfilled when the write is complete.
    */
-  this.set = function(key, location) {
+  this.set = function(key, location, data) {
     validateKey(key);
     if (location !== null) {
       // Setting location to null is valid since it will remove the key
@@ -46,7 +47,7 @@ var GeoFire = function(firebaseRef) {
         _firebaseRef.child(key).remove(onComplete);
       } else {
         var geohash = encodeGeohash(location);
-        _firebaseRef.child(key).setWithPriority(encodeGeoFireObject(location, geohash), geohash, onComplete);
+        _firebaseRef.child(key).setWithPriority(encodeGeoFireObject(location, geohash, data), geohash, onComplete);
       }
     });
   };
