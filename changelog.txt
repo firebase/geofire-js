@@ -1,0 +1,1 @@
+fixed - Fixed typo in 3.0.1 release which caused it to be unusable.

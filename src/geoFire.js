@@ -99,7 +99,7 @@ var GeoFire = function(firebaseRef) {
   /*****************/
   /*  CONSTRUCTOR  */
   /*****************/
-  if (firebaseRef instanceof Firebase === false) {
+  if (Object.prototype.toString.call(firebaseRef) !== "[object Object]") {
     throw new Error("firebaseRef must be an instance of Firebase");
   }
 
