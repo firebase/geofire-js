@@ -51,9 +51,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p5");
-      }).catch(function(err) {
-        expect(err).toBeNull();
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_entered\" registrations can be cancelled", function(done) {
@@ -84,7 +82,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p4");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_exited\" registrations can be cancelled", function(done) {
@@ -119,7 +117,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("Cancelling a \"key_moved\" registration does not cancel all \"key_moved\" callbacks", function(done) {
@@ -157,7 +155,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("Cancelling a \"key_entered\" registration does not cancel all \"key_entered\" callbacks", function(done) {
@@ -191,7 +189,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p4");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("Cancelling a \"key_exited\" registration does not cancel all \"key_exited\" callbacks", function(done) {
@@ -229,7 +227,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("Calling cancel on a GeoCallbackRegistration twice does not throw", function() {

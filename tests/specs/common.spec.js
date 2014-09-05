@@ -126,3 +126,12 @@ function Checklist(items, expect, done) {
     return (this.length() === 0);
   };
 };
+
+/* Common error handler for use in .catch() statements of promises. This will
+ * cause the test to fail, outputting the details of the exception. Otherwise, tests
+ * tend to fail due to the Jasmine ASYNC timeout and provide no details of what actually
+ * went wrong.
+ **/
+function failTestOnCaughtError(err) {
+  expect(err).toBeNull();
+}
