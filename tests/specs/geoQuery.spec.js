@@ -673,6 +673,34 @@ describe("GeoQuery Tests:", function() {
       }).catch(failTestOnCaughtError);
     });
 
+    it("\"key_moved\" callback gets passed correct data parameter", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "loc1 moved"], expect, done);
+
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
+
+      geoQueries[0].on("key_moved", function(key, location, distance, data) {
+        cl.x(key + " moved");
+        expect(data).toEqual({'name': 'Test 1'});
+      });
+
+      batchSetWithData([
+        {key: "loc1", location: [0, 0], data: {name: 'Test 1'}},
+        {key: "loc2", location: [50, -7], data: {name: 'Test 2'}}
+      ]).then(function() {
+        cl.x("p1");
+
+        return batchSetWithData([
+          {key: "loc1", location: [2, 2], data: {name: 'Test 1'}}
+        ]);
+      }).then(function() {
+        cl.x("p2");
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p3");
+      }).catch(failTestOnCaughtError);
+    });
+
     it("\"key_moved\" callback properly fires when multiple keys are at the same location within the GeoQuery and only one of them moves somewhere else within the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 moved", "loc3 moved"], expect, done);
 
@@ -852,6 +880,30 @@ describe("GeoQuery Tests:", function() {
         {key: "loc3", location: [16, -150]},
         {key: "loc4", location: [5, 5]},
         {key: "loc5", location: [67, 55]}
+      ]).then(function() {
+        cl.x("p1");
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p2");
+      }).catch(failTestOnCaughtError);
+    });
+
+    it("\"key_entered\" callback gets passed correct data parameter", function(done) {
+      var cl = new Checklist(["p1", "p2", "loc1 entered"], expect, done);
+
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
+
+      geoQueries[0].on("key_entered", function(key, location, distance, data) {
+        cl.x(key + " entered");
+        expect(data).toEqual({'name': 'Test 1'});
+      });
+
+      batchSetWithData([
+        {key: "loc1", location: [2, 3], data: {name: 'Test 1'}},
+        {key: "loc2", location: [50, -7], data: {name: 'Test 2'}},
+        {key: "loc3", location: [16, -150], data: {name: 'Test 3'}},
+        {key: "loc5", location: [67, 55], data: {name: 'Test 4'}}
       ]).then(function() {
         cl.x("p1");
 

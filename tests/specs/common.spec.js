@@ -87,6 +87,14 @@ function batchSet(keyLocationPairs) {
   return RSVP.allSettled(promises);
 };
 
+/* Adds multiple keys to GeoFire in a single call */
+function batchSetWithData(keyLocationDataPairs) {
+  var promises = keyLocationDataPairs.map(function(keyLocationDataPair) {
+    return geoFire.set(keyLocationDataPair.key, keyLocationDataPair.location, keyLocationDataPair.data);
+  });
+  return RSVP.allSettled(promises);
+};
+
 
 /* Returns a promise which is fulfilled after the inputted number of milliseconds pass */
 function wait(milliseconds) {

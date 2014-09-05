@@ -36,6 +36,23 @@ describe("GeoFire Tests:", function() {
       }).catch(failTestOnCaughtError);
     });
 
+    it("set() can add optional data to index", function(done) {
+      var cl = new Checklist(["p1","p2"], expect, done);
+      batchSetWithData([
+        {key: "loc1", location: [0,0], data: {'name': 'Test 1'}},
+        {key: "loc2", location: [50,50], data: {'name': 'Test 2'}}
+      ]).then(function() {
+        cl.x("p1");
+        return getFirebaseData();
+      }).then(function(firebaseData) {
+        expect(firebaseData).toEqual({
+          "loc1": { "l": [0, 0], "g": "7zzzzzzzzz", "d": {'name': 'Test 1'}},
+          "loc2": { "l": [50, 50], "g": "v0gs3y0zh7", "d": {'name': 'Test 2'} }
+        });
+        cl.x("p2");
+      }).catch(failTestOnCaughtError);
+    });
+
     it("set() updates Firebase when adding new locations", function(done) {
       var cl = new Checklist(["p1", "p2"], expect, done);
 
@@ -284,6 +301,64 @@ describe("GeoFire Tests:", function() {
     it("get() throws errors given invalid keys", function() {
       invalidKeys.forEach(function(invalidKey) {
         expect(function() { geoFire.get(invalidKey); }).toThrow();
+      });
+    });
+  });
+
+  describe("Retrieving full data:", function() {
+    it("getWithData() returns a promise", function(done) {
+      var cl = new Checklist(["p1"], expect, done);
+
+      geoFire.getWithData("loc1").then(function() {
+        cl.x("p1");
+      }).catch(failTestOnCaughtError);
+    });
+
+    it("getWithData() returns null for non-existent keys", function(done) {
+      var cl = new Checklist(["p1"], expect, done);
+
+      geoFire.getWithData("loc1").then(function(location) {
+        expect(location).toBeNull();
+
+        cl.x("p1");
+      }).catch(failTestOnCaughtError);
+    });
+
+    it("getWithData() retrieves key, location, and data given existing keys", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4"], expect, done);
+
+      batchSetWithData([
+        {key: "loc1", location: [0, 0], data: {name: 'Test 1'}},
+        {key: "loc2", location: [50, 50], data: {name: 'Test 2'}},
+        {key: "loc3", location: [-90, -90], data: {name: 'Test 3'}}
+      ]).then(function() {
+        cl.x("p1");
+        return geoFire.getWithData("loc1");
+      }).then(function(data) {
+        expect(data).toEqual({'key': "loc1", 'location': [0, 0], 'data': {'name': 'Test 1'}});
+        cl.x("p2");
+
+        return geoFire.getWithData("loc2");
+      }).then(function(data) {
+        expect(data).toEqual({'key': "loc2", 'location': [50, 50], 'data': {'name': 'Test 2'}});
+        cl.x("p3");
+
+        return geoFire.getWithData("loc3");
+      }).then(function(data) {
+        expect(data).toEqual({'key': "loc3", 'location': [-90, -90], 'data': {'name': 'Test 3'}});
+        cl.x("p4");
+      }).catch(failTestOnCaughtError);
+    });
+
+    it("getWithData() does not throw errors given valid keys", function() {
+      validKeys.forEach(function(validKey) {
+        expect(function() { geoFire.getWithData(validKey); }).not.toThrow();
+      });
+    });
+
+    it("getWithData() throws errors given invalid keys", function() {
+      invalidKeys.forEach(function(invalidKey) {
+        expect(function() { geoFire.getWithData(invalidKey); }).toThrow();
       });
     });
   });
