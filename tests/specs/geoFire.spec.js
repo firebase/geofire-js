@@ -171,7 +171,7 @@ describe("GeoFire Tests:", function() {
         return batchSet([
           {key: "loc2", location: [0.2358, -72.621]},
           {key: "loc4", location: [87.6, -130]},
-          {key: "loc5", location: [5, 55.555]},
+          {key: "loc5", location: [5, 55.555]}
         ]);
       }).then(function() {
         cl.x("p3");
@@ -182,7 +182,7 @@ describe("GeoFire Tests:", function() {
 
         return batchSet([
           {key: "loc:1", location: [87.6, -130]},
-          {key: "loc6", location: [-72.258, 0.953215]},
+          {key: "loc6", location: [-72.258, 0.953215]}
         ]);
       }).then(function() {
         cl.x("p5");
@@ -429,7 +429,7 @@ describe("GeoFire Tests:", function() {
       batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [2, 3]},
-        {key: "loc3", location: [0, 0]},
+        {key: "loc3", location: [0, 0]}
       ]).then(function() {
         cl.x("p1");
 

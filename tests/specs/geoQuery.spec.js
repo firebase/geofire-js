@@ -1235,7 +1235,7 @@ describe("GeoQuery Tests:", function() {
 
       batchSet([
         {key: "loc1", location: [-1, -1]},
-        {key: "loc2", location: [1, 1]},
+        {key: "loc2", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
