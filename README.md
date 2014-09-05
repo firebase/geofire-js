@@ -72,7 +72,7 @@ In order to use GeoFire in your project, you need to include the following files
 <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 
 <!-- GeoFire -->
-<script src="https://cdn.firebase.com/libs/geofire/3.0.0/geofire.min.js"></script>
+<script src="https://cdn.firebase.com/libs/geofire/3.0.2/geofire.min.js"></script>
 ```
 
 Use the URL above to download both the minified and non-minified versions of GeoFire from the
@@ -88,7 +88,7 @@ $ npm install geofire --save
 ```
 
 ```bash
-$ bower install geofire-js --save
+$ bower install geofire --save
 ```
 
 ## Getting Started with Firebase
@@ -108,7 +108,7 @@ the location pointed to by `firebaseRef`. Note that this `firebaseRef` can point
 
 ```JavaScript
 // Create a Firebase reference where GeoFire will store its information
-var firebaseRef = new Firebase("https://<my_firebase>.firebaseio.com/");
+var firebaseRef = new Firebase("https://<your-firebase>.firebaseio.com/");
 
 // Create a GeoFire index
 var geoFire = new GeoFire(firebaseRef);
@@ -119,7 +119,7 @@ var geoFire = new GeoFire(firebaseRef);
 Returns the `Firebase` instance used to create this `GeoFire` instance.
 
 ```JavaScript
-var firebaseRef = new Firebase("https://<my_firebase>.firebaseio.com/");
+var firebaseRef = new Firebase("https://<your-firebase>.firebaseio.com/");
 var geoFire = new GeoFire(firebaseRef);
 
 var ref = geoFire.ref();  // ref === firebaseRef

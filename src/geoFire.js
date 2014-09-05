@@ -94,7 +94,7 @@ var GeoFire = function(firebaseRef) {
         } else {
           resolve({key: key, location: decodeGeoFireObject(dsv), data: decodeGeoFireDataObject(dsv)});
         }
-      }, function (err) {
+      }, function (error) {
         reject("Error: Firebase synchronization failed: " + error);
       });
     });
@@ -125,7 +125,7 @@ var GeoFire = function(firebaseRef) {
   /*****************/
   /*  CONSTRUCTOR  */
   /*****************/
-  if (firebaseRef instanceof Firebase === false) {
+  if (Object.prototype.toString.call(firebaseRef) !== "[object Object]") {
     throw new Error("firebaseRef must be an instance of Firebase");
   }
 
