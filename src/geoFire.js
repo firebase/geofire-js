@@ -76,6 +76,31 @@ var GeoFire = function(firebaseRef) {
   };
 
   /**
+   * Returns a promise fulfilled with the key, location, and data stored in the GeoFire index
+   * corresponding to the provided key.
+   *
+   * If the provided key does not exist in the index, the returned promise is fulfilled with null.
+   *
+   * @param {string} key The key of the geofire object to retrieve
+   * @return {RSVP.Promise} A promise that is fulfilled with an object of {key, location, data}
+   */
+  this.getWithData = function(key) {
+    validateKey(key);
+    return new RSVP.Promise(function(resolve, reject) {
+      _firebaseRef.child(key).once("value", function(dataSnapshot) {
+        var dsv = dataSnapshot.val();
+        if(dsv === null) {
+          resolve(null);
+        } else {
+          resolve({key: key, location: decodeGeoFireObject(dsv), data: decodeGeoFireDataObject(dsv)});
+        }
+      }, function (err) {
+        reject("Error: Firebase synchronization failed: " + error);
+      });
+    });
+  };
+
+  /**
    * Removes the provided key from this GeoFire. Returns an empty promise fulfilled when the key has been removed.
    *
    * If the provided key is not in this GeoFire, the promise will still successfully resolve.

@@ -337,7 +337,7 @@ var boundingBoxBits = function(coordinate, size) {
  * within the circle.
  * @param {array} center The center given as [latitude, longitude]
  * @param {number} radius The radius of the circle
- * @return {number} The four bounding box points
+ * @return {Array.<Array.<Number>>} The four bounding box points
  */
 var boundingBoxCoordinates = function(center, radius) {
   var latDegrees = radius/g_METERS_PER_DEGREE_LATITUDE;

@@ -51,6 +51,8 @@ describe("GeoCallbackRegistration Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p5");
+      }).catch(function(err) {
+        expect(err).toBeNull();
       });
     });
 
