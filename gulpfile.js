@@ -12,6 +12,10 @@ var uglify = require("gulp-uglify");
 // Testing
 var karma = require("gulp-karma");
 
+// Determine if this is being run in Travis
+var travis = (process.argv.indexOf('--travis') > -1);
+
+
 /****************/
 /*  FILE PATHS  */
 /****************/
@@ -45,6 +49,7 @@ var paths = {
   }
 };
 
+
 /***********/
 /*  TASKS  */
 /***********/
@@ -64,6 +69,12 @@ gulp.task("scripts", function() {
     // Lint
     .pipe(jshint())
     .pipe(jshint.reporter("jshint-stylish"))
+    .pipe(jshint.reporter("fail"))
+    .on("error", function(error) {
+      if (travis) {
+        throw error;
+      }
+    })
 
     // Write un-minified version
     .pipe(gulp.dest(paths.scripts.dest.dir))
@@ -95,8 +106,8 @@ gulp.task("test", function() {
       configFile: paths.tests.config,
       action: "run"
     }))
-    .on("error", function(err) {
-      throw err;
+    .on("error", function(error) {
+      throw error;
     });
 });
 
