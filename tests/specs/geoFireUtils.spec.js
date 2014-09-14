@@ -8,13 +8,6 @@ describe("geoFireUtils Tests:", function() {
 
     it("validateKey() throws errors given invalid keys", function() {
       invalidKeys.forEach(function(invalidKey) {
-        try {
-          validateKey(invalidKey);
-          console.log(invalidKey);
-        }
-        catch (e){
-
-        }
         expect(function() { validateKey(invalidKey); }).toThrow();
       });
     });

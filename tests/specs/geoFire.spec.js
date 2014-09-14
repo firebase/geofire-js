@@ -55,7 +55,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() handles decimal latitudes and longitudes", function(done) {
@@ -77,7 +77,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() updates Firebase when changing a pre-existing key", function(done) {
@@ -103,7 +103,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() updates Firebase when changing a pre-existing key to the same location", function(done) {
@@ -129,7 +129,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() handles multiple keys at the same location", function(done) {
@@ -151,7 +151,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() updates Firebase after complex operations", function(done) {
@@ -198,7 +198,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p6");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() does not throw errors given valid keys", function() {
@@ -272,7 +272,7 @@ describe("GeoFire Tests:", function() {
       }).then(function(location) {
         expect(location).toEqual([-90, -90]);
         cl.x("p4");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("get() does not throw errors given valid keys", function() {
@@ -321,7 +321,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() does nothing given a non-existent location and null", function(done) {
@@ -353,7 +353,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("remove() removes existing location", function(done) {
@@ -388,7 +388,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("remove() does nothing given a non-existent location", function(done) {
@@ -420,7 +420,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("remove() only removes one key if multiple keys are at the same location", function(done) {
@@ -445,7 +445,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("remove() does not throw errors given valid keys", function() {
