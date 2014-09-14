@@ -33,7 +33,24 @@ describe("GeoFire Tests:", function() {
 
       geoFire.set("loc1", [0, 0]).then(function() {
         cl.x("p1");
-      });
+      }).catch(failTestOnCaughtError);
+    });
+
+    it("set() can add optional data to index", function(done) {
+      var cl = new Checklist(["p1","p2"], expect, done);
+      batchSetWithData([
+        {key: "loc1", location: [0,0], data: {'name': 'Test 1'}},
+        {key: "loc2", location: [50,50], data: {'name': 'Test 2'}}
+      ]).then(function() {
+        cl.x("p1");
+        return getFirebaseData();
+      }).then(function(firebaseData) {
+        expect(firebaseData).toEqual({
+          "loc1": { "l": [0, 0], "g": "7zzzzzzzzz", "d": {'name': 'Test 1'}},
+          "loc2": { "l": [50, 50], "g": "v0gs3y0zh7", "d": {'name': 'Test 2'} }
+        });
+        cl.x("p2");
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() updates Firebase when adding new locations", function(done) {
@@ -55,7 +72,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() handles decimal latitudes and longitudes", function(done) {
@@ -77,7 +94,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() updates Firebase when changing a pre-existing key", function(done) {
@@ -103,7 +120,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() updates Firebase when changing a pre-existing key to the same location", function(done) {
@@ -129,7 +146,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() handles multiple keys at the same location", function(done) {
@@ -151,7 +168,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() updates Firebase after complex operations", function(done) {
@@ -171,7 +188,7 @@ describe("GeoFire Tests:", function() {
         return batchSet([
           {key: "loc2", location: [0.2358, -72.621]},
           {key: "loc4", location: [87.6, -130]},
-          {key: "loc5", location: [5, 55.555]},
+          {key: "loc5", location: [5, 55.555]}
         ]);
       }).then(function() {
         cl.x("p3");
@@ -182,7 +199,7 @@ describe("GeoFire Tests:", function() {
 
         return batchSet([
           {key: "loc:1", location: [87.6, -130]},
-          {key: "loc6", location: [-72.258, 0.953215]},
+          {key: "loc6", location: [-72.258, 0.953215]}
         ]);
       }).then(function() {
         cl.x("p5");
@@ -198,7 +215,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p6");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() does not throw errors given valid keys", function() {
@@ -235,7 +252,7 @@ describe("GeoFire Tests:", function() {
 
       geoFire.get("loc1").then(function() {
         cl.x("p1");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("get() returns null for non-existent keys", function(done) {
@@ -245,7 +262,7 @@ describe("GeoFire Tests:", function() {
         expect(location).toBeNull();
 
         cl.x("p1");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("get() retrieves locations given existing keys", function(done) {
@@ -272,7 +289,7 @@ describe("GeoFire Tests:", function() {
       }).then(function(location) {
         expect(location).toEqual([-90, -90]);
         cl.x("p4");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("get() does not throw errors given valid keys", function() {
@@ -284,6 +301,64 @@ describe("GeoFire Tests:", function() {
     it("get() throws errors given invalid keys", function() {
       invalidKeys.forEach(function(invalidKey) {
         expect(function() { geoFire.get(invalidKey); }).toThrow();
+      });
+    });
+  });
+
+  describe("Retrieving full data:", function() {
+    it("getWithData() returns a promise", function(done) {
+      var cl = new Checklist(["p1"], expect, done);
+
+      geoFire.getWithData("loc1").then(function() {
+        cl.x("p1");
+      }).catch(failTestOnCaughtError);
+    });
+
+    it("getWithData() returns null for non-existent keys", function(done) {
+      var cl = new Checklist(["p1"], expect, done);
+
+      geoFire.getWithData("loc1").then(function(location) {
+        expect(location).toBeNull();
+
+        cl.x("p1");
+      }).catch(failTestOnCaughtError);
+    });
+
+    it("getWithData() retrieves key, location, and data given existing keys", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "p4"], expect, done);
+
+      batchSetWithData([
+        {key: "loc1", location: [0, 0], data: {name: 'Test 1'}},
+        {key: "loc2", location: [50, 50], data: {name: 'Test 2'}},
+        {key: "loc3", location: [-90, -90], data: {name: 'Test 3'}}
+      ]).then(function() {
+        cl.x("p1");
+        return geoFire.getWithData("loc1");
+      }).then(function(data) {
+        expect(data).toEqual({'key': "loc1", 'location': [0, 0], 'data': {'name': 'Test 1'}});
+        cl.x("p2");
+
+        return geoFire.getWithData("loc2");
+      }).then(function(data) {
+        expect(data).toEqual({'key': "loc2", 'location': [50, 50], 'data': {'name': 'Test 2'}});
+        cl.x("p3");
+
+        return geoFire.getWithData("loc3");
+      }).then(function(data) {
+        expect(data).toEqual({'key': "loc3", 'location': [-90, -90], 'data': {'name': 'Test 3'}});
+        cl.x("p4");
+      }).catch(failTestOnCaughtError);
+    });
+
+    it("getWithData() does not throw errors given valid keys", function() {
+      validKeys.forEach(function(validKey) {
+        expect(function() { geoFire.getWithData(validKey); }).not.toThrow();
+      });
+    });
+
+    it("getWithData() throws errors given invalid keys", function() {
+      invalidKeys.forEach(function(invalidKey) {
+        expect(function() { geoFire.getWithData(invalidKey); }).toThrow();
       });
     });
   });
@@ -321,7 +396,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("set() does nothing given a non-existent location and null", function(done) {
@@ -353,7 +428,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("remove() removes existing location", function(done) {
@@ -388,7 +463,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("remove() does nothing given a non-existent location", function(done) {
@@ -420,7 +495,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("remove() only removes one key if multiple keys are at the same location", function(done) {
@@ -429,7 +504,7 @@ describe("GeoFire Tests:", function() {
       batchSet([
         {key: "loc1", location: [0, 0]},
         {key: "loc2", location: [2, 3]},
-        {key: "loc3", location: [0, 0]},
+        {key: "loc3", location: [0, 0]}
       ]).then(function() {
         cl.x("p1");
 
@@ -445,7 +520,7 @@ describe("GeoFire Tests:", function() {
         });
 
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("remove() does not throw errors given valid keys", function() {

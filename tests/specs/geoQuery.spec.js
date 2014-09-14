@@ -98,7 +98,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("updateCriteria() fires \"key_entered\" callback for locations with complex keys which now belong to the GeoQuery", function(done) {
@@ -123,7 +123,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("updateCriteria() fires \"key_exited\" callback for locations which no longer belong to the GeoQuery", function(done) {
@@ -148,7 +148,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("updateCriteria() does not cause event callbacks to fire on the previous criteria", function(done) {
@@ -187,7 +187,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p4");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("updateCriteria() does not cause \"key_moved\" callbacks to fire for keys in both the previous and updated queries", function(done) {
@@ -229,7 +229,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p4");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("updateCriteria() does not cause \"key_exited\" callbacks to fire twice for keys in the previous query but not in the updated query and which were moved after the query was updated", function(done) {
@@ -283,7 +283,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p6");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("updateCriteria() does not throw errors given valid query criteria", function() {
@@ -309,7 +309,7 @@ describe("GeoQuery Tests:", function() {
 
       var setInvalidEventType = function() {
         geoQueries[0].on("invalid_event", function() { });
-      }
+      };
 
       expect(setInvalidEventType).toThrow();
     });
@@ -319,7 +319,7 @@ describe("GeoQuery Tests:", function() {
 
       var setInvalidCallback = function() {
         geoQueries[0].on("key_entered", "non-function");
-      }
+      };
 
       expect(setInvalidCallback).toThrow();
     });
@@ -353,7 +353,7 @@ describe("GeoQuery Tests:", function() {
           expect(cl.length()).toBe(1);
           cl.x("ready fired");
         });
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"ready\" event fires immediately if the callback is added after the query is already ready", function(done) {
@@ -387,7 +387,7 @@ describe("GeoQuery Tests:", function() {
             cl.x("ready2 fired");
           });
         });
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"ready\" event fires after increasing the query radius, even if no new geohashes were queried", function(done) {
@@ -442,7 +442,7 @@ describe("GeoQuery Tests:", function() {
             cl.x("ready2 fired");
           });
         });
-      });
+      }).catch(failTestOnCaughtError);
     });
   });
 
@@ -466,7 +466,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_moved\" callback does not fire for locations outside of the GeoQuery which are moved somewhere else outside of the GeoQuery", function(done) {
@@ -495,7 +495,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_moved\" callback does not fire for locations outside of the GeoQuery which are moved within the GeoQuery", function(done) {
@@ -524,7 +524,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_moved\" callback does not fire for locations within the GeoQuery which are moved somewhere outside of the GeoQuery", function(done) {
@@ -553,7 +553,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_moved\" callback does not fires for a location within the GeoQuery which is set to the same location", function(done) {
@@ -583,7 +583,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_moved\" callback fires for locations within the GeoQuery which are moved somewhere else within the GeoQuery", function(done) {
@@ -612,7 +612,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_moved\" callback gets passed correct location parameter", function(done) {
@@ -641,7 +641,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_moved\" callback gets passed correct distance parameter", function(done) {
@@ -670,7 +670,35 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
+      }).catch(failTestOnCaughtError);
+    });
+
+    it("\"key_moved\" callback gets passed correct data parameter", function(done) {
+      var cl = new Checklist(["p1", "p2", "p3", "loc1 moved"], expect, done);
+
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
+
+      geoQueries[0].on("key_moved", function(key, location, distance, data) {
+        cl.x(key + " moved");
+        expect(data).toEqual({'name': 'Test 1'});
       });
+
+      batchSetWithData([
+        {key: "loc1", location: [0, 0], data: {name: 'Test 1'}},
+        {key: "loc2", location: [50, -7], data: {name: 'Test 2'}}
+      ]).then(function() {
+        cl.x("p1");
+
+        return batchSetWithData([
+          {key: "loc1", location: [2, 2], data: {name: 'Test 1'}}
+        ]);
+      }).then(function() {
+        cl.x("p2");
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p3");
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_moved\" callback properly fires when multiple keys are at the same location within the GeoQuery and only one of them moves somewhere else within the GeoQuery", function(done) {
@@ -699,7 +727,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_moved\" callback properly fires when a location within the GeoQuery moves somehwere else within the GeoQuery that is already occupied by another key", function(done) {
@@ -728,7 +756,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("multiple \"key_moved\" callbacks fire for locations within the GeoQuery which are moved somewhere else within the GeoQuery", function(done) {
@@ -760,7 +788,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
   });
 
@@ -786,7 +814,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_entered\" callback fires when a location enters the GeoQuery after onKeyEntered() was called", function(done) {
@@ -810,7 +838,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_entered\" callback gets passed correct location parameter", function(done) {
@@ -834,7 +862,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_entered\" callback gets passed correct distance parameter", function(done) {
@@ -858,7 +886,31 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p2");
+      }).catch(failTestOnCaughtError);
+    });
+
+    it("\"key_entered\" callback gets passed correct data parameter", function(done) {
+      var cl = new Checklist(["p1", "p2", "loc1 entered"], expect, done);
+
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
+
+      geoQueries[0].on("key_entered", function(key, location, distance, data) {
+        cl.x(key + " entered");
+        expect(data).toEqual({'name': 'Test 1'});
       });
+
+      batchSetWithData([
+        {key: "loc1", location: [2, 3], data: {name: 'Test 1'}},
+        {key: "loc2", location: [50, -7], data: {name: 'Test 2'}},
+        {key: "loc3", location: [16, -150], data: {name: 'Test 3'}},
+        {key: "loc5", location: [67, 55], data: {name: 'Test 4'}}
+      ]).then(function() {
+        cl.x("p1");
+
+        return wait(100);
+      }).then(function() {
+        cl.x("p2");
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_entered\" callback properly fires when multiple keys are at the same location outside the GeoQuery and only one of them moves within the GeoQuery", function(done) {
@@ -884,7 +936,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_entered\" callback properly fires when a location outside the GeoQuery moves somewhere within the GeoQuery that is already occupied by another key", function(done) {
@@ -910,7 +962,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("multiple \"key_entered\" callbacks fire when a location enters the GeoQuery", function(done) {
@@ -937,7 +989,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p2");
-      });
+      }).catch(failTestOnCaughtError);
     });
   });
 
@@ -970,7 +1022,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_exited\" callback gets passed correct location parameter", function(done) {
@@ -1002,7 +1054,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_exited\" callback gets passed correct distance parameter", function(done) {
@@ -1034,7 +1086,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_exited\" callback gets passed null for location and distance parameters if the key is entirely removed from GeoFire", function(done) {
@@ -1058,7 +1110,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_exited\" callback fires when a location within the GeoQuery is entirely removed from GeoFire", function(done) {
@@ -1083,7 +1135,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_exited\" callback properly fires when multiple keys are at the same location inside the GeoQuery and only one of them moves outside the GeoQuery", function(done) {
@@ -1108,7 +1160,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("\"key_exited\" callback properly fires when a location inside the GeoQuery moves somewhere outside the GeoQuery that is already occupied by another key", function(done) {
@@ -1134,7 +1186,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("multiple \"key_exited\" callbacks fire when a location leaves the GeoQuery", function(done) {
@@ -1168,7 +1220,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p3");
-      });
+      }).catch(failTestOnCaughtError);
     });
   });
 
@@ -1215,7 +1267,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p4");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it ("location moving between geohash queries triggers a key_moved", function(done) {
@@ -1235,7 +1287,7 @@ describe("GeoQuery Tests:", function() {
 
       batchSet([
         {key: "loc1", location: [-1, -1]},
-        {key: "loc2", location: [1, 1]},
+        {key: "loc2", location: [1, 1]}
       ]).then(function() {
         cl.x("p1");
 
@@ -1247,7 +1299,7 @@ describe("GeoQuery Tests:", function() {
         cl.x("p2");
 
         return wait(100);
-      });
+      }).catch(failTestOnCaughtError);
     });
   });
 
@@ -1312,7 +1364,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
 
     it("Calling cancel() on one GeoQuery does not cancel other GeoQueries", function(done) {
@@ -1374,7 +1426,7 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p5");
-      });
+      }).catch(failTestOnCaughtError);
     });
   });
 });

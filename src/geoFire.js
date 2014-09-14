@@ -25,9 +25,10 @@ var GeoFire = function(firebaseRef) {
    *
    * @param {string} key The key representing the location to add.
    * @param {array} location The [latitude, longitude] pair to add.
+   * @param {object} data The optional data to store in the GeoFire index (keep this small).
    * @return {RSVP.Promise} A promise that is fulfilled when the write is complete.
    */
-  this.set = function(key, location) {
+  this.set = function(key, location, data) {
     validateKey(key);
     if (location !== null) {
       // Setting location to null is valid since it will remove the key
@@ -46,7 +47,7 @@ var GeoFire = function(firebaseRef) {
         _firebaseRef.child(key).remove(onComplete);
       } else {
         var geohash = encodeGeohash(location);
-        _firebaseRef.child(key).setWithPriority(encodeGeoFireObject(location, geohash), geohash, onComplete);
+        _firebaseRef.child(key).setWithPriority(encodeGeoFireObject(location, geohash, data), geohash, onComplete);
       }
     });
   };
@@ -67,6 +68,31 @@ var GeoFire = function(firebaseRef) {
           resolve(null);
         } else {
           resolve(decodeGeoFireObject(dataSnapshot.val()));
+        }
+      }, function (error) {
+        reject("Error: Firebase synchronization failed: " + error);
+      });
+    });
+  };
+
+  /**
+   * Returns a promise fulfilled with the key, location, and data stored in the GeoFire index
+   * corresponding to the provided key.
+   *
+   * If the provided key does not exist in the index, the returned promise is fulfilled with null.
+   *
+   * @param {string} key The key of the geofire object to retrieve
+   * @return {RSVP.Promise} A promise that is fulfilled with an object of {key, location, data}
+   */
+  this.getWithData = function(key) {
+    validateKey(key);
+    return new RSVP.Promise(function(resolve, reject) {
+      _firebaseRef.child(key).once("value", function(dataSnapshot) {
+        var dsv = dataSnapshot.val();
+        if(dsv === null) {
+          resolve(null);
+        } else {
+          resolve({key: key, location: decodeGeoFireObject(dsv), data: decodeGeoFireDataObject(dsv)});
         }
       }, function (error) {
         reject("Error: Firebase synchronization failed: " + error);

@@ -87,6 +87,14 @@ function batchSet(keyLocationPairs) {
   return RSVP.allSettled(promises);
 };
 
+/* Adds multiple keys to GeoFire in a single call */
+function batchSetWithData(keyLocationDataPairs) {
+  var promises = keyLocationDataPairs.map(function(keyLocationDataPair) {
+    return geoFire.set(keyLocationDataPair.key, keyLocationDataPair.location, keyLocationDataPair.data);
+  });
+  return RSVP.allSettled(promises);
+};
+
 
 /* Returns a promise which is fulfilled after the inputted number of milliseconds pass */
 function wait(milliseconds) {
@@ -126,3 +134,12 @@ function Checklist(items, expect, done) {
     return (this.length() === 0);
   };
 };
+
+/* Common error handler for use in .catch() statements of promises. This will
+ * cause the test to fail, outputting the details of the exception. Otherwise, tests
+ * tend to fail due to the Jasmine ASYNC timeout and provide no details of what actually
+ * went wrong.
+ **/
+function failTestOnCaughtError(err) {
+  expect(err).toBeNull();
+}
