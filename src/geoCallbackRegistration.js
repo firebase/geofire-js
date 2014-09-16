@@ -3,7 +3,7 @@
  *
  * @constructor
  * @this {GeoCallbackRegistration}
- * @param {function} cancelCallback Callback to run when this callback registration is cancelled.
+ * @callback cancelCallback Callback to run when this callback registration is cancelled.
  */
 var GeoCallbackRegistration = function(cancelCallback) {
   /********************/

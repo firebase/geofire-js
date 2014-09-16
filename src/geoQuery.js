@@ -4,7 +4,7 @@
  * @constructor
  * @this {GeoQuery}
  * @param {Firebase} firebaseRef A Firebase reference.
- * @param {object} queryCriteria The criteria which specifies the query's center and radius.
+ * @param {Object} queryCriteria The criteria which specifies the query's center and radius.
  */
 var GeoQuery = function (firebaseRef, queryCriteria) {
   /*********************/
@@ -15,8 +15,8 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    *
    * @param {string} eventType The event type whose callbacks to fire. One of "key_entered", "key_exited", or "key_moved".
    * @param {string} key The key of the location for which to fire the callbacks.
-   * @param {array|null} location The location as latitude longitude pair
-   * @param {double|null} distanceFromCenter The distance from the center or null
+   * @param {?Array.<number>} location The location as [latitude, longitude] pair
+   * @param {?double} distanceFromCenter The distance from the center or null.
    */
   function _fireCallbacksForKey(eventType, key, location, distanceFromCenter) {
     _callbacks[eventType].forEach(function(callback) {
@@ -40,8 +40,9 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
   /**
    * Decodes a query string to a query
-   * @param {string} str The encoded query
-   * @return {array} The decoded query as a [start,end] pair
+   *
+   * @param {string} str The encoded query.
+   * @return {Array.<string>} The decoded query as a [start, end] pair.
    */
   function _stringToQuery(string) {
     var decoded = string.split(":");
@@ -52,9 +53,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
 
   /**
-   * Encodes a query as a string for easier indexing and equality
-   * @param {array} query The query to encode
-   * @param {string} The encoded query as string
+   * Encodes a query as a string for easier indexing and equality.
+   *
+   * @param {Array.<string>} query The query to encode.
+   * @param {string} The encoded query as string.
    */
   function _queryToString(query) {
     if (query.length !== 2) {
@@ -64,9 +66,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
 
   /**
-   * Turns off all callbacks for geo query
-   * @param {array} query The geohash query
-   * @param {object} queryState An object storing the current state of the query
+   * Turns off all callbacks for the provide geohash query.
+   *
+   * @param {Array.<string>} query The geohash query.
+   * @param {Object} queryState An object storing the current state of the query.
    */
   function _cancelGeohashQuery(query, queryState) {
     var queryRef = _firebaseRef.startAt(query[0]).endAt(query[1]);
@@ -116,13 +119,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
   /**
    * Callback for any updates to locations. Will update the information about a key and fire any necessary
-   * events every time the key's location changes
+   * events every time the key's location changes.
    *
    * When a key is removed from GeoFire or the query, this function will be called with null and performs
    * any necessary cleanup.
    *
-   * @param {string} key The key of the geofire location
-   * @param {array|null} location The location as [latitude, longitude] pair
+   * @param {string} key The key of the geofire location.
+   * @param {?Array.<number>} location The location as [latitude, longitude] pair.
    */
   function _updateLocation(key, location) {
     validateLocation(location);
@@ -154,10 +157,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
 
   /**
-   * Checks if this geohash is currently part of any of the geohash queries
+   * Checks if this geohash is currently part of any of the geohash queries.
    *
-   * @param {string} geohash The geohash
-   * @param {boolean} Returns true if the geohash is part of any of the current geohash queries
+   * @param {string} geohash The geohash.
+   * @param {boolean} Returns true if the geohash is part of any of the current geohash queries.
    */
   function _geohashInSomeQuery(geohash) {
     for (var queryStr in _currentGeohashesQueried) {
@@ -172,10 +175,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   }
 
   /**
-   * Removes the location from the local state and fires any events if necessary
+   * Removes the location from the local state and fires any events if necessary.
    *
-   * @param {string} key The key to be removed
-   * @param {array} currentLocation The current location as [latitude, longitude] pair or null if removed
+   * @param {string} key The key to be removed.
+   * @param {?Array.<number>} currentLocation The current location as [latitude, longitude] pair
+   * or null if removed.
    */
   function _removeLocation(key, currentLocation) {
     var locationDict = _locationsTracked[key];
@@ -328,7 +332,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   /**
    * Returns the location signifying the center of this query.
    *
-   * @return {array} The [latitude, longitude] pair signifying the center of this query.
+   * @return {Array.<number>} The [latitude, longitude] pair signifying the center of this query.
    */
   this.center = function() {
     return _center;
@@ -337,7 +341,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   /**
    * Returns the radius of this query, in kilometers.
    *
-   * @return {integer} The radius of this query, in kilometers.
+   * @return {number} The radius of this query, in kilometers.
    */
   this.radius = function() {
     return _radius;
@@ -346,7 +350,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   /**
    * Updates the criteria for this query.
    *
-   * @param {object} newQueryCriteria The criteria which specifies the query's center and radius.
+   * @param {Object} newQueryCriteria The criteria which specifies the query's center and radius.
    */
   this.updateCriteria = function(newQueryCriteria) {
     // Validate and save the new query criteria
@@ -415,7 +419,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    *
    * @param {string} eventType The event type for which to attach the callback. One of "ready", "key_entered",
    * "key_exited", or "key_moved".
-   * @param {function} callback Callback function to be called when an event of type eventType fires.
+   * @callback callback Callback function to be called when an event of type eventType fires.
    * @return {GeoCallbackRegistration} A callback registration which can be used to cancel the provided callback.
    */
   this.on = function(eventType, callback) {

@@ -24,8 +24,8 @@ var GeoFire = function(firebaseRef) {
    * If the provided key already exists in this GeoFire, it will be overwritten with the new location value.
    *
    * @param {string} key The key representing the location to add.
-   * @param {array} location The [latitude, longitude] pair to add.
-   * @return {RSVP.Promise} A promise that is fulfilled when the write is complete.
+   * @param {Array.<number>} location The [latitude, longitude] pair to add.
+   * @return {Promise.<>} A promise that is fulfilled when the write is complete.
    */
   this.set = function(key, location) {
     validateKey(key);
@@ -57,7 +57,7 @@ var GeoFire = function(firebaseRef) {
    * If the provided key does not exist, the returned promise is fulfilled with null.
    *
    * @param {string} key The key of the location to retrieve.
-   * @return {RSVP.Promise} A promise that is fulfilled with the location of the given key.
+   * @return {Promise.<Array.<number>>} A promise that is fulfilled with the location of the given key.
    */
   this.get = function(key) {
     validateKey(key);
@@ -80,7 +80,7 @@ var GeoFire = function(firebaseRef) {
    * If the provided key is not in this GeoFire, the promise will still successfully resolve.
    *
    * @param {string} key The key of the location to remove.
-   * @return {RSVP.Promise} A promise that is fulfilled after the inputted key is removed.
+   * @return {Promise.<string>} A promise that is fulfilled after the inputted key is removed.
    */
   this.remove = function(key) {
     return this.set(key, null);
@@ -89,7 +89,7 @@ var GeoFire = function(firebaseRef) {
   /**
    * Returns a new GeoQuery instance with the provided queryCriteria.
    *
-   * @param {object} queryCriteria The criteria which specifies the GeoQuery's center and radius.
+   * @param {Object} queryCriteria The criteria which specifies the GeoQuery's center and radius.
    * @return {GeoQuery} A new GeoQuery object.
    */
   this.query = function(queryCriteria) {
@@ -111,8 +111,8 @@ var GeoFire = function(firebaseRef) {
  * via the Haversine formula. Note that this is approximate due to the fact that the
  * Earth's radius varies between 6356.752 km and 6378.137 km.
  *
- * @param {array} location1 The [latitude, longitude] pair of the first location.
- * @param {array} location2 The [latitude, longitude] pair of the second location.
+ * @param {Array.<number>} location1 The [latitude, longitude] pair of the first location.
+ * @param {Array.<number>} location2 The [latitude, longitude] pair of the second location.
  * @return {number} The distance, in kilometers, between the inputted locations.
  */
 GeoFire.distance = function(location1, location2) {
