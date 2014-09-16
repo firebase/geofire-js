@@ -378,9 +378,6 @@ var geohashQuery = function(geohash, bits) {
   var base = geohash.substring(0, geohash.length - 1);
   var lastValue = g_BASE32.indexOf(geohash.charAt(geohash.length - 1));
   var significantBits = bits - (base.length*g_BITS_PER_CHAR);
-  if (significantBits === 0) {
-    return [base, base+"~"];
-  }
   var unusedBits = (g_BITS_PER_CHAR - significantBits);
   /*jshint bitwise: false*/
   // delete unused bits
