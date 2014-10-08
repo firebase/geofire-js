@@ -143,11 +143,14 @@ var validateCriteria = function(newQueryCriteria, requireCenterAndRadius) {
   }
 
   // Throw an error if there are any extraneous attributes
-  Object.keys(newQueryCriteria).forEach(function(key) {
+  var keys = Object.keys(newQueryCriteria);
+  var numKeys = keys.length;
+  for (var i = 0; i < numKeys; ++i) {
+    var key = keys[i];
     if (key !== "center" && key !== "radius") {
       throw new Error("Unexpected attribute '" + key + "'' found in query criteria");
     }
-  });
+  }
 
   // Validate the "center" attribute
   if (typeof newQueryCriteria.center !== "undefined") {
