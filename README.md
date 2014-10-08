@@ -69,7 +69,7 @@ In order to use GeoFire in your project, you need to include the following files
 <script src="rsvp.min.js"></script>
 
 <!-- Firebase -->
-<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
+<script src="https://cdn.firebase.com/js/client/1.1.0/firebase.js"></script>
 
 <!-- GeoFire -->
 <script src="https://cdn.firebase.com/libs/geofire/3.0.2/geofire.min.js"></script>
