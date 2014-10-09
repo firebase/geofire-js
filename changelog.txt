@@ -1,1 +1,2 @@
+feature - Implemented various minor performance improvements (suggested by @bolshchikov).
 changed - Updated Firebase dependency to 1.1.0.
