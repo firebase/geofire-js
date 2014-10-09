@@ -34,7 +34,7 @@
   ],
   "dependencies": {
     "firebase": "1.1.x",
-    "rsvp": "~3.0.14"
+    "rsvp": "~3.0.13"
   },
   "devDependencies": {
     "jasmine": "~2.0.0"
