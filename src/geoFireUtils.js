@@ -70,7 +70,7 @@ var validateKey = function(key) {
 var validateLocation = function(location) {
   var error;
 
-  if (Object.prototype.toString.call(location) !== "[object Array]") {
+  if (!Array.isArray(location)) {
     error = "location must be an array";
   }
   else if (location.length !== 2) {
@@ -143,11 +143,12 @@ var validateCriteria = function(newQueryCriteria, requireCenterAndRadius) {
   }
 
   // Throw an error if there are any extraneous attributes
-  for (var key in newQueryCriteria) {
-    if (newQueryCriteria.hasOwnProperty(key)) {
-      if (key !== "center" && key !== "radius") {
-        throw new Error("Unexpected attribute '" + key + "'' found in query criteria");
-      }
+  var keys = Object.keys(newQueryCriteria);
+  var numKeys = keys.length;
+  for (var i = 0; i < numKeys; ++i) {
+    var key = keys[i];
+    if (key !== "center" && key !== "radius") {
+      throw new Error("Unexpected attribute '" + key + "'' found in query criteria");
     }
   }
 

@@ -83,27 +83,29 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * Removes unnecessary Firebase queries which are currently being queried.
    */
   function _cleanUpCurrentGeohashesQueried() {
-    for (var geohashQueryStr in _currentGeohashesQueried) {
-      if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
-        var queryState = _currentGeohashesQueried[geohashQueryStr];
-        if (queryState.active === false) {
-          var query = _stringToQuery(geohashQueryStr);
-          // Delete the geohash since it should no longer be queried
-          _cancelGeohashQuery(query, queryState);
-          delete _currentGeohashesQueried[geohashQueryStr];
-        }
+    var keys = Object.keys(_currentGeohashesQueried);
+    var numKeys = keys.length;
+    for (var i = 0; i < numKeys; ++i) {
+      var geohashQueryStr = keys[i];
+      var queryState = _currentGeohashesQueried[geohashQueryStr];
+      if (queryState.active === false) {
+        var query = _stringToQuery(geohashQueryStr);
+        // Delete the geohash since it should no longer be queried
+        _cancelGeohashQuery(query, queryState);
+        delete _currentGeohashesQueried[geohashQueryStr];
       }
     }
 
     // Delete each location which should no longer be queried
-    for (var key in _locationsTracked) {
-      if (_locationsTracked.hasOwnProperty(key)) {
-        if (!_geohashInSomeQuery(_locationsTracked[key].geohash)) {
-          if (_locationsTracked[key].isInQuery) {
-            throw new Error("Internal State error, trying to remove location that is still in query");
-          }
-          delete _locationsTracked[key];
+    keys = Object.keys(_locationsTracked);
+    numKeys = keys.length;
+    for (i = 0; i < numKeys; ++i) {
+      var key = keys[i];
+      if (!_geohashInSomeQuery(_locationsTracked[key].geohash)) {
+        if (_locationsTracked[key].isInQuery) {
+          throw new Error("Internal State error, trying to remove location that is still in query");
         }
+        delete _locationsTracked[key];
       }
     }
 
@@ -163,7 +165,10 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {boolean} Returns true if the geohash is part of any of the current geohash queries.
    */
   function _geohashInSomeQuery(geohash) {
-    for (var queryStr in _currentGeohashesQueried) {
+    var keys = Object.keys(_currentGeohashesQueried);
+    var numKeys = keys.length;
+    for (var i = 0; i < numKeys; ++i) {
+      var queryStr = keys[i];
       if (_currentGeohashesQueried.hasOwnProperty(queryStr)) {
         var query = _stringToQuery(queryStr);
         if (geohash >= query[0] && geohash <= query[1]) {
@@ -262,16 +267,17 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // For all of the geohashes that we are already currently querying, check if they are still
     // supposed to be queried. If so, don't re-query them. Otherwise, mark them to be un-queried
     // next time we clean up the current geohashes queried dictionary.
-    for (var geohashQueryStr in _currentGeohashesQueried) {
-      if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
-        var index = geohashesToQuery.indexOf(geohashQueryStr);
-        if (index === -1) {
-          _currentGeohashesQueried[geohashQueryStr].active = false;
-        }
-        else {
-          _currentGeohashesQueried[geohashQueryStr].active = true;
-          geohashesToQuery.splice(index, 1);
-        }
+    var keys = Object.keys(_currentGeohashesQueried);
+    var numKeys = keys.length;
+    for (var i = 0; i < numKeys; ++i) {
+      var geohashQueryStr = keys[i];
+      var index = geohashesToQuery.indexOf(geohashQueryStr);
+      if (index === -1) {
+        _currentGeohashesQueried[geohashQueryStr].active = false;
+      }
+      else {
+        _currentGeohashesQueried[geohashQueryStr].active = true;
+        geohashesToQuery.splice(index, 1);
       }
     }
 
@@ -360,29 +366,31 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // Loop through all of the locations in the query, update their distance from the center of the
     // query, and fire any appropriate events
-    for (var key in _locationsTracked) {
-      if (_locationsTracked.hasOwnProperty(key)) {
-        // Get the cached information for this location
-        var locationDict = _locationsTracked[key];
+    var keys = Object.keys(_locationsTracked);
+    var numKeys = keys.length;
+    for (var i = 0; i < numKeys; ++i) {
+      var key = keys[i];
 
-        // Save if the location was already in the query
-        var wasAlreadyInQuery = locationDict.isInQuery;
+      // Get the cached information for this location
+      var locationDict = _locationsTracked[key];
 
-        // Update the location's distance to the new query center
-        locationDict.distanceFromCenter = GeoFire.distance(locationDict.location, _center);
+      // Save if the location was already in the query
+      var wasAlreadyInQuery = locationDict.isInQuery;
 
-        // Determine if the location is now in this query
-        locationDict.isInQuery = (locationDict.distanceFromCenter <= _radius);
+      // Update the location's distance to the new query center
+      locationDict.distanceFromCenter = GeoFire.distance(locationDict.location, _center);
 
-        // If the location just left the query, fire the "key_exited" callbacks
-        if (wasAlreadyInQuery && !locationDict.isInQuery) {
-          _fireCallbacksForKey("key_exited", key, locationDict.location, locationDict.distanceFromCenter);
-        }
+      // Determine if the location is now in this query
+      locationDict.isInQuery = (locationDict.distanceFromCenter <= _radius);
 
-        // If the location just entered the query, fire the "key_entered" callbacks
-        else if (!wasAlreadyInQuery && locationDict.isInQuery) {
-          _fireCallbacksForKey("key_entered", key, locationDict.location, locationDict.distanceFromCenter);
-        }
+      // If the location just left the query, fire the "key_exited" callbacks
+      if (wasAlreadyInQuery && !locationDict.isInQuery) {
+        _fireCallbacksForKey("key_exited", key, locationDict.location, locationDict.distanceFromCenter);
+      }
+
+      // If the location just entered the query, fire the "key_entered" callbacks
+      else if (!wasAlreadyInQuery && locationDict.isInQuery) {
+        _fireCallbacksForKey("key_entered", key, locationDict.location, locationDict.distanceFromCenter);
       }
     }
 
@@ -436,12 +444,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // If this is a "key_entered" callback, fire it for every location already within this query
     if (eventType === "key_entered") {
-      for (var key in _locationsTracked) {
-        if (_locationsTracked.hasOwnProperty(key)) {
-          var locationDict = _locationsTracked[key];
-          if (locationDict.isInQuery) {
-            callback(key, locationDict.location, locationDict.distanceFromCenter);
-          }
+      var keys = Object.keys(_locationsTracked);
+      var numKeys = keys.length;
+      for (var i = 0; i < numKeys; ++i) {
+        var key = keys[i];
+        var locationDict = _locationsTracked[key];
+        if (locationDict.isInQuery) {
+          callback(key, locationDict.location, locationDict.distanceFromCenter);
         }
       }
     }
@@ -473,12 +482,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     };
 
     // Turn off all Firebase listeners for the current geohashes being queried
-    for (var geohashQueryStr in _currentGeohashesQueried) {
-      if (_currentGeohashesQueried.hasOwnProperty(geohashQueryStr)) {
-        var query = _stringToQuery(geohashQueryStr);
-        _cancelGeohashQuery(query, _currentGeohashesQueried[geohashQueryStr]);
-        delete _currentGeohashesQueried[geohashQueryStr];
-      }
+    var keys = Object.keys(_currentGeohashesQueried);
+    var numKeys = keys.length;
+    for (var i = 0; i < numKeys; ++i) {
+      var geohashQueryStr = keys[i];
+      var query = _stringToQuery(geohashQueryStr);
+      _cancelGeohashQuery(query, _currentGeohashesQueried[geohashQueryStr]);
+      delete _currentGeohashesQueried[geohashQueryStr];
     }
 
     // Delete any stored locations
