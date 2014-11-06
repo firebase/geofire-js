@@ -33,6 +33,7 @@ location for each bar using GeoFire, using the bar IDs as GeoFire keys. GeoFire 
 easily query which bar IDs (the keys) are nearby. To display any additional information about the
 bars, you can load the information for each bar returned by the query at `/bars/<bar-id>`.
 
+
 ## Live Demos
 
 To see GeoFire in action, you can [play around with our fully-featured demo](https://geofire.firebaseapp.com/sfVehicles/index.html). (Drag the purple circle!)
@@ -44,9 +45,12 @@ drag around the search radius and see the vehicles update in realtime.
 You can find a full list of our demos [here](https://geofire.firebaseapp.com/index.html)
 and view the code for each of them in the [examples directory](./examples/) of this repository.
 The examples cover some of the common use cases for GeoFire and explain how to protect your data
-using security rules.
+using Security and Firebase Rules.
 
-## Upgrading from GeoFire 2.x to 3.x
+
+## Upgrading GeoFire
+
+### Upgrading from GeoFire 2.x.x to 3.x.x
 
 GeoFire 3.x has the same API as 2.x but uses a different underlying data structure to store its
 location data. If you are currently using 2.x and want to upgrade to 3.x, you must run the
@@ -60,6 +64,15 @@ $ npm install           # install local npm dependencies
 $ node migrateToV3.js   # display usage instructions
 ```
 
+### Upgrading from GeoFire 3.0.x to 3.1.x
+
+With the release of GeoFire 3.1.0, this library now uses [the new query functionality found in
+Firebase 2.0.0](https://www.firebase.com/blog/2014-11-04-firebase-realtime-queries.html). As a
+result, you will need to upgrade to Firebase 2.x.x and add a new `.indexOn` rule to your Security
+and Firebase Rules to get the best performance. You can view [the updated rules here](./examples/securityRules/rules.json)
+and [read our docs for more information about indexing your data](https://www.firebase.com/docs/security/guide/indexing-data.html).
+
+
 ## Downloading GeoFire
 
 In order to use GeoFire in your project, you need to include the following files in your HTML:
@@ -69,7 +82,7 @@ In order to use GeoFire in your project, you need to include the following files
 <script src="rsvp.min.js"></script>
 
 <!-- Firebase -->
-<script src="https://cdn.firebase.com/js/client/1.1.0/firebase.js"></script>
+<script src="https://cdn.firebase.com/js/client/2.0.2/firebase.js"></script>
 
 <!-- GeoFire -->
 <script src="https://cdn.firebase.com/libs/geofire/3.0.3/geofire.min.js"></script>
@@ -91,9 +104,11 @@ $ npm install geofire --save
 $ bower install geofire --save
 ```
 
+
 ## Getting Started with Firebase
 
 GeoFire requires Firebase in order to store location data. You can [sign up here](https://www.firebase.com/signup/?utm_source=geofire-js) for a free account.
+
 
 ## API Reference
 
@@ -358,6 +373,7 @@ var location2 = [-78.3, 105.6];
 var distance = GeoFire.distance(location1, location2);  // distance === 12378.536597423461
 ```
 
+
 ## Promises
 
 GeoFire uses promises when writing and retrieving data. Promises represent the result of a potentially long-running operation and allow code to run asynchronously. Upon completion of the operation, the promise will be "resolved" / "fulfilled" with the operation's result. This result will be passed to the function defined in the promise's `then()` method.
@@ -371,6 +387,7 @@ promise.then(function(result) {
   console.log("Promise was rejected with the following error: " + error);
 })
 ```
+
 
 ## Contributing
 

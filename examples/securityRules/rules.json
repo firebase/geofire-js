@@ -1,8 +1,14 @@
 {
   "rules": {
-    "<your-geo-fire-location>": {
+    "<your-geofire-node>": {
+      // Allow anyone to read and write to this node (assuming they respect the schema below)
       ".read": true,
       ".write": true,
+
+      // Index each location's geohash for faster querying
+      ".indexOn": ["g"],
+
+      // Schema validation
       "$key": {
         ".validate": "newData.hasChildren(['g', 'l']) && newData.getPriority().length <= 22 && newData.getPriority().length > 0",
         "g": {
