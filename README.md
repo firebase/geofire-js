@@ -24,7 +24,7 @@ in its own format and its own location within your Firebase. This allows your ex
 and security rules to remain unchanged while still providing you with an easy solution for geo
 queries.
 
-#### Example Usage
+### Example Usage
 
 Assume you are building an app to rate bars and you store all information for a bar, e.g. name,
 business hours and price range, at `/bars/<bar-id>`. Later, you want to add the possibility for
