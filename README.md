@@ -107,7 +107,7 @@ $ bower install geofire --save
 
 ## Getting Started with Firebase
 
-GeoFire requires Firebase in order to store location data. You can [sign up here](https://www.firebase.com/signup/?utm_source=geofire-js) for a free account.
+GeoFire requires Firebase in order to store location data. You can [sign up here for a free account](https://www.firebase.com/signup/?utm_source=geofire-js).
 
 
 ## API Reference
