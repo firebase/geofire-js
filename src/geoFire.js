@@ -19,35 +19,58 @@ var GeoFire = function(firebaseRef) {
   };
 
   /**
-   * Adds the provided key - location pair to Firebase. Returns an empty promise which is fulfilled when the write is complete.
+   * Adds the provided key - location pair(s) to Firebase. Returns an empty promise which is fulfilled when the write is complete.
    *
-   * If the provided key already exists in this GeoFire, it will be overwritten with the new location value.
+   * If any provided key already exists in this GeoFire, it will be overwritten with the new location value.
    *
-   * @param {string} key The key representing the location to add.
-   * @param {Array.<number>} location The [latitude, longitude] pair to add.
+   * @param {string|Object} keyOrLocations The key representing the location to add or a mapping of key - location pairs which
+   * represent the locations to add.
+   * @param {Array.<number>|undefined} location The [latitude, longitude] pair to add.
    * @return {Promise.<>} A promise that is fulfilled when the write is complete.
    */
-  this.set = function(key, location) {
-    validateKey(key);
-    if (location !== null) {
-      // Setting location to null is valid since it will remove the key
-      validateLocation(location);
+  this.set = function(keyOrLocations, location) {
+    var locations;
+    if (typeof keyOrLocations === "string" && keyOrLocations.length !== 0) {
+      // If this is a set for a single location, convert it into a object
+      locations = {};
+      locations[keyOrLocations] = location;
+    } else if (typeof keyOrLocations === "object") {
+      if (typeof location !== "undefined") {
+        throw new Error("The location argument should not be used if you pass an object to set().");
+      }
+      locations = keyOrLocations;
+    } else {
+      throw new Error("keyOrLocations must be a string or a mapping of key - location pairs.");
     }
+
+    var newData = {};
+
+    Object.keys(locations).forEach(function(key) {
+      validateKey(key);
+
+      var location = locations[key];
+      if (location === null) {
+        // Setting location to null is valid since it will remove the key
+        newData[key] = null;
+      } else {
+        validateLocation(location);
+
+        var geohash = encodeGeohash(location);
+        newData[key] = encodeGeoFireObject(location, geohash);
+      }
+    });
+
     return new RSVP.Promise(function(resolve, reject) {
       function onComplete(error) {
-        if (error) {
+        if (error !== null) {
           reject("Error: Firebase synchronization failed: " + error);
         }
         else {
           resolve();
         }
       }
-      if (location === null) {
-        _firebaseRef.child(key).remove(onComplete);
-      } else {
-        var geohash = encodeGeohash(location);
-        _firebaseRef.child(key).setWithPriority(encodeGeoFireObject(location, geohash), geohash, onComplete);
-      }
+
+      _firebaseRef.update(newData, onComplete);
     });
   };
 
