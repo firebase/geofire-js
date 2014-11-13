@@ -84,7 +84,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " entered");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -109,7 +109,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " entered");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc:^:*1": [2, 3],
         "loc:a:a:a:a:2": [50, -7],
         "loc%!@3": [16, -150],
@@ -134,7 +134,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " exited");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -162,7 +162,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " exited");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -177,7 +177,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc2": [1, 1],
           "loc4": [89, 90]
         });
@@ -204,7 +204,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -219,7 +219,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc2": [1, 1],
           "loc4": [89, 90]
         });
@@ -247,7 +247,7 @@ describe("GeoQuery Tests:", function() {
       });
 
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -262,7 +262,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc2": [1, 1],
           "loc4": [89, 90]
         });
@@ -273,7 +273,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p4");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc2": [0, 0],
           "loc5": [89, 89]
         });
@@ -329,7 +329,7 @@ describe("GeoQuery Tests:", function() {
     it("\"ready\" event fires after all \"key_entered\" events have fired", function(done) {
       var cl = new Checklist(["p1", "loc1 entered", "loc2 entered", "loc5 entered", "loc6 entered", "loc7 entered", "loc10 entered", "ready fired"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [1, 1],
         "loc3": [50, 50],
@@ -359,7 +359,7 @@ describe("GeoQuery Tests:", function() {
     it("\"ready\" event fires immediately if the callback is added after the query is already ready", function(done) {
       var cl = new Checklist(["p1", "loc1 entered", "loc2 entered", "loc5 entered", "loc6 entered", "loc7 entered", "loc10 entered", "ready1 fired", "ready2 fired"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [1, 1],
         "loc3": [50, 50],
@@ -408,7 +408,7 @@ describe("GeoQuery Tests:", function() {
     it("updateCriteria() fires the \"ready\" event after all \"key_entered\" events have fired", function(done) {
       var cl = new Checklist(["p1", "loc1 entered", "loc2 entered", "loc5 entered", "loc3 entered", "loc1 exited", "loc2 exited", "loc5 exited", "ready1 fired", "ready2 fired"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [1, 1],
         "loc3": [50, 50],
@@ -456,7 +456,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [1, 1]
@@ -478,14 +478,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [1, 90],
         "loc2": [50, -7],
         "loc3": [16, -150]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [1, 91],
           "loc3": [-50, -50]
         });
@@ -507,14 +507,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [1, 90],
         "loc2": [50, -7],
         "loc3": [16, -150]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [0, 0],
           "loc3": [-1, -1]
         });
@@ -536,14 +536,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [1, 1]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [1, 90],
           "loc3": [-1, -90]
         });
@@ -565,14 +565,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [1, -1]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [0, 0],
           "loc2": [55, 55],
           "loc3": [1, 1]
@@ -595,14 +595,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [1, 1]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [2, 2],
           "loc3": [-1, -1]
         });
@@ -624,14 +624,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved to " + location);
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [1, 1]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [2, 2],
           "loc3": [-1, -1]
         });
@@ -653,14 +653,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved (" + distance.toFixed(2) + " km from center)");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [1, 1]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [2, 2],
           "loc3": [-1, -1]
         });
@@ -682,14 +682,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [0, 0],
         "loc3": [1, 1]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [2, 2],
           "loc3": [-1, -1]
         });
@@ -711,14 +711,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [2, 2],
         "loc3": [1, 1]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [2, 2],
           "loc3": [-1, -1]
         });
@@ -743,14 +743,14 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved2");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [1, 1]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [2, 2],
           "loc3": [-1, -1]
         });
@@ -770,7 +770,7 @@ describe("GeoQuery Tests:", function() {
 
       geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -798,7 +798,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " entered");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -822,7 +822,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " entered at " + location);
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -846,7 +846,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " entered (" + distance.toFixed(2) + " km from center)");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -870,7 +870,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " entered");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [50, 50],
         "loc2": [50, 50],
         "loc3": [18, -121]
@@ -896,7 +896,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " entered");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [50, 50],
         "loc2": [50, 50],
         "loc3": [0, 0]
@@ -925,7 +925,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " entered2");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -951,7 +951,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " exited");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -960,7 +960,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [25, 90],
           "loc4": [25, 5]
         });
@@ -982,7 +982,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " exited to " + location);
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [5, 2],
         "loc3": [16, -150],
@@ -991,7 +991,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [25, 90],
           "loc2": [5, 5],
           "loc4": [25, 5]
@@ -1014,7 +1014,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " exited (" + distance.toFixed(2) + " km from center)");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [5, 2],
         "loc3": [16, -150],
@@ -1023,7 +1023,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [25, 90],
           "loc2": [5, 5],
           "loc4": [25, 5]
@@ -1070,7 +1070,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " exited");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [2, 3]
       }).then(function() {
@@ -1094,7 +1094,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " exited");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [0, 0],
         "loc3": [18, -121]
@@ -1120,7 +1120,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " exited");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, 50],
         "loc3": [18, -121]
@@ -1149,7 +1149,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " exited2");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -1158,7 +1158,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [25, 90],
           "loc4": [25, 5]
         });
@@ -1188,7 +1188,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -1197,14 +1197,14 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [1, 1],
           "loc4": [25, 5]
         });
       }).then(function() {
         cl.x("p2");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [10, -100],
           "loc2": [50, -50],
           "loc5": [5, 5]
@@ -1233,13 +1233,13 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [-1, -1],
         "loc2": [1, 1]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [1, 1],
           "loc2": [-1, -1]
         });
@@ -1267,7 +1267,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -1276,7 +1276,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [1, 1],
           "loc4": [25, 5]
         });
@@ -1301,7 +1301,7 @@ describe("GeoQuery Tests:", function() {
           cl.x(key + " moved");
         });
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [10, -100],
           "loc2": [50, -50],
           "loc5": [5, 5]
@@ -1341,7 +1341,7 @@ describe("GeoQuery Tests:", function() {
         cl.x(key + " moved2");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [2, 3],
         "loc2": [50, -7],
         "loc3": [16, -150],
@@ -1350,7 +1350,7 @@ describe("GeoQuery Tests:", function() {
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [1, 1],
           "loc4": [25, 5]
         });
@@ -1363,7 +1363,7 @@ describe("GeoQuery Tests:", function() {
 
         geoQueries[0].cancel();
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [10, -100],
           "loc2": [50, -50],
           "loc5": [1, 2]

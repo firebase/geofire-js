@@ -28,7 +28,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " moved");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [1, 1]
@@ -63,7 +63,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " entered");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [80, 80]
@@ -94,7 +94,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " exited");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [1, 1]
@@ -132,7 +132,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " moved2");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [1, 1]
@@ -170,7 +170,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " entered2");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [80, 80]
@@ -204,7 +204,7 @@ describe("GeoCallbackRegistration Tests:", function() {
         cl.x(key + " exited2");
       });
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, -7],
         "loc3": [1, 1]

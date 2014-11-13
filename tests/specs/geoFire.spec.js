@@ -26,7 +26,7 @@ describe("GeoFire Tests:", function() {
     });
   });
 
-  describe("Adding locations via set():", function() {
+  describe("Adding a single location via set():", function() {
     it("set() returns a promise", function(done) {
 
       var cl = new Checklist(["p1"], expect, done);
@@ -266,22 +266,22 @@ describe("GeoFire Tests:", function() {
     });
   });
 
-  describe("Adding locations via batchSet():", function() {
-    it("batchSet() returns a promise", function(done) {
+  describe("Adding multiple locations via set():", function() {
+    it("set() returns a promise", function(done) {
 
       var cl = new Checklist(["p1"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0]
       }).then(function() {
         cl.x("p1");
       });
     });
 
-    it("batchSet() updates Firebase when adding new locations", function(done) {
+    it("set() updates Firebase when adding new locations", function(done) {
       var cl = new Checklist(["p1", "p2"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, 50],
         "loc3": [-90, -90]
@@ -300,10 +300,10 @@ describe("GeoFire Tests:", function() {
       }).catch(failTestOnCaughtError);
     });
 
-    it("batchSet() handles decimal latitudes and longitudes", function(done) {
+    it("set() handles decimal latitudes and longitudes", function(done) {
       var cl = new Checklist(["p1", "p2"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0.254, 0],
         "loc2": [50, 50.293403],
         "loc3": [-82.614, -90.938]
@@ -322,17 +322,17 @@ describe("GeoFire Tests:", function() {
       }).catch(failTestOnCaughtError);
     });
 
-    it("batchSet() updates Firebase when changing a pre-existing key", function(done) {
+    it("set() updates Firebase when changing a pre-existing key", function(done) {
       var cl = new Checklist(["p1", "p2", "p3"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, 50],
         "loc3": [-90, -90]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [2, 3]
         });
       }).then(function() {
@@ -350,17 +350,17 @@ describe("GeoFire Tests:", function() {
       }).catch(failTestOnCaughtError);
     });
 
-    it("batchSet() updates Firebase when changing a pre-existing key to the same location", function(done) {
+    it("set() updates Firebase when changing a pre-existing key to the same location", function(done) {
       var cl = new Checklist(["p1", "p2", "p3"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, 50],
         "loc3": [-90, -90]
       }).then(function() {
         cl.x("p1");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": [0, 0]
         });
       }).then(function() {
@@ -378,10 +378,10 @@ describe("GeoFire Tests:", function() {
       }).catch(failTestOnCaughtError);
     });
 
-    it("batchSet() handles multiple keys at the same location", function(done) {
+    it("set() handles multiple keys at the same location", function(done) {
       var cl = new Checklist(["p1", "p2"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [0, 0],
         "loc3": [0, 0]
@@ -400,10 +400,10 @@ describe("GeoFire Tests:", function() {
       }).catch(failTestOnCaughtError);
     });
 
-    it("batchSet() updates Firebase after complex operations", function(done) {
+    it("set() updates Firebase after complex operations", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "p6"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc:1": [0, 0],
         "loc2": [50, 50],
         "loc%!A72f()3": [-90, -90]
@@ -414,7 +414,7 @@ describe("GeoFire Tests:", function() {
       }).then(function() {
         cl.x("p2");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc2": [0.2358, -72.621],
           "loc4": [87.6, -130],
           "loc5": [5, 55.555]
@@ -422,13 +422,13 @@ describe("GeoFire Tests:", function() {
       }).then(function() {
         cl.x("p3");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc5": null
         });
       }).then(function() {
         cl.x("p4");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc:1": [87.6, -130],
           "loc6": [-72.258, 0.953215]
         });
@@ -449,43 +449,44 @@ describe("GeoFire Tests:", function() {
       }).catch(failTestOnCaughtError);
     });
 
-    it("batchSet() does not throw errors given valid keys", function() {
+    it("set() does not throw errors given valid keys", function() {
       validKeys.forEach(function(validKey) {
         expect(function() {
           var locations = {};
           locations[validKey] = [0, 0];
-          geoFire.batchSet(locations);
+          geoFire.set(locations);
         }).not.toThrow();
       });
     });
 
-    it("batchSet() throws errors given invalid keys", function() {
-      var invalidBatchSetKeys = ["", [], {}, {a: 1}, "loc.1", "loc$1", "[loc1", "loc1]", "loc#1", "loc/1", "a#i]$da[s", "te/nst", "te/rst", "te/u0000st", "te/u0015st", "te/007Fst", Array(800).join("a")];
-      invalidBatchSetKeys.forEach(function(invalidKey) {
-        expect(function() {
-          var locations = {};
-          locations[invalidKey] = [0, 0];
-          geoFire.batchSet(locations);
-        }).toThrow();
+    it("set() throws errors given invalid keys", function() {
+      invalidKeys.forEach(function(invalidKey) {
+        if (invalidKey !== null && invalidKey !== undefined && typeof invalidKey !== "boolean") {
+          expect(function() {
+              var locations = {};
+              locations[invalidKey] = [0, 0];
+              geoFire.set(locations);
+          }).toThrow();
+        }
       });
     });
 
-    it("batchSet() does not throw errors given valid locations", function() {
+    it("set() does not throw errors given valid locations", function() {
       validLocations.forEach(function(validLocation, i) {
         expect(function() {
-          geoFire.batchSet({
+          geoFire.set({
             "loc": validLocation
           });
         }).not.toThrow();
       });
     });
 
-    it("batchSet() throws errors given invalid locations", function() {
+    it("set() throws errors given invalid locations", function() {
       invalidLocations.forEach(function(invalidLocation, i) {
         // Setting location to null is valid since it will remove the key
         if (invalidLocation !== null) {
           expect(function() {
-            geoFire.batchSet({
+            geoFire.set({
               "loc": invalidLocation
             });
           }).toThrow();
@@ -516,7 +517,7 @@ describe("GeoFire Tests:", function() {
     it("get() retrieves locations given existing keys", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [50, 50],
         "loc3": [-90, -90]
@@ -557,7 +558,7 @@ describe("GeoFire Tests:", function() {
     it("set() removes existing location given null", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [2, 3]
       }).then(function() {
@@ -621,10 +622,10 @@ describe("GeoFire Tests:", function() {
       }).catch(failTestOnCaughtError);
     });
 
-    it("batchSet() removes existing location given null", function(done) {
+    it("set() removes existing location given null", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [2, 3]
       }).then(function() {
@@ -636,7 +637,7 @@ describe("GeoFire Tests:", function() {
 
         cl.x("p2");
 
-        return geoFire.batchSet({
+        return geoFire.set({
           "loc1": null,
           "loc3": [-90, -90]
         });
@@ -660,10 +661,10 @@ describe("GeoFire Tests:", function() {
       }).catch(failTestOnCaughtError);
     });
 
-    it("batchSet() does nothing given a non-existent location and null", function(done) {
+    it("set() does nothing given a non-existent location and null", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": null
       }).then(function() {
@@ -694,7 +695,7 @@ describe("GeoFire Tests:", function() {
     it("remove() removes existing location", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc:^%*1": [0, 0],
         "loc2": [2, 3]
       }).then(function() {
@@ -761,7 +762,7 @@ describe("GeoFire Tests:", function() {
     it("remove() only removes one key if multiple keys are at the same location", function(done) {
       var cl = new Checklist(["p1", "p2", "p3"], expect, done);
 
-      geoFire.batchSet({
+      geoFire.set({
         "loc1": [0, 0],
         "loc2": [2, 3],
         "loc3": [0, 0]

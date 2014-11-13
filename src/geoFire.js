@@ -19,48 +19,27 @@ var GeoFire = function(firebaseRef) {
   };
 
   /**
-   * Adds the provided key - location pair to Firebase. Returns an empty promise which is fulfilled when the write is complete.
+   * Adds the provided key - location pair(s) to Firebase. Returns an empty promise which is fulfilled when the write is complete.
    *
-   * If the provided key already exists in this GeoFire, it will be overwritten with the new location value.
+   * If any provided key already exists in this GeoFire, it will be overwritten with the new location value.
    *
-   * @param {string} key The key representing the location to add.
-   * @param {Array.<number>} location The [latitude, longitude] pair to add.
+   * @param {string|Object} keyOrLocations The key representing the location to add or a mapping of key - location pairs which
+   * represent the locations to add.
+   * @param {Array.<number>|undefined} location The [latitude, longitude] pair to add.
    * @return {Promise.<>} A promise that is fulfilled when the write is complete.
    */
-  this.set = function(key, location) {
-    validateKey(key);
-    if (location !== null) {
-      // Setting location to null is valid since it will remove the key
-      validateLocation(location);
+  this.set = function(keyOrLocations, location) {
+    var locations;
+    if (typeof keyOrLocations === "string" && keyOrLocations.length !== 0) {
+      // If this is a set for a single location, convert it into a object
+      locations = {};
+      locations[keyOrLocations] = location;
+    } else if (typeof keyOrLocations === "object") {
+      locations = keyOrLocations;
+    } else {
+      throw new Error("keyOrLocations must be a string or a mapping of key - location pairs.");
     }
 
-    return new RSVP.Promise(function(resolve, reject) {
-      function onComplete(error) {
-        if (error !== null) {
-          reject("Error: Firebase synchronization failed: " + error);
-        }
-        else {
-          resolve();
-        }
-      }
-      if (location === null) {
-        _firebaseRef.child(key).remove(onComplete);
-      } else {
-        var geohash = encodeGeohash(location);
-        _firebaseRef.child(key).set(encodeGeoFireObject(location, geohash), onComplete);
-      }
-    });
-  };
-
-  /**
-   * Adds the provided key - location pairs to Firebase. Returns an empty promise which is fulfilled when the write is complete.
-   *
-   * If any of the provided keys already exist in this GeoFire, they will be overwritten with the new location values.
-   *
-   * @param {Object} locations A mapping of key - location pairs which representing the locations to add.
-   * @return {Promise.<>} A promise that is fulfilled when the write is complete.
-   */
-  this.batchSet = function(locations) {
     var newData = {};
 
     Object.keys(locations).forEach(function(key) {

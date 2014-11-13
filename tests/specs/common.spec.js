@@ -10,7 +10,7 @@ var demoFirebaseUrl = "https://geofire.firebaseio.com";
 // Define examples of valid and invalid parameters
 var invalidFirebaseRefs = [null, undefined, NaN, true, false, [], 0, 5, "", "a", ["hi", 1]];
 var validKeys = ["a", "loc1", "(e@Xi:4t>*E2)hc<5oa:1s6{B0d?u", Array(743).join("a")];
-var invalidKeys = ["", 1, true, false, [], {}, [1, 2], {a: 1}, null, undefined, NaN, "loc.1", "loc$1", "[loc1", "loc1]", "loc#1", "loc/1", "a#i]$da[s", "te/nst", "te/rst", "te/u0000st", "te/u0015st", "te/007Fst", Array(800).join("a")];
+var invalidKeys = ["", true, false, null, undefined, {a: 1}, "loc.1", "loc$1", "[loc1", "loc1]", "loc#1", "loc/1", "a#i]$da[s", "te/nst", "te/rst", "te/u0000st", "te/u0015st", "te/007Fst", Array(800).join("a")];
 var validLocations = [[0, 0], [-90, 180], [90, -180], [23, 74], [47.235124363, 127.2379654226]];
 var invalidLocations = [[-91, 0], [91, 0], [0, 181], [0, -181], [[0, 0], 0], ["a", 0], [0, "a"], ["a", "a"], [NaN, 0], [0, NaN], [undefined, NaN], [null, 0], [null, null], [0, undefined], [undefined, undefined], "", "a", true, false, [], [1], {}, {a:1}, null, undefined, NaN];
 var validGeohashes = ["4", "d62dtu", "000000000000"];
