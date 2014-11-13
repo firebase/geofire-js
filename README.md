@@ -166,7 +166,7 @@ geoFire.set("some_key", [37.79, -122.41]).then(function() {
 ```
 
 ```JavaScript
-geoFire.batchSet({
+geoFire.set({
   "some_key": [37.79, -122.41],
   "another_key": [36.98, -122.56]
 }).then(function() {
