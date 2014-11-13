@@ -33,9 +33,10 @@ var GeoFire = function(firebaseRef) {
       // Setting location to null is valid since it will remove the key
       validateLocation(location);
     }
+
     return new RSVP.Promise(function(resolve, reject) {
       function onComplete(error) {
-        if (error) {
+        if (error !== null) {
           reject("Error: Firebase synchronization failed: " + error);
         }
         else {
@@ -46,7 +47,49 @@ var GeoFire = function(firebaseRef) {
         _firebaseRef.child(key).remove(onComplete);
       } else {
         var geohash = encodeGeohash(location);
-        _firebaseRef.child(key).setWithPriority(encodeGeoFireObject(location, geohash), geohash, onComplete);
+        _firebaseRef.child(key).set(encodeGeoFireObject(location, geohash), onComplete);
+      }
+    });
+  };
+
+  /**
+   * Adds the provided key - location pairs to Firebase. Returns an empty promise which is fulfilled when the write is complete.
+   *
+   * If any of the provided keys already exist in this GeoFire, they will be overwritten with the new location values.
+   *
+   * @param {Object} locations A mapping of key - location pairs which representing the locations to add.
+   * @return {Promise.<>} A promise that is fulfilled when the write is complete.
+   */
+  this.batchSet = function(locations) {
+    var newData = {};
+
+    Object.keys(locations).forEach(function(key) {
+      validateKey(key);
+
+      var location = locations[key];
+      if (location === null) {
+        // Setting location to null is valid since it will remove the key
+        newData[key] = null;
+      } else {
+        validateLocation(location);
+
+        var geohash = encodeGeohash(location);
+        newData[key] = encodeGeoFireObject(location, geohash);
+      }
+    });
+
+    return new RSVP.Promise(function(resolve, reject) {
+      function onComplete(error) {
+        if (error !== null) {
+          reject("Error: Firebase synchronization failed: " + error);
+        }
+        else {
+          resolve();
+        }
+      }
+
+      if (newData !== {}) {
+        _firebaseRef.update(newData, onComplete);
       }
     });
   };

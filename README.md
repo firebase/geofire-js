@@ -142,18 +142,43 @@ var ref = geoFire.ref();  // ref === firebaseRef
 
 #### GeoFire.set(key, location)
 
-Adds the specified `key` - `location` pair to Firebase. If the provided `key`
+Adds the specified `key` - `location` pair to this GeoFire. If the provided `key`
 already exists in this `GeoFire`, it will be overwritten with the new `location`
 value. `location` must have the form `[latitude, longitude]`.
 
 Returns a promise which is fulfilled when the new location has been synchronized with the Firebase servers.
 
 `key` must be a string and a
-[valid Firebase key name](https://www.firebase.com/docs/web/guide/understanding-data.html#section-creating-references?utm_source=geofire-js)
+[valid Firebase key name](https://www.firebase.com/docs/web/guide/understanding-data.html#section-creating-references?utm_source=geofire-js).
 
 ```JavaScript
 geoFire.set("some_key", [37.79, -122.41]).then(function() {
   console.log("Provided key has been added to GeoFire");
+}, function(error) {
+  console.log("Error: " + error);
+});
+```
+
+#### GeoFire.batchSet(location)
+
+Takes an object containing a mapping between keys and locations and adds each location to this
+GeoFire in one write. It is much more efficient to add several locations at once via `batchSet()`
+than to write each one individually via `set()`. If any of the provided keys already exist in this
+`GeoFire`, they will be overwritten with the new location values. Locations must have the form
+`[latitude, longitude]`.
+
+Returns a promise which is fulfilled when the new locations have been synchronized with the
+Firebase servers.
+
+Keys must be strings and [valid Firebase key
+names](https://www.firebase.com/docs/web/guide/understanding-data.html#section-creating-references?utm_source=geofire-js).
+
+```JavaScript
+geoFire.batchSet({
+  "some_key": [37.79, -122.41],
+  "another_key": [36.98, -122.56]
+}).then(function() {
+  console.log("Provided keys have been added to GeoFire");
 }, function(error) {
   console.log("Error: " + error);
 });
@@ -185,7 +210,7 @@ Removes the provided `key` from this `GeoFire`. Returns a promise fulfilled when
 the removal of `key` has been synchronized with the Firebase servers. If the provided
 `key` is not present in this `GeoFire`, the promise will still successfully resolve.
 
-This is equivalent to calling `set(key, null)`.
+This is equivalent to calling `set(key, null)` or `batchSet({ <key>: null })`.
 
 ```JavaScript
 geoFire.remove("some_key").then(function() {

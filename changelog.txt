@@ -1,0 +1,1 @@
+feature - Added a `batchSet()` method to more efficiently add several locations to GeoFire at once.

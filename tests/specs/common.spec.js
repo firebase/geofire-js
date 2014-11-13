@@ -74,17 +74,9 @@ function generateRandomString() {
 function getFirebaseData() {
   return new RSVP.Promise(function(resolve, reject) {
     firebaseRef.once("value", function(dataSnapshot) {
-      resolve(dataSnapshot.val());
+      resolve(dataSnapshot.exportVal());
     });
   });
-};
-
-/* Adds multiple keys to GeoFire in a single call */
-function batchSet(keyLocationPairs) {
-  var promises = keyLocationPairs.map(function(keyLocationPair) {
-    return geoFire.set(keyLocationPair.key, keyLocationPair.location);
-  });
-  return RSVP.allSettled(promises);
 };
 
 
