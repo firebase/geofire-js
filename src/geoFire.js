@@ -35,6 +35,9 @@ var GeoFire = function(firebaseRef) {
       locations = {};
       locations[keyOrLocations] = location;
     } else if (typeof keyOrLocations === "object") {
+      if (typeof location !== "undefined") {
+        throw new Error("The location argument should not be used if you pass an object to set().");
+      }
       locations = keyOrLocations;
     } else {
       throw new Error("keyOrLocations must be a string or a mapping of key - location pairs.");

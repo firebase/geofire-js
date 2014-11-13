@@ -471,6 +471,14 @@ describe("GeoFire Tests:", function() {
       });
     });
 
+    it("set() throws errors given a location argument in combination with an object", function() {
+      expect(function() {
+        geoFire.set({
+          "loc": [0, 0]
+        }, [0, 0]);
+      }).toThrow();
+    });
+
     it("set() does not throw errors given valid locations", function() {
       validLocations.forEach(function(validLocation, i) {
         expect(function() {
