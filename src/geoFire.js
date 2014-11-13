@@ -67,9 +67,7 @@ var GeoFire = function(firebaseRef) {
         }
       }
 
-      if (newData !== {}) {
-        _firebaseRef.update(newData, onComplete);
-      }
+      _firebaseRef.update(newData, onComplete);
     });
   };
 
