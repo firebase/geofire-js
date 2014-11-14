@@ -1,1 +1,0 @@
-feature - `set()` can now take a mapping of key - location pairs to more efficiently add several locations at once.
