@@ -1,7 +1,7 @@
 # GeoFire for JavaScript — Realtime location queries with Firebase
 
 [![Build Status](https://travis-ci.org/firebase/geofire-js.svg?branch=master)](https://travis-ci.org/firebase/geofire-js)
-[![Coverage Status](https://img.shields.io/coveralls/firebase/geofire-js.svg?branch=master)](https://coveralls.io/r/firebase/geofire-js)
+[![Coverage Status](https://img.shields.io/coveralls/firebase/geofire-js.svg?branch=master&style=flat)](https://coveralls.io/r/firebase/geofire-js)
 [![Version](https://badge.fury.io/gh/firebase%2Fgeofire-js.svg)](http://badge.fury.io/gh/firebase%2Fgeofire-js)
 
 GeoFire is an open-source library that allows you to store and query a set of keys based on their
