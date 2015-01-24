@@ -33,8 +33,8 @@
     "changelog.txt"
   ],
   "dependencies": {
-    "firebase": "2.0.x",
-    "rsvp": "~3.0.13"
+    "firebase": "2.1.x",
+    "rsvp": "3.0.16"
   },
   "devDependencies": {
     "jasmine": "~2.0.0"
