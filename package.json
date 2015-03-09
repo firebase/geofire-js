@@ -32,8 +32,8 @@
     "package.json"
   ],
   "dependencies": {
-    "firebase": "2.1.x",
-    "rsvp": "3.0.16"
+    "firebase": "2.2.x",
+    "rsvp": "3.0.x"
   },
   "devDependencies": {
     "gulp": "3.8.10",

@@ -1,0 +1,3 @@
+feature - Upgraded Firebase dependency to 2.2.x.
+feature - Upgraded RSVP dependency to 3.0.x.
+fixed - GeoFire can now be used in Browserify.
