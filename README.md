@@ -20,7 +20,7 @@ and [Java](https://github.com/firebase/geofire-java).
 ### Integrating GeoFire with your data
 
 GeoFire is designed as a lightweight add-on to Firebase. To keep things simple, GeoFire stores data
-in its own format and its own location within your Firebase. This allows your existing data format
+in its own format and its own location within your Firebase database. This allows your existing data format
 and security rules to remain unchanged while still providing you with an easy solution for geo
 queries.
 
