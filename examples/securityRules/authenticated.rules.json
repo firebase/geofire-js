@@ -9,8 +9,8 @@
 
       // Schema validation
       "$key": {
-        // Allow anyone to add, update, or remove keys in the GeoFire index
-        ".write": true,
+        // Allow any authentication user to add, update, or remove keys in the GeoFire index
+        ".write": "auth !== null",
 
         // Key validation
         ".validate": "newData.hasChildren(['g', 'l']) && newData.getPriority().length <= 22 && newData.getPriority().length > 0",

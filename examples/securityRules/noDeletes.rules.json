@@ -1,7 +1,7 @@
 {
   "rules": {
     "<your-geofire-node>": {
-      // Allow anyone to read the GeoFire index
+      // Allow anyone to read from this node
       ".read": true,
 
       // Index each location's geohash for faster querying
@@ -9,8 +9,8 @@
 
       // Schema validation
       "$key": {
-        // Allow anyone to add, update, or remove keys in the GeoFire index
-        ".write": true,
+        // Allow anyone to add or update keys in the GeoFire index, but not remove them
+        ".write": "newData.exists()",
 
         // Key validation
         ".validate": "newData.hasChildren(['g', 'l']) && newData.getPriority().length <= 22 && newData.getPriority().length > 0",
