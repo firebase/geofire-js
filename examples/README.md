@@ -63,13 +63,35 @@ You can check out a live demo of this example [here](https://geofire.firebaseapp
 
 ## [securityRules - Security Rules](https://geofire.firebaseapp.com/securityRules/rules.json)
 
-This example is just a `rules.json` file which contains some security rules you
-can use for your GeoFire node. While this does help to enforce the schema of the data,
-it does not prevent a malicious user from scraping or overwriting your GeoFire data.
-You should replace all of the `".write"` rules with some custom logic to restrict who
-can write to that node.
+It is important to protect your data with [Firebase and Security Rules](https://www.firebase.com/docs/security/).
+This example contains several different versions of rules for your GeoFire index. All of the
+following rules enforce the schema of your index, but allow varying types of updates to it.
 
-You can check out the example rules.json file [here](https://geofire.firebaseapp.com/securityRules/rules.json).
+* **[Default rules](https://geofire.firebaseapp.com/securityRules/rules.json)** - These rules allow
+any client to add, update, or remove items from your index. This does not prevent a malicious user
+from overwriting your index.
+
+* **[Authenticated rules](https://geofire.firebaseapp.com/securityRules/authenticated.rules.json)** -
+These rules require that only authenticated clients can update your index. Note that these rules
+will intentionally cause all `GeoFire.add()` and `GeoFire.remove()` calls to fail for unauthenticated
+clients.
+
+* **[No deletes rules](https://geofire.firebaseapp.com/securityRules/noDeletes.rules.json)** - These
+rules prevent clients from being able to delete any existing keys in your index. Note that these
+rules will intentionally cause all `GeoFire.remove()` calls to fail.
+
+* **[No updates rules](https://geofire.firebaseapp.com/securityRules/noUpdates.rules.json)** - These
+rules prevent clients from being able to update or delete any existing keys in your index. Note that
+these rules will intentionally fail all `GeoFire.remove()` calls as well as any `GeoFire.add()`
+calls for existing keys in the index.
+
+You can further replace the `".write"` rule in the example rules files with some custom logic to
+restrict who and how users can write to your GeoFire index.
+
+All of the example rules ensure that one client cannot overwrite your entire GeoFire index node with
+a single call. However, none of them prevent a malicious user from scraping your entire index. You
+can replace the `".read"` rule in the example rules files with some custom logic to do this.
+
 
 ## [sfVehicles - Fully-featured Example](https://geofire.firebaseapp.com/sfVehicles/index.html)
 

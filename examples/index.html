@@ -78,7 +78,7 @@
     <h2><a href="./queryBuilder/index.html">queryBuilder - Build a Custom GeoQuery</a></h2>
 
     <p>
-      This demo allows you to build custom `GeoQuery` objects and see when fish enter and
+      This demo allows you to build custom <pre>GeoQuery</pre> objects and see when fish enter and
       leave the query as it gets updated. Thanks to <a href="https://github.com/stefek99">@stefek99</a>
       for the contribution!
     </p>
@@ -88,14 +88,50 @@
     <h2><a href="./securityRules/rules.json">securityRules - Security Rules</a></h2>
 
     <p>
-      This example is just a rules.json file which contains some security rules you
-      can use for your GeoFire node. While this does help to enforce the schema of the data,
-      it does not prevent a malicious user from scraping or overwriting your GeoFire data.
-      You should replace all of the ".write" rules with some custom logic to restrict who
-      can write to that node.
+      It is important to protect your data with
+      <a href="https://www.firebase.com/docs/security/">Firebase and Security Rules</a>. This
+      example contains several different versions of rules for your GeoFire index. All of the
+      following rules enforce the schema of your index, but allow varying types of updates to it.
     </p>
 
-    <p>You can check out the example rules.json file <a href="./securityRules/rules.json">here</a>.</p>
+    <ul>
+      <li>
+        <b><a href="https://geofire.firebaseapp.com/securityRules/rules.json">Default rules</a></b> -
+        These rules allow any client to add, update, or remove items from your index. This does not
+        prevent a malicious user from overwriting your index.
+      </li>
+
+      <li>
+        <b><a href="https://geofire.firebaseapp.com/securityRules/authenticated.rules.json">Authenticated rules</a></b> -
+        These rules require that only authenticated clients can update your index. Note that these
+        rules will intentionally cause all <pre>GeoFire.add()</pre> and <pre>GeoFire.remove()</pre>
+        calls to fail for unauthenticated clients.
+      </li>
+
+      <li>
+        <b><a href="https://geofire.firebaseapp.com/securityRules/noDeletes.json">No deletes rules</a></b> -
+        These rules prevent clients from being able to delete any existing keys in your index. Note
+        that these rules will intentionally cause all <pre>GeoFire.remove()</pre> calls to fail.
+      </li>
+
+      <li>
+        <b><a href="https://geofire.firebaseapp.com/securityRules/noUpdates.json">No updates rules</a></b> -
+        These rules prevent clients from being able to update or delete any existing keys in your
+        index. Note that these rules will intentionally fail all <pre>GeoFire.remove()</pre> calls
+        as well as any <pre>GeoFire.add()</pre> calls for existing keys in the index.
+      </li>
+    </ul>
+
+    <p>
+      You can further replace the <pre>".write"</pre> rule in the example rules files with some custom logic to restrict who and how users can write to your GeoFire index.
+    </p>
+
+    <p>
+      All of the example rules ensure that one client cannot overwrite your entire GeoFire index
+      node with a single call. However, none of them prevent a malicious user from scraping your
+      entire index. You can replace the <pre>".read"</pre> rule in the example rules files with some
+      custom logic to do this.
+    </p>
 
     <h2><a href="./sfVehicles/index.html">sfVehicles - Fully-featured Example</a></h2>
 
