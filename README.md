@@ -118,7 +118,7 @@ A `GeoFire` instance is used to read and write geolocation data to your Firebase
 
 #### new GeoFire(firebaseRef)
 
-Creates and returns a new `GeoFire` instance to manage your location data. Data will stored at
+Creates and returns a new `GeoFire` instance to manage your location data. Data will be stored at
 the location pointed to by `firebaseRef`. Note that this `firebaseRef` can point to anywhere in your Firebase database.
 
 ```JavaScript
