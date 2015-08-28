@@ -1,4 +1,9 @@
 {
-  "firebase": "geofire",
-  "public": "examples"
+  "firebase": "web-sflivebus",
+  "public": "examples/sfVehicles",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**"
+  ]
 }
