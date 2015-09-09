@@ -1,19 +1,22 @@
+"use strict";
+
 /**************/
 /*  REQUIRES  */
 /**************/
 var gulp = require("gulp");
+var runSequence = require("run-sequence");
 
 // File IO
-var streamqueue = require("streamqueue");
+var exit = require("gulp-exit");
 var concat = require("gulp-concat");
 var jshint = require("gulp-jshint");
 var uglify = require("gulp-uglify");
+var extReplace = require("gulp-ext-replace");
+var streamqueue = require("streamqueue");
 
 // Testing
-var karma = require("gulp-karma");
-
-// Determine if this is being run in Travis
-var travis = (process.argv.indexOf('--travis') > -1);
+var mocha = require("gulp-mocha");
+var istanbul = require("gulp-istanbul");
 
 
 /****************/
@@ -22,73 +25,57 @@ var travis = (process.argv.indexOf('--travis') > -1);
 var paths = {
   destDir: "dist",
 
-  scripts: {
-    src: {
-      dir: "src",
-      files: [
-        "src/*.js"
-      ]
-    },
-    dest: {
-      dir: "dist",
-      files: {
-        unminified: "geofire.js",
-        minified: "geofire.min.js"
-      }
-    }
-  },
+  srcFiles: [
+    "src/*.js"
+  ],
 
-  tests: {
-    config: "tests/karma.conf.js",
-    files: [
-      "bower_components/firebase/firebase.js",
-      "bower_components/rsvp/rsvp.min.js",
-      "src/*.js",
-      "tests/specs/*.spec.js"
-    ]
-  }
+  testFiles: [
+    "tests/helpers.js",
+    "tests/specs/geoCallbackRegistration.spec.js",
+    "tests/specs/geoFire.spec.js",
+    "tests/specs/geoFireUtils.spec.js"
+  ]
 };
 
 
 /***********/
 /*  TASKS  */
 /***********/
-/* Lints, minifies, and concatenates the script files */
-gulp.task("scripts", function() {
+// Lints the JavaScript files
+gulp.task("lint", function() {
+  var filesToLint = [paths.destDir + "/geofire.js", "gulpfile.js"];
+  return gulp.src(filesToLint)
+    .pipe(jshint())
+    .pipe(jshint.reporter("jshint-stylish"))
+    .pipe(jshint.reporter("fail"));
+});
+
+/* Builds the distribution files */
+gulp.task("build", function() {
   // Concatenate all src files together
   var stream = streamqueue({ objectMode: true });
   stream.queue(gulp.src("build/header"));
-  stream.queue(gulp.src(paths.scripts.src.files));
+  stream.queue(gulp.src(paths.srcFiles));
   stream.queue(gulp.src("build/footer"));
 
   // Output the final concatenated script file
   return stream.done()
     // Rename file
-    .pipe(concat(paths.scripts.dest.files.unminified))
-
-    // Lint
-    .pipe(jshint())
-    .pipe(jshint.reporter("jshint-stylish"))
-    .pipe(jshint.reporter("fail"))
-    .on("error", function(error) {
-      if (travis) {
-        throw error;
-      }
-    })
+    .pipe(concat("geofire.js"))
 
     // Write un-minified version
-    .pipe(gulp.dest(paths.scripts.dest.dir))
+    .pipe(gulp.dest(paths.destDir))
 
     // Minify
     .pipe(uglify({
       preserveComments: "some"
     }))
 
-    // Rename file
-    .pipe(concat(paths.scripts.dest.files.minified))
+    // Change the file extension
+    .pipe(extReplace(".min.js"))
 
-    // Write minified version to the distribution directory
-    .pipe(gulp.dest(paths.scripts.dest.dir))
+    // Write minified version
+    .pipe(gulp.dest(paths.destDir))
 
     // Write minified version to the examples directories
     .pipe(gulp.dest("examples/fish1/js/vendor/"))
@@ -99,25 +86,32 @@ gulp.task("scripts", function() {
     .pipe(gulp.dest("examples/html5Geolocation/js/vendor/"));
 });
 
-/* Uses the Karma test runner to run the Jasmine tests */
+// Runs the Mocha test suite
 gulp.task("test", function() {
-  return gulp.src(paths.tests.files)
-    .pipe(karma({
-      configFile: paths.tests.config,
-      action: "run"
-    }))
-    .on("error", function(error) {
-      throw error;
+  return gulp.src(paths.destDir + "/geofire.js")
+    .pipe(istanbul())
+    .pipe(istanbul.hookRequire())
+    .on("finish", function() {
+      gulp.src(paths.testFiles)
+        .pipe(mocha({
+          reporter: "spec",
+          timeout: 5000
+        }))
+        .pipe(istanbul.writeReports())
+        .pipe(exit());
     });
 });
 
-/* Re-runs the "scripts" task every time a script file changes */
+// Re-lints and re-builds every time a source file changes
 gulp.task("watch", function() {
-  gulp.watch(["build/*", paths.scripts.src.dir + "/**/*"], ["scripts"]);
+  gulp.watch(["build/*", paths.srcFiles], function() {
+    runSequence("build", "lint");
+  });
 });
 
-/* Builds the distribution files */
-gulp.task("build", ["scripts"]);
-
-/* Runs the "test" and "scripts" tasks by default */
-gulp.task("default", ["test", "scripts"]);
+// Default task
+gulp.task("default", function(done) {
+  runSequence("build", "lint", "test", function(error) {
+    done(error && error.err);
+  });
+});

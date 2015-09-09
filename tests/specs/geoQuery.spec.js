@@ -1,4 +1,4 @@
-describe("GeoQuery Tests:", function() {
+describe("GeoQuery", function() {
   // Reset the Firebase before each test
   beforeEach(function(done) {
     beforeEachHelper(done);
@@ -8,7 +8,7 @@ describe("GeoQuery Tests:", function() {
     afterEachHelper(done);
   });
 
-  describe("Constructor:", function() {
+  describe("Constructor", function() {
     it("Constructor stores query criteria", function() {
       geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
@@ -39,7 +39,7 @@ describe("GeoQuery Tests:", function() {
     });
   });
 
-  describe("updateCriteria():", function() {
+  describe("updateCriteria()", function() {
     it("updateCriteria() updates query criteria", function() {
       geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
@@ -303,7 +303,7 @@ describe("GeoQuery Tests:", function() {
     });
   });
 
-  describe("on():", function() {
+  describe("on()", function() {
     it("on() throws error given invalid event type", function() {
       geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
@@ -325,7 +325,7 @@ describe("GeoQuery Tests:", function() {
     });
   });
 
-  describe("\"ready\" event:", function() {
+  describe("\"ready\" event", function() {
     it("\"ready\" event fires after all \"key_entered\" events have fired", function(done) {
       var cl = new Checklist(["p1", "loc1 entered", "loc2 entered", "loc5 entered", "loc6 entered", "loc7 entered", "loc10 entered", "ready fired"], expect, done);
 
@@ -446,7 +446,7 @@ describe("GeoQuery Tests:", function() {
     });
   });
 
-  describe("\"key_moved\" event:", function() {
+  describe("\"key_moved\" event", function() {
     it("\"key_moved\" callback does not fire for brand new locations within or outside of the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2"], expect, done);
 
@@ -764,7 +764,7 @@ describe("GeoQuery Tests:", function() {
     });
   });
 
-  describe("\"key_entered\" event:", function() {
+  describe("\"key_entered\" event", function() {
     it("\"key_entered\" callback fires when a location enters the GeoQuery before onKeyEntered() was called", function(done) {
       var cl = new Checklist(["p1", "p2", "loc1 entered", "loc4 entered"], expect, done);
 
@@ -941,7 +941,7 @@ describe("GeoQuery Tests:", function() {
     });
   });
 
-  describe("\"key_exited\" event:", function() {
+  describe("\"key_exited\" event", function() {
     it("\"key_exited\" callback fires when a location leaves the GeoQuery", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "loc1 exited", "loc4 exited"], expect, done);
 
@@ -1172,7 +1172,7 @@ describe("GeoQuery Tests:", function() {
     });
   });
 
-  describe("\"key_*\" events combined:", function() {
+  describe("\"key_*\" events combined", function() {
     it ("\"key_*\" event callbacks fire when used all at the same time", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "loc1 entered", "loc4 entered", "loc1 moved", "loc4 exited", "loc1 exited", "loc5 entered"], expect, done);
 
@@ -1251,7 +1251,7 @@ describe("GeoQuery Tests:", function() {
     });
   });
 
-  describe("Cancelling GeoQuery:", function() {
+  describe("Cancelling GeoQuery", function() {
     it ("cancel() prevents GeoQuery from firing any more \"key_*\" event callbacks", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 entered", "loc4 entered", "loc1 moved", "loc4 exited"], expect, done);
 
