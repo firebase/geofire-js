@@ -140,7 +140,7 @@ var geoFire = new GeoFire(firebaseRef);
 var ref = geoFire.ref();  // ref === firebaseRef
 ```
 
-#### GeoFire.set(keyOrLocations[, location])
+#### GeoFire.set(keyOrLocations, [location])
 
 Adds the specified key - location pair(s) to this `GeoFire`. If the provided `keyOrLocations`
 argument is a string, the single `location` will be added. The `keyOrLocations` argument can also
