@@ -18,7 +18,7 @@ module.exports = function(config) {
         }
       ]
     },
-    browsers: ["PhantomJS"],
+    browsers: ["Firefox"],
     browserNoActivityTimeout: 30000
   });
 };

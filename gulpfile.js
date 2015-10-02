@@ -8,12 +8,10 @@ var streamqueue = require("streamqueue");
 var concat = require("gulp-concat");
 var jshint = require("gulp-jshint");
 var uglify = require("gulp-uglify");
+var runSequence = require('run-sequence');
 
 // Testing
 var karma = require("gulp-karma");
-
-// Determine if this is being run in Travis
-var travis = (process.argv.indexOf('--travis') > -1);
 
 
 /****************/
@@ -71,9 +69,7 @@ gulp.task("scripts", function() {
     .pipe(jshint.reporter("jshint-stylish"))
     .pipe(jshint.reporter("fail"))
     .on("error", function(error) {
-      if (travis) {
-        throw error;
-      }
+      throw error;
     })
 
     // Write un-minified version
@@ -120,4 +116,8 @@ gulp.task("watch", function() {
 gulp.task("build", ["scripts"]);
 
 /* Runs the "test" and "scripts" tasks by default */
-gulp.task("default", ["test", "scripts"]);
+gulp.task("default", function(done) {
+  runSequence("scripts", "test", function(error) {
+    done(error && error.err);
+  });
+});
