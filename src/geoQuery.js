@@ -449,7 +449,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
       for (var i = 0; i < numKeys; ++i) {
         var key = keys[i];
         var locationDict = _locationsTracked[key];
-        if (locationDict.isInQuery) {
+        if (typeof locationDict !== "undefined" && locationDict.isInQuery) {
           callback(key, locationDict.location, locationDict.distanceFromCenter);
         }
       }

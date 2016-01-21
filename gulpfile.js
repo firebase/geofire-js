@@ -64,6 +64,9 @@ gulp.task("scripts", function() {
     // Rename file
     .pipe(concat(paths.scripts.dest.files.unminified))
 
+    // Write un-minified version
+    .pipe(gulp.dest(paths.scripts.dest.dir))
+
     // Lint
     .pipe(jshint())
     .pipe(jshint.reporter("jshint-stylish"))
@@ -71,9 +74,6 @@ gulp.task("scripts", function() {
     .on("error", function(error) {
       throw error;
     })
-
-    // Write un-minified version
-    .pipe(gulp.dest(paths.scripts.dest.dir))
 
     // Minify
     .pipe(uglify({
