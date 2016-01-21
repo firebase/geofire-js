@@ -1378,7 +1378,7 @@ describe("GeoQuery Tests:", function() {
     });
 
     it("Calling cancel() in the middle of firing \"key_entered\" events is allowed", function(done) {
-      var cl = new Checklist(["p1", "cancel query", "loc1 entered"], expect, done);
+      var cl = new Checklist(["p1", "key entered", "cancel query"], expect, done);
 
       geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
@@ -1391,7 +1391,7 @@ describe("GeoQuery Tests:", function() {
 
         var numKeyEnteredEventsFired = 0;
         geoQueries[0].on("key_entered", function(key, location, distance) {
-          cl.x(key + " entered");
+          cl.x("key entered");
           numKeyEnteredEventsFired++;
           if (numKeyEnteredEventsFired === 1) {
             cl.x("cancel query");
