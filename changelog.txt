@@ -1,1 +1,0 @@
-fixed - Fixed bug caused by cancelling a query before all initial "key_entered" events have fired.
