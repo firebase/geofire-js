@@ -7,7 +7,7 @@
   "forin": true,
   "freeze": true,
   "indent": 2,
-  "latedef": true,
+  "latedef": false,
   "node": true,
   "noempty": true,
   "nonbsp": true,

@@ -1252,7 +1252,7 @@ describe("GeoQuery Tests:", function() {
   });
 
   describe("Cancelling GeoQuery:", function() {
-    it ("cancel() prevents GeoQuery from firing any more \"key_*\" event callbacks", function(done) {
+    it("cancel() prevents GeoQuery from firing any more \"key_*\" event callbacks", function(done) {
       var cl = new Checklist(["p1", "p2", "p3", "p4", "p5", "loc1 entered", "loc4 entered", "loc1 moved", "loc4 exited"], expect, done);
 
       geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
@@ -1374,6 +1374,30 @@ describe("GeoQuery Tests:", function() {
         return wait(100);
       }).then(function() {
         cl.x("p5");
+      }).catch(failTestOnCaughtError);
+    });
+
+    it("Calling cancel() in the middle of firing \"key_entered\" events is allowed", function(done) {
+      var cl = new Checklist(["p1", "key entered", "cancel query"], expect, done);
+
+      geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
+
+      geoFire.set({
+        "loc1": [1, 2],
+        "loc2": [1, 3],
+        "loc3": [1, 4]
+      }).then(function() {
+        cl.x("p1");
+
+        var numKeyEnteredEventsFired = 0;
+        geoQueries[0].on("key_entered", function(key, location, distance) {
+          cl.x("key entered");
+          numKeyEnteredEventsFired++;
+          if (numKeyEnteredEventsFired === 1) {
+            cl.x("cancel query");
+            geoQueries[0].cancel();
+          }
+        });
       }).catch(failTestOnCaughtError);
     });
   });
