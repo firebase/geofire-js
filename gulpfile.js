@@ -40,7 +40,7 @@ var paths = {
     config: "tests/karma.conf.js",
     files: [
       "bower_components/firebase/firebase.js",
-      "bower_components/rsvp/rsvp.min.js",
+      "bower_components/es6-shim/es6-shim.min.js",
       "src/*.js",
       "tests/specs/*.spec.js"
     ]

@@ -72,7 +72,7 @@ function generateRandomString() {
 
 /* Returns the current data in the Firebase */
 function getFirebaseData() {
-  return new RSVP.Promise(function(resolve, reject) {
+  return new Promise(function(resolve, reject) {
     firebaseRef.once("value", function(dataSnapshot) {
       resolve(dataSnapshot.exportVal());
     });
@@ -82,7 +82,7 @@ function getFirebaseData() {
 
 /* Returns a promise which is fulfilled after the inputted number of milliseconds pass */
 function wait(milliseconds) {
-  return new RSVP.Promise(function(resolve, reject) {
+  return new Promise(function(resolve, reject) {
     var timeout = window.setTimeout(function() {
       window.clearTimeout(timeout);
       resolve();

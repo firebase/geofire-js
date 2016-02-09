@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "rsvp": "3.0.9",
+    "es6-shim": "0.34.x",
     "firebase": "1.0.x"
   }
 }

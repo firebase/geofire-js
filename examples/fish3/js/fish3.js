@@ -26,7 +26,7 @@
   });
 
   // Once all the fish are in GeoFire, log a message that the user can now move fish around
-  RSVP.allSettled(promises).then(function() {
+  Promise.all(promises).then(function() {
     log("*** Creating GeoQuery ***");
     // Create a GeoQuery centered at fish2
     var geoQuery = geoFire.query({

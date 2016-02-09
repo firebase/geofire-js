@@ -27,7 +27,7 @@
 
   // Once all the fish are in GeoFire, update some of their positions
   var newLocation;
-  RSVP.allSettled(promises).then(function() {
+  Promise.all(promises).then(function() {
     log("*** Updating locations ***");
     newLocation = [-53.435719, 140.808716];
     return geoFire.set("fish1", newLocation);
