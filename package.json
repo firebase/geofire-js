@@ -33,6 +33,7 @@
   "devDependencies": {
     "coveralls": "2.11.4",
     "gulp": "3.9.0",
+	"bower": "1.7.x",
     "gulp-concat": "2.6.0",
     "gulp-ext-replace": "0.2.0",
     "gulp-jshint": "1.11.2",
