@@ -1,5 +1,4 @@
 var Firebase = require('firebase');
-var RSVP = require('rsvp');
 var args = process.argv
 
 function usage() {
@@ -11,7 +10,7 @@ function usage() {
 }
 
 function setWithPromise(ref, value, priority) {
-  return new RSVP.Promise(function(resolve, reject) {
+  return new Promise(function(resolve, reject) {
     if (priority) {
       ref.setWithPriority(value, priority, function(error) {
         if (error) {
@@ -52,7 +51,7 @@ function runMigration(fromFirebase, toFirebase, inPlace) {
           var hash = parts[0];
           var key = parts.splice(1).join(":");
           (function(key, hash) {
-            var promise = new RSVP.Promise(function(resolve, reject) {
+            var promise = new Promise(function(resolve, reject) {
               fromFirebase.child('l').child(key).once('value', function(snapshot) {
                 resolve(snapshot.val());
               }, function(error) {
@@ -76,7 +75,7 @@ function runMigration(fromFirebase, toFirebase, inPlace) {
           })(key, hash);
         }
       });
-      RSVP.all(promises).then(function(posts) {
+      Promise.all(promises).then(function(posts) {
         if (error) {
           console.log("There were errors migrating GeoFire, please check your data and the result manually");
           process.exit(1);
@@ -84,7 +83,7 @@ function runMigration(fromFirebase, toFirebase, inPlace) {
           console.log("Migrated " + promises.length + " keys successfully!");
           if (inPlace) {
             console.log("Deleting old keys");
-            return RSVP.all([
+            return Promise.all([
               setWithPromise(fromFirebase.child('l'), null),
               setWithPromise(fromFirebase.child('i'), null),
             ]);

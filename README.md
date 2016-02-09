@@ -78,8 +78,8 @@ and [read our docs for more information about indexing your data](https://www.fi
 In order to use GeoFire in your project, you need to include the following files in your HTML:
 
 ```html
-<!-- RSVP -->
-<script src="rsvp.min.js"></script>
+<!-- ES6 (Promise) Shim -->
+<script src="js/vendor/es6-shim.min.js"></script>
 
 <!-- Firebase -->
 <script src="https://cdn.firebase.com/js/client/2.2.5/firebase.js"></script>
@@ -92,7 +92,7 @@ Use the URL above to download both the minified and non-minified versions of Geo
 Firebase CDN. You can also download them from the
 [releases page of this GitHub repository](https://github.com/firebase/geofire-js/releases).
 [Firebase](https://www.firebase.com/docs/web/quickstart.html?utm_source=geofire-js) and
-[RSVP](https://github.com/tildeio/rsvp.js/) can be downloaded directly from their respective websites.
+[ES6 Shim](https://github.com/paulmillr/es6-shim)
 
 You can also install GeoFire via npm or Bower and its dependencies will be downloaded automatically:
 
@@ -395,7 +395,7 @@ var distance = GeoFire.distance(location1, location2);  // distance === 12378.53
 
 GeoFire uses promises when writing and retrieving data. Promises represent the result of a potentially long-running operation and allow code to run asynchronously. Upon completion of the operation, the promise will be "resolved" / "fulfilled" with the operation's result. This result will be passed to the function defined in the promise's `then()` method.
 
-GeoFire uses the lightweight RSVP.js library to provide an implementation of JavaScript promises. If you are unfamiliar with promises, please refer to the [RSVP.js documentation](https://github.com/tildeio/rsvp.js/). Here is a quick example of how to consume a promise:
+GeoFire uses the lightweight ES6 Shim library to provide a polyfill for the native implementation of JavaScript promises. If you are unfamiliar with promises, please refer to the [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Here is a quick example of how to consume a promise:
 
 ```JavaScript
 promise.then(function(result) {

@@ -49,7 +49,7 @@
   });
 
   // Once all the fish are in GeoFire, log a message that the user can now move fish around
-  RSVP.allSettled(promises).then(function() {
+  Promise.all(promises).then(function() {
     log("*** Use the controls above to move the fish in and out of the query ***");
   });
 

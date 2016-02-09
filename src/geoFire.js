@@ -60,7 +60,7 @@ var GeoFire = function(firebaseRef) {
       }
     });
 
-    return new RSVP.Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       function onComplete(error) {
         if (error !== null) {
           reject("Error: Firebase synchronization failed: " + error);
@@ -84,7 +84,7 @@ var GeoFire = function(firebaseRef) {
    */
   this.get = function(key) {
     validateKey(key);
-    return new RSVP.Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       _firebaseRef.child(key).once("value", function(dataSnapshot) {
         if (dataSnapshot.val() === null) {
           resolve(null);

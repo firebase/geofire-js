@@ -34,7 +34,7 @@
   ],
   "dependencies": {
     "firebase": "2.x.x",
-    "rsvp": "3.1.x"
+    "es6-shim": "0.34.x"
   },
   "devDependencies": {
     "jasmine": "~2.0.0"
