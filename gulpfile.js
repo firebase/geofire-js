@@ -11,7 +11,7 @@ var uglify = require("gulp-uglify");
 var runSequence = require('run-sequence');
 
 // Testing
-var karma = require("gulp-karma");
+var Server = require("karma").Server;
 
 
 /****************/
@@ -37,7 +37,6 @@ var paths = {
   },
 
   tests: {
-    config: "tests/karma.conf.js",
     files: [
       "bower_components/firebase/firebase.js",
       "bower_components/rsvp/rsvp.min.js",
@@ -96,15 +95,11 @@ gulp.task("scripts", function() {
 });
 
 /* Uses the Karma test runner to run the Jasmine tests */
-gulp.task("test", function() {
-  return gulp.src(paths.tests.files)
-    .pipe(karma({
-      configFile: paths.tests.config,
-      action: "run"
-    }))
-    .on("error", function(error) {
-      throw error;
-    });
+gulp.task("test", function(done) {
+  new Server({
+    configFile: __dirname + '/tests/karma.conf.js',
+    singleRun: true
+  }, done).start();
 });
 
 /* Re-runs the "scripts" task every time a script file changes */
