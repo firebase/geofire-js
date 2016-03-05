@@ -60,18 +60,7 @@ var GeoFire = function(firebaseRef) {
       }
     });
 
-    return new RSVP.Promise(function(resolve, reject) {
-      function onComplete(error) {
-        if (error !== null) {
-          reject("Error: Firebase synchronization failed: " + error);
-        }
-        else {
-          resolve();
-        }
-      }
-
-      _firebaseRef.update(newData, onComplete);
-    });
+    return _firebaseRef.update(newData);
   };
 
   /**
@@ -84,16 +73,13 @@ var GeoFire = function(firebaseRef) {
    */
   this.get = function(key) {
     validateKey(key);
-    return new RSVP.Promise(function(resolve, reject) {
-      _firebaseRef.child(key).once("value", function(dataSnapshot) {
-        if (dataSnapshot.val() === null) {
-          resolve(null);
-        } else {
-          resolve(decodeGeoFireObject(dataSnapshot.val()));
-        }
-      }, function (error) {
-        reject("Error: Firebase synchronization failed: " + error);
-      });
+    return _firebaseRef.child(key).once("value").then(function(dataSnapshot) {
+      var snapshotVal = dataSnapshot.val();
+      if (snapshotVal === null) {
+        return null;
+      } else {
+        return decodeGeoFireObject(snapshotVal);
+      }
     });
   };
 

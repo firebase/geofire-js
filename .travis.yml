@@ -1,7 +1,7 @@
 language: node_js
 node_js:
 - '0.12'
-- stable
+#- stable
 sudo: false
 before_install:
 - export DISPLAY=:99.0

@@ -26,9 +26,9 @@
     "README.md",
     "package.json"
   ],
-  "dependencies": {
-    "firebase": "2.x.x",
-    "rsvp": "3.1.x"
+  "dependencies": {},
+  "peerDependencies": {
+    "firebase": "^2.4.0"
   },
   "devDependencies": {
     "coveralls": "2.11.4",

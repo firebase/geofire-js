@@ -72,17 +72,15 @@ function generateRandomString() {
 
 /* Returns the current data in the Firebase */
 function getFirebaseData() {
-  return new RSVP.Promise(function(resolve, reject) {
-    firebaseRef.once("value", function(dataSnapshot) {
-      resolve(dataSnapshot.exportVal());
-    });
+  return firebaseRef.once("value").then(function(dataSnapshot) {
+    return dataSnapshot.exportVal();
   });
 };
 
 
 /* Returns a promise which is fulfilled after the inputted number of milliseconds pass */
 function wait(milliseconds) {
-  return new RSVP.Promise(function(resolve, reject) {
+  return new RSVP.Promise(function(resolve) {
     var timeout = window.setTimeout(function() {
       window.clearTimeout(timeout);
       resolve();

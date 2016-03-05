@@ -1,7 +1,7 @@
 # GeoFire for JavaScript — Realtime location queries with Firebase
 
 [![Build Status](https://travis-ci.org/firebase/geofire-js.svg?branch=master)](https://travis-ci.org/firebase/geofire-js)
-[![Coverage Status](https://img.shields.io/coveralls/firebase/geofire-js.svg?branch=master&style=flat)](https://coveralls.io/r/firebase/geofire-js)
+[![Coverage Status](https://coveralls.io/repos/github/firebase/geofire-js/badge.svg?branch=master)](https://coveralls.io/github/firebase/geofire-js?branch=master)
 [![Version](https://badge.fury.io/gh/firebase%2Fgeofire-js.svg)](http://badge.fury.io/gh/firebase%2Fgeofire-js)
 
 GeoFire is an open-source library that allows you to store and query a set of keys based on their
@@ -50,27 +50,8 @@ using Security and Firebase Rules.
 
 ## Upgrading GeoFire
 
-### Upgrading from GeoFire 2.x.x to 3.x.x
-
-GeoFire 3.x has the same API as 2.x but uses a different underlying data structure to store its
-location data. If you are currently using 2.x and want to upgrade to 3.x, you must run the
-[GeoFire 3.x migration script](https://github.com/firebase/geofire-js/blob/master/migration/migrateToV3.js)
-on your Firebase database. This Node.js script only needs to be run one time and should take only a few seconds
-to minutes depending on the size of your data. To run the script, copy the files in this repo's
-`/migration/` folder to your machine and run the following commands:
-
-```bash
-$ npm install           # install local npm dependencies
-$ node migrateToV3.js   # display usage instructions
-```
-
-### Upgrading from GeoFire 3.0.x to 3.1.x
-
-With the release of GeoFire 3.1.0, this library now uses [the new query functionality found in
-Firebase 2.0.0](https://www.firebase.com/blog/2014-11-04-firebase-realtime-queries.html). As a
-result, you will need to upgrade to Firebase 2.x.x and add a new `.indexOn` rule to your Security
-and Firebase Rules to get the best performance. You can view [the updated rules here](./examples/securityRules/rules.json)
-and [read our docs for more information about indexing your data](https://www.firebase.com/docs/security/guide/indexing-data.html).
+Using an older version of GeoFire and want to upgrade to the latest version? Check out our
+[migration guides](./migration) to find out how!
 
 
 ## Downloading GeoFire
@@ -78,27 +59,25 @@ and [read our docs for more information about indexing your data](https://www.fi
 In order to use GeoFire in your project, you need to include the following files in your HTML:
 
 ```html
-<!-- RSVP -->
-<script src="rsvp.min.js"></script>
-
 <!-- Firebase -->
-<script src="https://cdn.firebase.com/js/client/2.2.5/firebase.js"></script>
+<script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
 
 <!-- GeoFire -->
-<script src="https://cdn.firebase.com/libs/geofire/3.2.4/geofire.min.js"></script>
+<script src="https://cdn.firebase.com/libs/geofire/4.0.0/geofire.min.js"></script>
 ```
 
 Use the URL above to download both the minified and non-minified versions of GeoFire from the
 Firebase CDN. You can also download them from the
 [releases page of this GitHub repository](https://github.com/firebase/geofire-js/releases).
-[Firebase](https://www.firebase.com/docs/web/quickstart.html?utm_source=geofire-js) and
-[RSVP](https://github.com/tildeio/rsvp.js/) can be downloaded directly from their respective websites.
 
-You can also install GeoFire via npm or Bower and its dependencies will be downloaded automatically:
+You can also install GeoFire via npm or Bower. If downloading via npm, you will have to install
+Firebase separately (because it is a peer dependency to GeoFire):
 
 ```bash
-$ npm install geofire --save
+$ npm install geofire firebase --save
 ```
+
+On Bower, the Firebase dependency will be downloaded automatically:
 
 ```bash
 $ bower install geofire --save
@@ -393,9 +372,13 @@ var distance = GeoFire.distance(location1, location2);  // distance === 12378.53
 
 ## Promises
 
-GeoFire uses promises when writing and retrieving data. Promises represent the result of a potentially long-running operation and allow code to run asynchronously. Upon completion of the operation, the promise will be "resolved" / "fulfilled" with the operation's result. This result will be passed to the function defined in the promise's `then()` method.
+GeoFire uses promises when writing and retrieving data. Promises represent the result of a potentially
+long-running operation and allow code to run asynchronously. Upon completion of the operation, the
+promise will be "resolved" / "fulfilled" with the operation's result. This result will be passed to
+the function defined in the promise's `then()` method.
 
-GeoFire uses the lightweight RSVP.js library to provide an implementation of JavaScript promises. If you are unfamiliar with promises, please refer to the [RSVP.js documentation](https://github.com/tildeio/rsvp.js/). Here is a quick example of how to consume a promise:
+If you are unfamiliar with promises, check out [this blog post](http://www.html5rocks.com/en/tutorials/es6/promises).
+Here is a quick example of how to consume a promise:
 
 ```JavaScript
 promise.then(function(result) {
