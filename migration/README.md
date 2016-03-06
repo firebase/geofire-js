@@ -4,7 +4,7 @@ Below are instructions for migrating from one version of GeoFire to another. If 
 several versions at once, make sure you follow the migration instructions for all upgrades.
 
 
-## Upgrading from GeoFire `3.x.x` to `4.x.x`
+## `3.x.x` to `4.x.x`
 
 Let's start off with the good news: RSVP is no longer required required at all to run GeoFire! That
 means you can remove RSVP entirely if you aren't using it elsewhere in your project.
@@ -41,7 +41,7 @@ you will need to make sure `firebase` is listed as a regular dependency alongsid
 ```
 
 
-## Upgrading from GeoFire `3.0.x` to `3.1.x`
+## `3.0.x` to `3.1.x`
 
 With the release of GeoFire `3.1.0`, GeoFire now uses [the new query functionality found in Firebase
 `2.0.0`](https://www.firebase.com/blog/2014-11-04-firebase-realtime-queries.html). As a
@@ -50,7 +50,7 @@ and Firebase Rules to get the best performance. You can view [the updated rules 
 and [read our docs for more information about indexing your data](https://www.firebase.com/docs/security/guide/indexing-data.html).
 
 
-## Upgrading from GeoFire `2.x.x` to `3.x.x`
+## `2.x.x` to `3.x.x`
 
 GeoFire `3.x.x` has the same API as `2.x.x` but uses a different underlying data structure to store
 its location data. If you are currently using `2.x.x` and want to upgrade to `3.x.x`, you must run
