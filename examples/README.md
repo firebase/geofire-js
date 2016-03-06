@@ -61,7 +61,7 @@ for the contribution!
 
 You can check out a live demo of this example [here](https://geofire.firebaseapp.com/queryBuilder/index.html).
 
-## [securityRules - Security Rules](https://geofire.firebaseapp.com/securityRules/rules.json)
+## [securityRules - Security Rules](https://geofire.firebaseapp.com/securityRules/)
 
 It is important to protect your data with [Firebase and Security Rules](https://www.firebase.com/docs/security/).
 This example contains several different versions of rules for your GeoFire index. All of the
