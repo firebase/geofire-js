@@ -2,6 +2,12 @@
 <html>
   <head>
     <title>GeoFire Examples</title>
+    <style>
+      .code {
+        white-space: pre;
+        font-family: monospace;
+      }
+    </style>
   </head>
 
   <body style="width: 800px; margin: auto;">
@@ -37,8 +43,8 @@
 
     <p>
       This is a very basic example which shows you how to read from and write to GeoFire
-      and how to handle the promises returned by the set(), get(), and remove()
-      methods.
+      and how to handle the promises returned by the <span class="code">set()</span>,
+      <span class="code">get()</span>, and <span class="code">remove()</span> methods.
     </p>
 
     <p>You can check out a live demo of this example <a href="./fish1/index.html">here</a>.</p>
@@ -69,7 +75,7 @@
       The <a href="http://diveintohtml5.info/geolocation.html">HTML5 Geolocation API</a> allows you
       to get the current location of the person who is viewing your site. This demo shows
       how to use it to add their location to GeoFire. In addition, the examples uses
-      Firebase's onDisconnect() method to remove their location from GeoFire when they
+      Firebase's <span class="code">onDisconnect()</span> method to remove their location from GeoFire when they
       leave the page (or close the app).
     </p>
 
@@ -78,14 +84,14 @@
     <h2><a href="./queryBuilder/index.html">queryBuilder - Build a Custom GeoQuery</a></h2>
 
     <p>
-      This demo allows you to build custom <pre>GeoQuery</pre> objects and see when fish enter and
-      leave the query as it gets updated. Thanks to <a href="https://github.com/stefek99">@stefek99</a>
-      for the contribution!
+      This demo allows you to build custom <span class="code">GeoQuery</span> objects and see when
+      fish enter and leave the query as it gets updated. Thanks to
+      <a href="https://github.com/stefek99">@stefek99</a> for the contribution!
     </p>
 
     <p>You can check out a live demo of this example <a href="./queryBuilder/index.html">here</a>.</p>
 
-    <h2><a href="./securityRules/rules.json">securityRules - Security Rules</a></h2>
+    <h2><a href="./securityRules/">securityRules - Security Rules</a></h2>
 
     <p>
       It is important to protect your data with
@@ -96,41 +102,43 @@
 
     <ul>
       <li>
-        <b><a href="https://geofire.firebaseapp.com/securityRules/rules.json">Default rules</a></b> -
+        <b><a href="./securityRules/rules.json">Default rules</a></b> -
         These rules allow any client to add, update, or remove items from your index. This does not
         prevent a malicious user from overwriting your index.
       </li>
 
       <li>
-        <b><a href="https://geofire.firebaseapp.com/securityRules/authenticated.rules.json">Authenticated rules</a></b> -
+        <b><a href="./securityRules/authenticated.rules.json">Authenticated rules</a></b> -
         These rules require that only authenticated clients can update your index. Note that these
-        rules will intentionally cause all <pre>GeoFire.add()</pre> and <pre>GeoFire.remove()</pre>
-        calls to fail for unauthenticated clients.
+        rules will intentionally cause all <span class="code">GeoFire.add()</span> and
+        <span class="code">GeoFire.remove()</span> calls to fail for unauthenticated clients.
       </li>
 
       <li>
-        <b><a href="https://geofire.firebaseapp.com/securityRules/noDeletes.json">No deletes rules</a></b> -
+        <b><a href="./securityRules/noDeletes.rules.json">No deletes rules</a></b> -
         These rules prevent clients from being able to delete any existing keys in your index. Note
-        that these rules will intentionally cause all <pre>GeoFire.remove()</pre> calls to fail.
+        that these rules will intentionally cause all <span class="code">GeoFire.remove()</span>
+        calls to fail.
       </li>
 
       <li>
-        <b><a href="https://geofire.firebaseapp.com/securityRules/noUpdates.json">No updates rules</a></b> -
+        <b><a href="./securityRules/noUpdates.rules.json">No updates rules</a></b> -
         These rules prevent clients from being able to update or delete any existing keys in your
-        index. Note that these rules will intentionally fail all <pre>GeoFire.remove()</pre> calls
-        as well as any <pre>GeoFire.add()</pre> calls for existing keys in the index.
+        index. Note that these rules will intentionally fail all <span class="code">GeoFire.remove()</span>
+        calls as well as any <span class="code">GeoFire.add()</span> calls for existing keys in the index.
       </li>
     </ul>
 
     <p>
-      You can further replace the <pre>".write"</pre> rule in the example rules files with some custom logic to restrict who and how users can write to your GeoFire index.
+      You can further replace the <span class="code">".write"</span> rule in the example rules files
+      with some custom logic to restrict who and how users can write to your GeoFire index.
     </p>
 
     <p>
       All of the example rules ensure that one client cannot overwrite your entire GeoFire index
       node with a single call. However, none of them prevent a malicious user from scraping your
-      entire index. You can replace the <pre>".read"</pre> rule in the example rules files with some
-      custom logic to do this.
+      entire index. You can replace the <span class="code">".read"</span> rule in the example rules
+      files with some custom logic to do this.
     </p>
 
     <h2><a href="./sfVehicles/index.html">sfVehicles - Fully-featured Example</a></h2>
