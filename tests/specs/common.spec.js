@@ -21,13 +21,21 @@ var invalidQueryCriterias = [{}, {random: 100}, {center: [91,2], radius: 1000, r
 // Create global variables to hold the Firebase and GeoFire variables
 var firebaseRef, geoFire, geoQueries = [];
 
+//TODO: Store this config elsewhere
+var config = {
+  apiKey: "AIzaSyDOlKivprJ3SquwbMUoBB0uK7V_FjUWAqI",
+  authDomain: "topstory.firebaseapp.com",
+  databaseURL: "https://topstory.firebaseio.com"
+};
+firebase.initializeApp(config);
+
 /**********************/
 /*  HELPER FUNCTIONS  */
 /**********************/
 /* Helper function which runs before each Jasmine test has started */
 function beforeEachHelper(done) {
   // Create a new firebase ref with a new context
-  firebaseRef = new Firebase(demoFirebaseUrl, Firebase.Context());
+  firebaseRef = firebase.database().ref();
 
   // Reset the Firebase
   firebaseRef.remove(function() {

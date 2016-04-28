@@ -34,20 +34,6 @@ easily query which bar IDs (the keys) are nearby. To display any additional info
 bars, you can load the information for each bar returned by the query at `/bars/<bar-id>`.
 
 
-## Live Demos
-
-To see GeoFire in action, you can [play around with our fully-featured demo](https://geofire.firebaseapp.com/sfVehicles/index.html). (Drag the purple circle!)
-This demo maps all of the San Francisco MUNI vehicles within a certain search radius. You can
-drag around the search radius and see the vehicles update in realtime.
-
-[![SF MUNI Demo Image](./examples/sfVehicles/images/sf-vehicles.png)](https://geofire.firebaseapp.com/sfVehicles/index.html)
-
-You can find a full list of our demos [here](https://geofire.firebaseapp.com/index.html)
-and view the code for each of them in the [examples directory](./examples/) of this repository.
-The examples cover some of the common use cases for GeoFire and explain how to protect your data
-using Security and Firebase Rules.
-
-
 ## Upgrading GeoFire
 
 Using an older version of GeoFire and want to upgrade to the latest version? Check out our
@@ -59,6 +45,7 @@ Using an older version of GeoFire and want to upgrade to the latest version? Che
 In order to use GeoFire in your project, you need to include the following files in your HTML:
 
 ```html
+//TODO: Update these links
 <!-- Firebase -->
 <script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
 
@@ -102,7 +89,7 @@ the location pointed to by `firebaseRef`. Note that this `firebaseRef` can point
 
 ```JavaScript
 // Create a Firebase reference where GeoFire will store its information
-var firebaseRef = new Firebase("https://<your-firebase>.firebaseio.com/");
+var firebaseRef = firebase.database().ref();
 
 // Create a GeoFire index
 var geoFire = new GeoFire(firebaseRef);

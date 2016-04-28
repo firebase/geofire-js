@@ -448,3 +448,21 @@ function decodeGeoFireObject(geoFireObj) {
     throw new Error("Unexpected GeoFire location object encountered: " + JSON.stringify(geoFireObj));
   }
 }
+
+/**
+ * Get the key of a Firebase snapshot across SDK versions
+ *
+ * @param {Object} snapshot A Firebase Snapshot
+ * @return {String} key The Firebase snapshot's key
+ */
+ function getKey(snapshot) {
+   var key;
+   if (typeof(snapshot.key) === "function") {
+     key = snapshot.key();
+   } else if (typeof(snapshot.key) === "string") {
+     key = snapshot.key;
+   } else {
+     key = snapshot.name();
+   }
+   return key;
+ }
