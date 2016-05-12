@@ -457,9 +457,9 @@ function decodeGeoFireObject(geoFireObj) {
  */
  function getKey(snapshot) {
    var key;
-   if (typeof(snapshot.key) === "function") {
+   if (typeof snapshot.key === "function") {
      key = snapshot.key();
-   } else if (typeof(snapshot.key) === "string") {
+   } else if (typeof snapshot.key === "string") {
      key = snapshot.key;
    } else {
      key = snapshot.name();
