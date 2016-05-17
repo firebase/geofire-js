@@ -43,7 +43,7 @@ Returns a promise which is fulfilled when the new location has been synchronized
 servers.
 
 Keys must be strings and [valid Firebase database key
-names](https://www.firebase.com/docs/web/guide/understanding-data.html#section-creating-references?utm_source=geofire-js).
+names](https://firebase.google.com/docs/web/).
 
 ```JavaScript
 geoFire.set("some_key", [37.79, -122.41]).then(function() {

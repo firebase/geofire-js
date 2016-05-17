@@ -7,10 +7,20 @@
     <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
 
     <!-- Firebase -->
-    <script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyC5IcRccDo289TTRa3Y7qJIu8YPz3EnKAI",
+        authDomain: "geofire-9d0de.firebaseapp.com",
+        databaseURL: "https://geofire-9d0de.firebaseio.com",
+        storageBucket: "geofire-9d0de.appspot.com",
+      };
+      firebase.initializeApp(config);
+    </script>
 
     <!-- GeoFire -->
-    <script src="https://cdn.firebase.com/libs/geofire/4.0.0/geofire.min.js"></script>
+    <script src="https://cdn.firebase.com/libs/geofire/4.1.0/geofire.min.js"></script>
 
     <!-- Custom JS -->
     <script src="js/queryBuilder.js" defer></script>

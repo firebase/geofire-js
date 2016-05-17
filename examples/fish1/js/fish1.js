@@ -1,7 +1,6 @@
 (function() {
   // Generate a random Firebase location
-  var firebaseUrl = "https://" + generateRandomString(10) + ".firebaseio-demo.com/";
-  var firebaseRef = new Firebase(firebaseUrl);
+  var firebaseRef = firebase.database().ref();
 
   // Set the URL of the link element to be the Firebase URL
   document.getElementById("firebaseRef").setAttribute("href", firebaseUrl);

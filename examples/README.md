@@ -5,7 +5,7 @@ geographic location. At its heart, GeoFire simply stores locations with string k
 benefit, however, is the possibility of retrieving only those keys within a given geographic
 area - all in realtime.
 
-GeoFire uses [Firebase](https://www.firebase.com/?utm_source=geofire-js) for data storage, allowing
+GeoFire uses [Firebase](https://firebase.google.com) for data storage, allowing
 query results to be updated in realtime as they change. GeoFire *selectively loads only the data
 near certain locations, keeping your applications light and responsive*, even with extremely large
 datasets.
@@ -91,20 +91,3 @@ restrict who and how users can write to your GeoFire index.
 All of the example rules ensure that one client cannot overwrite your entire GeoFire index node with
 a single call. However, none of them prevent a malicious user from scraping your entire index. You
 can replace the `".read"` rule in the example rules files with some custom logic to do this.
-
-
-## [sfVehicles - Fully-featured Example](https://geofire.firebaseapp.com/sfVehicles/index.html)
-
-This is a fully-featured, complex example which combines GeoFire, Google Maps,
-and the [Firebase Transit Open Data Set](https://www.firebase.com/docs/open-data/transit.html?utm_source=geofire).
-Firebase provides a public Firebase which contains the realtime locations of public
-transit vehicles in several major US cities, including San Francisco MUNI. The data
-set also contains GeoFire data for each vehicle which we used to create this demo.
-
-Drag around the purple circle to the left to see the vehicles which are currently within its radius. The
-results update in realtime as you move the circle and as vehicles travel around the city. GeoFire handles all
-of the hard work, telling you exactly when vehicles enter and exit the circle. It also selectively loads
-only the data geographically close to the circle, meaning GeoFire data for buses in New York or Chicago are not
-loaded into memory unnecessarily.
-
-You can check out a live demo of this example [here](https://geofire.firebaseapp.com/sfVehicles/index.html).

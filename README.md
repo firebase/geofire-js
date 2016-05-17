@@ -9,10 +9,10 @@ geographic location. At its heart, GeoFire simply stores locations with string k
 benefit, however, is the possibility of retrieving only those keys within a given geographic
 area - all in realtime.
 
-GeoFire uses the [Firebase](https://www.firebase.com/?utm_source=geofire-js) database for data storage, allowing
+GeoFire uses the [Firebase](https://firebase.google.com/) database for data storage, allowing
 query results to be updated in realtime as they change. GeoFire *selectively loads only the data
 near certain locations, keeping your applications light and responsive*, even with extremely large
-datasets. You can [sign up here for a free account](https://www.firebase.com/signup/?utm_source=geofire-js).
+datasets. You can [sign up here for a free account](https://firebase.google.com).
 
 
 A compatible GeoFire client is also available for [Objective-C](https://github.com/firebase/geofire-objc)
