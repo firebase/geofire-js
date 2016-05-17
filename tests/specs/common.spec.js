@@ -4,9 +4,6 @@
 // Override the default timeout interval for Jasmine
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
-// Get a reference to a random demo Firebase
-var demoFirebaseUrl = 'https://' + generateRandomString() + '.firebaseio-demo.com';
-
 // Define examples of valid and invalid parameters
 var invalidFirebaseRefs = [null, undefined, NaN, true, false, [], 0, 5, "", "a", ["hi", 1]];
 var validKeys = ["a", "loc1", "(e@Xi:4t>*E2)hc<5oa:1s6{B0d?u", Array(743).join("a")];
@@ -21,11 +18,12 @@ var invalidQueryCriterias = [{}, {random: 100}, {center: [91,2], radius: 1000, r
 // Create global variables to hold the Firebase and GeoFire variables
 var firebaseRef, geoFire, geoQueries = [];
 
-//TODO: Store this config elsewhere
+// Initialize Firebase
 var config = {
-  apiKey: "AIzaSyDOlKivprJ3SquwbMUoBB0uK7V_FjUWAqI",
-  authDomain: "topstory.firebaseapp.com",
-  databaseURL: "https://topstory.firebaseio.com"
+  apiKey: "AIzaSyC5IcRccDo289TTRa3Y7qJIu8YPz3EnKAI",
+  authDomain: "geofire-9d0de.firebaseapp.com",
+  databaseURL: "https://geofire-9d0de.firebaseio.com",
+  storageBucket: "geofire-9d0de.appspot.com",
 };
 firebase.initializeApp(config);
 
