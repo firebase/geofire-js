@@ -6,7 +6,7 @@
   });
 
   // Generate a random Firebase location
-  var firebaseRef = firebase.database().ref(generateRandomString(10));
+  var firebaseRef = firebase.database().ref().push();
 
   // Set the URL of the link element to be the Firebase URL
   document.getElementById("firebaseRef").setAttribute("href", firebaseUrl);
@@ -72,18 +72,6 @@
   /*************/
   /*  HELPERS  */
   /*************/
-  /* Returns a random string of the inputted length */
-  function generateRandomString(length) {
-      var text = "";
-      var validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-      for(var i = 0; i < length; i++) {
-          text += validChars.charAt(Math.floor(Math.random() * validChars.length));
-      }
-
-      return text;
-  }
-
   /* Logs to the page instead of the console */
   function log(message) {
     var childDiv = document.createElement("div");
