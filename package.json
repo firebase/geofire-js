@@ -28,7 +28,7 @@
   ],
   "dependencies": {},
   "peerDependencies": {
-    "firebase": "^3.0.0"
+    "firebase": "^2.4.0 || 3.x.x"
   },
   "devDependencies": {
     "coveralls": "2.11.4",

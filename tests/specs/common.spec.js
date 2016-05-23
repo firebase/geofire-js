@@ -22,8 +22,7 @@ var firebaseRef, geoFire, geoQueries = [];
 var config = {
   apiKey: "AIzaSyC5IcRccDo289TTRa3Y7qJIu8YPz3EnKAI",
   authDomain: "geofire-9d0de.firebaseapp.com",
-  databaseURL: "https://geofire-9d0de.firebaseio.com",
-  storageBucket: "geofire-9d0de.appspot.com",
+  databaseURL: "https://geofire-9d0de.firebaseio.com"
 };
 firebase.initializeApp(config);
 
