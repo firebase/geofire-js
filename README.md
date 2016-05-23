@@ -11,7 +11,7 @@
  * [Live Demos](#live-demos)
  * [Downloading GeoFire](#downloading-geofire)
  * [Documentation](#documentation)
- * [Upgrading GeoFire](#upgrading-geofire)
+ * [Migration Guides](#migration-guides)
  * [Contributing](#contributing)
 
 
@@ -89,7 +89,7 @@ $ bower install geofire --save
 [API Reference](docs/reference.md)
 
 
-## Upgrading GeoFire
+## Migration Guides
 
 Using an older version of GeoFire and want to upgrade to the latest version? Check out our
 [migration guides](docs/migration.md) to find out how!
