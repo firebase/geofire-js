@@ -1,7 +1,12 @@
 (function() {
+  // Initialize the Firebase SDK
+  firebase.initializeApp({
+    apiKey: "AIzaSyC5IcRccDo289TTRa3Y7qJIu8YPz3EnKAI",
+    databaseURL: "https://geofire-9d0de.firebaseio.com"
+  });
+
   // Generate a random Firebase location
-  var firebaseUrl = "https://" + generateRandomString(10) + ".firebaseio-demo.com/";
-  var firebaseRef = new Firebase(firebaseUrl);
+  var firebaseRef = firebase.database().ref().push();
 
   // Set the URL of the link element to be the Firebase URL
   document.getElementById("firebaseRef").setAttribute("href", firebaseUrl);
@@ -59,18 +64,6 @@
   /*************/
   /*  HELPERS  */
   /*************/
-  /* Returns a random string of the inputted length */
-  function generateRandomString(length) {
-      var text = "";
-      var validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-      for(var i = 0; i < length; i++) {
-          text += validChars.charAt(Math.floor(Math.random() * validChars.length));
-      }
-
-      return text;
-  }
-
   /* Logs to the page instead of the console */
   function log(message) {
     var childDiv = document.createElement("div");

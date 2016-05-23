@@ -1,4 +1,4 @@
-# Upgrading GeoFire
+# Migration Guides | GeoFire for JavaScript
 
 Below are instructions for migrating from one version of GeoFire to another. If you are upgrading
 several versions at once, make sure you follow the migration instructions for all upgrades.
@@ -10,7 +10,7 @@ Let's start off with the good news: RSVP is no longer required required at all t
 means you can remove RSVP entirely if you aren't using it elsewhere in your project.
 
 The slightly bad news is that you may need to upgrade your Firebase dependency because GeoFire now
-uses [the new promises functionality found in Firebase `2.4.0`](https://www.firebase.com/blog/2016-01-21-keeping-our-promises.html).
+uses [the new promises functionality found in Firebase `2.4.0`](https://firebase.googleblog.com/2016/01/keeping-our-promises-and-callbacks_76.html).
 Thankfully, upgrading should be as easy as upgrading the Firebase version you are using to `2.4.0`
 or higher (if it isn't already).
 
@@ -44,23 +44,23 @@ you will need to make sure `firebase` is listed as a regular dependency alongsid
 ## `3.0.x` to `3.1.x`
 
 With the release of GeoFire `3.1.0`, GeoFire now uses [the new query functionality found in Firebase
-`2.0.0`](https://www.firebase.com/blog/2014-11-04-firebase-realtime-queries.html). As a
+`2.0.0`](https://firebase.googleblog.com/2014/11/firebase-now-with-more-querying.html). As a
 result, you will need to upgrade to Firebase `2.x.x` and add a new `.indexOn` rule to your Security
 and Firebase Rules to get the best performance. You can view [the updated rules here](../examples/securityRules/rules.json)
-and [read our docs for more information about indexing your data](https://www.firebase.com/docs/security/guide/indexing-data.html).
+and [read our docs for more information about indexing your data](https://firebase.google.com/docs/database/security/indexing-data).
 
 
 ## `2.x.x` to `3.x.x`
 
 GeoFire `3.x.x` has the same API as `2.x.x` but uses a different underlying data structure to store
 its location data. If you are currently using `2.x.x` and want to upgrade to `3.x.x`, you must run
-the [GeoFire 3.x migration script](./migrateToV3.js) on your Firebase database. This Node.js script
+the [GeoFire 3.x.x migration script](migration/migrateToV3.js) on your Firebase database. This Node.js script
 only needs to be run one time and should take only a few seconds to minutes depending on the size of
-your data. To run the script, copy the files in this repo's `/migration` folder to your machine and
+your data. To run the script, copy the files in the [`migration/`](migration) folder to your machine and
 run the following commands:
 
 ```bash
-$ npm install firebase rsvp  # install needed dependencies
-$ node migrateToV3.js        # display usage instructions
+$ npm install              # install needed dependencies
+$ node migrateToV3.js      # display usage instructions
 ```
 

@@ -16,13 +16,13 @@ describe("GeoFire Tests:", function() {
     });
 
     it("Constructor does not throw errors given valid Firebase references", function() {
-      expect(function() { new GeoFire(firebaseRef); }).not.toThrow();
+      expect(function() { new GeoFire(geoFireRef); }).not.toThrow();
     });
   });
 
   describe("ref():", function() {
     it("ref() returns the Firebase reference used to create a GeoFire instance", function() {
-      expect(geoFire.ref()).toBe(firebaseRef);
+      expect(geoFire.ref()).toBe(geoFireRef);
     });
   });
 
