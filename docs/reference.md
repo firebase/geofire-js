@@ -90,7 +90,7 @@ Returns a promise which is fulfilled when the new location has been synchronized
 servers.
 
 Keys must be strings and [valid Firebase database key
-names](https://firebase.google.com/docs/web/).
+names](https://firebase.google.com/docs/database/web/structure-data).
 
 ```JavaScript
 geoFire.set("some_key", [37.79, -122.41]).then(function() {
@@ -313,7 +313,7 @@ long-running operation and allow code to run asynchronously. Upon completion of 
 promise will be "resolved" / "fulfilled" with the operation's result. This result will be passed to
 the function defined in the promise's `then()` method.
 
-If you are unfamiliar with promises, check out [this blog post](http://www.html5rocks.com/en/tutorials/es6/promises).
+If you are unfamiliar with promises, check out [this blog post](http://www.html5rocks.com/en/tutorials/es6/promises/).
 Here is a quick example of how to consume a promise:
 
 ```JavaScript
