@@ -33,7 +33,7 @@
     "changelog.txt"
   ],
   "dependencies": {
-    "firebase": "^2.4.0"
+    "firebase": "^3.0.0"
   },
   "devDependencies": {
     "jasmine": "~2.0.0",
