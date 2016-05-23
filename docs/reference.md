@@ -12,9 +12,9 @@
  * [`GeoQuery`](#geoquery)
    - [`center()`](#geoquerycenter)
    - [`radius()`](#geoqueryradius)
-   - [`cancel()`](#geoquerycancel)
-   - [`on(eventType, callback)`](#geoqueryoneventtype-callback)
    - [`updateCriteria(newQueryCriteria)`](#geoqueryupdatecriterianewquerycriteria)
+   - [`on(eventType, callback)`](#geoqueryoneventtype-callback)
+   - [`cancel()`](#geoquerycancel)
  * [`GeoCallbackRegistration`](#geocallbackregistration)
    - [`cancel()`](#geocallbackregistrationcancel)
  * [Helper Methods](#helper-methods)
@@ -32,6 +32,11 @@ Creates and returns a new `GeoFire` instance to manage your location data. Data 
 the location pointed to by `firebaseRef`. Note that this `firebaseRef` can point to anywhere in your Firebase database.
 
 ```JavaScript
+// Initialize the Firebase SDK
+firebase.initializeApp({
+  // ...
+});
+
 // Create a Firebase reference where GeoFire will store its information
 var firebaseRef = firebase.database().ref();
 
@@ -44,10 +49,30 @@ var geoFire = new GeoFire(firebaseRef);
 Returns the `Firebase` reference used to create this `GeoFire` instance.
 
 ```JavaScript
-var firebaseRef = new Firebase("https://<your-firebase>.firebaseio.com/");
+var firebaseRef = firebase.database().ref();
 var geoFire = new GeoFire(firebaseRef);
 
 var ref = geoFire.ref();  // ref === firebaseRef
+```
+
+### GeoFire.get(key)
+
+Fetches the location stored for `key`.
+
+Returns a promise fulfilled with the `location` corresponding to the provided `key`.
+If `key` does not exist, the returned promise is fulfilled with `null`.
+
+```JavaScript
+geoFire.get("some_key").then(function(location) {
+  if (location === null) {
+    console.log("Provided key is not in GeoFire");
+  }
+  else {
+    console.log("Provided key has a location of " + location);
+  }
+}, function(error) {
+  console.log("Error: " + error);
+});
 ```
 
 ### GeoFire.set(keyOrLocations[, location])
@@ -81,26 +106,6 @@ geoFire.set({
   "another_key": [36.98, -122.56]
 }).then(function() {
   console.log("Provided keys have been added to GeoFire");
-}, function(error) {
-  console.log("Error: " + error);
-});
-```
-
-### GeoFire.get(key)
-
-Fetches the location stored for `key`.
-
-Returns a promise fulfilled with the `location` corresponding to the provided `key`.
-If `key` does not exist, the returned promise is fulfilled with `null`.
-
-```JavaScript
-geoFire.get("some_key").then(function(location) {
-  if (location === null) {
-    console.log("Provided key is not in GeoFire");
-  }
-  else {
-    console.log("Provided key has a location of " + location);
-  }
 }, function(error) {
   console.log("Error: " + error);
 });

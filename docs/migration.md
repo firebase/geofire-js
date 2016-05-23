@@ -54,7 +54,7 @@ and [read our docs for more information about indexing your data](https://fireba
 
 GeoFire `3.x.x` has the same API as `2.x.x` but uses a different underlying data structure to store
 its location data. If you are currently using `2.x.x` and want to upgrade to `3.x.x`, you must run
-the [GeoFire 3.x migration script](migration/migrateToV3.js) on your Firebase database. This Node.js script
+the [GeoFire 3.x.x migration script](migration/migrateToV3.js) on your Firebase database. This Node.js script
 only needs to be run one time and should take only a few seconds to minutes depending on the size of
 your data. To run the script, copy the files in the [`migration/`](migration) folder to your machine and
 run the following commands:
