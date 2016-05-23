@@ -1,4 +1,26 @@
-# GeoFire API Reference (JavaScript)
+# API Reference - GeoFire for JavaScript
+
+## Table of Contents
+
+ * [`GeoFire`](#geofire)
+   - [`new GeoFire(firebaseRef)`](#new-geofirefirebaseref)
+   - [`ref()`](#geofireref)
+   - [`get(key)`](#geofiregetkey)
+   - [`set(keyOrLocations[, location])`](#geofiresetkeyorlocations-location)
+   - [`remove(key)`](#geofireremovekey)
+   - [`query(queryCriteria)`](#geofirequeryquerycriteria)
+ * [`GeoQuery`](#geoquery)
+   - [`center()`](#geoquerycenter)
+   - [`radius()`](#geoqueryradius)
+   - [`cancel()`](#geoquerycancel)
+   - [`on(eventType, callback)`](#geoqueryoneventtype-callback)
+   - [`updateCriteria(newQueryCriteria)`](#geoqueryupdatecriterianewquerycriteria)
+ * [`GeoCallbackRegistration`](#geocallbackregistration)
+   - [`cancel()`](#geocallbackregistrationcancel)
+ * [Helper Methods](#helper-methods)
+   - [`GeoFire.distance(location1, location2)`](#geofiredistancelocation1-location2)
+ * [Promises](#promises)
+
 
 ## GeoFire
 
@@ -116,7 +138,7 @@ var geoQuery = geoFire.query({
 });
 ```
 
-### GeoQuery
+## GeoQuery
 
 A standing query that tracks a set of keys matching a criteria. A new `GeoQuery` is created every time you call `GeoFire.query()`.
 
@@ -237,7 +259,7 @@ var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, 
 });
 ```
 
-### GeoCallbackRegistration
+## GeoCallbackRegistration
 
 An event registration which is used to cancel a `GeoQuery.on()` callback when it is no longer needed. A new `GeoCallbackRegistration` is returned every time you call `GeoQuery.on()`.
 
@@ -263,7 +285,7 @@ var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, 
 });
 ```
 
-### Helper Methods
+## Helper Methods
 
 ### GeoFire.distance(location1, location2)
 

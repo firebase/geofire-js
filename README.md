@@ -4,16 +4,28 @@
 [![Coverage Status](https://coveralls.io/repos/github/firebase/geofire-js/badge.svg?branch=master)](https://coveralls.io/github/firebase/geofire-js?branch=master)
 [![Version](https://badge.fury.io/gh/firebase%2Fgeofire-js.svg)](http://badge.fury.io/gh/firebase%2Fgeofire-js)
 
+
+## Table of Contents
+
+ * [Overview](#overview)
+ * [Live Demos](#live-demos)
+ * [Downloading GeoFire](#downloading-geofire)
+ * [Documentation](#documentation)
+ * [Upgrading GeoFire](#upgrading-geofire)
+ * [Contributing](#contributing)
+
+
+## Overview
+
 GeoFire is an open-source library that allows you to store and query a set of keys based on their
 geographic location. At its heart, GeoFire simply stores locations with string keys. Its main
 benefit, however, is the possibility of retrieving only those keys within a given geographic
 area - all in realtime.
 
-GeoFire uses the [Firebase](https://firebase.google.com/) database for data storage, allowing
-query results to be updated in realtime as they change. GeoFire *selectively loads only the data
-near certain locations, keeping your applications light and responsive*, even with extremely large
-datasets. You can [sign up here for a free account](https://firebase.google.com).
-
+GeoFire uses the [Firebase Realtime Database](https://firebase.google.com/docs/database/) for data
+storage, allowing query results to be updated in realtime as they change. GeoFire *selectively loads
+only the data near certain locations, keeping your applications light and responsive*, even with
+extremely large datasets. You can [sign up here for a free account](https://firebase.google.com).
 
 A compatible GeoFire client is also available for [Objective-C](https://github.com/firebase/geofire-objc)
 and [Java](https://github.com/firebase/geofire-java).
@@ -21,8 +33,8 @@ and [Java](https://github.com/firebase/geofire-java).
 ### Integrating GeoFire with your data
 
 GeoFire is designed as a lightweight add-on to Firebase. To keep things simple, GeoFire stores data
-in its own format and its own location within your Firebase database. This allows your existing data format
-and security rules to remain unchanged while still providing you with an easy solution for geo
+in its own format and its own location within your Firebase database. This allows your existing data
+format and Security Rules to remain unchanged while still providing you with an easy solution for geo
 queries.
 
 ### Example Usage
@@ -35,10 +47,12 @@ easily query which bar IDs (the keys) are nearby. To display any additional info
 bars, you can load the information for each bar returned by the query at `/bars/<bar-id>`.
 
 
-## Upgrading GeoFire
+## Live Demos
 
-Using an older version of GeoFire and want to upgrade to the latest version? Check out our
-[migration guides](./migration) to find out how!
+You can find a full list of our demos [here](https://geofire.firebaseapp.com/index.html)
+and view the code for each of them in the [examples directory](examples/) of this repository.
+The examples cover some of the common use cases for GeoFire and explain how to protect your data
+using the [Firebase Database Security Rules](https://firebase.google.com/docs/database/security/).
 
 
 ## Downloading GeoFire
@@ -47,7 +61,7 @@ In order to use GeoFire in your project, you need to include the following files
 
 ```html
 <!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/3.0.0/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.0.2/firebase.js"></script>
 
 <!-- GeoFire -->
 <script src="https://cdn.firebase.com/libs/geofire/4.1.0/geofire.min.js"></script>
@@ -73,6 +87,13 @@ $ bower install geofire --save
 ## Documentation
 
 [API Reference](docs/reference.md)
+
+
+## Upgrading GeoFire
+
+Using an older version of GeoFire and want to upgrade to the latest version? Check out our
+[migration guides](docs/migration.md) to find out how!
+
 
 ## Contributing
 
