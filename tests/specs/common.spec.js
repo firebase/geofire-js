@@ -21,7 +21,6 @@ var firebaseRef, geoFire, geoQueries = [];
 // Initialize Firebase
 var config = {
   apiKey: "AIzaSyC5IcRccDo289TTRa3Y7qJIu8YPz3EnKAI",
-  authDomain: "geofire-9d0de.firebaseapp.com",
   databaseURL: "https://geofire-9d0de.firebaseio.com"
 };
 firebase.initializeApp(config);
@@ -31,13 +30,11 @@ firebase.initializeApp(config);
 /**********************/
 /* Helper function which runs before each Jasmine test has started */
 function beforeEachHelper(done) {
-  // Create a new firebase ref with a new context
-  firebaseRef = firebase.database().ref();
-
   // Reset the Firebase
-  firebaseRef.remove(function() {
+  var rootRef = firebase.database().ref();
+  rootRef.remove(function() {
     // Create a new firebase ref at a random node
-    firebaseRef = firebaseRef.child(generateRandomString());
+    firebaseRef = rootRef.child(generateRandomString());
 
     // Create a new GeoFire
     geoFire = new GeoFire(firebaseRef);

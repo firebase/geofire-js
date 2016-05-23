@@ -1,6 +1,12 @@
 (function() {
+  // Initialize the Firebase SDK
+  firebase.initializeApp({
+    apiKey: "AIzaSyC5IcRccDo289TTRa3Y7qJIu8YPz3EnKAI",
+    databaseURL: "https://geofire-9d0de.firebaseio.com"
+  });
+
   // Generate a random Firebase location
-  var firebaseRef = firebase.database().ref();
+  var firebaseRef = firebase.database().ref(generateRandomString(10));
 
   // Set the URL of the link element to be the Firebase URL
   document.getElementById("firebaseRef").setAttribute("href", firebaseUrl);

@@ -22,10 +22,10 @@
     </p>
 
     <p>
-      GeoFire uses <a href="https://www.firebase.com/?utm_source=geofire">Firebase</a> for data storage,
-      allowing query results to be updated in realtime as they change. GeoFire <strong>selectively loads
-      only the data near certain locations, keeping your applications light and responsive</strong>, even
-      with extremely large datasets.
+      GeoFire uses the <a href="https://firebase.google.com/docs/database/">Firebase Realtime Database</a>
+      for data storage, allowing query results to be updated in realtime as they change. GeoFire
+      <strong>selectively loads only the data near certain locations, keeping your applications light
+      and responsive</strong>, even with extremely large datasets.
     </p>
 
     <p>
@@ -140,25 +140,5 @@
       entire index. You can replace the <span class="code">".read"</span> rule in the example rules
       files with some custom logic to do this.
     </p>
-
-    <h2><a href="./sfVehicles/index.html">sfVehicles - Fully-featured Example</a></h2>
-
-    <p>
-      This is a fully-featured, complex example which combines GeoFire, Google Maps,
-      and the <a href="https://www.firebase.com/docs/open-data/transit.html?utm_source=geofire">Firebase Transit Open Data Set</a>.
-      Firebase provides a public Firebase which contains the realtime locations of public
-      transit vehicles in several major US cities, including San Francisco MUNI. The data
-      set also contains GeoFire data for each vehicle which we used to create this demo.
-    </p>
-
-    <p>
-      Drag around the purple circle to the left to see the vehicles which are currently within its radius. The
-      results update in realtime as you move the circle and as vehicles travel around the city. GeoFire handles all
-      of the hard work, telling you exactly when vehicles enter and exit the circle. It also selectively loads
-      only the data geographically close to the circle, meaning GeoFire data for buses in New York or Chicago are not
-      loaded into memory unnecessarily.
-    </p>
-
-    <p>You can check out a live demo of this example <a href="./sfVehicles/index.html">here</a></p>
   </body>
 </html>
