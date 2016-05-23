@@ -1,4 +1,4 @@
-# Upgrading GeoFire
+# Migration Guides | GeoFire for JavaScript
 
 Below are instructions for migrating from one version of GeoFire to another. If you are upgrading
 several versions at once, make sure you follow the migration instructions for all upgrades.

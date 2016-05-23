@@ -1,4 +1,4 @@
-# API Reference - GeoFire for JavaScript
+# API Reference | GeoFire for JavaScript
 
 ## Table of Contents
 
