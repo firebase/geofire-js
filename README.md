@@ -49,10 +49,10 @@ bars, you can load the information for each bar returned by the query at `/bars/
 
 ## Live Demos
 
-You can find a full list of our demos [here](https://geofire.firebaseapp.com/index.html)
-and view the code for each of them in the [examples directory](examples/) of this repository.
-The examples cover some of the common use cases for GeoFire and explain how to protect your data
-using the [Firebase Database Security Rules](https://firebase.google.com/docs/database/security/).
+You can find a full list of our demos and view the code for each of them in the
+[examples directory](examples/) of this repository. The examples cover some of the common use
+cases for GeoFire and explain how to protect your data using the
+[Firebase Database Security Rules](https://firebase.google.com/docs/database/security/).
 
 
 ## Downloading GeoFire
