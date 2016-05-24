@@ -1,0 +1,16 @@
+{
+  "firebase": "geofire",
+  "public": ".",
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://github.com/firebase/geofire-js/blob/master/examples/README.md",
+      "type": 301
+    },
+    {
+      "source": "/index.html",
+      "destination": "https://github.com/firebase/geofire-js/blob/master/examples/README.md",
+      "type": 301
+    }
+  ]
+}

@@ -8,9 +8,6 @@
   // Generate a random Firebase location
   var firebaseRef = firebase.database().ref().push();
 
-  // Set the URL of the link element to be the Firebase URL
-  document.getElementById("firebaseRef").setAttribute("href", firebaseUrl);
-
   // Create a new GeoFire instance at the random Firebase location
   var geoFire = new GeoFire(firebaseRef);
 
@@ -39,7 +36,6 @@
       firebaseRef.child(username).onDisconnect().remove();
 
       log("Added handler to remove user " + username + " from GeoFire when you leave this page.");
-      log("You can use the link above to verify that " + username + " was removed from GeoFire after you close this page.");
     }).catch(function(error) {
       log("Error adding user " + username + "'s location to GeoFire");
     });

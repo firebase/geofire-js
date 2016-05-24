@@ -16,10 +16,10 @@ and [Java](https://github.com/firebase/geofire-java).
 ## Running Locally
 
 To run the following examples locally, clone this entire `geofire` repository
-and then simply open the example's respective `index.html` file in the browser
+and then simply open each example's respective `index.html` file in the browser
 of your choice.
 
-## [fish1 - Writing To and Reading From GeoFire](https://geofire.firebaseapp.com/fish1/index.html)
+## [fish1 - Writing To and Reading From GeoFire](fish1/)
 
 This is a very basic example which shows you how to read from and write to GeoFire
 and how to handle the promises returned by the `set()`, `get()`, and `remove()`
@@ -27,7 +27,7 @@ methods.
 
 You can check out a live demo of this example [here](https://geofire.firebaseapp.com/fish1/index.html).
 
-## [fish2 - Using a GeoQuery](https://geofire.firebaseapp.com/fish3/index.html)
+## [fish2 - Using a GeoQuery](fish2/)
 
 This is a more complex example which shows you how to create a `GeoQuery` and
 respond to keys moving into, out of, and within the query. It also shows how
@@ -35,7 +35,7 @@ to cancel event callback registrations.
 
 You can check out a live demo of this example [here](https://geofire.firebaseapp.com/fish2/index.html).
 
-## [fish3 - Loading Initial Data](https://geofire.firebaseapp.com/fish3/index.html)
+## [fish3 - Loading Initial Data](fish3/)
 
 This example shows you how to achieve a common use case: loading only initial
 data. This is accomplished in GeoFire by canceling a `GeoQuery` once its `ready`
@@ -43,7 +43,7 @@ event has fired.
 
 You can check out a live demo of this example [here](https://geofire.firebaseapp.com/fish3/index.html).
 
-## [html5Geolocation - HTML5 Geolocation API](https://geofire.firebaseapp.com/html5Geolocation/index.html)
+## [html5Geolocation - HTML5 Geolocation API](html5Geolocation/)
 
 The [HTML5 Geolocation API](http://diveintohtml5.info/geolocation.html) allows you
 to get the current location of the person who is viewing your site. This demo shows
@@ -53,7 +53,7 @@ leave the page (or close the app).
 
 You can check out a live demo of this example [here](https://geofire.firebaseapp.com/html5Geolocation/index.html).
 
-## [queryBuilder - Build a Custom GeoQuery](https://geofire.firebaseapp.com/queryBuilder/index.html)
+## [queryBuilder - Build a Custom GeoQuery](queryBuilder/)
 
 This demo allows you to build custom `GeoQuery` objects and see when fish enter and
 leave the query as it gets updated. Thanks to [@stefek99](https://github.com/stefek99)
@@ -61,7 +61,7 @@ for the contribution!
 
 You can check out a live demo of this example [here](https://geofire.firebaseapp.com/queryBuilder/index.html).
 
-## [securityRules - Security Rules](https://geofire.firebaseapp.com/securityRules/)
+## [securityRules - Security Rules](securityRules/)
 
 It is important to protect your data with [Firebase and Security Rules](https://www.firebase.com/docs/security/).
 This example contains several different versions of rules for your GeoFire index. All of the
