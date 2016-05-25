@@ -450,10 +450,10 @@ function decodeGeoFireObject(geoFireObj) {
 }
 
 /**
- * Get the key of a Firebase snapshot across SDK versions
+ * Returns the key of a Firebase snapshot across SDK versions.
  *
- * @param {Object} snapshot A Firebase Snapshot
- * @return {String} key The Firebase snapshot's key
+ * @param {DataSnapshot} snapshot A Firebase snapshot
+ * @return {String|null} key The Firebase snapshot's key.
  */
  function getKey(snapshot) {
    var key;
