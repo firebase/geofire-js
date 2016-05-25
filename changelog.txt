@@ -1,0 +1,1 @@
+fixed - Fixed internal issue which could result in an uncaught exception being thrown when given a Firebase database root reference.
