@@ -35,7 +35,7 @@ If your issue appears to be a bug, and hasn't been reported,
 [open a new issue](https://github.com/firebase/geofire-js/issues/new). Please use the provided bug
 report template and include a minimal repro.
 
-If you are up to the challenge, [submit a Pull Request](#submit) with a fix!
+If you are up to the challenge, [submit a pull request](#submit) with a fix!
 
 
 ## <a name="feature"></a>Have a feature request?
@@ -69,7 +69,7 @@ before we can accept your pull request.
 
 ## <a name="local-setup"></a>Need to get set up locally?
 
-If you'd like to contribute to ReactFire, you'll need to do the following to get your environment
+If you'd like to contribute to GeoFire, you'll need to do the following to get your environment
 set up.
 
 ### Install Dependencies
@@ -95,4 +95,4 @@ $ gulp test      # just test
 $ gulp watch     # lint and build whenever source files change
 ```
 
-The output files - `reactfire.js` and `reactfire.min.js` - are written to the `/dist/` directory.
+The output files - `geofire.js` and `geofire.min.js` - are written to the `/dist/` directory.
