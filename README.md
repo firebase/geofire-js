@@ -21,7 +21,6 @@ and [Java](https://github.com/firebase/geofire-java).
 
 ## Table of Contents
 
- * [Overview](#overview)
  * [Downloading GeoFire](#downloading-geofire)
  * [Documentation](#documentation)
  * [Examples](#examples)
