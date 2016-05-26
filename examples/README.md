@@ -1,4 +1,4 @@
-# GeoFire Examples
+# Examples | GeoFire
 
 GeoFire is an open-source library that allows you to store and query a set of keys based on their
 geographic location. At its heart, GeoFire simply stores locations with string keys. Its main
