@@ -7,9 +7,9 @@ Have a usage question?
 We get lots of those and we love helping you, but GitHub is not the best place for them and they
 will be closed. Here are some resources to get help:
 
-- Start with the documentation: https://github.com/firebase/geofire-js/
+- Start with the documentation: https://github.com/firebase/geofire-js/blob/master/README.md
 - Read the full API reference: https://github.com/firebase/geofire-js/blob/master/docs/reference.md
-- Try out some examples: https://github.com/firebase/geofire-js/tree/master/examples
+- Try out some examples: https://github.com/firebase/geofire-js/blob/master/examples/README.md
 
 If the official documentation doesn't help, try asking through our official support channels:
 
