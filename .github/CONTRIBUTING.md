@@ -9,7 +9,7 @@ Thank you for contributing to the Firebase community!
  - [Need to get set up locally?](#local-setup)
 
 
-## <a name="question"></a> Have a usage question?
+## <a name="question"></a>Have a usage question?
 
 We get lots of those and we love helping you, but GitHub is not the best place for them. Issues
 which just ask about usage will be closed. Here are some resources to get help:
@@ -24,7 +24,7 @@ If the official documentation doesn't help, try asking a question through our
 **Please avoid double posting across multiple channels!**
 
 
-## <a name="issue"></a> Think you found a bug?
+## <a name="issue"></a>Think you found a bug?
 
 Yeah, we're definitely not perfect!
 
@@ -38,7 +38,7 @@ report template and include a minimal repro.
 If you are up to the challenge, [submit a Pull Request](#submit) with a fix!
 
 
-## <a name="feature"></a> Have a feature request?
+## <a name="feature"></a>Have a feature request?
 
 Great, we love hearing how we can improve our products! After making sure someone hasn't already
 requested the feature in the [existing issues](https://github.com/firebase/geofire-js/issues), go
@@ -49,7 +49,7 @@ will it make current workarounds straightforward? What potential bugs and edge c
 avoid?
 
 
-## <a name="submit"></a> Want to submit a pull request?
+## <a name="submit"></a>Want to submit a pull request?
 
 Sweet, we'd love to accept your contribution! [Open a new pull request](https://github.com/firebase/geofire-js/pull/new/master)
 and fill out the provided form.
@@ -67,7 +67,7 @@ Finally, you will need to sign our [Contributor License Agreement](https://cla.d
 before we can accept your pull request.
 
 
-## <a name="local-setup"></a> Need to get set up locally?
+## <a name="local-setup"></a>Need to get set up locally?
 
 If you'd like to contribute to ReactFire, you'll need to do the following to get your environment
 set up.
