@@ -63,7 +63,7 @@ You can check out a live demo of this example [here](https://geofire.firebaseapp
 
 ## [securityRules - Security Rules](securityRules/)
 
-It is important to protect your data with [Firebase and Security Rules](https://www.firebase.com/docs/security/).
+It is important to protect your data with [Firebase and Security Rules](https://firebase.google.com/docs/database/security/).
 This example contains several different versions of rules for your GeoFire index. All of the
 following rules enforce the schema of your index, but allow varying types of updates to it.
 
