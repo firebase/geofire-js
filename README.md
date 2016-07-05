@@ -34,7 +34,7 @@ In order to use GeoFire in your project, you need to include the following files
 
 ```html
 <!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/3.0.3/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
 
 <!-- GeoFire -->
 <script src="https://cdn.firebase.com/libs/geofire/4.1.1/geofire.min.js"></script>
