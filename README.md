@@ -24,6 +24,7 @@ and [Java](https://github.com/firebase/geofire-java).
  * [Downloading GeoFire](#downloading-geofire)
  * [Documentation](#documentation)
  * [Examples](#examples)
+ * [Release Notes](https://github.com/firebase/geofire-js/releases)
  * [Migration Guides](#migration-guides)
  * [Contributing](#contributing)
 
@@ -34,7 +35,7 @@ In order to use GeoFire in your project, you need to include the following files
 
 ```html
 <!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
 
 <!-- GeoFire -->
 <script src="https://cdn.firebase.com/libs/geofire/4.1.1/geofire.min.js"></script>
