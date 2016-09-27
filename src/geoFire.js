@@ -26,42 +26,64 @@ var GeoFire = function(firebaseRef) {
    * @param {string|Object} keyOrLocations The key representing the location to add or a mapping of key - location pairs which
    * represent the locations to add.
    * @param {Array.<number>|undefined} location The [latitude, longitude] pair to add.
+   * @param {Object} customData The custom data if any.
    * @return {Promise.<>} A promise that is fulfilled when the write is complete.
    */
-  this.set = function(keyOrLocations, location) {
-    var locations;
-    if (typeof keyOrLocations === "string" && keyOrLocations.length !== 0) {
-      // If this is a set for a single location, convert it into a object
-      locations = {};
-      locations[keyOrLocations] = location;
-    } else if (typeof keyOrLocations === "object") {
-      if (typeof location !== "undefined") {
-        throw new Error("The location argument should not be used if you pass an object to set().");
-      }
-      locations = keyOrLocations;
-    } else {
-      throw new Error("keyOrLocations must be a string or a mapping of key - location pairs.");
-    }
+   this.set = function(keyOrLocations, location, customData) {
+     var locations;
+     if (typeof keyOrLocations === "string" && keyOrLocations.length !== 0) {
+       if(customData && typeof customData !== "object"){
+         throw new Error("customData must be a Object.");
+       }
+       // If this is a set for a single location, convert it into a object
+       locations = {};
+       locations[keyOrLocations] = location;
+       if(location && customData){
+         locations[keyOrLocations].push(customData);
+       }
+     } else if (typeof keyOrLocations === "object") {
+       if (typeof location !== "undefined") {
+         throw new Error("The location argument should not be used if you pass an object to set().");
+       }
+       locations = keyOrLocations;
+     } else {
+       throw new Error("keyOrLocations must be a string or a mapping of key - location pairs.");
+     }
 
-    var newData = {};
+     var newData = {};
 
-    Object.keys(locations).forEach(function(key) {
-      validateKey(key);
+     Object.keys(locations).forEach(function(key) {
+       validateKey(key);
 
-      var location = locations[key];
-      if (location === null) {
-        // Setting location to null is valid since it will remove the key
-        newData[key] = null;
-      } else {
-        validateLocation(location);
+       var location = locations[key];
 
-        var geohash = encodeGeohash(location);
-        newData[key] = encodeGeoFireObject(location, geohash);
-      }
-    });
+       if (location === null) {
+         // Setting location to null is valid since it will remove the key
+         newData[key] = null;
+       } else {
+         var customData = null;
+         if(location && location.length >= 3){
+           customData = location.pop();
+         }
 
-    return _firebaseRef.update(newData);
-  };
+         validateLocation(location);
+
+         var geohash = encodeGeohash(location);
+         newData[key] = encodeGeoFireObject(location, geohash);
+
+         if(customData){
+           var cdKeys = Object.keys(customData);
+           var cdKey = null;
+           for(var i = 0, iMax = cdKeys.length; i < iMax; i++){
+             cdKey = cdKeys[i];
+             newData[key][cdKey] = customData[cdKey];
+           }
+         }
+       }
+     });
+
+     return _firebaseRef.update(newData);
+   };
 
   /**
    * Returns a promise fulfilled with the location corresponding to the provided key.

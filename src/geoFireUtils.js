@@ -466,3 +466,30 @@ function decodeGeoFireObject(geoFireObj) {
    }
    return key;
  }
+
+ /**
+  * Gets the GeoFire object custom data.
+  *
+  * @param {DataSnapshot} snapshot A Firebase snapshot.
+  * @return {Object} customData The custom data object or null if there is no additional data.
+  */
+  function getCustomData(snapshot) {
+    var customData = null;
+    var val = snapshot.val();
+    if(val){
+      var keys = Object.keys(val);
+      var key = null;
+      for(var i = 0, iMax = keys.length; i < iMax; i++){
+        key = keys[i];
+        if(key === "g" || key === "l"){
+          continue;
+        }
+
+        if(!customData){
+          customData = {};
+        }
+        customData[key] = val[key];
+      }
+    }
+    return customData;
+  }
