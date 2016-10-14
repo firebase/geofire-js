@@ -1,0 +1,1 @@
+fixed - Fixed uncaught exception caused when cancelling a query immediately after calling `updateCriteria()`.
