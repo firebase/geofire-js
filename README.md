@@ -38,7 +38,7 @@ In order to use GeoFire in your project, you need to include the following files
 <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
 
 <!-- GeoFire -->
-<script src="https://cdn.firebase.com/libs/geofire/4.1.1/geofire.min.js"></script>
+<script src="https://cdn.firebase.com/libs/geofire/4.1.2/geofire.min.js"></script>
 ```
 
 Use the URL above to download both the minified and non-minified versions of GeoFire from the
