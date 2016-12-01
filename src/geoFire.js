@@ -85,25 +85,32 @@ var GeoFire = function(firebaseRef) {
      return _firebaseRef.update(newData);
    };
 
-  /**
-   * Returns a promise fulfilled with the location corresponding to the provided key.
-   *
-   * If the provided key does not exist, the returned promise is fulfilled with null.
-   *
-   * @param {string} key The key of the location to retrieve.
-   * @return {Promise.<Array.<number>>} A promise that is fulfilled with the location of the given key.
-   */
-  this.get = function(key) {
-    validateKey(key);
-    return _firebaseRef.child(key).once("value").then(function(dataSnapshot) {
-      var snapshotVal = dataSnapshot.val();
-      if (snapshotVal === null) {
-        return null;
-      } else {
-        return decodeGeoFireObject(snapshotVal);
-      }
-    });
-  };
+   /**
+    * Returns a promise fulfilled with the location, and eventualy the custom data, corresponding to the provided key.
+    *
+    * If the provided key does not exist, the returned promise is fulfilled with null.
+    *
+    * @param {string} key The key of the location to retrieve.
+    * @return {Promise.<Array>} A promise that is fulfilled with the location, and eventualy the custom data, of the given key.
+    */
+   this.get = function(key) {
+     validateKey(key);
+     return _firebaseRef.child(key).once("value").then(function(dataSnapshot) {
+       var snapshotVal = dataSnapshot.val();
+       if (snapshotVal === null) {
+         return null;
+       } else {
+         var decodedGeoFireObject = decodeGeoFireObject(snapshotVal);
+         if(decodedGeoFireObject){
+           var customData = getCustomData(dataSnapshot);
+           if(customData){
+             decodedGeoFireObject.push(customData);
+           }
+         }
+         return decodedGeoFireObject;
+       }
+     });
+   };
 
   /**
    * Removes the provided key from this GeoFire. Returns an empty promise fulfilled when the key has been removed.
