@@ -325,7 +325,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     });
     // Based upon the algorithm to calculate geohashes, it's possible that no "new"
     // geohashes were queried even if the client updates the radius of the query.
-    // This results in no "READY" event being fired after the .updateQuery() call.
+    // This results in no "READY" event being fired after the .updateCriteria() call.
     // Check to see if this is the case, and trigger the "READY" event.
     if(geohashesToQuery.length === 0) {
       _geohashQueryReadyCallback();
@@ -415,7 +415,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    *
    * "ready" is used to signify that this query has loaded its initial state and is up-to-date with its corresponding
    * GeoFire instance. "ready" fires when this query has loaded all of the initial data from GeoFire and fired all
-   * other events for that data. It also fires every time updateQuery() is called, after all other events have
+   * other events for that data. It also fires every time updateCriteria() is called, after all other events have
    * fired for the updated query.
    *
    * "key_entered" fires when a key enters this query. This can happen when a key moves from a location outside of
