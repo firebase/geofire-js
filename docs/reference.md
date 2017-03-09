@@ -216,7 +216,7 @@ Attaches a `callback` to this query which will be run when the provided `eventTy
 
 `ready` fires once when this query's initial state has been loaded from the server.
 The `ready` event will fire after all other events associated with the loaded data
-have been triggered. `ready` will fire again once each time `updateQuery()` is called, after all new data is loaded and all other new events have been fired.
+have been triggered. `ready` will fire again once each time `updateCriteria()` is called, after all new data is loaded and all other new events have been fired.
 
 `key_entered` fires when a key enters this query. This can happen when a key moves from a location outside of this query to one inside of it or when a key is written to `GeoFire` for the first time and it falls within this query.
 
