@@ -361,8 +361,12 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
   this.updateCriteria = function(newQueryCriteria) {
     // Validate and save the new query criteria
     validateCriteria(newQueryCriteria);
-    _center = newQueryCriteria.center || _center;
-    _radius = newQueryCriteria.radius || _radius;
+    if (typeof newQueryCriteria.center !== "undefined" && newQueryCriteria.center !== null) {
+      _center = newQueryCriteria.center;
+    }
+    if (typeof newQueryCriteria.radius !== "undefined" && newQueryCriteria.radius !== null) {
+      _radius = newQueryCriteria.radius;
+    }
 
     // Loop through all of the locations in the query, update their distance from the center of the
     // query, and fire any appropriate events
