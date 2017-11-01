@@ -286,11 +286,22 @@ describe("GeoQuery Tests:", function() {
       }).catch(failTestOnCaughtError);
     });
 
-    it("updateCriteria() does not throw errors given valid query criteria", function() {
+    it("updateCriteria() updates query criteria when given valid query criteria", function() {
       geoQueries.push(geoFire.query({center: [1,2], radius: 1000}));
 
+      expect(geoQueries[0].center()).toEqual([1,2]);
+      expect(geoQueries[0].radius()).toEqual(1000);
+
       validQueryCriterias.forEach(function(validQueryCriteria) {
-        expect(function() { geoQueries[0].updateCriteria(validQueryCriteria); }).not.toThrow();
+        geoQueries[0].updateCriteria(validQueryCriteria);
+
+        if ('center' in validQueryCriteria) {
+          expect(geoQueries[0].center()).toEqual(validQueryCriteria.center);
+        }
+
+        if ('radius' in validQueryCriteria) {
+          expect(geoQueries[0].radius()).toEqual(validQueryCriteria.radius);
+        }
       });
     });
 
