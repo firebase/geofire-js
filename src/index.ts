@@ -10,5 +10,4 @@
  * License: MIT
  */
 
-var GeoFire = (function() {
-  "use strict";
+export { GeoFire } from './firebase/geoFire';

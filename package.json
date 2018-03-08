@@ -19,40 +19,36 @@
     "realtime",
     "geolocation"
   ],
-  "main": "dist/geofire.js",
+  "main": "dist/index.js",
   "files": [
     "dist/**",
     "LICENSE",
     "README.md",
     "package.json"
   ],
-  "dependencies": {},
   "peerDependencies": {
-    "firebase": "^2.4.0 || 3.x.x"
+    "firebase": "^4.x.x"
   },
   "devDependencies": {
-    "coveralls": "2.11.4",
-    "firebase": "3.x.x",
-    "gulp": "3.9.0",
-    "gulp-concat": "2.6.0",
-    "gulp-ext-replace": "0.2.0",
-    "gulp-jshint": "1.11.2",
-    "gulp-karma": "0.0.5",
-    "gulp-uglify": "1.4.1",
-    "jasmine-core": "^2.5.2",
-    "jshint-stylish": "2.0.1",
-    "karma": "^0.13.22",
-    "karma-chrome-launcher": "0.2.0",
-    "karma-coverage": "0.5.2",
-    "karma-failed-reporter": "0.0.3",
-    "karma-firefox-launcher": "0.1.6",
-    "karma-jasmine": "0.3.6",
-    "karma-spec-reporter": "0.0.20",
-    "run-sequence": "^1.1.4",
-    "streamqueue": "0.1.1"
+    "@types/chai": "^4.1.2",
+    "@types/mocha": "^2.2.48",
+    "@types/node": "^9.4.6",
+    "browserify": "^16.1.1",
+    "chai": "^4.1.2",
+    "firebase": "4.x.x",
+    "jsdom": "^11.6.2",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^5.0.4",
+    "ts-node": "^5.0.1",
+    "tslint": "^5.9.1",
+    "typescript": "^2.7.2",
+    "uglify-js": "^3.3.13"
   },
   "scripts": {
-    "test": "gulp test",
-    "travis": "gulp"
+    "browserify": "browserify dist/index.js -o dist/geofire.js",
+    "build": "tsc && npm run browserify && npm run uglify",
+    "test": "mocha --reporter spec -r ts-node/register -r jsdom-global/register --timeout 5000 'tests/**/*.test.ts'",
+    "travis": "npm run test && npm run build",
+    "uglify": "uglifyjs dist/geofire.js -c -m -o dist/geofire.min.js"
   }
 }
