@@ -426,12 +426,26 @@ export function decodeGeoFireObject(geoFireObj: GeoFireObj): number[] {
  * Returns the key of a Firebase snapshot across SDK versions.
  *
  * @param A Firebase snapshot.
- * @returns key The Firebase snapshot's key.
+ * @returns The Firebase snapshot's key.
  */
-export function getKey(snapshot: firebase.database.DataSnapshot): string {
+export function geoFireGetKey(snapshot: firebase.database.DataSnapshot): string {
   let key: string;
   if (typeof snapshot.key === 'string' || snapshot.key === null) {
     key = snapshot.key;
   }
   return key;
+}
+
+/**
+ * Returns the id of a Firestore snapshot across SDK versions.
+ *
+ * @param A Firestore snapshot.
+ * @returns The Firestore snapshot's id.
+ */
+export function geoFirestoreGetKey(snapshot: firebase.firestore.DocumentSnapshot): string {
+  let id: string;
+  if (typeof snapshot.id === 'string' || snapshot.id === null) {
+    id = snapshot.id;
+  }
+  return id;
 }

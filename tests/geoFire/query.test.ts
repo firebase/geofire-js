@@ -2,11 +2,11 @@ import * as chai from 'chai';
 
 import {
   afterEachHelper, beforeEachHelper, Checklist, failTestOnCaughtError, geoFire, geoQueries, invalidQueryCriterias, validQueryCriterias, wait
-} from './common';
+} from '../common';
 
 const expect = chai.expect;
 
-describe('GeoQuery Tests:', () => {
+describe('GeoFireQuery Tests:', () => {
   // Reset the Firebase before each test
   beforeEach((done) => {
     beforeEachHelper(done);
@@ -84,7 +84,7 @@ describe('GeoQuery Tests:', () => {
       expect(geoQueries[0].radius()).to.equal(100);
     });
 
-    it('updateCriteria() fires \'key_entered\' callback for locations which now belong to the GeoQuery', (done) => {
+    it('updateCriteria() fires \'key_entered\' callback for locations which now belong to the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'loc1 entered', 'loc4 entered'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [90, 90], radius: 1000 }));
@@ -109,7 +109,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('updateCriteria() fires \'key_entered\' callback for locations with complex keys which now belong to the GeoQuery', (done) => {
+    it('updateCriteria() fires \'key_entered\' callback for locations with complex keys which now belong to the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'loc:^:*1 entered', 'loc-+-+-4 entered'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [90, 90], radius: 1000 }));
@@ -134,7 +134,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('updateCriteria() fires \'key_exited\' callback for locations which no longer belong to the GeoQuery', (done) => {
+    it('updateCriteria() fires \'key_exited\' callback for locations which no longer belong to the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'loc1 exited', 'loc4 exited'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -455,7 +455,7 @@ describe('GeoQuery Tests:', () => {
   });
 
   describe('\'key_moved\' event:', () => {
-    it('\'key_moved\' callback does not fire for brand new locations within or outside of the GeoQuery', (done) => {
+    it('\'key_moved\' callback does not fire for brand new locations within or outside of the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -477,7 +477,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_moved\' callback does not fire for locations outside of the GeoQuery which are moved somewhere else outside of the GeoQuery', (done) => {
+    it('\'key_moved\' callback does not fire for locations outside of the GeoFireQuery which are moved somewhere else outside of the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -506,7 +506,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_moved\' callback does not fire for locations outside of the GeoQuery which are moved within the GeoQuery', (done) => {
+    it('\'key_moved\' callback does not fire for locations outside of the GeoFireQuery which are moved within the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -535,7 +535,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_moved\' callback does not fire for locations within the GeoQuery which are moved somewhere outside of the GeoQuery', (done) => {
+    it('\'key_moved\' callback does not fire for locations within the GeoFireQuery which are moved somewhere outside of the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -564,7 +564,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_moved\' callback does not fires for a location within the GeoQuery which is set to the same location', (done) => {
+    it('\'key_moved\' callback does not fires for a location within the GeoFireQuery which is set to the same location', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc3 moved'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -594,7 +594,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_moved\' callback fires for locations within the GeoQuery which are moved somewhere else within the GeoQuery', (done) => {
+    it('\'key_moved\' callback fires for locations within the GeoFireQuery which are moved somewhere else within the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 moved', 'loc3 moved'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -681,7 +681,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_moved\' callback properly fires when multiple keys are at the same location within the GeoQuery and only one of them moves somewhere else within the GeoQuery', (done) => {
+    it('\'key_moved\' callback properly fires when multiple keys are at the same location within the GeoFireQuery and only one of them moves somewhere else within the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 moved', 'loc3 moved'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -710,7 +710,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_moved\' callback properly fires when a location within the GeoQuery moves somehwere else within the GeoQuery that is already occupied by another key', (done) => {
+    it('\'key_moved\' callback properly fires when a location within the GeoFireQuery moves somehwere else within the GeoFireQuery that is already occupied by another key', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 moved', 'loc3 moved'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -739,7 +739,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('multiple \'key_moved\' callbacks fire for locations within the GeoQuery which are moved somewhere else within the GeoQuery', (done) => {
+    it('multiple \'key_moved\' callbacks fire for locations within the GeoFireQuery which are moved somewhere else within the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 moved1', 'loc3 moved1', 'loc1 moved2', 'loc3 moved2'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -773,7 +773,7 @@ describe('GeoQuery Tests:', () => {
   });
 
   describe('\'key_entered\' event:', () => {
-    it('\'key_entered\' callback fires when a location enters the GeoQuery before onKeyEntered() was called', (done) => {
+    it('\'key_entered\' callback fires when a location enters the GeoFireQuery before onKeyEntered() was called', (done) => {
       const cl = new Checklist(['p1', 'p2', 'loc1 entered', 'loc4 entered'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -797,7 +797,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_entered\' callback fires when a location enters the GeoQuery after onKeyEntered() was called', (done) => {
+    it('\'key_entered\' callback fires when a location enters the GeoFireQuery after onKeyEntered() was called', (done) => {
       const cl = new Checklist(['p1', 'p2', 'loc1 entered', 'loc4 entered'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -869,7 +869,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_entered\' callback properly fires when multiple keys are at the same location outside the GeoQuery and only one of them moves within the GeoQuery', (done) => {
+    it('\'key_entered\' callback properly fires when multiple keys are at the same location outside the GeoFireQuery and only one of them moves within the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 entered'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -895,7 +895,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_entered\' callback properly fires when a location outside the GeoQuery moves somewhere within the GeoQuery that is already occupied by another key', (done) => {
+    it('\'key_entered\' callback properly fires when a location outside the GeoFireQuery moves somewhere within the GeoFireQuery that is already occupied by another key', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 entered', 'loc3 entered'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -921,7 +921,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('multiple \'key_entered\' callbacks fire when a location enters the GeoQuery', (done) => {
+    it('multiple \'key_entered\' callbacks fire when a location enters the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'loc1 entered1', 'loc4 entered1', 'loc1 entered2', 'loc4 entered2'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -950,7 +950,7 @@ describe('GeoQuery Tests:', () => {
   });
 
   describe('\'key_exited\' event:', () => {
-    it('\'key_exited\' callback fires when a location leaves the GeoQuery', (done) => {
+    it('\'key_exited\' callback fires when a location leaves the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 exited', 'loc4 exited'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -1069,7 +1069,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_exited\' callback fires when a location within the GeoQuery is entirely removed from GeoFire', (done) => {
+    it('\'key_exited\' callback fires when a location within the GeoFireQuery is entirely removed from GeoFire', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 exited'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -1094,7 +1094,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_exited\' callback properly fires when multiple keys are at the same location inside the GeoQuery and only one of them moves outside the GeoQuery', (done) => {
+    it('\'key_exited\' callback properly fires when multiple keys are at the same location inside the GeoFireQuery and only one of them moves outside the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 exited'], expect, done);
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
 
@@ -1119,7 +1119,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_exited\' callback properly fires when a location inside the GeoQuery moves somewhere outside the GeoQuery that is already occupied by another key', (done) => {
+    it('\'key_exited\' callback properly fires when a location inside the GeoFireQuery moves somewhere outside the GeoFireQuery that is already occupied by another key', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 exited'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -1145,7 +1145,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('multiple \'key_exited\' callbacks fire when a location leaves the GeoQuery', (done) => {
+    it('multiple \'key_exited\' callbacks fire when a location leaves the GeoFireQuery', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 exited1', 'loc4 exited1', 'loc1 exited2', 'loc4 exited2'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -1259,8 +1259,8 @@ describe('GeoQuery Tests:', () => {
     });
   });
 
-  describe('Cancelling GeoQuery:', () => {
-    it('cancel() prevents GeoQuery from firing any more \'key_*\' event callbacks', (done) => {
+  describe('Cancelling GeoFireQuery:', () => {
+    it('cancel() prevents GeoFireQuery from firing any more \'key_*\' event callbacks', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'p4', 'p5', 'loc1 entered', 'loc4 entered', 'loc1 moved', 'loc4 exited'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
@@ -1323,7 +1323,7 @@ describe('GeoQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('Calling cancel() on one GeoQuery does not cancel other GeoQueries', (done) => {
+    it('Calling cancel() on one GeoFireQuery does not cancel other GeoQueries', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'p4', 'p5', 'loc1 entered1', 'loc1 entered2', 'loc4 entered1', 'loc4 entered2', 'loc1 moved1', 'loc1 moved2', 'loc4 exited1', 'loc4 exited2', 'loc1 exited2', 'loc5 entered2'], expect, done);
 
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));

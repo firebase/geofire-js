@@ -1,14 +1,14 @@
 import * as chai from 'chai';
 
-import { GeoFire } from '../src/firebase/geoFire';
+import { GeoFire } from '../../src/geoFire';
 import {
   boundingBoxBits, degreesToRadians, encodeGeohash, geohashQuery, geohashQueries, g_GEOHASH_PRECISION,
   metersToLongitudeDegrees, validateCriteria, validateGeohash, validateKey, validateLocation, wrapLongitude
-} from '../src/firebase/geoFireUtils';
+} from '../../src/tools/utils';
 import {
   invalidGeohashes, invalidKeys, invalidLocations, invalidQueryCriterias,
   validGeohashes, validKeys, validLocations, validQueryCriterias
-} from './common';
+} from '../common';
 
 const expect = chai.expect;
 

@@ -1,8 +1,8 @@
-import { GeoCallbackRegistration } from '../src/firebase/geoCallbackRegistration';
+import { GeoCallbackRegistration } from '../../src/tools/callbackRegistration';
 import {
   afterEachHelper, beforeEachHelper, Checklist,
   failTestOnCaughtError, geoFire, geoQueries, wait
-} from './common';
+} from '../common';
 
 import * as chai from 'chai';
 

@@ -1,20 +1,32 @@
+/*!
+ * GeoFire is an open-source library that allows you to store and query a set
+ * of keys based on their geographic location. At its heart, GeoFire simply
+ * stores locations with string keys. Its main benefit, however, is the
+ * possibility of retrieving only those keys within a given geographic area -
+ * all in realtime.
+ *
+ * GeoFire 0.0.0
+ * https://github.com/firebase/geofire-js/
+ * License: MIT
+ */
+
 import * as firebase from 'firebase';
 
-import { GeoQuery } from './geoQuery';
-import { decodeGeoFireObject, degreesToRadians, encodeGeoFireObject, encodeGeohash, validateLocation, validateKey } from './geoFireUtils';
+import { GeoFirestoreQuery } from './query';
+import { decodeGeoFireObject, degreesToRadians, encodeGeoFireObject, encodeGeohash, validateLocation, validateKey } from '../tools/utils';
 
-import { QueryCriteria } from '../interfaces';
+import { QueryCriteria, GeoFireObj } from '../interfaces';
 
 /**
- * Creates a GeoFire instance.
+ * Creates a GeoFirestore instance.
  */
-export class GeoFire {
+export class GeoFirestore {
   /**
-   * @param _firebaseRef A Firebase reference where the GeoFire data will be stored.
+   * @param _collectionRef A Firestore Collection reference where the GeoFirestore data will be stored.
    */
-  constructor(private _firebaseRef: firebase.database.Reference) {
-    if (Object.prototype.toString.call(this._firebaseRef) !== '[object Object]') {
-      throw new Error('firebaseRef must be an instance of Firebase');
+  constructor(private _collectionRef: firebase.firestore.CollectionReference) {
+    if (Object.prototype.toString.call(this._collectionRef) !== '[object Object]') {
+      throw new Error('collectionRef must be an instance of a Firestore Collection');
     }
   }
 
@@ -31,8 +43,8 @@ export class GeoFire {
    */
   public get(key: string): Promise<number[]> {
     validateKey(key);
-    return this._firebaseRef.child(key).once('value').then((dataSnapshot: firebase.database.DataSnapshot) => {
-      const snapshotVal = dataSnapshot.val();
+    return this._collectionRef.doc(key).get().then((documentSnapshot: firebase.firestore.DocumentSnapshot) => {
+      const snapshotVal = <GeoFireObj>documentSnapshot.data();
       if (snapshotVal === null) {
         return null;
       } else {
@@ -42,18 +54,18 @@ export class GeoFire {
   };
 
   /**
-   * Returns the Firebase instance used to create this GeoFire instance.
+   * Returns the Firestore Collection used to create this GeoFirestore instance.
    *
-   * @returns The Firebase instance used to create this GeoFire instance.
+   * @returns The Firestore Collection used to create this GeoFirestore instance.
    */
-  public ref(): firebase.database.Reference {
-    return this._firebaseRef;
+  public ref(): firebase.firestore.CollectionReference {
+    return this._collectionRef;
   };
 
   /**
-   * Removes the provided key from this GeoFire. Returns an empty promise fulfilled when the key has been removed.
+   * Removes the provided key from this GeoFirestore. Returns an empty promise fulfilled when the key has been removed.
    *
-   * If the provided key is not in this GeoFire, the promise will still successfully resolve.
+   * If the provided key is not in this GeoFirestore, the promise will still successfully resolve.
    *
    * @param key The key of the location to remove.
    * @returns A promise that is fulfilled after the inputted key is removed.
@@ -63,9 +75,9 @@ export class GeoFire {
   };
 
   /**
-   * Adds the provided key - location pair(s) to Firebase. Returns an empty promise which is fulfilled when the write is complete.
+   * Adds the provided key - location pair(s) to Firestore. Returns an empty promise which is fulfilled when the write is complete.
    *
-   * If any provided key already exists in this GeoFire, it will be overwritten with the new location value.
+   * If any provided key already exists in this GeoFirestore, it will be overwritten with the new location value.
    *
    * @param keyOrLocations The key representing the location to add or a mapping of key - location pairs which
    * represent the locations to add.
@@ -73,6 +85,7 @@ export class GeoFire {
    * @returns A promise that is fulfilled when the write is complete.
    */
   public set(keyOrLocations: string | any, location?: number[]): Promise<any> {
+    const batch: firebase.firestore.WriteBatch = this._collectionRef.firestore.batch();
     let locations;
     if (typeof keyOrLocations === 'string' && keyOrLocations.length !== 0) {
       // If this is a set for a single location, convert it into a object
@@ -87,34 +100,32 @@ export class GeoFire {
       throw new Error('keyOrLocations must be a string or a mapping of key - location pairs.');
     }
 
-    const newData = {};
-
-    Object.keys(locations).forEach(function (key) {
+    Object.keys(locations).forEach((key) => {
       validateKey(key);
 
+      const ref = this._collectionRef.doc(key);
       const location: number[] = locations[key];
       if (location === null) {
-        // Setting location to null is valid since it will remove the key
-        newData[key] = null;
+        batch.delete(ref);
       } else {
         validateLocation(location);
 
         const geohash: string = encodeGeohash(location);
-        newData[key] = encodeGeoFireObject(location, geohash);
+        batch.set(ref, encodeGeoFireObject(location, geohash), { merge: true });
       }
     });
 
-    return this._firebaseRef.update(newData);
+    return batch.commit();
   };
 
   /**
    * Returns a new GeoQuery instance with the provided queryCriteria.
    *
    * @param queryCriteria The criteria which specifies the GeoQuery's center and radius.
-   * @return A new GeoQuery object.
+   * @return A new GeoFirestoreQuery object.
    */
-  public query(queryCriteria: QueryCriteria): GeoQuery {
-    return new GeoQuery(this._firebaseRef, queryCriteria);
+  public query(queryCriteria: QueryCriteria): GeoFirestoreQuery {
+    return new GeoFirestoreQuery(this._collectionRef, queryCriteria);
   };
 
   /********************/

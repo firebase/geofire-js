@@ -1,11 +1,11 @@
 import * as chai from 'chai';
 
-import { GeoFire } from '../src/firebase/geoFire';
-import { GeoQuery } from '../src/firebase/geoQuery';
+import { GeoFire } from '../../src/geoFire';
+import { GeoFireQuery } from '../../src/geoFire/query';
 import {
   afterEachHelper, beforeEachHelper, Checklist, failTestOnCaughtError, geoFire, geoFireRef, getFirebaseData, geoQueries,
   invalidFirebaseRefs, invalidKeys, invalidLocations, invalidQueryCriterias, validKeys, validLocations, validQueryCriterias
-} from './common';
+} from '../common';
 
 const expect = chai.expect;
 
@@ -819,10 +819,10 @@ describe('GeoFire Tests:', () => {
   });
 
   describe('query():', () => {
-    it('query() returns GeoQuery instance', () => {
+    it('query() returns GeoFireQuery instance', () => {
       geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
 
-      expect(geoQueries[0] instanceof GeoQuery).to.be.ok;
+      expect(geoQueries[0] instanceof GeoFireQuery).to.be.ok;
     });
 
     it('query() does not throw errors given valid query criteria', () => {

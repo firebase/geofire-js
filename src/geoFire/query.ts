@@ -1,15 +1,15 @@
 import * as firebase from 'firebase';
 
-import { GeoFire } from './geoFire';
-import { GeoCallbackRegistration } from './geoCallbackRegistration';
-import { decodeGeoFireObject, encodeGeohash, getKey, geohashQueries, validateCriteria, validateLocation } from './geoFireUtils';
+import { GeoFire } from './';
+import { GeoCallbackRegistration } from '../tools/callbackRegistration';
+import { decodeGeoFireObject, encodeGeohash, geoFireGetKey, geohashQueries, validateCriteria, validateLocation } from '../tools/utils';
 
 import { QueryCriteria } from '../interfaces';
 
 /**
- * Creates a GeoQuery instance.
+ * Creates a GeoFireQuery instance.
  */
-export class GeoQuery {
+export class GeoFireQuery {
   // Event callbacks
   private _callbacks: any = { ready: [], key_entered: [], key_exited: [], key_moved: [] };
   // Variable to track when the query is cancelled
@@ -235,7 +235,7 @@ export class GeoQuery {
    * @param locationDataSnapshot A snapshot of the data stored for this location.
    */
   private _childAddedCallback(locationDataSnapshot: firebase.database.DataSnapshot): void {
-    this._updateLocation(getKey(locationDataSnapshot), decodeGeoFireObject(locationDataSnapshot.val()));
+    this._updateLocation(geoFireGetKey(locationDataSnapshot), decodeGeoFireObject(locationDataSnapshot.val()));
   }
 
   /**
@@ -244,7 +244,7 @@ export class GeoQuery {
    * @param locationDataSnapshot A snapshot of the data stored for this location.
    */
   private _childChangedCallback(locationDataSnapshot: firebase.database.DataSnapshot): void {
-    this._updateLocation(getKey(locationDataSnapshot), decodeGeoFireObject(locationDataSnapshot.val()));
+    this._updateLocation(geoFireGetKey(locationDataSnapshot), decodeGeoFireObject(locationDataSnapshot.val()));
   }
 
   /**
@@ -253,7 +253,7 @@ export class GeoQuery {
    * @param locationDataSnapshot A snapshot of the data stored for this location.
    */
   private _childRemovedCallback(locationDataSnapshot: firebase.database.DataSnapshot): void {
-    const key: string = getKey(locationDataSnapshot);
+    const key: string = geoFireGetKey(locationDataSnapshot);
     if (this._locationsTracked.hasOwnProperty(key)) {
       this._firebaseRef.child(key).once('value', (snapshot: firebase.database.DataSnapshot) => {
         const location: number[] = (snapshot.val() === null) ? null : decodeGeoFireObject(snapshot.val());

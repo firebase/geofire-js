@@ -46,9 +46,9 @@ export function beforeEachHelper(done) {
 
 /* Helper function which runs after each Jasmine test has completed */
 export function afterEachHelper(done) {
-  // Cancel each outstanding GeoQuery
-  geoQueries.forEach(function (geoQuery) {
-    geoQuery.cancel();
+  // Cancel each outstanding GeoFireQuery
+  geoQueries.forEach(function (geoFireQuery) {
+    geoFireQuery.cancel();
   })
 
   geoFireRef.remove().then(function () {

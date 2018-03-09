@@ -45,10 +45,10 @@
     "uglify-js": "^3.3.13"
   },
   "scripts": {
-    "browserify": "browserify dist/index.js -o dist/geofire.js",
-    "build": "tsc && npm run browserify && npm run uglify",
+    "browserify": "browserify dist/geoFire/index.js -o dist/browser/geofire.js && browserify dist/geoFirestore/index.js -o dist/browser/geofirestore.js",
+    "build": "rm -rf ./dist && tsc && npm run browserify && npm run uglify",
     "test": "mocha --reporter spec -r ts-node/register -r jsdom-global/register --timeout 5000 --exit 'tests/**/*.test.ts'",
     "travis": "npm run test && npm run build",
-    "uglify": "uglifyjs dist/geofire.js -c -m -o dist/geofire.min.js"
+    "uglify": "uglifyjs dist/browser/geofire.js -c -m -o dist/browser/geofire.min.js && uglifyjs dist/browser/geofirestore.js -c -m -o dist/browser/geofirestore.min.js"
   }
 }
