@@ -414,9 +414,9 @@ export class GeoQuery {
       const firebaseQuery: firebase.database.Query = this._firebaseRef.orderByChild('g').startAt(query[0]).endAt(query[1]);
 
       // For every new matching geohash, determine if we should fire the 'key_entered' event
-      const childAddedCallback = firebaseQuery.on('child_added', this._childAddedCallback);
-      const childRemovedCallback = firebaseQuery.on('child_removed', this._childRemovedCallback);
-      const childChangedCallback = firebaseQuery.on('child_changed', this._childChangedCallback);
+      const childAddedCallback = firebaseQuery.on('child_added', (a) => this._childAddedCallback(a));
+      const childRemovedCallback = firebaseQuery.on('child_removed', (a) => this._childRemovedCallback(a));
+      const childChangedCallback = firebaseQuery.on('child_changed', (a) => this._childChangedCallback(a));
 
       // Once the current geohash to query is processed, see if it is the last one to be processed
       // and, if so, mark the value event as fired.
@@ -496,7 +496,7 @@ export class GeoQuery {
    * @param key The key of the geofire location.
    * @param location The location as [latitude, longitude] pair.
    */
-  private _updateLocation(key: string, location: number[]): void {
+  private _updateLocation(key: string, location?: number[]): void {
     validateLocation(location);
     // Get the key and location
     let distanceFromCenter: number, isInQuery;
