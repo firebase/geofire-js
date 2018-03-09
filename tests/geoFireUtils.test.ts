@@ -116,14 +116,14 @@ describe('geoFireUtils Tests:', () => {
 
     it('dist() calculates the distance between locations', () => {
       expect(GeoFire.distance([90, 180], [90, 180])).to.be.closeTo(0, 0);
-      expect(GeoFire.distance([-90, -180], [90, 180])).to.be.closeTo(20015, 0);
-      expect(GeoFire.distance([-90, -180], [-90, 180])).to.be.closeTo(0, 0);
-      expect(GeoFire.distance([-90, -180], [90, -180])).to.be.closeTo(20015, 0);
-      expect(GeoFire.distance([37.7853074, -122.4054274], [78.216667, 15.55])).to.be.closeTo(6818, 0);
-      expect(GeoFire.distance([38.98719, -77.250783], [29.3760648, 47.9818853])).to.be.closeTo(10531, 0);
-      expect(GeoFire.distance([38.98719, -77.250783], [-54.933333, -67.616667])).to.be.closeTo(10484, 0);
-      expect(GeoFire.distance([29.3760648, 47.9818853], [-54.933333, -67.616667])).to.be.closeTo(14250, 0);
-      expect(GeoFire.distance([-54.933333, -67.616667], [-54, -67])).to.be.closeTo(111, 0);
+      expect(GeoFire.distance([-90, -180], [90, 180])).to.be.closeTo(20015, 1);
+      expect(GeoFire.distance([-90, -180], [-90, 180])).to.be.closeTo(0, 1);
+      expect(GeoFire.distance([-90, -180], [90, -180])).to.be.closeTo(20015, 1);
+      expect(GeoFire.distance([37.7853074, -122.4054274], [78.216667, 15.55])).to.be.closeTo(6818, 1);
+      expect(GeoFire.distance([38.98719, -77.250783], [29.3760648, 47.9818853])).to.be.closeTo(10531, 1);
+      expect(GeoFire.distance([38.98719, -77.250783], [-54.933333, -67.616667])).to.be.closeTo(10484, 1);
+      expect(GeoFire.distance([29.3760648, 47.9818853], [-54.933333, -67.616667])).to.be.closeTo(14250, 1);
+      expect(GeoFire.distance([-54.933333, -67.616667], [-54, -67])).to.be.closeTo(111, 1);
     });
 
     it('dist() does not throw errors given valid locations', () => {
@@ -145,34 +145,34 @@ describe('geoFireUtils Tests:', () => {
 
   describe('Geohashing:', () => {
     it('encodeGeohash() encodes locations to geohashes given no precision', () => {
-      expect(encodeGeohash([-90, -180])).to.be('000000000000'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([90, 180])).to.be('zzzzzzzzzzzz'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([-90, 180])).to.be('pbpbpbpbpbpb'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([90, -180])).to.be('bpbpbpbpbpbp'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([37.7853074, -122.4054274])).to.be('9q8yywe56gcf'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([38.98719, -77.250783])).to.be('dqcjf17sy6cp'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([29.3760648, 47.9818853])).to.be('tj4p5gerfzqu'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([78.216667, 15.55])).to.be('umghcygjj782'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([-54.933333, -67.616667])).to.be('4qpzmren1kwb'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([-54, -67])).to.be('4w2kg3s54y7h'.slice(0, g_GEOHASH_PRECISION));
+      expect(encodeGeohash([-90, -180])).to.be.equal('000000000000'.slice(0, g_GEOHASH_PRECISION));
+      expect(encodeGeohash([90, 180])).to.be.equal('zzzzzzzzzzzz'.slice(0, g_GEOHASH_PRECISION));
+      expect(encodeGeohash([-90, 180])).to.be.equal('pbpbpbpbpbpb'.slice(0, g_GEOHASH_PRECISION));
+      expect(encodeGeohash([90, -180])).to.be.equal('bpbpbpbpbpbp'.slice(0, g_GEOHASH_PRECISION));
+      expect(encodeGeohash([37.7853074, -122.4054274])).to.be.equal('9q8yywe56gcf'.slice(0, g_GEOHASH_PRECISION));
+      expect(encodeGeohash([38.98719, -77.250783])).to.be.equal('dqcjf17sy6cp'.slice(0, g_GEOHASH_PRECISION));
+      expect(encodeGeohash([29.3760648, 47.9818853])).to.be.equal('tj4p5gerfzqu'.slice(0, g_GEOHASH_PRECISION));
+      expect(encodeGeohash([78.216667, 15.55])).to.be.equal('umghcygjj782'.slice(0, g_GEOHASH_PRECISION));
+      expect(encodeGeohash([-54.933333, -67.616667])).to.be.equal('4qpzmren1kwb'.slice(0, g_GEOHASH_PRECISION));
+      expect(encodeGeohash([-54, -67])).to.be.equal('4w2kg3s54y7h'.slice(0, g_GEOHASH_PRECISION));
     });
 
     it('encodeGeohash() encodes locations to geohashes given a custom precision', () => {
-      expect(encodeGeohash([-90, -180], 6)).to.be('000000');
-      expect(encodeGeohash([90, 180], 20)).to.be('zzzzzzzzzzzzzzzzzzzz');
-      expect(encodeGeohash([-90, 180], 1)).to.be('p');
-      expect(encodeGeohash([90, -180], 5)).to.be('bpbpb');
-      expect(encodeGeohash([37.7853074, -122.4054274], 8)).to.be('9q8yywe5');
-      expect(encodeGeohash([38.98719, -77.250783], 18)).to.be('dqcjf17sy6cppp8vfn');
-      expect(encodeGeohash([29.3760648, 47.9818853], 12)).to.be('tj4p5gerfzqu');
-      expect(encodeGeohash([78.216667, 15.55], 1)).to.be('u');
-      expect(encodeGeohash([-54.933333, -67.616667], 7)).to.be('4qpzmre');
-      expect(encodeGeohash([-54, -67], 9)).to.be('4w2kg3s54');
+      expect(encodeGeohash([-90, -180], 6)).to.be.equal('000000');
+      expect(encodeGeohash([90, 180], 20)).to.be.equal('zzzzzzzzzzzzzzzzzzzz');
+      expect(encodeGeohash([-90, 180], 1)).to.be.equal('p');
+      expect(encodeGeohash([90, -180], 5)).to.be.equal('bpbpb');
+      expect(encodeGeohash([37.7853074, -122.4054274], 8)).to.be.equal('9q8yywe5');
+      expect(encodeGeohash([38.98719, -77.250783], 18)).to.be.equal('dqcjf17sy6cppp8vfn');
+      expect(encodeGeohash([29.3760648, 47.9818853], 12)).to.be.equal('tj4p5gerfzqu');
+      expect(encodeGeohash([78.216667, 15.55], 1)).to.be.equal('u');
+      expect(encodeGeohash([-54.933333, -67.616667], 7)).to.be.equal('4qpzmre');
+      expect(encodeGeohash([-54, -67], 9)).to.be.equal('4w2kg3s54');
     });
 
     it('encodeGeohash() does not throw errors given valid locations', () => {
       validLocations.forEach((validLocation, i) => {
-        expect(() => { encodeGeohash(validLocation); }).not.to.throw();
+        expect(() => encodeGeohash(validLocation)).not.to.throw();
       });
     });
 
@@ -184,7 +184,7 @@ describe('geoFireUtils Tests:', () => {
     });
 
     it('encodeGeohash() does not throw errors given valid precision', () => {
-      var validPrecisions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, undefined];
+      const validPrecisions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, undefined];
 
       validPrecisions.forEach((validPrecision, i) => {
         expect(() => encodeGeohash([0, 0], validPrecision)).not.to.throw();
@@ -192,7 +192,7 @@ describe('geoFireUtils Tests:', () => {
     });
 
     it('encodeGeohash() throws errors given invalid precision', () => {
-      var invalidPrecisions = [0, -1, 1.5, 23, '', 'a', true, false, [], {}, [1], { a: 1 }, null];
+      const invalidPrecisions = [0, -1, 1.5, 23, '', 'a', true, false, [], {}, [1], { a: 1 }, null];
 
       invalidPrecisions.forEach((invalidPrecision, i) => {
         // @ts-ignore
@@ -258,34 +258,34 @@ describe('geoFireUtils Tests:', () => {
 
   describe('Geohash queries:', () => {
     it('Geohash queries must be of the right size', () => {
-      expect(geohashQuery('64m9yn96mx', 6)).to.equal(['60', '6h']);
-      expect(geohashQuery('64m9yn96mx', 1)).to.equal(['0', 'h']);
-      expect(geohashQuery('64m9yn96mx', 10)).to.equal(['64', '65']);
-      expect(geohashQuery('6409yn96mx', 11)).to.equal(['640', '64h']);
-      expect(geohashQuery('64m9yn96mx', 11)).to.equal(['64h', '64~']);
-      expect(geohashQuery('6', 10)).to.equal(['6', '6~']);
-      expect(geohashQuery('64z178', 12)).to.equal(['64s', '64~']);
-      expect(geohashQuery('64z178', 15)).to.equal(['64z', '64~']);
+      expect(geohashQuery('64m9yn96mx', 6)).to.be.deep.equal(['60', '6h']);
+      expect(geohashQuery('64m9yn96mx', 1)).to.be.deep.equal(['0', 'h']);
+      expect(geohashQuery('64m9yn96mx', 10)).to.be.deep.equal(['64', '65']);
+      expect(geohashQuery('6409yn96mx', 11)).to.be.deep.equal(['640', '64h']);
+      expect(geohashQuery('64m9yn96mx', 11)).to.be.deep.equal(['64h', '64~']);
+      expect(geohashQuery('6', 10)).to.be.deep.equal(['6', '6~']);
+      expect(geohashQuery('64z178', 12)).to.be.deep.equal(['64s', '64~']);
+      expect(geohashQuery('64z178', 15)).to.be.deep.equal(['64z', '64~']);
     });
 
     it('Queries from geohashQueries must contain points in circle', () => {
       function inQuery(queries, hash) {
-        for (var i = 0; i < queries.length; i++) {
+        for (let i = 0; i < queries.length; i++) {
           if (hash >= queries[i][0] && hash < queries[i][1]) {
             return true;
           }
         }
         return false;
       }
-      for (var i = 0; i < 200; i++) {
-        var centerLat = Math.pow(Math.random(), 5) * 160 - 80;
-        var centerLong = Math.pow(Math.random(), 5) * 360 - 180;
-        var radius = Math.random() * Math.random() * 100000;
-        var degreeRadius = metersToLongitudeDegrees(radius, centerLat);
-        var queries = geohashQueries([centerLat, centerLong], radius);
-        for (var j = 0; j < 1000; j++) {
-          var pointLat = Math.max(-89.9, Math.min(89.9, centerLat + Math.random() * degreeRadius));
-          var pointLong = wrapLongitude(centerLong + Math.random() * degreeRadius);
+      for (let i = 0; i < 200; i++) {
+        const centerLat = Math.pow(Math.random(), 5) * 160 - 80;
+        const centerLong = Math.pow(Math.random(), 5) * 360 - 180;
+        const radius = Math.random() * Math.random() * 100000;
+        const degreeRadius = metersToLongitudeDegrees(radius, centerLat);
+        const queries = geohashQueries([centerLat, centerLong], radius);
+        for (let j = 0; j < 1000; j++) {
+          const pointLat = Math.max(-89.9, Math.min(89.9, centerLat + Math.random() * degreeRadius));
+          const pointLong = wrapLongitude(centerLong + Math.random() * degreeRadius);
           if (GeoFire.distance([centerLat, centerLong], [pointLat, pointLong]) < radius / 1000) {
             expect(inQuery(queries, encodeGeohash([pointLat, pointLong]))).to.be.true;
           }
