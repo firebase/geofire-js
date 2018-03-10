@@ -44,10 +44,10 @@ export class GeoFirestore {
   public get(key: string): Promise<number[]> {
     validateKey(key);
     return this._collectionRef.doc(key).get().then((documentSnapshot: firebase.firestore.DocumentSnapshot) => {
-      const snapshotVal = <GeoFireObj>documentSnapshot.data();
-      if (snapshotVal === null) {
+      if (!documentSnapshot.exists) {
         return null;
       } else {
+        const snapshotVal = <GeoFireObj>documentSnapshot.data();
         return decodeGeoFireObject(snapshotVal);
       }
     });
@@ -70,7 +70,7 @@ export class GeoFirestore {
    * @param key The key of the location to remove.
    * @returns A promise that is fulfilled after the inputted key is removed.
    */
-  public remove(key: string): Promise<string> {
+  public remove(key: string): Promise<void> {
     return this.set(key, null);
   };
 
@@ -84,37 +84,36 @@ export class GeoFirestore {
    * @param location The [latitude, longitude] pair to add.
    * @returns A promise that is fulfilled when the write is complete.
    */
-  public set(keyOrLocations: string | any, location?: number[]): Promise<any> {
-    const batch: firebase.firestore.WriteBatch = this._collectionRef.firestore.batch();
-    let locations;
-    if (typeof keyOrLocations === 'string' && keyOrLocations.length !== 0) {
-      // If this is a set for a single location, convert it into a object
-      locations = {};
-      locations[keyOrLocations] = location;
+  public set(keyOrLocations: string | any, location?: number[]): Promise<void> {
+    if (typeof keyOrLocations === 'string' && location && location.length !== 0) {
+      validateKey(keyOrLocations);
+      validateLocation(location);
+      const geohash: string = encodeGeohash(location);
+      return this._collectionRef.doc(keyOrLocations).set(encodeGeoFireObject(location, geohash));
+    } else if (typeof keyOrLocations === 'string') {
+      validateKey(keyOrLocations);
+      return this._collectionRef.doc(keyOrLocations).delete();
     } else if (typeof keyOrLocations === 'object') {
       if (typeof location !== 'undefined') {
         throw new Error('The location argument should not be used if you pass an object to set().');
       }
-      locations = keyOrLocations;
     } else {
       throw new Error('keyOrLocations must be a string or a mapping of key - location pairs.');
     }
 
-    Object.keys(locations).forEach((key) => {
+    const batch: firebase.firestore.WriteBatch = this._collectionRef.firestore.batch();
+    Object.keys(keyOrLocations).forEach((key) => {
       validateKey(key);
-
       const ref = this._collectionRef.doc(key);
-      const location: number[] = locations[key];
+      const location: number[] = keyOrLocations[key];
       if (location === null) {
         batch.delete(ref);
       } else {
         validateLocation(location);
-
         const geohash: string = encodeGeohash(location);
         batch.set(ref, encodeGeoFireObject(location, geohash), { merge: true });
       }
     });
-
     return batch.commit();
   };
 
