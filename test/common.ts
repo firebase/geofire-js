@@ -31,9 +31,12 @@ export let geoFirestoreRef: firebase.firestore.CollectionReference,
 
 // Initialize Firebase
 const config = {
-  apiKey: 'AIzaSyDPmGjw0Igt75VpzGmfgdqmHornPneV7zQ',
-  databaseURL: 'https://geofire-5f3fc.firebaseio.com',
-  projectId: 'geofire-5f3fc',
+  apiKey: 'AIzaSyDyHvs6rPWhlKF7kBi6OIYFSf8EpFhx4i4',
+  databaseURL: 'https://geofire-4c79d.firebaseio.com',
+  projectId: 'geofire-4c79d'
+  // apiKey: 'AIzaSyC5IcRccDo289TTRa3Y7qJIu8YPz3EnKAI',
+  // databaseURL: 'https://geofire-9d0de.firebaseio.com',
+  // projectId: 'geofire-9d0de'
 };
 firebase.initializeApp(config);
 

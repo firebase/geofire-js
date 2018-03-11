@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": ".",
-    "sourceMap": false,
+    "inlineSourceMap": true,
     "declaration": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,

@@ -121,14 +121,15 @@ describe('GeoFirestore GeoCallbackRegistration Tests:', () => {
         onKeyExitedRegistration.cancel();
         cl.x('p3');
 
-        return wait(100).then(() => geoFirestore.set('loc3', [-80, -80]));
+        return geoFirestore.set('loc3', [-80, -80]);
       }).then(() => {
         cl.x('p4');
 
         return wait(100);
       }).then(() => {
         cl.x('p5');
-      }).catch(failTestOnCaughtError);
+      })
+        .catch(failTestOnCaughtError);
     });
 
     it('Cancelling a \'key_moved\' registration does not cancel all \'key_moved\' callbacks', (done) => {
