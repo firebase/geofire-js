@@ -65,14 +65,13 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' },
-          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [ 50, 50 ], 'g': 'v0gs3y0zh7' },
-          'loc3': { '.priority': '1bpbpbpbpb', 'l': [ -90, -90 ], 'g': '1bpbpbpbpb' }
+          'loc1': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' },
+          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [50, 50], 'g': 'v0gs3y0zh7' },
+          'loc3': { '.priority': '1bpbpbpbpb', 'l': [-90, -90], 'g': '1bpbpbpbpb' }
         });
 
         cl.x('p4');
       }).catch((error) => {
-        console.log(error);
         failTestOnCaughtError(error)
       });
     });
@@ -94,9 +93,9 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': 'ebpcrypzxv', 'l': [ 0.254, 0 ], 'g': 'ebpcrypzxv' },
-          'loc2': { '.priority': 'v0gu2qnx15', 'l': [ 50, 50.293403 ], 'g': 'v0gu2qnx15' },
-          'loc3': { '.priority': '1cr648sfx4', 'l': [ -82.614, -90.938 ], 'g': '1cr648sfx4' }
+          'loc1': { '.priority': 'ebpcrypzxv', 'l': [0.254, 0], 'g': 'ebpcrypzxv' },
+          'loc2': { '.priority': 'v0gu2qnx15', 'l': [50, 50.293403], 'g': 'v0gu2qnx15' },
+          'loc3': { '.priority': '1cr648sfx4', 'l': [-82.614, -90.938], 'g': '1cr648sfx4' }
         });
 
         cl.x('p4');
@@ -124,9 +123,9 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': 's065kk0dc5', 'l': [ 2, 3 ], 'g': 's065kk0dc5' },
-          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [ 50, 50 ], 'g': 'v0gs3y0zh7' },
-          'loc3': { '.priority': '1bpbpbpbpb', 'l': [ -90, -90 ], 'g': '1bpbpbpbpb' }
+          'loc1': { '.priority': 's065kk0dc5', 'l': [2, 3], 'g': 's065kk0dc5' },
+          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [50, 50], 'g': 'v0gs3y0zh7' },
+          'loc3': { '.priority': '1bpbpbpbpb', 'l': [-90, -90], 'g': '1bpbpbpbpb' }
         });
 
         cl.x('p5');
@@ -154,9 +153,9 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' },
-          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [ 50, 50 ], 'g': 'v0gs3y0zh7' },
-          'loc3': { '.priority': '1bpbpbpbpb', 'l': [ -90, -90 ], 'g': '1bpbpbpbpb' }
+          'loc1': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' },
+          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [50, 50], 'g': 'v0gs3y0zh7' },
+          'loc3': { '.priority': '1bpbpbpbpb', 'l': [-90, -90], 'g': '1bpbpbpbpb' }
         });
 
         cl.x('p5');
@@ -180,9 +179,9 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' },
-          'loc2': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' },
-          'loc3': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' }
+          'loc1': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' },
+          'loc2': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' },
+          'loc3': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' }
         });
 
         cl.x('p4');
@@ -234,11 +233,11 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc:1': { '.priority': 'cped3g0fur', 'l': [ 87.6, -130 ], 'g': 'cped3g0fur' },
-          'loc2': { '.priority': 'd2h376zj8h', 'l': [ 0.2358, -72.621 ], 'g': 'd2h376zj8h' },
-          'loc%!A72f()3': { '.priority': '1bpbpbpbpb', 'l': [ -90, -90 ], 'g': '1bpbpbpbpb' },
-          'loc4': { '.priority': 'cped3g0fur', 'l': [ 87.6, -130 ], 'g': 'cped3g0fur' },
-          'loc6': { '.priority': 'h50svty4es', 'l': [ -72.258, 0.953215 ], 'g': 'h50svty4es' }
+          'loc:1': { '.priority': 'cped3g0fur', 'l': [87.6, -130], 'g': 'cped3g0fur' },
+          'loc2': { '.priority': 'd2h376zj8h', 'l': [0.2358, -72.621], 'g': 'd2h376zj8h' },
+          'loc%!A72f()3': { '.priority': '1bpbpbpbpb', 'l': [-90, -90], 'g': '1bpbpbpbpb' },
+          'loc4': { '.priority': 'cped3g0fur', 'l': [87.6, -130], 'g': 'cped3g0fur' },
+          'loc6': { '.priority': 'h50svty4es', 'l': [-72.258, 0.953215], 'g': 'h50svty4es' }
         });
 
         cl.x('p11');
@@ -262,7 +261,7 @@ describe('GeoFirestore Tests:', () => {
     });
 
     it('set() does not throw errors given valid locations', () => {
-      validLocations.forEach((validLocation, i) => {
+      validLocations.forEach((validLocation) => {
         expect(() => {
           geoFirestore.set('loc', validLocation);
         }).not.to.throw();
@@ -270,13 +269,13 @@ describe('GeoFirestore Tests:', () => {
     });
 
     it('set() throws errors given invalid locations', () => {
-      invalidLocations.forEach((invalidLocation, i) => {
+      invalidLocations.forEach((invalidLocation) => {
         // Setting location to null is valid since it will remove the key
         if (invalidLocation !== null) {
           expect(() => {
             // @ts-ignore
             geoFirestore.set('loc', invalidLocation);
-          }).to.throw();
+          }).to.throw(Error, /Invalid GeoFire location/);
         }
       });
     });
@@ -307,9 +306,9 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' },
-          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [ 50, 50 ], 'g': 'v0gs3y0zh7' },
-          'loc3': { '.priority': '1bpbpbpbpb', 'l': [ -90, -90 ], 'g': '1bpbpbpbpb' }
+          'loc1': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' },
+          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [50, 50], 'g': 'v0gs3y0zh7' },
+          'loc3': { '.priority': '1bpbpbpbpb', 'l': [-90, -90], 'g': '1bpbpbpbpb' }
         });
 
         cl.x('p2');
@@ -329,9 +328,9 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': 'ebpcrypzxv', 'l': [ 0.254, 0 ], 'g': 'ebpcrypzxv' },
-          'loc2': { '.priority': 'v0gu2qnx15', 'l': [ 50, 50.293403 ], 'g': 'v0gu2qnx15' },
-          'loc3': { '.priority': '1cr648sfx4', 'l': [ -82.614, -90.938 ], 'g': '1cr648sfx4' }
+          'loc1': { '.priority': 'ebpcrypzxv', 'l': [0.254, 0], 'g': 'ebpcrypzxv' },
+          'loc2': { '.priority': 'v0gu2qnx15', 'l': [50, 50.293403], 'g': 'v0gu2qnx15' },
+          'loc3': { '.priority': '1cr648sfx4', 'l': [-82.614, -90.938], 'g': '1cr648sfx4' }
         });
 
         cl.x('p2');
@@ -357,9 +356,9 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': 's065kk0dc5', 'l': [ 2, 3 ], 'g': 's065kk0dc5' },
-          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [ 50, 50 ], 'g': 'v0gs3y0zh7' },
-          'loc3': { '.priority': '1bpbpbpbpb', 'l': [ -90, -90 ], 'g': '1bpbpbpbpb' }
+          'loc1': { '.priority': 's065kk0dc5', 'l': [2, 3], 'g': 's065kk0dc5' },
+          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [50, 50], 'g': 'v0gs3y0zh7' },
+          'loc3': { '.priority': '1bpbpbpbpb', 'l': [-90, -90], 'g': '1bpbpbpbpb' }
         });
 
         cl.x('p3');
@@ -385,9 +384,9 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' },
-          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [ 50, 50 ], 'g': 'v0gs3y0zh7' },
-          'loc3': { '.priority': '1bpbpbpbpb', 'l': [ -90, -90 ], 'g': '1bpbpbpbpb' }
+          'loc1': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' },
+          'loc2': { '.priority': 'v0gs3y0zh7', 'l': [50, 50], 'g': 'v0gs3y0zh7' },
+          'loc3': { '.priority': '1bpbpbpbpb', 'l': [-90, -90], 'g': '1bpbpbpbpb' }
         });
 
         cl.x('p3');
@@ -407,9 +406,9 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' },
-          'loc2': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' },
-          'loc3': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' }
+          'loc1': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' },
+          'loc2': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' },
+          'loc3': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' }
         });
 
         cl.x('p2');
@@ -454,11 +453,11 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc:1': { '.priority': 'cped3g0fur', 'l': [ 87.6, -130 ], 'g': 'cped3g0fur' },
-          'loc2': { '.priority': 'd2h376zj8h', 'l': [ 0.2358, -72.621 ], 'g': 'd2h376zj8h' },
-          'loc%!A72f()3': { '.priority': '1bpbpbpbpb', 'l': [ -90, -90 ], 'g': '1bpbpbpbpb' },
-          'loc4': { '.priority': 'cped3g0fur', 'l': [ 87.6, -130 ], 'g': 'cped3g0fur' },
-          'loc6': { '.priority': 'h50svty4es', 'l': [ -72.258, 0.953215 ], 'g': 'h50svty4es' }
+          'loc:1': { '.priority': 'cped3g0fur', 'l': [87.6, -130], 'g': 'cped3g0fur' },
+          'loc2': { '.priority': 'd2h376zj8h', 'l': [0.2358, -72.621], 'g': 'd2h376zj8h' },
+          'loc%!A72f()3': { '.priority': '1bpbpbpbpb', 'l': [-90, -90], 'g': '1bpbpbpbpb' },
+          'loc4': { '.priority': 'cped3g0fur', 'l': [87.6, -130], 'g': 'cped3g0fur' },
+          'loc6': { '.priority': 'h50svty4es', 'l': [-72.258, 0.953215], 'g': 'h50svty4es' }
         });
 
         cl.x('p6');
@@ -497,7 +496,7 @@ describe('GeoFirestore Tests:', () => {
     });
 
     it('set() does not throw errors given valid locations', () => {
-      validLocations.forEach((validLocation, i) => {
+      validLocations.forEach((validLocation) => {
         expect(() => {
           geoFirestore.set({
             'loc': validLocation
@@ -507,14 +506,14 @@ describe('GeoFirestore Tests:', () => {
     });
 
     it('set() throws errors given invalid locations', () => {
-      invalidLocations.forEach((invalidLocation, i) => {
+      invalidLocations.forEach((invalidLocation) => {
         // Setting location to null is valid since it will remove the key
         if (invalidLocation !== null) {
           expect(() => {
             geoFirestore.set({
               'loc': invalidLocation
             });
-          }).to.throw();
+          }).to.throw(Error, /Invalid GeoFire location/);
         }
       });
     });
@@ -525,7 +524,6 @@ describe('GeoFirestore Tests:', () => {
       const cl = new Checklist(['p1'], expect, done);
 
       geoFirestore.get('loc1').then((ref) => {
-        console.log(ref)
         cl.x('p1');
       });
     });
@@ -603,7 +601,6 @@ describe('GeoFirestore Tests:', () => {
 
         return geoFirestore.get('loc1');
       }).then((location) => {
-        console.log('location', location);
         expect(location).to.equal(null);
 
         cl.x('p4');
@@ -611,7 +608,7 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc2': { '.priority': 's065kk0dc5', 'l': [ 2, 3 ], 'g': 's065kk0dc5' }
+          'loc2': { '.priority': 's065kk0dc5', 'l': [2, 3], 'g': 's065kk0dc5' }
         });
 
         cl.x('p5');
@@ -643,7 +640,7 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' }
+          'loc1': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' }
         });
 
         cl.x('p5');
@@ -713,7 +710,7 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' }
+          'loc1': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' }
         });
 
         cl.x('p4');
@@ -748,7 +745,7 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc2': { '.priority': 's065kk0dc5', 'l': [ 2, 3 ], 'g': 's065kk0dc5' }
+          'loc2': { '.priority': 's065kk0dc5', 'l': [2, 3], 'g': 's065kk0dc5' }
         });
 
         cl.x('p5');
@@ -780,7 +777,7 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc1': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' }
+          'loc1': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' }
         });
 
         cl.x('p5');
@@ -804,8 +801,8 @@ describe('GeoFirestore Tests:', () => {
         return getFirestoreData();
       }).then((firebaseData) => {
         expect(firebaseData).to.deep.equal({
-          'loc2': { '.priority': 's065kk0dc5', 'l': [ 2, 3 ], 'g': 's065kk0dc5' },
-          'loc3': { '.priority': '7zzzzzzzzz', 'l': [ 0, 0 ], 'g': '7zzzzzzzzz' }
+          'loc2': { '.priority': 's065kk0dc5', 'l': [2, 3], 'g': 's065kk0dc5' },
+          'loc3': { '.priority': '7zzzzzzzzz', 'l': [0, 0], 'g': '7zzzzzzzzz' }
         });
 
         cl.x('p3');
