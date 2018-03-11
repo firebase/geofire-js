@@ -415,10 +415,10 @@ export function encodeGeoFireObject(location: number[], geohash: string): GeoFir
  * @returns The location as [latitude, longitude] pair or null if decoding fails.
  */
 export function decodeGeoFireObject(geoFireObj: GeoFireObj): number[] {
-  if (geoFireObj !== null && geoFireObj.hasOwnProperty('l') && Array.isArray(geoFireObj.l) && geoFireObj.l.length === 2) {
+  if (geoFireObj && 'l' in geoFireObj && Array.isArray(geoFireObj.l) && geoFireObj.l.length === 2) {
     return geoFireObj.l;
   } else {
-    throw new Error('Unexpected GeoFire location object encountered: ' + JSON.stringify(geoFireObj));
+    throw new Error('Unexpected location object encountered: ' + JSON.stringify(geoFireObj));
   }
 }
 

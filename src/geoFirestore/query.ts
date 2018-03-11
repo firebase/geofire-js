@@ -232,7 +232,8 @@ export class GeoFirestoreQuery {
    * @param locationDataSnapshot A snapshot of the data stored for this location.
    */
   private _childAddedCallback(locationDataSnapshot: firebase.firestore.DocumentSnapshot): void {
-    this._updateLocation(geoFirestoreGetKey(locationDataSnapshot), decodeGeoFireObject(<GeoFireObj>locationDataSnapshot.data()));
+    const data = <GeoFireObj>locationDataSnapshot.data();
+    this._updateLocation(geoFirestoreGetKey(locationDataSnapshot), decodeGeoFireObject(data));
   }
 
   /**
@@ -241,7 +242,8 @@ export class GeoFirestoreQuery {
    * @param locationDataSnapshot A snapshot of the data stored for this location.
    */
   private _childChangedCallback(locationDataSnapshot: firebase.firestore.DocumentSnapshot): void {
-    this._updateLocation(geoFirestoreGetKey(locationDataSnapshot), decodeGeoFireObject(<GeoFireObj>locationDataSnapshot.data()));
+    const data = <GeoFireObj>locationDataSnapshot.data();
+    this._updateLocation(geoFirestoreGetKey(locationDataSnapshot), decodeGeoFireObject(data));
   }
 
   /**
@@ -253,7 +255,8 @@ export class GeoFirestoreQuery {
     const key: string = geoFirestoreGetKey(locationDataSnapshot);
     if (key in this._locationsTracked) {
       this._collectionRef.doc(key).get().then((snapshot: firebase.firestore.DocumentSnapshot) => {
-        const location: number[] = (snapshot.data() === null) ? null : decodeGeoFireObject(<GeoFireObj>snapshot.data());
+        const data = (!snapshot.exists) ? null : <GeoFireObj>snapshot.data();
+        const location: number[] = (!snapshot.exists) ? null : decodeGeoFireObject(data);
         const geohash: string = (location !== null) ? encodeGeohash(location) : null;
         // Only notify observers if key is not part of any other geohash query or this actually might not be
         // a key exited event, but a key moved or entered event. These events will be triggered by updates
