@@ -103,6 +103,7 @@ describe('GeoFirestore GeoCallbackRegistration Tests:', () => {
 
       const onKeyExitedRegistration = geoFirestoreQueries[0].on('key_exited', (key, location, distance) => {
         cl.x(key + ' exited');
+        onKeyExitedRegistration.cancel();
       });
 
       geoFirestore.set({
@@ -118,7 +119,6 @@ describe('GeoFirestore GeoCallbackRegistration Tests:', () => {
 
         return wait(100);
       }).then(() => {
-        onKeyExitedRegistration.cancel();
         cl.x('p3');
 
         return geoFirestore.set('loc3', [-80, -80]);
@@ -128,8 +128,7 @@ describe('GeoFirestore GeoCallbackRegistration Tests:', () => {
         return wait(100);
       }).then(() => {
         cl.x('p5');
-      })
-        .catch(failTestOnCaughtError);
+      }).catch(failTestOnCaughtError);
     });
 
     it('Cancelling a \'key_moved\' registration does not cancel all \'key_moved\' callbacks', (done) => {
