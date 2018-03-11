@@ -20,20 +20,20 @@ describe('GeoFirestore Tests:', () => {
   });
 
   describe('Constructor:', () => {
-    it('Constructor throws errors given invalid Firebase references', () => {
+    it('Constructor throws errors given invalid Firestore Collection references', () => {
       invalidFirebaseRefs.forEach((invalidFirebaseRef) => {
         // @ts-ignore
         expect(() => new GeoFirestore(invalidFirebaseRef)).to.throw(null, 'collectionRef must be an instance of a Firestore Collection');
       });
     });
 
-    it('Constructor does not throw errors given valid Firebase references', () => {
+    it('Constructor does not throw errors given valid Firestore Collection references', () => {
       expect(() => new GeoFirestore(geoFirestoreRef)).not.to.throw();
     });
   });
 
   describe('ref():', () => {
-    it('ref() returns the Firebase reference used to create a GeoFire instance', () => {
+    it('ref() returns the Firestore Collection reference used to create a GeoFire instance', () => {
       expect(geoFirestore.ref()).to.deep.equal(geoFirestoreRef);
     });
   });
