@@ -47,7 +47,7 @@ export function beforeEachHelper(done) {
   // Create a new GeoFire instance
   geoFire = new GeoFire(geoFireRef);
 
-  // Reset the GeoQueries
+  // Reset the GeoFireQueries
   geoFireQueries = [];
 
   done();
@@ -59,7 +59,7 @@ export function beforeEachHelperFirestore(done) {
   // Create a new GeoFire instance
   geoFirestore = new GeoFirestore(geoFirestoreRef);
 
-  // Reset the GeoQueries
+  // Reset the GeoFirestoreQueries
   geoFirestoreQueries = [];
 
   done();
