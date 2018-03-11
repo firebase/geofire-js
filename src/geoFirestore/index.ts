@@ -85,14 +85,16 @@ export class GeoFirestore {
    * @returns A promise that is fulfilled when the write is complete.
    */
   public set(keyOrLocations: string | any, location?: number[]): Promise<void> {
-    if (typeof keyOrLocations === 'string' && location && location.length !== 0) {
+    if (typeof keyOrLocations === 'string' && keyOrLocations.length !== 0) {
       validateKey(keyOrLocations);
-      validateLocation(location);
-      const geohash: string = encodeGeohash(location);
-      return this._collectionRef.doc(keyOrLocations).set(encodeGeoFireObject(location, geohash));
-    } else if (typeof keyOrLocations === 'string') {
-      validateKey(keyOrLocations);
-      return this._collectionRef.doc(keyOrLocations).delete();
+      if (location === null) {
+        // Setting location to null is valid since it will remove the key
+        return this._collectionRef.doc(keyOrLocations).delete();
+      } else {
+        validateLocation(location);
+        const geohash: string = encodeGeohash(location);
+        return this._collectionRef.doc(keyOrLocations).set(encodeGeoFireObject(location, geohash));
+      }
     } else if (typeof keyOrLocations === 'object') {
       if (typeof location !== 'undefined') {
         throw new Error('The location argument should not be used if you pass an object to set().');
