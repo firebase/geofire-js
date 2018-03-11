@@ -3,8 +3,8 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 
 import { GeoFire, GeoFirestore } from '../src';
-import { GeoFireQuery } from '../src/geoFire/query';
-import { GeoFirestoreQuery } from '../src/geoFirestore/query';
+import { GeoFireQuery } from '../src/firebase/query';
+import { GeoFirestoreQuery } from '../src/firestore/query';
 
 /*************/
 /*  GLOBALS  */
@@ -31,9 +31,9 @@ export let geoFirestoreRef: firebase.firestore.CollectionReference,
 
 // Initialize Firebase
 const config = {
-  apiKey: 'AIzaSyAWJ1lpvNJgAwFYR0TRWyySeaMswTKnDOU',
-  databaseURL: 'https://geofire-95a87.firebaseio.com',
-  projectId: 'geofire-95a87'
+  apiKey: 'AIzaSyDPmGjw0Igt75VpzGmfgdqmHornPneV7zQ',
+  databaseURL: 'https://geofire-5f3fc.firebaseio.com',
+  projectId: 'geofire-5f3fc',
 };
 firebase.initializeApp(config);
 

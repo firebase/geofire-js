@@ -1054,7 +1054,7 @@ describe('GeoFirestoreQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_exited\' callback gets passed null for location and distance parameters if the key is entirely removed from GeoFire', (done) => {
+    it('\'key_exited\' callback gets passed null for location and distance parameters if the key is entirely removed from GeoFirestore', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 exited'], expect, done);
 
       geoFirestoreQueries.push(geoFirestore.query({ center: [1, 2], radius: 1000 }));
@@ -1078,7 +1078,7 @@ describe('GeoFirestoreQuery Tests:', () => {
       }).catch(failTestOnCaughtError);
     });
 
-    it('\'key_exited\' callback fires when a location within the GeoFirestoreQuery is entirely removed from GeoFire', (done) => {
+    it('\'key_exited\' callback fires when a location within the GeoFirestoreQuery is entirely removed from GeoFirestore', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'loc1 exited'], expect, done);
 
       geoFirestoreQueries.push(geoFirestore.query({ center: [1, 2], radius: 1000 }));
@@ -1376,8 +1376,7 @@ describe('GeoFirestoreQuery Tests:', () => {
 
         return wait(100);
       }).then(() => {
-        cl.x('p3')
-
+        cl.x('p3');
         geoFirestoreQueries[0].cancel();
 
         return geoFirestore.set({

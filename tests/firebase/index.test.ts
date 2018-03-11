@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 
-import { GeoFire } from '../../src/geoFire';
-import { GeoFireQuery } from '../../src/geoFire/query';
+import { GeoFire } from '../../src/firebase';
+import { GeoFireQuery } from '../../src/firebase/query';
 import {
   afterEachHelper, beforeEachHelper, Checklist, failTestOnCaughtError, geoFire, geoFireRef, getFirebaseData, geoFireQueries,
   invalidFirebaseRefs, invalidKeys, invalidLocations, invalidQueryCriterias, validKeys, validLocations, validQueryCriterias
