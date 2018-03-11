@@ -254,7 +254,7 @@ export class GeoFireQuery {
    */
   private _childRemovedCallback(locationDataSnapshot: firebase.database.DataSnapshot): void {
     const key: string = geoFireGetKey(locationDataSnapshot);
-    if (this._locationsTracked.hasOwnProperty(key)) {
+    if (key in this._locationsTracked) {
       this._firebaseRef.child(key).once('value', (snapshot: firebase.database.DataSnapshot) => {
         const location: number[] = (snapshot.val() === null) ? null : decodeGeoFireObject(snapshot.val());
         const geohash: string = (location !== null) ? encodeGeohash(location) : null;
@@ -276,7 +276,7 @@ export class GeoFireQuery {
     keys.forEach((geohashQueryStr: string) => {
       const queryState: any = this._currentGeohashesQueried[geohashQueryStr];
       if (queryState.active === false) {
-        var query = this._stringToQuery(geohashQueryStr);
+        const query = this._stringToQuery(geohashQueryStr);
         // Delete the geohash since it should no longer be queried
         this._cancelGeohashQuery(query, queryState);
         delete this._currentGeohashesQueried[geohashQueryStr];
@@ -340,8 +340,8 @@ export class GeoFireQuery {
   private _geohashInSomeQuery(geohash: string): boolean {
     const keys: string[] = Object.keys(this._currentGeohashesQueried);
     for (const queryStr of keys) {
-      if (this._currentGeohashesQueried.hasOwnProperty(queryStr)) {
-        var query = this._stringToQuery(queryStr);
+      if (queryStr in this._currentGeohashesQueried) {
+        const query = this._stringToQuery(queryStr);
         if (geohash >= query[0] && geohash <= query[1]) {
           return true;
         }
@@ -500,8 +500,8 @@ export class GeoFireQuery {
     validateLocation(location);
     // Get the key and location
     let distanceFromCenter: number, isInQuery;
-    var wasInQuery: boolean = (this._locationsTracked.hasOwnProperty(key)) ? this._locationsTracked[key].isInQuery : false;
-    var oldLocation: number[] = (this._locationsTracked.hasOwnProperty(key)) ? this._locationsTracked[key].location : null;
+    const wasInQuery: boolean = (key in this._locationsTracked) ? this._locationsTracked[key].isInQuery : false;
+    const oldLocation: number[] = (key in this._locationsTracked) ? this._locationsTracked[key].location : null;
 
     // Determine if the location is within this query
     distanceFromCenter = GeoFire.distance(location, this._center);

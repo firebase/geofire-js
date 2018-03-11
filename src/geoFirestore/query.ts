@@ -251,7 +251,7 @@ export class GeoFirestoreQuery {
    */
   private _childRemovedCallback(locationDataSnapshot: firebase.firestore.DocumentSnapshot): void {
     const key: string = geoFirestoreGetKey(locationDataSnapshot);
-    if (this._locationsTracked.hasOwnProperty(key)) {
+    if (key in this._locationsTracked) {
       this._collectionRef.doc(key).get().then((snapshot: firebase.firestore.DocumentSnapshot) => {
         const location: number[] = (snapshot.data() === null) ? null : decodeGeoFireObject(<GeoFireObj>snapshot.data());
         const geohash: string = (location !== null) ? encodeGeohash(location) : null;
@@ -273,7 +273,7 @@ export class GeoFirestoreQuery {
     keys.forEach((geohashQueryStr: string) => {
       const queryState: any = this._currentGeohashesQueried[geohashQueryStr];
       if (queryState.active === false) {
-        var query = this._stringToQuery(geohashQueryStr);
+        const query = this._stringToQuery(geohashQueryStr);
         // Delete the geohash since it should no longer be queried
         this._cancelGeohashQuery(query, queryState);
         delete this._currentGeohashesQueried[geohashQueryStr];
@@ -337,8 +337,8 @@ export class GeoFirestoreQuery {
   private _geohashInSomeQuery(geohash: string): boolean {
     const keys: string[] = Object.keys(this._currentGeohashesQueried);
     for (const queryStr of keys) {
-      if (this._currentGeohashesQueried.hasOwnProperty(queryStr)) {
-        var query = this._stringToQuery(queryStr);
+      if (queryStr in this._currentGeohashesQueried) {
+        const query = this._stringToQuery(queryStr);
         if (geohash >= query[0] && geohash <= query[1]) {
           return true;
         }
@@ -505,8 +505,8 @@ export class GeoFirestoreQuery {
     validateLocation(location);
     // Get the key and location
     let distanceFromCenter: number, isInQuery;
-    var wasInQuery: boolean = (this._locationsTracked.hasOwnProperty(key)) ? this._locationsTracked[key].isInQuery : false;
-    var oldLocation: number[] = (this._locationsTracked.hasOwnProperty(key)) ? this._locationsTracked[key].location : null;
+    const wasInQuery: boolean = (key in this._locationsTracked) ? this._locationsTracked[key].isInQuery : false;
+    const oldLocation: number[] = (key in this._locationsTracked) ? this._locationsTracked[key].location : null;
 
     // Determine if the location is within this query
     distanceFromCenter = GeoFirestore.distance(location, this._center);
