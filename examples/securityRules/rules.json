@@ -13,11 +13,11 @@
         ".write": true,
 
         // Key validation
-        ".validate": "newData.hasChildren(['g', 'l']) && newData.getPriority().length <= 22 && newData.getPriority().length > 0",
+        ".validate": "newData.hasChildren(['g', 'l']) && newData.g.length <= 22 && newData.g.length > 0",
 
         // Geohash validation
         "g": {
-          ".validate": "newData.val() == newData.parent().getPriority()"
+          ".validate": "newData.val() == newData.parent().g"
         },
 
         // Location coordinates validation
