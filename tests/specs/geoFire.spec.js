@@ -53,9 +53,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
-          "loc2": { ".priority": "v0gs3y0zh7", "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
-          "loc3": { ".priority": "1bpbpbpbpb", "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
+          "loc1": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
+          "loc2": { "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
+          "loc3": { "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
         });
 
         cl.x("p4");
@@ -79,9 +79,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "ebpcrypzxv", "l": { "0": 0.254, "1": 0 }, "g": "ebpcrypzxv" },
-          "loc2": { ".priority": "v0gu2qnx15", "l": { "0": 50, "1": 50.293403 }, "g": "v0gu2qnx15" },
-          "loc3": { ".priority": "1cr648sfx4", "l": { "0": -82.614, "1": -90.938 }, "g": "1cr648sfx4" }
+          "loc1": { "l": { "0": 0.254, "1": 0 }, "g": "ebpcrypzxv" },
+          "loc2": { "l": { "0": 50, "1": 50.293403 }, "g": "v0gu2qnx15" },
+          "loc3": { "l": { "0": -82.614, "1": -90.938 }, "g": "1cr648sfx4" }
         });
 
         cl.x("p4");
@@ -109,9 +109,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "s065kk0dc5", "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" },
-          "loc2": { ".priority": "v0gs3y0zh7", "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
-          "loc3": { ".priority": "1bpbpbpbpb", "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
+          "loc1": { "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" },
+          "loc2": { "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
+          "loc3": { "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
         });
 
         cl.x("p5");
@@ -139,9 +139,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
-          "loc2": { ".priority": "v0gs3y0zh7", "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
-          "loc3": { ".priority": "1bpbpbpbpb", "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
+          "loc1": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
+          "loc2": { "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
+          "loc3": { "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
         });
 
         cl.x("p5");
@@ -165,9 +165,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
-          "loc2": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
-          "loc3": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
+          "loc1": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
+          "loc2": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
+          "loc3": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
         });
 
         cl.x("p4");
@@ -219,11 +219,11 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc:1": { ".priority": "cped3g0fur", "l": { "0": 87.6, "1": -130 }, "g": "cped3g0fur" },
-          "loc2": { ".priority": "d2h376zj8h", "l": { "0": 0.2358, "1": -72.621 }, "g": "d2h376zj8h" },
-          "loc%!A72f()3": { ".priority": "1bpbpbpbpb", "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" },
-          "loc4": { ".priority": "cped3g0fur", "l": { "0": 87.6, "1": -130 }, "g": "cped3g0fur" },
-          "loc6": { ".priority": "h50svty4es", "l": { "0": -72.258, "1": 0.953215 }, "g": "h50svty4es" }
+          "loc:1": { "l": { "0": 87.6, "1": -130 }, "g": "cped3g0fur" },
+          "loc2": { "l": { "0": 0.2358, "1": -72.621 }, "g": "d2h376zj8h" },
+          "loc%!A72f()3": { "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" },
+          "loc4": { "l": { "0": 87.6, "1": -130 }, "g": "cped3g0fur" },
+          "loc6": { "l": { "0": -72.258, "1": 0.953215 }, "g": "h50svty4es" }
         });
 
         cl.x("p11");
@@ -291,9 +291,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
-          "loc2": { ".priority": "v0gs3y0zh7", "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
-          "loc3": { ".priority": "1bpbpbpbpb", "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
+          "loc1": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
+          "loc2": { "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
+          "loc3": { "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
         });
 
         cl.x("p2");
@@ -313,9 +313,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "ebpcrypzxv", "l": { "0": 0.254, "1": 0 }, "g": "ebpcrypzxv" },
-          "loc2": { ".priority": "v0gu2qnx15", "l": { "0": 50, "1": 50.293403 }, "g": "v0gu2qnx15" },
-          "loc3": { ".priority": "1cr648sfx4", "l": { "0": -82.614, "1": -90.938 }, "g": "1cr648sfx4" }
+          "loc1": { "l": { "0": 0.254, "1": 0 }, "g": "ebpcrypzxv" },
+          "loc2": { "l": { "0": 50, "1": 50.293403 }, "g": "v0gu2qnx15" },
+          "loc3": { "l": { "0": -82.614, "1": -90.938 }, "g": "1cr648sfx4" }
         });
 
         cl.x("p2");
@@ -341,9 +341,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "s065kk0dc5", "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" },
-          "loc2": { ".priority": "v0gs3y0zh7", "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
-          "loc3": { ".priority": "1bpbpbpbpb", "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
+          "loc1": { "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" },
+          "loc2": { "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
+          "loc3": { "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
         });
 
         cl.x("p3");
@@ -369,9 +369,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
-          "loc2": { ".priority": "v0gs3y0zh7", "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
-          "loc3": { ".priority": "1bpbpbpbpb", "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
+          "loc1": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
+          "loc2": { "l": { "0": 50, "1": 50 }, "g": "v0gs3y0zh7" },
+          "loc3": { "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
         });
 
         cl.x("p3");
@@ -391,9 +391,9 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
-          "loc2": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
-          "loc3": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
+          "loc1": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
+          "loc2": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" },
+          "loc3": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
         });
 
         cl.x("p2");
@@ -438,11 +438,11 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc:1": { ".priority": "cped3g0fur", "l": { "0": 87.6, "1": -130 }, "g": "cped3g0fur" },
-          "loc2": { ".priority": "d2h376zj8h", "l": { "0": 0.2358, "1": -72.621 }, "g": "d2h376zj8h" },
-          "loc%!A72f()3": { ".priority": "1bpbpbpbpb", "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" },
-          "loc4": { ".priority": "cped3g0fur", "l": { "0": 87.6, "1": -130 }, "g": "cped3g0fur" },
-          "loc6": { ".priority": "h50svty4es", "l": { "0": -72.258, "1": 0.953215 }, "g": "h50svty4es" }
+          "loc:1": { "l": { "0": 87.6, "1": -130 }, "g": "cped3g0fur" },
+          "loc2": { "l": { "0": 0.2358, "1": -72.621 }, "g": "d2h376zj8h" },
+          "loc%!A72f()3": { "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" },
+          "loc4": { "l": { "0": 87.6, "1": -130 }, "g": "cped3g0fur" },
+          "loc6": { "l": { "0": -72.258, "1": 0.953215 }, "g": "h50svty4es" }
         });
 
         cl.x("p6");
@@ -591,7 +591,7 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc2": { ".priority": "s065kk0dc5", "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" }
+          "loc2": { "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" }
         });
 
         cl.x("p5");
@@ -623,7 +623,7 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
+          "loc1": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
         });
 
         cl.x("p5");
@@ -661,8 +661,8 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc2": { ".priority": "s065kk0dc5", "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" },
-          "loc3": { ".priority": "1bpbpbpbpb", "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
+          "loc2": { "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" },
+          "loc3": { "l": { "0": -90, "1": -90 }, "g": "1bpbpbpbpb" }
         });
 
         cl.x("p5");
@@ -693,7 +693,7 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
+          "loc1": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
         });
 
         cl.x("p4");
@@ -728,7 +728,7 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc2": { ".priority": "s065kk0dc5", "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" }
+          "loc2": { "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" }
         });
 
         cl.x("p5");
@@ -760,7 +760,7 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc1": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
+          "loc1": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
         });
 
         cl.x("p5");
@@ -784,8 +784,8 @@ describe("GeoFire Tests:", function() {
         return getFirebaseData();
       }).then(function(firebaseData) {
         expect(firebaseData).toEqual({
-          "loc2": { ".priority": "s065kk0dc5", "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" },
-          "loc3": { ".priority": "7zzzzzzzzz", "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
+          "loc2": { "l": { "0": 2, "1": 3 }, "g": "s065kk0dc5" },
+          "loc3": { "l": { "0": 0, "1": 0 }, "g": "7zzzzzzzzz" }
         });
 
         cl.x("p3");
