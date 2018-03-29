@@ -19,6 +19,7 @@
    - [`cancel()`](#geocallbackregistrationcancel)
  * [Helper Methods](#helper-methods)
    - [`GeoFire.distance(location1, location2)`](#geofiredistancelocation1-location2)
+   - [`GeoFire.getUpdateData(keyOrLocations[, location])`](#geofiregetupdatedatakeyorlocations-location)
  * [Promises](#promises)
 
 
@@ -303,6 +304,31 @@ var location1 = [10.3, -55.3];
 var location2 = [-78.3, 105.6];
 
 var distance = GeoFire.distance(location1, location2);  // distance === 12378.536597423461
+```
+
+### GeoFire.getUpdateData(keyOrLocations[, location])
+
+Static helper method which has the same input as `GeoFire.set()`. The difference is that this method does not do the update automatically,
+instead it returns the update data which can later be used to do a multi location update manually.
+
+```JavaScript
+var firebaseRef = firebase.database().ref();
+
+// Generate a new push ID for the new post
+var newPostRef = ref.child("posts").push();
+var newPostKey = newPostRef.key();
+
+// Create the data we want to update
+var updatedUserData = {};
+updatedUserData["user/posts/" + newPostKey] = true;
+updatedUserData["posts/" + newPostKey] = {
+  title: "New Post",
+  content: "Here is my new post!"
+};
+updatedUserData["location"] = GeoFire.getUpdateData(newPostKey, [37.79, -122.41]);
+
+// Do a deep-path update
+ref.update(updatedUserData);
 ```
 
 
