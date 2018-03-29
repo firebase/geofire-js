@@ -428,7 +428,6 @@ function encodeGeoFireObject(location, geohash) {
   validateLocation(location);
   validateGeohash(geohash);
   return {
-    ".priority": geohash,
     "g": geohash,
     "l": location
   };
