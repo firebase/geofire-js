@@ -6,7 +6,7 @@
    - [`new GeoFire(firebaseRef)`](#new-geofirefirebaseref)
    - [`ref()`](#geofireref)
    - [`get(key)`](#geofiregetkey)
-   - [`set(keyOrLocations[, location])`](#geofiresetkeyorlocations-location)
+   - [`set(keyOrLocations[, location, customData])`](#geofiresetkeyorlocations-location)
    - [`remove(key)`](#geofireremovekey)
    - [`query(queryCriteria)`](#geofirequeryquerycriteria)
  * [`GeoQuery`](#geoquery)
@@ -75,7 +75,7 @@ geoFire.get("some_key").then(function(location) {
 });
 ```
 
-### GeoFire.set(keyOrLocations[, location])
+### GeoFire.set(keyOrLocations[, location, customData])
 
 Adds the specified key - location pair(s) to this `GeoFire`. If the provided `keyOrLocations`
 argument is a string, the single `location` will be added. The `keyOrLocations` argument can also
@@ -86,6 +86,9 @@ each one individually.
 If any of the provided keys already exist in this `GeoFire`, they will be overwritten with the new
 location values. Locations must have the form `[latitude, longitude]`.
 
+Optional custom data could also be added (useful for client side filtering for example).
+Depending on your context, make sure to do the best compromise between adding data and performances.
+
 Returns a promise which is fulfilled when the new location has been synchronized with the Firebase
 servers.
 
@@ -93,7 +96,7 @@ Keys must be strings and [valid Firebase database key
 names](https://firebase.google.com/docs/database/web/structure-data).
 
 ```JavaScript
-geoFire.set("some_key", [37.79, -122.41]).then(function() {
+geoFire.set("some_key", [37.79, -122.41, {t: "a"}]).then(function() {
   console.log("Provided key has been added to GeoFire");
 }, function(error) {
   console.log("Error: " + error);
@@ -102,8 +105,8 @@ geoFire.set("some_key", [37.79, -122.41]).then(function() {
 
 ```JavaScript
 geoFire.set({
-  "some_key": [37.79, -122.41],
-  "another_key": [36.98, -122.56]
+  "some_key": [37.79, -122.41, {t: "a"}],
+  "another_key": [36.98, -122.56, {t: "b"}]
 }).then(function() {
   console.log("Provided keys have been added to GeoFire");
 }, function(error) {
@@ -213,6 +216,7 @@ Attaches a `callback` to this query which will be run when the provided `eventTy
 1. the location's key
 2. the location's [latitude, longitude] pair
 3. the distance, in kilometers, from the location to this query's center
+4. the custom data if any
 
 `ready` fires once when this query's initial state has been loaded from the server.
 The `ready` event will fire after all other events associated with the loaded data
@@ -231,15 +235,15 @@ var onReadyRegistration = geoQuery.on("ready", function() {
   console.log("GeoQuery has loaded and fired all other events for initial data");
 });
 
-var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance, customData) {
   console.log(key + " entered query at " + location + " (" + distance + " km from center)");
 });
 
-var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
+var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance, customData) {
   console.log(key + " exited query to " + location + " (" + distance + " km from center)");
 });
 
-var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location, distance) {
+var onKeyMovedRegistration = geoQuery.on("key_moved", function(key, location, distance, customData) {
   console.log(key + " moved within query to " + location + " (" + distance + " km from center)");
 });
 ```
@@ -252,11 +256,11 @@ Terminates this query so that it no longer sends location updates. All callbacks
 // This example stops listening for all key events in the query once the
 // first key leaves the query
 
-var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance, customData) {
   console.log(key + " entered query at " + location + " (" + distance + " km from center)");
 });
 
-var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
+var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance, customData) {
   console.log(key + " exited query to " + location + " (" + distance + " km from center)");
 
   // Cancel all of the query's callbacks
@@ -278,11 +282,11 @@ Cancels this callback registration so that it no longer fires its callback. This
 // This example stops listening for new keys entering the query once the
 // first key leaves the query
 
-var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
+var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance, customData) {
   console.log(key + " entered query at " + location + " (" + distance + " km from center)");
 });
 
-var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance) {
+var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, distance, customData) {
   console.log(key + " exited query to " + location + " (" + distance + " km from center)");
 
   // Cancel the "key_entered" callback
