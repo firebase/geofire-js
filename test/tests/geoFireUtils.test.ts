@@ -1,10 +1,10 @@
 import * as chai from 'chai';
 
-import { GeoFire } from '../../src/firebase';
+import { GeoFire } from '../../src/geoFire'; 
 import {
   boundingBoxBits, degreesToRadians, encodeGeohash, geohashQuery, geohashQueries, g_GEOHASH_PRECISION,
   metersToLongitudeDegrees, validateCriteria, validateGeohash, validateKey, validateLocation, wrapLongitude
-} from '../../src/tools/utils';
+} from '../../src/geoFire/geoFireUtils';
 import {
   invalidGeohashes, invalidKeys, invalidLocations, invalidQueryCriterias,
   validGeohashes, validKeys, validLocations, validQueryCriterias

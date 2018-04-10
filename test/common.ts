@@ -1,10 +1,9 @@
 import * as chai from 'chai';
 import * as firebase from 'firebase';
-import 'firebase/firestore';
 
-import { GeoFire, GeoFirestore } from '../src';
-import { GeoFireQuery } from '../src/firebase/query';
-import { GeoFirestoreQuery } from '../src/firestore/query';
+import { GeoFire } from '../src/geoFire';
+import { GeoQuery } from '../src/geoFire/geoQuery';
+
 
 /*************/
 /*  GLOBALS  */
@@ -24,19 +23,13 @@ export const invalidQueryCriterias = [{}, { random: 100 }, { center: [91, 2], ra
 // Create global constiables to hold the Firebase and GeoFire constiables
 export let geoFireRef: firebase.database.Reference,
   geoFire: GeoFire,
-  geoFireQueries: GeoFireQuery[] = [];
-export let geoFirestoreRef: firebase.firestore.CollectionReference,
-  geoFirestore: GeoFirestore,
-  geoFirestoreQueries: GeoFirestoreQuery[] = [];
+  geoQueries: GeoQuery[] = [];
 
 // Initialize Firebase
 const config = {
-  apiKey: 'AIzaSyDfEvcG1WHlI8o_KKK2yQcTHkz63_8nZK8',
-  databaseURL: 'https://geofi-5653f.firebaseio.com',
-  projectId: 'geofi-5653f'
-  // apiKey: 'AIzaSyC5IcRccDo289TTRa3Y7qJIu8YPz3EnKAI',
-  // databaseURL: 'https://geofire-9d0de.firebaseio.com',
-  // projectId: 'geofire-9d0de'
+  apiKey: 'AIzaSyC5IcRccDo289TTRa3Y7qJIu8YPz3EnKAI',
+  databaseURL: 'https://geofire-9d0de.firebaseio.com',
+  projectId: 'geofire-9d0de'
 };
 firebase.initializeApp(config);
 
@@ -51,43 +44,19 @@ export function beforeEachHelper(done) {
   geoFire = new GeoFire(geoFireRef);
 
   // Reset the GeoFireQueries
-  geoFireQueries = [];
-
-  done();
-}
-
-export function beforeEachHelperFirestore(done) {
-  // Create a new Firebase database ref at a random node
-  geoFirestoreRef = firebase.firestore().collection('geofire');
-  // Create a new GeoFire instance
-  geoFirestore = new GeoFirestore(geoFirestoreRef);
-
-  // Reset the GeoFirestoreQueries
-  geoFirestoreQueries = [];
+  geoQueries = [];
 
   done();
 }
 
 /* Helper functions which runs after each Jasmine test has completed */
 export function afterEachHelper(done) {
-  // Cancel each outstanding GeoFireQuery
-  geoFireQueries.forEach((geoFireQuery) => {
-    geoFireQuery.cancel();
+  // Cancel each outstanding GeoQuery
+  geoQueries.forEach((GeoQuery) => {
+    GeoQuery.cancel();
   });
 
   geoFireRef.remove().then(() => {
-    // Wait for 50 milliseconds after each test to give enough time for old query events to expire
-    return wait(50);
-  }).then(done);
-}
-
-export function afterEachHelperFirestore(done) {
-  // Cancel each outstanding GeoFirestoreQuery
-  geoFirestoreQueries.forEach((geoFirestoreQuery) => {
-    geoFirestoreQuery.cancel();
-  });
-
-  deleteCollection(geoFirestoreRef.firestore, 'geofire', 50).then(() => {
     // Wait for 50 milliseconds after each test to give enough time for old query events to expire
     return wait(50);
   }).then(done);
@@ -112,18 +81,6 @@ export function getFirebaseData() {
     return dataSnapshot.exportVal();
   });
 };
-
-/* Returns the current data in the Firestore */
-export function getFirestoreData() {
-  return geoFirestoreRef.get().then((querySnapshot: firebase.firestore.QuerySnapshot) => {
-    const data = {};
-    querySnapshot.docs.map((val: firebase.firestore.QueryDocumentSnapshot) => {
-      data[val.id] = val.data();
-    });
-    return data;
-  });
-};
-
 
 /* Returns a promise which is fulfilled after the inputted number of milliseconds pass */
 export function wait(milliseconds) {
@@ -171,32 +128,4 @@ export function Checklist(items, expect, done) {
  **/
 export function failTestOnCaughtError(error) {
   expect(error).to.throw();
-}
-
-/* Used to purge Firestore collection. Used by afterEachHelperFirestore. */
-function deleteCollection(db: firebase.firestore.Firestore, collectionPath: string, batchSize: number) {
-  const collectionRef = db.collection(collectionPath);
-  const query: firebase.firestore.Query = collectionRef.limit(batchSize);
-
-  return new Promise((resolve, reject) => deleteQueryBatch(db, query, batchSize, resolve, reject));
-}
-
-/* Actually purges Firestore collection recursively through batch function. */
-function deleteQueryBatch(db: firebase.firestore.Firestore, query: firebase.firestore.Query, batchSize: number, resolve: Function, reject: Function) {
-  query.get().then((snapshot) => {
-    // When there are no documents left, we are done
-    if (snapshot.size == 0) { return 0; }
-
-    // Delete documents in a batch
-    const batch = db.batch();
-    snapshot.docs.forEach((doc) => batch.delete(doc.ref));
-
-    return batch.commit().then(() => snapshot.size);
-  }).then((numDeleted) => {
-    if (numDeleted === 0) {
-      resolve();
-      return;
-    }
-    process.nextTick(() => deleteQueryBatch(db, query, batchSize, resolve, reject));
-  }).catch(err => reject(err));
 }

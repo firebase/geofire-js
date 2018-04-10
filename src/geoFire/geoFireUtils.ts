@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
 
-import { GeoFireObj } from '../interfaces';
+import { GeoFireObj } from './interfaces';
 
 // Default geohash length
 export const g_GEOHASH_PRECISION: number = 10;

@@ -1,7 +1,7 @@
-import { GeoCallbackRegistration } from '../../src/tools/callbackRegistration';
+import { GeoCallbackRegistration } from '../../src/geoFire/geoCallbackRegistration';
 import {
   afterEachHelper, beforeEachHelper, Checklist,
-  failTestOnCaughtError, geoFire, geoFireQueries, wait
+  failTestOnCaughtError, geoFire, geoQueries, wait
 } from '../common';
 
 import * as chai from 'chai';
@@ -33,9 +33,9 @@ describe('GeoFire GeoCallbackRegistration Tests:', () => {
     it('\'key_moved\' registrations can be cancelled', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'p4', 'p5', 'loc1 moved'], expect, done);
 
-      geoFireQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
+      geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
 
-      const onKeyMovedRegistration = geoFireQueries[0].on('key_moved', (key, location, distance) => {
+      const onKeyMovedRegistration = geoQueries[0].on('key_moved', (key, location, distance) => {
         cl.x(key + ' moved');
       });
 
@@ -68,9 +68,9 @@ describe('GeoFire GeoCallbackRegistration Tests:', () => {
     it('\'key_entered\' registrations can be cancelled', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'p4', 'loc1 entered'], expect, done);
 
-      geoFireQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
+      geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
 
-      const onKeyEnteredRegistration = geoFireQueries[0].on('key_entered', (key, location, distance) => {
+      const onKeyEnteredRegistration = geoQueries[0].on('key_entered', (key, location, distance) => {
         cl.x(key + ' entered');
       });
 
@@ -99,9 +99,9 @@ describe('GeoFire GeoCallbackRegistration Tests:', () => {
     it('\'key_exited\' registrations can be cancelled', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'p4', 'p5', 'loc1 exited'], expect, done);
 
-      geoFireQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
+      geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
 
-      const onKeyExitedRegistration = geoFireQueries[0].on('key_exited', (key, location, distance) => {
+      const onKeyExitedRegistration = geoQueries[0].on('key_exited', (key, location, distance) => {
         cl.x(key + ' exited');
       });
 
@@ -134,12 +134,12 @@ describe('GeoFire GeoCallbackRegistration Tests:', () => {
     it('Cancelling a \'key_moved\' registration does not cancel all \'key_moved\' callbacks', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'p4', 'p5', 'loc1 moved1', 'loc1 moved2', 'loc3 moved2'], expect, done);
 
-      geoFireQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
+      geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
 
-      const onKeyMovedRegistration1 = geoFireQueries[0].on('key_moved', (key, location, distance) => {
+      const onKeyMovedRegistration1 = geoQueries[0].on('key_moved', (key, location, distance) => {
         cl.x(key + ' moved1');
       });
-      const onKeyMovedRegistration2 = geoFireQueries[0].on('key_moved', (key, location, distance) => {
+      const onKeyMovedRegistration2 = geoQueries[0].on('key_moved', (key, location, distance) => {
         cl.x(key + ' moved2');
       });
 
@@ -172,12 +172,12 @@ describe('GeoFire GeoCallbackRegistration Tests:', () => {
     it('Cancelling a \'key_entered\' registration does not cancel all \'key_entered\' callbacks', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'p4', 'loc1 entered1', 'loc1 entered2', 'loc3 entered2'], expect, done);
 
-      geoFireQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
+      geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
 
-      const onKeyEnteredRegistration1 = geoFireQueries[0].on('key_entered', (key, location, distance) => {
+      const onKeyEnteredRegistration1 = geoQueries[0].on('key_entered', (key, location, distance) => {
         cl.x(key + ' entered1');
       });
-      const onKeyEnteredRegistration2 = geoFireQueries[0].on('key_entered', (key, location, distance) => {
+      const onKeyEnteredRegistration2 = geoQueries[0].on('key_entered', (key, location, distance) => {
         cl.x(key + ' entered2');
       });
 
@@ -206,12 +206,12 @@ describe('GeoFire GeoCallbackRegistration Tests:', () => {
     it('Cancelling a \'key_exited\' registration does not cancel all \'key_exited\' callbacks', (done) => {
       const cl = new Checklist(['p1', 'p2', 'p3', 'p4', 'p5', 'loc1 exited1', 'loc1 exited2', 'loc3 exited2'], expect, done);
 
-      geoFireQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
+      geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
 
-      const onKeyExitedRegistration1 = geoFireQueries[0].on('key_exited', (key, location, distance) => {
+      const onKeyExitedRegistration1 = geoQueries[0].on('key_exited', (key, location, distance) => {
         cl.x(key + ' exited1');
       });
-      const onKeyExitedRegistration2 = geoFireQueries[0].on('key_exited', (key, location, distance) => {
+      const onKeyExitedRegistration2 = geoQueries[0].on('key_exited', (key, location, distance) => {
         cl.x(key + ' exited2');
       });
 
@@ -242,9 +242,9 @@ describe('GeoFire GeoCallbackRegistration Tests:', () => {
     });
 
     it('Calling cancel on a GeoCallbackRegistration twice does not throw', () => {
-      geoFireQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
+      geoQueries.push(geoFire.query({ center: [1, 2], radius: 1000 }));
 
-      const onKeyExitedRegistration = geoFireQueries[0].on('key_exited', () => { });
+      const onKeyExitedRegistration = geoQueries[0].on('key_exited', () => { });
 
       expect(() => onKeyExitedRegistration.cancel()).not.throw();
       expect(() => onKeyExitedRegistration.cancel()).not.throw();

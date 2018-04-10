@@ -1,3 +1,2 @@
-export * from './interfaces';
-export { GeoFire } from './firebase';
-export { GeoFirestore } from './firestore';
+export { GeoFire } from './geoFire';
+export * from './geoFire/interfaces';

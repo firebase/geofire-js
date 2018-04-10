@@ -1,15 +1,15 @@
 import * as firebase from 'firebase';
 
-import { GeoFire } from './';
-import { GeoCallbackRegistration } from '../tools/callbackRegistration';
-import { decodeGeoFireObject, encodeGeohash, geoFireGetKey, geohashQueries, validateCriteria, validateLocation } from '../tools/utils';
+import { GeoFire } from './index';
+import { GeoCallbackRegistration } from './geoCallbackRegistration';
+import { decodeGeoFireObject, encodeGeohash, geoFireGetKey, geohashQueries, validateCriteria, validateLocation } from './geoFireUtils';
 
-import { QueryCriteria } from '../interfaces';
+import { QueryCriteria } from './interfaces';
 
 /**
- * Creates a GeoFireQuery instance.
+ * Creates a GeoQuery instance.
  */
-export class GeoFireQuery {
+export class GeoQuery {
   // Event callbacks
   private _callbacks: any = { ready: [], key_entered: [], key_exited: [], key_moved: [] };
   // Variable to track when the query is cancelled
