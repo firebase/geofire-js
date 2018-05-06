@@ -1,22 +1,22 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./dist",
-    "baseUrl": ".",
-    "inlineSourceMap": true,
     "declaration": true,
+    "importHelpers": true,
+    "lib": [
+      "es2015",
+      "dom"
+    ],
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "outDir": "dist",
+    "sourceMap": false,
     "target": "es5",
     "typeRoots": [
       "node_modules/@types"
-    ],
-    "lib": [
-      "es2016",
-      "dom"
     ]
   },
-  "files": [
-    "./src/index.ts"
+  "include": [
+    "src"
   ]
 }
