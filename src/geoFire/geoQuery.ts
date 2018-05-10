@@ -1,8 +1,7 @@
 import * as firebase from 'firebase';
 
-import { GeoFire } from './index';
 import { GeoCallbackRegistration } from './geoCallbackRegistration';
-import { decodeGeoFireObject, encodeGeohash, geoFireGetKey, geohashQueries, validateCriteria, validateLocation } from './geoFireUtils';
+import { decodeGeoFireObject, distance, encodeGeohash, geoFireGetKey, geohashQueries, validateCriteria, validateLocation } from './geoFireUtils';
 
 import { QueryCriteria } from './interfaces';
 
@@ -192,7 +191,7 @@ export class GeoQuery {
       // Save if the location was already in the query
       const wasAlreadyInQuery = locationDict.isInQuery;
       // Update the location's distance to the new query center
-      locationDict.distanceFromCenter = GeoFire.distance(locationDict.location, this._center);
+      locationDict.distanceFromCenter = distance(locationDict.location, this._center);
       // Determine if the location is now in this query
       locationDict.isInQuery = (locationDict.distanceFromCenter <= this._radius);
       // If the location just left the query, fire the 'key_exited' callbacks
@@ -467,7 +466,7 @@ export class GeoQuery {
     const locationDict = this._locationsTracked[key];
     delete this._locationsTracked[key];
     if (typeof locationDict !== 'undefined' && locationDict.isInQuery) {
-      const distanceFromCenter: number = (currentLocation) ? GeoFire.distance(currentLocation, this._center) : null;
+      const distanceFromCenter: number = (currentLocation) ? distance(currentLocation, this._center) : null;
       this._fireCallbacksForKey('key_exited', key, currentLocation, distanceFromCenter);
     }
   }
@@ -504,7 +503,7 @@ export class GeoQuery {
     const oldLocation: number[] = (key in this._locationsTracked) ? this._locationsTracked[key].location : null;
 
     // Determine if the location is within this query
-    distanceFromCenter = GeoFire.distance(location, this._center);
+    distanceFromCenter = distance(location, this._center);
     isInQuery = (distanceFromCenter <= this._radius);
 
     // Add this location to the locations queried dictionary even if it is not within this query
