@@ -429,10 +429,17 @@ export function decodeGeoFireObject(geoFireObj: GeoFireObj): number[] {
  * @returns The Firebase snapshot's key.
  */
 export function geoFireGetKey(snapshot: firebase.database.DataSnapshot): string {
-  let key: string;
+  let key;
   if (typeof snapshot.key === 'string' || snapshot.key === null) {
     key = snapshot.key;
+  } else if (typeof snapshot.key === 'function') {
+    // @ts-ignore
+    key = snapshot.key();
+  } else {
+    // @ts-ignore
+    key = snapshot.name();
   }
+
   return key;
 }
 
