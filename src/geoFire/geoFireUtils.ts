@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
 
-import { GeoFireObj } from './interfaces';
+import { GeoFireObj, QueryCriteria } from './interfaces';
 
 // Default geohash length
 export const g_GEOHASH_PRECISION: number = 10;
@@ -126,7 +126,7 @@ export function validateGeohash(geohash: string): void {
  * @param newQueryCriteria The criteria which specifies the query's center and/or radius.
  * @param requireCenterAndRadius The criteria which center and radius required.
  */
-export function validateCriteria(newQueryCriteria: any, requireCenterAndRadius: boolean = false): void {
+export function validateCriteria(newQueryCriteria: QueryCriteria, requireCenterAndRadius: boolean = false): void {
   if (typeof newQueryCriteria !== 'object') {
     throw new Error('query criteria must be an object');
   } else if (typeof newQueryCriteria.center === 'undefined' && typeof newQueryCriteria.radius === 'undefined') {
@@ -437,41 +437,27 @@ export function geoFireGetKey(snapshot: firebase.database.DataSnapshot): string 
 }
 
 /**
- * Returns the id of a Firestore snapshot across SDK versions.
+ * Method which calculates the distance, in kilometers, between two locations,
+ * via the Haversine formula. Note that this is approximate due to the fact that the
+ * Earth's radius varies between 6356.752 km and 6378.137 km.
  *
- * @param A Firestore snapshot.
- * @returns The Firestore snapshot's id.
+ * @param location1 The [latitude, longitude] pair of the first location.
+ * @param location2 The [latitude, longitude] pair of the second location.
+ * @returns The distance, in kilometers, between the inputted locations.
  */
-export function geoFirestoreGetKey(snapshot: firebase.firestore.DocumentSnapshot): string {
-  let id: string;
-  if (typeof snapshot.id === 'string' || snapshot.id === null) {
-    id = snapshot.id;
-  }
-  return id;
-}
+export function distance(location1: number[], location2: number[]): number {
+  validateLocation(location1);
+  validateLocation(location2);
 
-  /**
-   * Method which calculates the distance, in kilometers, between two locations,
-   * via the Haversine formula. Note that this is approximate due to the fact that the
-   * Earth's radius varies between 6356.752 km and 6378.137 km.
-   *
-   * @param location1 The [latitude, longitude] pair of the first location.
-   * @param location2 The [latitude, longitude] pair of the second location.
-   * @returns The distance, in kilometers, between the inputted locations.
-   */
-  export function distance(location1: number[], location2: number[]): number {
-    validateLocation(location1);
-    validateLocation(location2);
+  var radius = 6371; // Earth's radius in kilometers
+  var latDelta = degreesToRadians(location2[0] - location1[0]);
+  var lonDelta = degreesToRadians(location2[1] - location1[1]);
 
-    var radius = 6371; // Earth's radius in kilometers
-    var latDelta = degreesToRadians(location2[0] - location1[0]);
-    var lonDelta = degreesToRadians(location2[1] - location1[1]);
+  var a = (Math.sin(latDelta / 2) * Math.sin(latDelta / 2)) +
+    (Math.cos(degreesToRadians(location1[0])) * Math.cos(degreesToRadians(location2[0])) *
+      Math.sin(lonDelta / 2) * Math.sin(lonDelta / 2));
 
-    var a = (Math.sin(latDelta / 2) * Math.sin(latDelta / 2)) +
-      (Math.cos(degreesToRadians(location1[0])) * Math.cos(degreesToRadians(location2[0])) *
-        Math.sin(lonDelta / 2) * Math.sin(lonDelta / 2));
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return radius * c;
-  };
+  return radius * c;
+};

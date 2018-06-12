@@ -19,8 +19,7 @@
     "realtime",
     "geolocation"
   ],
-  "main": "dist/index.node.cjs.js",
-  "browser": "dist/index.cjs.js",
+  "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
   "files": [

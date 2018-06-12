@@ -69,6 +69,7 @@ describe('geoFireUtils Tests:', () => {
 
     it('validateCriteria(criteria, true) throws errors given invalid query criteria', () => {
       invalidQueryCriterias.forEach((invalidQueryCriteria) => {
+        // @ts-ignore
         expect(() => validateCriteria(invalidQueryCriteria, true)).to.throw();
       });
       expect(() => validateCriteria({ center: [0, 0] }, true)).to.throw();
@@ -77,6 +78,7 @@ describe('geoFireUtils Tests:', () => {
 
     it('validateCriteria(criteria) throws errors given invalid query criteria', () => {
       invalidQueryCriterias.forEach((invalidQueryCriteria) => {
+        // @ts-ignore
         expect(() => validateCriteria(invalidQueryCriteria)).to.throw();
       });
     });

@@ -19,10 +19,6 @@ const external = Object.keys(pkg.dependencies || {});
 const completeBuilds = [{
     input: 'src/index.ts',
     output: [{
-        file: pkg.browser,
-        format: 'cjs'
-      },
-      {
         file: pkg.main,
         format: 'cjs'
       },
