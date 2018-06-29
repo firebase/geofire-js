@@ -1,4 +1,6 @@
 dist/
 node_modules/
-bower_components/
-tests/coverage/
+coverage/
+.DS_Store
+.nyc_output/
+.rpt2_cache
