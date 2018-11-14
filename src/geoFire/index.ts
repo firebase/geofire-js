@@ -60,7 +60,7 @@ export class GeoFire {
   public get(key: string): Promise<number[]> {
     validateKey(key);
     return this._firebaseRef.child(key).once('value').then((dataSnapshot: firebase.database.DataSnapshot) => {
-      const snapshotVal = dataSnapshot.val();
+      const snapshotVal: any = dataSnapshot.val();
       if (snapshotVal === null) {
         return null;
       } else {
@@ -101,7 +101,7 @@ export class GeoFire {
    * @returns A promise that is fulfilled when the write is complete.
    */
   public set(keyOrLocations: string | any, location?: number[]): Promise<any> {
-    let locations;
+    let locations: any;
     if (typeof keyOrLocations === 'string' && keyOrLocations.length !== 0) {
       // If this is a set for a single location, convert it into a object
       locations = {};
