@@ -84,7 +84,7 @@ export class GeoQuery {
 
     // Turn off the current geohashes queried clean up interval
     clearInterval(this._cleanUpCurrentGeohashesQueriedInterval);
-  };
+  }
 
   /**
    * Returns the location signifying the center of this query.
@@ -93,7 +93,7 @@ export class GeoQuery {
    */
   public center(): number[] {
     return this._center;
-  };
+  }
 
   /**
    * Attaches a callback to this query which will be run when the provided eventType fires. Valid eventType
@@ -124,7 +124,7 @@ export class GeoQuery {
    * @param callback Callback function to be called when an event of type eventType fires.
    * @returns A callback registration which can be used to cancel the provided callback.
    */
-  public on(eventType: string, callback: Function): GeoCallbackRegistration {
+  public on(eventType: string, callback: (key?: string, location?: number[], distanceFromCenter?: number) => void): GeoCallbackRegistration {
     // Validate the inputs
     if (['ready', 'key_entered', 'key_exited', 'key_moved'].indexOf(eventType) === -1) {
       throw new Error('event type must be \'ready\', \'key_entered\', \'key_exited\', or \'key_moved\'');
@@ -156,7 +156,7 @@ export class GeoQuery {
     return new GeoCallbackRegistration(() => {
       this._callbacks[eventType].splice(this._callbacks[eventType].indexOf(callback), 1);
     });
-  };
+  }
 
   /**
    * Returns the radius of this query, in kilometers.
@@ -165,7 +165,7 @@ export class GeoQuery {
    */
   public radius(): number {
     return this._radius;
-  };
+  }
 
   /**
    * Updates the criteria for this query.
@@ -209,7 +209,7 @@ export class GeoQuery {
 
     // Listen for new geohashes being added to GeoFire and fire the appropriate events
     this._listenForNewGeohashes();
-  };
+  }
 
 
   /*********************/
@@ -430,9 +430,9 @@ export class GeoQuery {
       this._currentGeohashesQueried[toQueryStr] = {
         active: true,
         childAddedCallback,
-        childRemovedCallback,
         childChangedCallback,
-        valueCallback
+        childRemovedCallback,
+        valueCallback,
       };
     });
     // Based upon the algorithm to calculate geohashes, it's possible that no 'new'
@@ -499,20 +499,19 @@ export class GeoQuery {
   private _updateLocation(key: string, location?: number[]): void {
     validateLocation(location);
     // Get the key and location
-    let distanceFromCenter: number, isInQuery;
     const wasInQuery: boolean = (key in this._locationsTracked) ? this._locationsTracked[key].isInQuery : false;
     const oldLocation: number[] = (key in this._locationsTracked) ? this._locationsTracked[key].location : null;
 
     // Determine if the location is within this query
-    distanceFromCenter = distance(location, this._center);
-    isInQuery = (distanceFromCenter <= this._radius);
+    const distanceFromCenter: number = distance(location, this._center);
+    const isInQuery: boolean = (distanceFromCenter <= this._radius);
 
     // Add this location to the locations queried dictionary even if it is not within this query
     this._locationsTracked[key] = {
-      location,
       distanceFromCenter,
+      geohash: encodeGeohash(location),
       isInQuery,
-      geohash: encodeGeohash(location)
+      location,
     };
 
     // Fire the 'key_entered' event if the provided key has entered this query

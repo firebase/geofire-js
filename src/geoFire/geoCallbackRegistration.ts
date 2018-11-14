@@ -5,7 +5,7 @@ export class GeoCallbackRegistration {
   /**
    * @param _cancelCallback Callback to run when this callback registration is cancelled.
    */
-  constructor(private _cancelCallback: Function) {
+  constructor(private _cancelCallback: () => void) {
     if (Object.prototype.toString.call(this._cancelCallback) !== '[object Function]') {
       throw new Error('callback must be a function');
     }

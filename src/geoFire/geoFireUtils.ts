@@ -33,16 +33,18 @@ export const g_E2: number = 0.00669447819799;
 // Cutoff for rounding errors on double calculations
 export const g_EPSILON: number = 1e-12;
 
-Math.log2 = Math.log2 || function (x) {
-  return Math.log(x) / Math.log(2);
-};
+if (!Math.log2) {
+  Math.log2 = (x: number): number => {
+    return Math.log(x) / Math.log(2);
+  };
+}
 
 /**
  * Validates the inputted key and throws an error if it is invalid.
  *
  * @param key The key to be verified.
  */
-export function validateKey(key: string): void {
+export const validateKey = (key: string): void => {
   let error: string;
 
   if (typeof key !== 'string') {
@@ -68,7 +70,7 @@ export function validateKey(key: string): void {
  *
  * @param location The [latitude, longitude] pair to be verified.
  */
-export function validateLocation(location: number[]): void {
+export const validateLocation = (location: number[]): void => {
   let error: string;
 
   if (!Array.isArray(location)) {
@@ -100,7 +102,7 @@ export function validateLocation(location: number[]): void {
  *
  * @param geohash The geohash to be validated.
  */
-export function validateGeohash(geohash: string): void {
+export const validateGeohash = (geohash: string): void => {
   let error;
 
   if (typeof geohash !== 'string') {
@@ -126,7 +128,7 @@ export function validateGeohash(geohash: string): void {
  * @param newQueryCriteria The criteria which specifies the query's center and/or radius.
  * @param requireCenterAndRadius The criteria which center and radius required.
  */
-export function validateCriteria(newQueryCriteria: QueryCriteria, requireCenterAndRadius: boolean = false): void {
+export const validateCriteria = (newQueryCriteria: QueryCriteria, requireCenterAndRadius: boolean = false): void => {
   if (typeof newQueryCriteria !== 'object') {
     throw new Error('query criteria must be an object');
   } else if (typeof newQueryCriteria.center === 'undefined' && typeof newQueryCriteria.radius === 'undefined') {
@@ -170,7 +172,7 @@ export function degreesToRadians(degrees: number): number {
   }
 
   return (degrees * Math.PI / 180);
-};
+}
 
 /**
  * Generates a geohash of the specified precision/string length from the  [latitude, longitude]
@@ -196,22 +198,22 @@ export function encodeGeohash(location: number[], precision: number = g_GEOHASH_
   }
 
   const latitudeRange = {
+    max: 90,
     min: -90,
-    max: 90
   };
   const longitudeRange = {
+    max: 180,
     min: -180,
-    max: 180
   };
   let hash: string = '';
-  let hashVal = 0;
+  let hashVal: number = 0;
   let bits: number = 0;
   let even: number | boolean = 1;
 
   while (hash.length < precision) {
-    const val = even ? location[1] : location[0];
+    const val: number = even ? location[1] : location[0];
     const range = even ? longitudeRange : latitudeRange;
-    const mid = (range.min + range.max) / 2;
+    const mid: number = (range.min + range.max) / 2;
 
     if (val > mid) {
       hashVal = (hashVal << 1) + 1;
@@ -232,7 +234,7 @@ export function encodeGeohash(location: number[], precision: number = g_GEOHASH_
   }
 
   return hash;
-};
+}
 
 /**
  * Calculates the number of degrees a given distance is at a given latitude.
@@ -241,6 +243,7 @@ export function encodeGeohash(location: number[], precision: number = g_GEOHASH_
  * @param latitude The latitude at which to calculate.
  * @returns The number of degrees the distance corresponds to.
  */
+// tslint:disable-next-line: no-shadowed-variable
 export function metersToLongitudeDegrees(distance: number, latitude: number): number {
   const radians = degreesToRadians(latitude);
   const num = Math.cos(radians) * g_EARTH_EQ_RADIUS * Math.PI / 180;
@@ -248,11 +251,10 @@ export function metersToLongitudeDegrees(distance: number, latitude: number): nu
   const deltaDeg = num * denom;
   if (deltaDeg < g_EPSILON) {
     return distance > 0 ? 360 : 0;
-  }
-  else {
+  } else {
     return Math.min(360, distance / deltaDeg);
   }
-};
+}
 
 /**
  * Calculates the bits necessary to reach a given resolution, in meters, for the longitude at a
@@ -265,7 +267,7 @@ export function metersToLongitudeDegrees(distance: number, latitude: number): nu
 export function longitudeBitsForResolution(resolution: number, latitude: number): number {
   const degs = metersToLongitudeDegrees(resolution, latitude);
   return (Math.abs(degs) > 0.000001) ? Math.max(1, Math.log2(360 / degs)) : 1;
-};
+}
 
 /**
  * Calculates the bits necessary to reach a given resolution, in meters, for the latitude.
@@ -275,7 +277,7 @@ export function longitudeBitsForResolution(resolution: number, latitude: number)
  */
 export function latitudeBitsForResolution(resolution: number): number {
   return Math.min(Math.log2(g_EARTH_MERI_CIRCUMFERENCE / 2 / resolution), g_MAXIMUM_BITS_PRECISION);
-};
+}
 
 /**
  * Wraps the longitude to [-180,180].
@@ -290,11 +292,10 @@ export function wrapLongitude(longitude: number): number {
   const adjusted = longitude + 180;
   if (adjusted > 0) {
     return (adjusted % 360) - 180;
-  }
-  else {
+  } else {
     return 180 - (-adjusted % 360);
   }
-};
+}
 
 /**
  * Calculates the maximum number of bits of a geohash to get a bounding box that is larger than a
@@ -312,7 +313,7 @@ export function boundingBoxBits(coordinate: number[], size: number): number {
   const bitsLongNorth = Math.floor(longitudeBitsForResolution(size, latitudeNorth)) * 2 - 1;
   const bitsLongSouth = Math.floor(longitudeBitsForResolution(size, latitudeSouth)) * 2 - 1;
   return Math.min(bitsLat, bitsLongNorth, bitsLongSouth, g_MAXIMUM_BITS_PRECISION);
-};
+}
 
 /**
  * Calculates eight points on the bounding box and the center of a given circle. At least one
@@ -339,9 +340,9 @@ export function boundingBoxCoordinates(center: number[], radius: number): number
     [latitudeNorth, wrapLongitude(center[1] + longDegs)],
     [latitudeSouth, center[1]],
     [latitudeSouth, wrapLongitude(center[1] - longDegs)],
-    [latitudeSouth, wrapLongitude(center[1] + longDegs)]
+    [latitudeSouth, wrapLongitude(center[1] + longDegs)],
   ];
-};
+}
 
 /**
  * Calculates the bounding box query for a geohash with x bits precision.
@@ -369,7 +370,7 @@ export function geohashQuery(geohash: string, bits: number): string[] {
   } else {
     return [base + g_BASE32[startValue], base + g_BASE32[endValue]];
   }
-};
+}
 
 /**
  * Calculates a set of queries to fully contain a given circle. A query is a [start, end] pair
@@ -381,19 +382,19 @@ export function geohashQuery(geohash: string, bits: number): string[] {
  */
 export function geohashQueries(center: number[], radius: number): string[][] {
   validateLocation(center);
-  const queryBits = Math.max(1, boundingBoxBits(center, radius));
-  const geohashPrecision = Math.ceil(queryBits / g_BITS_PER_CHAR);
-  const coordinates = boundingBoxCoordinates(center, radius);
-  const queries = coordinates.map(function (coordinate) {
+  const queryBits: number = Math.max(1, boundingBoxBits(center, radius));
+  const geohashPrecision: number = Math.ceil(queryBits / g_BITS_PER_CHAR);
+  const coordinates: number[][] = boundingBoxCoordinates(center, radius);
+  const queries: string[][] = coordinates.map((coordinate: number[]): string[] => {
     return geohashQuery(encodeGeohash(coordinate, geohashPrecision), queryBits);
   });
   // remove duplicates
-  return queries.filter(function (query, index) {
-    return !queries.some(function (other, otherIndex) {
+  return queries.filter((query: string[], index: number): boolean => {
+    return !queries.some((other: string[], otherIndex: number): boolean => {
       return index > otherIndex && query[0] === other[0] && query[1] === other[1];
     });
   });
-};
+}
 
 /**
  * Encodes a location and geohash as a GeoFire object.
@@ -456,15 +457,15 @@ export function distance(location1: number[], location2: number[]): number {
   validateLocation(location1);
   validateLocation(location2);
 
-  var radius = 6371; // Earth's radius in kilometers
-  var latDelta = degreesToRadians(location2[0] - location1[0]);
-  var lonDelta = degreesToRadians(location2[1] - location1[1]);
+  const radius = 6371; // Earth's radius in kilometers
+  const latDelta = degreesToRadians(location2[0] - location1[0]);
+  const lonDelta = degreesToRadians(location2[1] - location1[1]);
 
-  var a = (Math.sin(latDelta / 2) * Math.sin(latDelta / 2)) +
+  const a = (Math.sin(latDelta / 2) * Math.sin(latDelta / 2)) +
     (Math.cos(degreesToRadians(location1[0])) * Math.cos(degreesToRadians(location2[0])) *
       Math.sin(lonDelta / 2) * Math.sin(lonDelta / 2));
 
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return radius * c;
-};
+}
