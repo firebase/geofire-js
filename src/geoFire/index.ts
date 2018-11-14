@@ -12,8 +12,8 @@
 
 import * as firebase from 'firebase';
 
+import { decodeGeoFireObject, distance, encodeGeoFireObject, encodeGeohash, validateKey, validateLocation } from './geoFireUtils';
 import { GeoQuery } from './geoQuery';
-import { decodeGeoFireObject, distance, encodeGeoFireObject, encodeGeohash, validateLocation, validateKey } from './geoFireUtils';
 
 import { QueryCriteria } from './interfaces';
 
@@ -21,6 +21,22 @@ import { QueryCriteria } from './interfaces';
  * Creates a GeoFire instance.
  */
 export class GeoFire {
+  /********************/
+  /*  STATIC METHODS  */
+  /********************/
+  /**
+   * Static method which calculates the distance, in kilometers, between two locations,
+   * via the Haversine formula. Note that this is approximate due to the fact that the
+   * Earth's radius varies between 6356.752 km and 6378.137 km.
+   *
+   * @param location1 The [latitude, longitude] pair of the first location.
+   * @param location2 The [latitude, longitude] pair of the second location.
+   * @returns The distance, in kilometers, between the inputted locations.
+   */
+  public static distance(location1: number[], location2: number[]): number {
+    return distance(location1, location2);
+  }
+
   /**
    * @param _firebaseRef A Firebase reference where the GeoFire data will be stored.
    */
@@ -44,14 +60,14 @@ export class GeoFire {
   public get(key: string): Promise<number[]> {
     validateKey(key);
     return this._firebaseRef.child(key).once('value').then((dataSnapshot: firebase.database.DataSnapshot) => {
-      const snapshotVal = dataSnapshot.val();
+      const snapshotVal: any = dataSnapshot.val();
       if (snapshotVal === null) {
         return null;
       } else {
         return decodeGeoFireObject(snapshotVal);
       }
     });
-  };
+  }
 
   /**
    * Returns the Firebase instance used to create this GeoFire instance.
@@ -60,7 +76,7 @@ export class GeoFire {
    */
   public ref(): firebase.database.Reference {
     return this._firebaseRef;
-  };
+  }
 
   /**
    * Removes the provided key from this GeoFire. Returns an empty promise fulfilled when the key has been removed.
@@ -72,7 +88,7 @@ export class GeoFire {
    */
   public remove(key: string): Promise<string> {
     return this.set(key, null);
-  };
+  }
 
   /**
    * Adds the provided key - location pair(s) to Firebase. Returns an empty promise which is fulfilled when the write is complete.
@@ -85,7 +101,7 @@ export class GeoFire {
    * @returns A promise that is fulfilled when the write is complete.
    */
   public set(keyOrLocations: string | any, location?: number[]): Promise<any> {
-    let locations;
+    let locations: any;
     if (typeof keyOrLocations === 'string' && keyOrLocations.length !== 0) {
       // If this is a set for a single location, convert it into a object
       locations = {};
@@ -104,20 +120,20 @@ export class GeoFire {
     Object.keys(locations).forEach((key) => {
       validateKey(key);
 
-      const location: number[] = locations[key];
-      if (location === null) {
+      const latLng: number[] = locations[key];
+      if (latLng === null) {
         // Setting location to null is valid since it will remove the key
         newData[key] = null;
       } else {
-        validateLocation(location);
+        validateLocation(latLng);
 
-        const geohash: string = encodeGeohash(location);
-        newData[key] = encodeGeoFireObject(location, geohash);
+        const geohash: string = encodeGeohash(latLng);
+        newData[key] = encodeGeoFireObject(latLng, geohash);
       }
     });
 
     return this._firebaseRef.update(newData);
-  };
+  }
 
   /**
    * Returns a new GeoQuery instance with the provided queryCriteria.
@@ -127,21 +143,6 @@ export class GeoFire {
    */
   public query(queryCriteria: QueryCriteria): GeoQuery {
     return new GeoQuery(this._firebaseRef, queryCriteria);
-  };
+  }
 
-  /********************/
-  /*  STATIC METHODS  */
-  /********************/
-  /**
-   * Static method which calculates the distance, in kilometers, between two locations,
-   * via the Haversine formula. Note that this is approximate due to the fact that the
-   * Earth's radius varies between 6356.752 km and 6378.137 km.
-   *
-   * @param location1 The [latitude, longitude] pair of the first location.
-   * @param location2 The [latitude, longitude] pair of the second location.
-   * @returns The distance, in kilometers, between the inputted locations.
-   */
-  static distance(location1: number[], location2: number[]): number {
-    return distance(location1, location2);
-  };
 }

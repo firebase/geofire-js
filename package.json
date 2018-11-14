@@ -56,7 +56,8 @@
     "build": "rollup -c",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "test": "nyc --reporter=html --reporter=text mocha",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "tslint": "npx tslint --project ."
   },
   "nyc": {
     "extension": [

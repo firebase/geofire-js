@@ -5,6 +5,7 @@ sudo: false
 install:
   - npm install
 script:
+  - npm run tslint
   - npm run test
 after_success:
   - npm run coverage
