@@ -1,8 +1,8 @@
+/* tslint:disable:max-line-length */
 import * as chai from 'chai';
 import * as firebase from 'firebase';
 
-import { GeoFire } from '../src/geoFire';
-import { GeoQuery } from '../src/geoFire/geoQuery';
+import { GeoFire, GeoQuery } from '../src';
 
 
 /*************/
@@ -52,8 +52,8 @@ export function beforeEachHelper(done) {
 /* Helper functions which runs after each Jasmine test has completed */
 export function afterEachHelper(done) {
   // Cancel each outstanding GeoQuery
-  geoQueries.forEach((GeoQuery) => {
-    GeoQuery.cancel();
+  geoQueries.forEach((geoQuery) => {
+    geoQuery.cancel();
   });
 
   geoFireRef.remove().then(() => {
@@ -80,17 +80,17 @@ export function getFirebaseData() {
   return geoFireRef.once('value').then((dataSnapshot: firebase.database.DataSnapshot) => {
     return dataSnapshot.exportVal();
   });
-};
+}
 
 /* Returns a promise which is fulfilled after the inputted number of milliseconds pass */
 export function wait(milliseconds) {
-  return new Promise(function (resolve) {
+  return new Promise((resolve) => {
     const timeout = window.setTimeout(() => {
       window.clearTimeout(timeout);
       resolve();
     }, milliseconds);
   });
-};
+}
 
 /* Keeps track of all the current asynchronous tasks being run */
 export function Checklist(items, expect, done) {
@@ -111,15 +111,15 @@ export function Checklist(items, expect, done) {
   };
 
   /* Returns the length of the events list */
-  this.length = function () {
+  this.length = () => {
     return eventsToComplete.length;
   };
 
   /* Returns true if the events list is empty */
-  this.isEmpty = function () {
+  this.isEmpty = () => {
     return (this.length() === 0);
   };
-};
+}
 
 /* Common error handler for use in .catch() statements of promises. This will
  * cause the test to fail, outputting the details of the exception. Otherwise, tests

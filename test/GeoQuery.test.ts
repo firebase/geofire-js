@@ -1,8 +1,9 @@
+/* tslint:disable:max-line-length */
 import * as chai from 'chai';
 
 import {
   afterEachHelper, beforeEachHelper, Checklist, failTestOnCaughtError, geoFire, geoQueries, invalidQueryCriterias, validQueryCriterias, wait
-} from '../common';
+} from './common';
 
 const expect = chai.expect;
 
@@ -325,7 +326,7 @@ describe('GeoQuery Tests:', () => {
 
       const setInvalidEventType = () => {
         geoQueries[0].on('invalid_event', () => { });
-      }
+      };
 
       expect(setInvalidEventType).to.throw();
     });
@@ -336,7 +337,7 @@ describe('GeoQuery Tests:', () => {
       const setInvalidCallback = () => {
         // @ts-ignore
         geoQueries[0].on('key_entered', 'non-function');
-      }
+      };
 
       expect(setInvalidCallback).to.throw();
     });
@@ -1302,7 +1303,7 @@ describe('GeoQuery Tests:', () => {
 
         return wait(100);
       }).then(() => {
-        cl.x('p3')
+        cl.x('p3');
 
         geoQueries[0].cancel();
 
@@ -1376,7 +1377,7 @@ describe('GeoQuery Tests:', () => {
 
         return wait(100);
       }).then(() => {
-        cl.x('p3')
+        cl.x('p3');
 
         geoQueries[0].cancel();
 
