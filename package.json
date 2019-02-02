@@ -27,6 +27,7 @@
     "geolocation"
   ],
   "main": "dist/index.cjs.js",
+  "browser": "dist/geofire.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
@@ -54,7 +55,6 @@
     "nyc": "^13.1.0",
     "rollup": "^1.1.2",
     "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-copy": "^0.2.3",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-typescript2": "^0.19.2",
     "rollup-plugin-uglify": "^6.0.2",
