@@ -27,7 +27,7 @@
     "geolocation"
   ],
   "main": "dist/index.cjs.js",
-  "browser": "dist/geofire.js",
+  "browser": "dist/geofire.min.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
   "files": [

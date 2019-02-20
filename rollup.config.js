@@ -36,6 +36,15 @@ const completeBuilds = [{
     },
     plugins: [...plugins, uglify()]
   },
+  {
+    input: 'src/index.ts',
+    output: {
+      file: 'dist/geofire.js',
+      format: 'umd',
+      name: GLOBAL_NAME
+    },
+    plugins: [...plugins]
+  }
 ];
 
 export default [...completeBuilds];
