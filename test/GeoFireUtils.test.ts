@@ -1,14 +1,14 @@
 import * as chai from 'chai';
 
-import { GeoFire } from '../../src/geoFire'; 
+import { GeoFire } from '../src/GeoFire'; 
 import {
-  boundingBoxBits, degreesToRadians, encodeGeohash, geohashQuery, geohashQueries, g_GEOHASH_PRECISION,
+  boundingBoxBits, degreesToRadians, encodeGeohash, geohashQuery, geohashQueries, GEOHASH_PRECISION,
   metersToLongitudeDegrees, validateCriteria, validateGeohash, validateKey, validateLocation, wrapLongitude
-} from '../../src/geoFire/geoFireUtils';
+} from '../src/utils';
 import {
   invalidGeohashes, invalidKeys, invalidLocations, invalidQueryCriterias,
   validGeohashes, validKeys, validLocations, validQueryCriterias
-} from '../common';
+} from './common';
 
 const expect = chai.expect;
 
@@ -147,16 +147,16 @@ describe('geoFireUtils Tests:', () => {
 
   describe('Geohashing:', () => {
     it('encodeGeohash() encodes locations to geohashes given no precision', () => {
-      expect(encodeGeohash([-90, -180])).to.be.equal('000000000000'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([90, 180])).to.be.equal('zzzzzzzzzzzz'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([-90, 180])).to.be.equal('pbpbpbpbpbpb'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([90, -180])).to.be.equal('bpbpbpbpbpbp'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([37.7853074, -122.4054274])).to.be.equal('9q8yywe56gcf'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([38.98719, -77.250783])).to.be.equal('dqcjf17sy6cp'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([29.3760648, 47.9818853])).to.be.equal('tj4p5gerfzqu'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([78.216667, 15.55])).to.be.equal('umghcygjj782'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([-54.933333, -67.616667])).to.be.equal('4qpzmren1kwb'.slice(0, g_GEOHASH_PRECISION));
-      expect(encodeGeohash([-54, -67])).to.be.equal('4w2kg3s54y7h'.slice(0, g_GEOHASH_PRECISION));
+      expect(encodeGeohash([-90, -180])).to.be.equal('000000000000'.slice(0, GEOHASH_PRECISION));
+      expect(encodeGeohash([90, 180])).to.be.equal('zzzzzzzzzzzz'.slice(0, GEOHASH_PRECISION));
+      expect(encodeGeohash([-90, 180])).to.be.equal('pbpbpbpbpbpb'.slice(0, GEOHASH_PRECISION));
+      expect(encodeGeohash([90, -180])).to.be.equal('bpbpbpbpbpbp'.slice(0, GEOHASH_PRECISION));
+      expect(encodeGeohash([37.7853074, -122.4054274])).to.be.equal('9q8yywe56gcf'.slice(0, GEOHASH_PRECISION));
+      expect(encodeGeohash([38.98719, -77.250783])).to.be.equal('dqcjf17sy6cp'.slice(0, GEOHASH_PRECISION));
+      expect(encodeGeohash([29.3760648, 47.9818853])).to.be.equal('tj4p5gerfzqu'.slice(0, GEOHASH_PRECISION));
+      expect(encodeGeohash([78.216667, 15.55])).to.be.equal('umghcygjj782'.slice(0, GEOHASH_PRECISION));
+      expect(encodeGeohash([-54.933333, -67.616667])).to.be.equal('4qpzmren1kwb'.slice(0, GEOHASH_PRECISION));
+      expect(encodeGeohash([-54, -67])).to.be.equal('4w2kg3s54y7h'.slice(0, GEOHASH_PRECISION));
     });
 
     it('encodeGeohash() encodes locations to geohashes given a custom precision', () => {
@@ -289,7 +289,7 @@ describe('geoFireUtils Tests:', () => {
           const pointLat = Math.max(-89.9, Math.min(89.9, centerLat + Math.random() * degreeRadius));
           const pointLong = wrapLongitude(centerLong + Math.random() * degreeRadius);
           if (GeoFire.distance([centerLat, centerLong], [pointLat, pointLong]) < radius / 1000) {
-            expect(inQuery(queries, encodeGeohash([pointLat, pointLong]))).to.be.true;
+            expect(inQuery(queries, encodeGeohash([pointLat, pointLong]))).to.be.equal(true);
           }
         }
       }

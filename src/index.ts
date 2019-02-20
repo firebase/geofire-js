@@ -1,4 +1,4 @@
-export { GeoCallbackRegistration } from './geoFire/geoCallbackRegistration';
-export { GeoFire } from './geoFire';
-export { GeoQuery } from './geoFire/geoQuery';
-export { GeoFireObj, QueryCriteria } from './geoFire/interfaces';
+export { GeoCallbackRegistration } from './GeoCallbackRegistration';
+export { GeoFire } from './GeoFire';
+export { GeoQuery } from './GeoQuery';
+export { GeoFireTypes } from './GeoFireTypes';

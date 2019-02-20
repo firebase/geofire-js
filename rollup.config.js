@@ -14,8 +14,6 @@ const plugins = [
   commonjs()
 ];
 
-const external = Object.keys(pkg.dependencies || {});
-
 const completeBuilds = [{
     input: 'src/index.ts',
     output: [{
@@ -27,13 +25,12 @@ const completeBuilds = [{
         format: 'es'
       }
     ],
-    plugins,
-    external
+    plugins
   },
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/geofire.js',
+      file: pkg.browser,
       format: 'umd',
       name: GLOBAL_NAME
     },

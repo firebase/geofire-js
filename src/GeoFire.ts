@@ -1,4 +1,4 @@
-/*!
+/**
  * GeoFire is an open-source library that allows you to store and query a set
  * of keys based on their geographic location. At its heart, GeoFire simply
  * stores locations with string keys. Its main benefit, however, is the
@@ -9,13 +9,9 @@
  * https://github.com/firebase/geofire-js/
  * License: MIT
  */
-
-import * as firebase from 'firebase';
-
-import { GeoQuery } from './geoQuery';
-import { decodeGeoFireObject, distance, encodeGeoFireObject, encodeGeohash, validateLocation, validateKey } from './geoFireUtils';
-
-import { QueryCriteria } from './interfaces';
+import { GeoQuery } from './GeoQuery';
+import { decodeGeoFireObject, distance, encodeGeoFireObject, encodeGeohash, validateLocation, validateKey } from './utils';
+import { GeoFireTypes } from './GeoFireTypes';
 
 /**
  * Creates a GeoFire instance.
@@ -24,7 +20,7 @@ export class GeoFire {
   /**
    * @param _firebaseRef A Firebase reference where the GeoFire data will be stored.
    */
-  constructor(private _firebaseRef: firebase.database.Reference) {
+  constructor(private _firebaseRef: GeoFireTypes.firebase.Reference) {
     if (Object.prototype.toString.call(this._firebaseRef) !== '[object Object]') {
       throw new Error('firebaseRef must be an instance of Firebase');
     }
@@ -43,7 +39,7 @@ export class GeoFire {
    */
   public get(key: string): Promise<number[]> {
     validateKey(key);
-    return this._firebaseRef.child(key).once('value').then((dataSnapshot: firebase.database.DataSnapshot) => {
+    return this._firebaseRef.child(key).once('value').then((dataSnapshot: GeoFireTypes.firebase.DataSnapshot) => {
       const snapshotVal = dataSnapshot.val();
       if (snapshotVal === null) {
         return null;
@@ -51,16 +47,16 @@ export class GeoFire {
         return decodeGeoFireObject(snapshotVal);
       }
     });
-  };
+  }
 
   /**
    * Returns the Firebase instance used to create this GeoFire instance.
    *
    * @returns The Firebase instance used to create this GeoFire instance.
    */
-  public ref(): firebase.database.Reference {
+  public ref(): GeoFireTypes.firebase.Reference {
     return this._firebaseRef;
-  };
+  }
 
   /**
    * Removes the provided key from this GeoFire. Returns an empty promise fulfilled when the key has been removed.
@@ -72,7 +68,7 @@ export class GeoFire {
    */
   public remove(key: string): Promise<string> {
     return this.set(key, null);
-  };
+  }
 
   /**
    * Adds the provided key - location pair(s) to Firebase. Returns an empty promise which is fulfilled when the write is complete.
@@ -117,7 +113,7 @@ export class GeoFire {
     });
 
     return this._firebaseRef.update(newData);
-  };
+  }
 
   /**
    * Returns a new GeoQuery instance with the provided queryCriteria.
@@ -125,9 +121,9 @@ export class GeoFire {
    * @param queryCriteria The criteria which specifies the GeoQuery's center and radius.
    * @return A new GeoQuery object.
    */
-  public query(queryCriteria: QueryCriteria): GeoQuery {
+  public query(queryCriteria: GeoFireTypes.QueryCriteria): GeoQuery {
     return new GeoQuery(this._firebaseRef, queryCriteria);
-  };
+  }
 
   /********************/
   /*  STATIC METHODS  */
@@ -141,7 +137,7 @@ export class GeoFire {
    * @param location2 The [latitude, longitude] pair of the second location.
    * @returns The distance, in kilometers, between the inputted locations.
    */
-  static distance(location1: number[], location2: number[]): number {
+  public static distance(location1: number[], location2: number[]): number {
     return distance(location1, location2);
-  };
+  }
 }

@@ -1,8 +1,8 @@
-import { GeoCallbackRegistration } from '../../src/geoFire/geoCallbackRegistration';
+import { GeoCallbackRegistration } from '../src';
 import {
   afterEachHelper, beforeEachHelper, Checklist,
   failTestOnCaughtError, geoFire, geoQueries, wait
-} from '../common';
+} from './common';
 
 import * as chai from 'chai';
 
@@ -22,8 +22,8 @@ describe('GeoFire GeoCallbackRegistration Tests:', () => {
     it('Constructor throws error given non-function', () => {
       const createCallbackRegistration = () => {
         // @ts-ignore 
-        new GeoCallbackRegistration('nonFunction');
-      }
+        return new GeoCallbackRegistration('nonFunction');
+      };
 
       expect(() => createCallbackRegistration()).to.throw(null, 'callback must be a function');
     });
@@ -62,7 +62,7 @@ describe('GeoFire GeoCallbackRegistration Tests:', () => {
         return wait(100);
       }).then(() => {
         cl.x('p5');
-      }).catch(failTestOnCaughtError);;
+      }).catch(failTestOnCaughtError);
     });
 
     it('\'key_entered\' registrations can be cancelled', (done) => {
