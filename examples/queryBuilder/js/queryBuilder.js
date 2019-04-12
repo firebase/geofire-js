@@ -9,7 +9,7 @@
   var firebaseRef = firebase.database().ref().push();
 
   // Create a new GeoFire instance at the random Firebase location
-  var geoFire = new GeoFire(firebaseRef);
+  var geoFireInstance = new geofire.GeoFire(firebaseRef);
   var geoQuery;
 
   $("#addfish").on("submit", function() {
@@ -17,7 +17,7 @@
     var lon = parseFloat($("#addlon").val());
     var myID = "fish-" + firebaseRef.push().key;
 
-    geoFire.set(myID, [lat, lon]).then(function() {
+    geoFireInstance.set(myID, [lat, lon]).then(function() {
       log(myID + ": setting position to [" + lat + "," + lon + "]");
     });
 
@@ -41,7 +41,7 @@
     } else {
       operation = "Creating";
 
-      geoQuery = geoFire.query({
+      geoQuery = geoFireInstance.query({
         center: [lat, lon],
         radius: radius
       });

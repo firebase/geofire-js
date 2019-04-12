@@ -9,7 +9,7 @@
   var firebaseRef = firebase.database().ref().push();
 
   // Create a new GeoFire instance at the random Firebase location
-  var geoFire = new GeoFire(firebaseRef);
+  var geoFireInstance = new geofire.GeoFire(firebaseRef);
 
   /* Uses the HTML5 geolocation API to get the current user's location */
   var getLocation = function() {
@@ -28,7 +28,7 @@
     log("Retrieved user's location: [" + latitude + ", " + longitude + "]");
 
     var username = "wesley";
-    geoFire.set(username, [latitude, longitude]).then(function() {
+    geoFireInstance.set(username, [latitude, longitude]).then(function() {
       log("Current user " + username + "'s location has been added to GeoFire");
 
       // When the user disconnects from Firebase (e.g. closes the app, exits the browser),
