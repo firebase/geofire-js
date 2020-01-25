@@ -9,7 +9,7 @@
   var firebaseRef = firebase.database().ref().push();
 
   // Create a new GeoFire instance at the random Firebase location
-  var geoFire = new GeoFire(firebaseRef);
+  var geoFireInstance = new geofire.GeoFire(firebaseRef);
 
   // Create the locations for each fish
   var fishLocations = [
@@ -20,7 +20,7 @@
   ];
 
   // Create a GeoQuery centered at fish2
-  var geoQuery = geoFire.query({
+  var geoQuery = geoFireInstance.query({
     center: fishLocations[2],
     radius: 3000
   });
@@ -47,7 +47,7 @@
   // Set the initial locations of the fish in GeoFire
   log("*** Setting initial locations ***");
   var promises = fishLocations.map(function(location, index) {
-    return geoFire.set("fish" + index, location);
+    return geoFireInstance.set("fish" + index, location);
   });
 
   // Once all the fish are in GeoFire, log a message that the user can now move fish around
@@ -83,7 +83,7 @@
       }
     };
 
-    geoFire.set(selectedFishKey, newLocations[selectedFishKey][selectedLocation]);
+    geoFireInstance.set(selectedFishKey, newLocations[selectedFishKey][selectedLocation]);
   });
 
   // Cancel the "key_moved" callback when the corresponding button is clicked

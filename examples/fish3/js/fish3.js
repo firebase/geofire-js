@@ -9,7 +9,7 @@
   var firebaseRef = firebase.database().ref().push();
 
   // Create a new GeoFire instance at the random Firebase location
-  var geoFire = new GeoFire(firebaseRef);
+  var geoFireInstance = new geofire.GeoFire(firebaseRef);
 
   // Create the locations for each fish
   var fishLocations = [
@@ -22,7 +22,7 @@
   // Set the initial locations of the fish in GeoFire
   log("*** Setting initial locations ***");
   var promises = fishLocations.map(function(location, index) {
-    return geoFire.set("fish" + index, location).then(function() {
+    return geoFireInstance.set("fish" + index, location).then(function() {
       log("fish" + index + " initially set to [" + location + "]");
     });
   });
@@ -31,7 +31,7 @@
   RSVP.allSettled(promises).then(function() {
     log("*** Creating GeoQuery ***");
     // Create a GeoQuery centered at fish2
-    var geoQuery = geoFire.query({
+    var geoQuery = geoFireInstance.query({
       center: fishLocations[2],
       radius: 3000
     });
