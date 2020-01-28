@@ -396,7 +396,9 @@ export class GeoQuery {
     // kick off a timeout to clean them up so we don't create an infinite number of unneeded queries.
     if (this._geohashCleanupScheduled === false && Object.keys(this._currentGeohashesQueried).length > 25) {
       this._geohashCleanupScheduled = true;
-      this._cleanUpCurrentGeohashesQueriedTimeout = setTimeout(this._cleanUpCurrentGeohashesQueried, 10);
+      this._cleanUpCurrentGeohashesQueriedTimeout = setTimeout(() => {
+        this._cleanUpCurrentGeohashesQueried();
+      }, 10);
     }
 
     // Keep track of which geohashes have been processed so we know when to fire the 'ready' event
