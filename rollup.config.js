@@ -44,6 +44,15 @@ const completeBuilds = [{
       name: GLOBAL_NAME
     },
     plugins: [...plugins]
+  },
+  {
+    input: 'src/utils.ts',
+    output: {
+      file: 'dist/geofire-utils.js',
+      format: 'umd',
+      name: pkg.utils
+    },
+    plugins: [...plugins]
   }
 ];
 

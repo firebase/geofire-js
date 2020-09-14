@@ -30,6 +30,7 @@
   "browser": "dist/geofire.min.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
+  "utils": "dist/geofire-utils.js",
   "files": [
     "dist/**",
     "LICENSE",
@@ -37,7 +38,8 @@
     "package.json"
   ],
   "dependencies": {
-    "@firebase/database-types": "0.x.x"
+    "@firebase/database-types": "0.x.x",
+    "@rollup/plugin-commonjs": "^15.0.0"
   },
   "peerDependencies": {
     "firebase": "^2.4.0 || 3.x.x || 4.x.x || 5.x.x"
