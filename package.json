@@ -26,11 +26,13 @@
     "realtime",
     "geolocation"
   ],
-  "main": "dist/index.cjs.js",
-  "browser": "dist/geofire.min.js",
-  "module": "dist/index.esm.js",
-  "typings": "dist/index.d.ts",
-  "utils": "dist/geofire-utils.js",
+  "main": "dist/geofire/index.cjs.js",
+  "index": "dist/geofire/index.js",
+  "browser": "dist/geofire/geofire.min.js",
+  "module": "dist/geofire/index.esm.js",
+  "typings": "dist/geofire/index.d.ts",
+  "utils": "dist/geofire-utils/geofire-utils.js",
+  "utils-min": "dist/geofire-utils/geofire-utils.min.js",
   "files": [
     "dist/**",
     "LICENSE",

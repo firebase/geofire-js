@@ -5,6 +5,7 @@ import { uglify } from 'rollup-plugin-uglify';
 import pkg from './package.json';
 
 const GLOBAL_NAME = 'geofire';
+const UTILS_NAME = 'geofire-utils';
 
 const plugins = [
   resolveModule(),
@@ -39,7 +40,7 @@ const completeBuilds = [{
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/geofire.js',
+      file: pkg.index,
       format: 'umd',
       name: GLOBAL_NAME
     },
@@ -48,11 +49,20 @@ const completeBuilds = [{
   {
     input: 'src/utils.ts',
     output: {
-      file: 'dist/geofire-utils.js',
+      file: pkg.utils,
       format: 'umd',
-      name: pkg.utils
+      name: UTILS_NAME
     },
     plugins: [...plugins]
+  },
+  {
+    input: 'src/utils.ts',
+    output: {
+      file: pkg["utils-min"],
+      format: 'umd',
+      name: UTILS_NAME
+    },
+    plugins: [...plugins, uglify()]
   }
 ];
 
