@@ -100,7 +100,7 @@ export function Checklist(items, expect, done) {
   this.x = function (item) {
     const index = eventsToComplete.indexOf(item);
     if (index === -1) {
-      expect('Attempting to delete unexpected item \'' + item + '\' from Checklist').toBeFalsy();
+      expect('Attempting to delete unexpected item \'' + item + '\' from Checklist').to.not.be.ok();
     }
     else {
       eventsToComplete.splice(index, 1);
