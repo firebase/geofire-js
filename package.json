@@ -38,8 +38,7 @@
     "package.json"
   ],
   "dependencies": {
-    "@firebase/database-types": "0.x.x",
-    "@rollup/plugin-commonjs": "^15.0.0"
+    "@firebase/database-types": "0.x.x"
   },
   "peerDependencies": {
     "firebase": "^2.4.0 || 3.x.x || 4.x.x || 5.x.x"
