@@ -4,7 +4,7 @@
   "version": "5.0.1",
   "scripts": {
     "build": "rollup -c",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "coverage": "nyc report --reporter=text-lcov > ./coverage/lcov.info",
     "lint": "tslint --project ./tslint.json 'src/**/*.ts'",
     "test": "nyc --reporter=html --reporter=text mocha",
     "prepare": "npm run build"
