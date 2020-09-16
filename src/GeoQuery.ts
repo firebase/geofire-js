@@ -4,7 +4,7 @@ import {
 } from './utils';
 import {
   decodeGeoFireObject, geoFireGetKey } from './databaseUtils';
-import { GeoFireTypes } from './GeoFireTypes';
+import * as GeoFireTypes from './GeoFireTypes';
 import * as DatabaseTypes from '@firebase/database-types';
 
 /**

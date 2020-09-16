@@ -13,7 +13,7 @@ import { GeoQuery } from './GeoQuery';
 import { distance, encodeGeohash, validateLocation, validateKey } from './utils';
 import { decodeGeoFireObject, encodeGeoFireObject } from './databaseUtils';
 
-import { GeoFireTypes } from './GeoFireTypes';
+import * as GeoFireTypes from './GeoFireTypes';
 import * as DatabaseTypes from '@firebase/database-types';
 
 /**

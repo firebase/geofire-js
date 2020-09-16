@@ -1,6 +1,6 @@
-import { GeoFireTypes } from './GeoFireTypes';
-import {validateLocation, validateGeohash, degreesToRadians } from './utils';
-import * as DatabaseTypes from '@firebase/database-types';
+import { Document } from './GeoFireTypes';
+import { validateLocation, validateGeohash } from './utils';
+import { DataSnapshot } from '@firebase/database-types';
 
 /**
  * Encodes a location and geohash as a GeoFire object.
@@ -9,7 +9,7 @@ import * as DatabaseTypes from '@firebase/database-types';
  * @param geohash The geohash of the location.
  * @returns The location encoded as GeoFire object.
  */
-export function encodeGeoFireObject(location: number[], geohash: string): GeoFireTypes.Document {
+export function encodeGeoFireObject(location: number[], geohash: string): Document {
   validateLocation(location);
   validateGeohash(geohash);
   return { '.priority': geohash, 'g': geohash, 'l': location };
@@ -21,7 +21,7 @@ export function encodeGeoFireObject(location: number[], geohash: string): GeoFir
  * @param geoFireObj The location encoded as GeoFire object.
  * @returns The location as [latitude, longitude] pair or null if decoding fails.
  */
-export function decodeGeoFireObject(geoFireObj: GeoFireTypes.Document): number[] {
+export function decodeGeoFireObject(geoFireObj: Document): number[] {
   if (geoFireObj && 'l' in geoFireObj && Array.isArray(geoFireObj.l) && geoFireObj.l.length === 2) {
     return geoFireObj.l;
   } else {
@@ -35,7 +35,7 @@ export function decodeGeoFireObject(geoFireObj: GeoFireTypes.Document): number[]
  * @param A Firebase snapshot.
  * @returns The Firebase snapshot's key.
  */
-export function geoFireGetKey(snapshot: DatabaseTypes.DataSnapshot): string {
+export function geoFireGetKey(snapshot: DataSnapshot): string {
   let key;
   if (typeof snapshot.key === 'string' || snapshot.key === null) {
     key = snapshot.key;

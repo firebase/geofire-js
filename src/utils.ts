@@ -1,4 +1,5 @@
-import { GeoFireTypes } from './GeoFireTypes';
+import { QueryCriteria } from './GeoFireTypes';
+
 
 // Default geohash length
 export const GEOHASH_PRECISION = 10;
@@ -124,7 +125,7 @@ export function validateGeohash(geohash: string): void {
  * @param newQueryCriteria The criteria which specifies the query's center and/or radius.
  * @param requireCenterAndRadius The criteria which center and radius required.
  */
-export function validateCriteria(newQueryCriteria: GeoFireTypes.QueryCriteria, requireCenterAndRadius = false): void {
+export function validateCriteria(newQueryCriteria: QueryCriteria, requireCenterAndRadius = false): void {
   if (typeof newQueryCriteria !== 'object') {
     throw new Error('query criteria must be an object');
   } else if (typeof newQueryCriteria.center === 'undefined' && typeof newQueryCriteria.radius === 'undefined') {
