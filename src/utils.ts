@@ -394,54 +394,6 @@ export function geohashQueries(center: number[], radius: number): string[][] {
 }
 
 /**
- * Encodes a location and geohash as a GeoFire object.
- *
- * @param location The location as [latitude, longitude] pair.
- * @param geohash The geohash of the location.
- * @returns The location encoded as GeoFire object.
- */
-export function encodeGeoFireObject(location: number[], geohash: string): GeoFireTypes.Document {
-  validateLocation(location);
-  validateGeohash(geohash);
-  return { '.priority': geohash, 'g': geohash, 'l': location };
-}
-
-/**
- * Decodes the location given as GeoFire object. Returns null if decoding fails.
- *
- * @param geoFireObj The location encoded as GeoFire object.
- * @returns The location as [latitude, longitude] pair or null if decoding fails.
- */
-export function decodeGeoFireObject(geoFireObj: GeoFireTypes.Document): number[] {
-  if (geoFireObj && 'l' in geoFireObj && Array.isArray(geoFireObj.l) && geoFireObj.l.length === 2) {
-    return geoFireObj.l;
-  } else {
-    throw new Error('Unexpected location object encountered: ' + JSON.stringify(geoFireObj));
-  }
-}
-
-/**
- * Returns the key of a Firebase snapshot across SDK versions.
- *
- * @param A Firebase snapshot.
- * @returns The Firebase snapshot's key.
- */
-export function geoFireGetKey(snapshot: GeoFireTypes.firebase.DataSnapshot): string {
-  let key;
-  if (typeof snapshot.key === 'string' || snapshot.key === null) {
-    key = snapshot.key;
-  } else if (typeof snapshot.key === 'function') {
-    // @ts-ignore
-    key = snapshot.key();
-  } else {
-    // @ts-ignore
-    key = snapshot.name();
-  }
-
-  return key;
-}
-
-/**
  * Method which calculates the distance, in kilometers, between two locations,
  * via the Haversine formula. Note that this is approximate due to the fact that the
  * Earth's radius varies between 6356.752 km and 6378.137 km.
