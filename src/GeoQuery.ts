@@ -1,11 +1,27 @@
 import { GeoCallbackRegistration } from './GeoCallbackRegistration';
 import {
-  distance, encodeGeohash, geohashQueries, validateCriteria, validateLocation
+  distance, encodeGeohash, geohashQueries, validateLocation
 } from './utils';
 import {
   decodeGeoFireObject, geoFireGetKey } from './databaseUtils';
 import * as GeoFireTypes from './GeoFireTypes';
 import * as DatabaseTypes from '@firebase/database-types';
+
+export interface QueryCriteria {
+  center?: number[];
+  radius?: number;
+}
+export type QueryStateCallback = (
+  a: DatabaseTypes.DataSnapshot | null,
+  b?: string
+) => any;
+export interface QueryState {
+  active: boolean;
+  childAddedCallback: QueryStateCallback;
+  childRemovedCallback: QueryStateCallback;
+  childChangedCallback: QueryStateCallback;
+  valueCallback: QueryStateCallback;
+}
 
 /**
  * Creates a GeoQuery instance.
@@ -17,7 +33,7 @@ export class GeoQuery {
   private _cancelled = false;
   private _center: number[];
   // A dictionary of geohash queries which currently have an active callbacks
-  private _currentGeohashesQueried: { [name: string]: GeoFireTypes.QueryState } = {};
+  private _currentGeohashesQueried: { [name: string]: QueryState } = {};
   // A dictionary of locations that a currently active in the queries
   // Note that not all of these are currently within this query
   private _locationsTracked: { [name: string]: GeoFireTypes.LocationTracked } = {};
@@ -35,7 +51,7 @@ export class GeoQuery {
    * @param _firebaseRef A Firebase reference where the GeoFire data will be stored.
    * @param queryCriteria The criteria which specifies the query's center and radius.
    */
-  constructor(private _firebaseRef: DatabaseTypes.Reference, queryCriteria: GeoFireTypes.QueryCriteria) {
+  constructor(private _firebaseRef: DatabaseTypes.Reference, queryCriteria: QueryCriteria) {
     // Firebase reference of the GeoFire which created this query
     if (Object.prototype.toString.call(this._firebaseRef) !== '[object Object]') {
       throw new Error('firebaseRef must be an instance of Firebase');
@@ -51,7 +67,7 @@ export class GeoQuery {
     }, 10000);
 
     // Validate and save the query criteria
-    validateCriteria(queryCriteria, true);
+    this.validateCriteria(queryCriteria, true);
     this._center = queryCriteria.center;
     this._radius = queryCriteria.radius;
 
@@ -62,6 +78,47 @@ export class GeoQuery {
   /********************/
   /*  PUBLIC METHODS  */
   /********************/
+
+  /**
+   * Validates the inputted query criteria and throws an error if it is invalid.
+   *
+   * @param newQueryCriteria The criteria which specifies the query's center and/or radius.
+   * @param requireCenterAndRadius The criteria which center and radius required.
+   */
+  public validateCriteria(newQueryCriteria: QueryCriteria, requireCenterAndRadius = false): void {
+    if (typeof newQueryCriteria !== 'object') {
+      throw new Error('query criteria must be an object');
+    } else if (typeof newQueryCriteria.center === 'undefined' && typeof newQueryCriteria.radius === 'undefined') {
+      throw new Error('radius and/or center must be specified');
+    } else if (requireCenterAndRadius && (typeof newQueryCriteria.center === 'undefined' || typeof newQueryCriteria.radius === 'undefined')) {
+      throw new Error('query criteria for a new query must contain both a center and a radius');
+    }
+
+    // Throw an error if there are any extraneous attributes
+    const keys: string[] = Object.keys(newQueryCriteria);
+    for (const key of keys) {
+      if (key !== 'center' && key !== 'radius') {
+        throw new Error('Unexpected attribute \'' + key + '\' found in query criteria');
+      }
+    }
+
+    // Validate the 'center' attribute
+    if (typeof newQueryCriteria.center !== 'undefined') {
+      validateLocation(newQueryCriteria.center);
+    }
+
+    // Validate the 'radius' attribute
+    if (typeof newQueryCriteria.radius !== 'undefined') {
+      if (typeof newQueryCriteria.radius !== 'number' || isNaN(newQueryCriteria.radius)) {
+        throw new Error('radius must be a number');
+      } else if (newQueryCriteria.radius < 0) {
+        throw new Error('radius must be greater than or equal to 0');
+      }
+    }
+  }
+
+
+
   /**
    * Terminates this query so that it no longer sends location updates. All callbacks attached to this
    * query via on() will be cancelled. This query can no longer be used in the future.
@@ -174,9 +231,9 @@ export class GeoQuery {
    *
    * @param newQueryCriteria The criteria which specifies the query's center and radius.
    */
-  public updateCriteria(newQueryCriteria: GeoFireTypes.QueryCriteria): void {
+  public updateCriteria(newQueryCriteria: QueryCriteria): void {
     // Validate and save the new query criteria
-    validateCriteria(newQueryCriteria);
+    this.validateCriteria(newQueryCriteria);
     this._center = newQueryCriteria.center || this._center;
     this._radius = newQueryCriteria.radius || this._radius;
 
@@ -223,7 +280,7 @@ export class GeoQuery {
    * @param query The geohash query.
    * @param queryState An object storing the current state of the query.
    */
-  private _cancelGeohashQuery(query: string[], queryState: GeoFireTypes.QueryState): void {
+  private _cancelGeohashQuery(query: string[], queryState: QueryState): void {
     const queryRef = this._firebaseRef.orderByChild('g').startAt(query[0]).endAt(query[1]);
     queryRef.off('child_added', queryState.childAddedCallback);
     queryRef.off('child_removed', queryState.childRemovedCallback);

@@ -9,7 +9,7 @@
  * https://github.com/firebase/geofire-js/
  * License: MIT
  */
-import { GeoQuery } from './GeoQuery';
+import { GeoQuery, QueryCriteria } from './GeoQuery';
 import { distance, encodeGeohash, validateLocation, validateKey } from './utils';
 import { decodeGeoFireObject, encodeGeoFireObject } from './databaseUtils';
 
@@ -124,7 +124,7 @@ export class GeoFire {
    * @param queryCriteria The criteria which specifies the GeoQuery's center and radius.
    * @return A new GeoQuery object.
    */
-  public query(queryCriteria: GeoFireTypes.QueryCriteria): GeoQuery {
+  public query(queryCriteria: QueryCriteria): GeoQuery {
     return new GeoQuery(this._firebaseRef, queryCriteria);
   }
 

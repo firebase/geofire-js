@@ -1,6 +1,3 @@
-import { QueryCriteria } from './GeoFireTypes';
-
-
 // Default geohash length
 export const GEOHASH_PRECISION = 10;
 
@@ -116,44 +113,6 @@ export function validateGeohash(geohash: string): void {
 
   if (typeof error !== 'undefined') {
     throw new Error('Invalid GeoFire geohash \'' + geohash + '\': ' + error);
-  }
-}
-
-/**
- * Validates the inputted query criteria and throws an error if it is invalid.
- *
- * @param newQueryCriteria The criteria which specifies the query's center and/or radius.
- * @param requireCenterAndRadius The criteria which center and radius required.
- */
-export function validateCriteria(newQueryCriteria: QueryCriteria, requireCenterAndRadius = false): void {
-  if (typeof newQueryCriteria !== 'object') {
-    throw new Error('query criteria must be an object');
-  } else if (typeof newQueryCriteria.center === 'undefined' && typeof newQueryCriteria.radius === 'undefined') {
-    throw new Error('radius and/or center must be specified');
-  } else if (requireCenterAndRadius && (typeof newQueryCriteria.center === 'undefined' || typeof newQueryCriteria.radius === 'undefined')) {
-    throw new Error('query criteria for a new query must contain both a center and a radius');
-  }
-
-  // Throw an error if there are any extraneous attributes
-  const keys: string[] = Object.keys(newQueryCriteria);
-  for (const key of keys) {
-    if (key !== 'center' && key !== 'radius') {
-      throw new Error('Unexpected attribute \'' + key + '\' found in query criteria');
-    }
-  }
-
-  // Validate the 'center' attribute
-  if (typeof newQueryCriteria.center !== 'undefined') {
-    validateLocation(newQueryCriteria.center);
-  }
-
-  // Validate the 'radius' attribute
-  if (typeof newQueryCriteria.radius !== 'undefined') {
-    if (typeof newQueryCriteria.radius !== 'number' || isNaN(newQueryCriteria.radius)) {
-      throw new Error('radius must be a number');
-    } else if (newQueryCriteria.radius < 0) {
-      throw new Error('radius must be greater than or equal to 0');
-    }
   }
 }
 

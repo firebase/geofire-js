@@ -24,18 +24,3 @@ export interface QueryCallbacks {
   key_exited: KeyCallback[];
   key_moved: KeyCallback[];
 }
-export interface QueryCriteria {
-  center?: number[];
-  radius?: number;
-}
-export type QueryStateCallback = (
-  a: DataSnapshot | null,
-  b?: string
-) => any;
-export interface QueryState {
-  active: boolean;
-  childAddedCallback: QueryStateCallback;
-  childRemovedCallback: QueryStateCallback;
-  childChangedCallback: QueryStateCallback;
-  valueCallback: QueryStateCallback;
-}
