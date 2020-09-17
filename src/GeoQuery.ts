@@ -22,6 +22,43 @@ export interface QueryState {
   childChangedCallback: QueryStateCallback;
   valueCallback: QueryStateCallback;
 }
+/**
+ * Validates the inputted query criteria and throws an error if it is invalid.
+ *
+ * @param newQueryCriteria The criteria which specifies the query's center and/or radius.
+ * @param requireCenterAndRadius The criteria which center and radius required.
+ */
+export function validateCriteria(newQueryCriteria: QueryCriteria, requireCenterAndRadius = false): void {
+  if (typeof newQueryCriteria !== 'object') {
+    throw new Error('query criteria must be an object');
+  } else if (typeof newQueryCriteria.center === 'undefined' && typeof newQueryCriteria.radius === 'undefined') {
+    throw new Error('radius and/or center must be specified');
+  } else if (requireCenterAndRadius && (typeof newQueryCriteria.center === 'undefined' || typeof newQueryCriteria.radius === 'undefined')) {
+    throw new Error('query criteria for a new query must contain both a center and a radius');
+  }
+
+  // Throw an error if there are any extraneous attributes
+  const keys: string[] = Object.keys(newQueryCriteria);
+  for (const key of keys) {
+    if (key !== 'center' && key !== 'radius') {
+      throw new Error('Unexpected attribute \'' + key + '\' found in query criteria');
+    }
+  }
+
+  // Validate the 'center' attribute
+  if (typeof newQueryCriteria.center !== 'undefined') {
+    validateLocation(newQueryCriteria.center);
+  }
+
+  // Validate the 'radius' attribute
+  if (typeof newQueryCriteria.radius !== 'undefined') {
+    if (typeof newQueryCriteria.radius !== 'number' || isNaN(newQueryCriteria.radius)) {
+      throw new Error('radius must be a number');
+    } else if (newQueryCriteria.radius < 0) {
+      throw new Error('radius must be greater than or equal to 0');
+    }
+  }
+}
 
 /**
  * Creates a GeoQuery instance.
@@ -67,7 +104,7 @@ export class GeoQuery {
     }, 10000);
 
     // Validate and save the query criteria
-    this.validateCriteria(queryCriteria, true);
+    validateCriteria(queryCriteria, true);
     this._center = queryCriteria.center;
     this._radius = queryCriteria.radius;
 
@@ -78,47 +115,6 @@ export class GeoQuery {
   /********************/
   /*  PUBLIC METHODS  */
   /********************/
-
-  /**
-   * Validates the inputted query criteria and throws an error if it is invalid.
-   *
-   * @param newQueryCriteria The criteria which specifies the query's center and/or radius.
-   * @param requireCenterAndRadius The criteria which center and radius required.
-   */
-  public validateCriteria(newQueryCriteria: QueryCriteria, requireCenterAndRadius = false): void {
-    if (typeof newQueryCriteria !== 'object') {
-      throw new Error('query criteria must be an object');
-    } else if (typeof newQueryCriteria.center === 'undefined' && typeof newQueryCriteria.radius === 'undefined') {
-      throw new Error('radius and/or center must be specified');
-    } else if (requireCenterAndRadius && (typeof newQueryCriteria.center === 'undefined' || typeof newQueryCriteria.radius === 'undefined')) {
-      throw new Error('query criteria for a new query must contain both a center and a radius');
-    }
-
-    // Throw an error if there are any extraneous attributes
-    const keys: string[] = Object.keys(newQueryCriteria);
-    for (const key of keys) {
-      if (key !== 'center' && key !== 'radius') {
-        throw new Error('Unexpected attribute \'' + key + '\' found in query criteria');
-      }
-    }
-
-    // Validate the 'center' attribute
-    if (typeof newQueryCriteria.center !== 'undefined') {
-      validateLocation(newQueryCriteria.center);
-    }
-
-    // Validate the 'radius' attribute
-    if (typeof newQueryCriteria.radius !== 'undefined') {
-      if (typeof newQueryCriteria.radius !== 'number' || isNaN(newQueryCriteria.radius)) {
-        throw new Error('radius must be a number');
-      } else if (newQueryCriteria.radius < 0) {
-        throw new Error('radius must be greater than or equal to 0');
-      }
-    }
-  }
-
-
-
   /**
    * Terminates this query so that it no longer sends location updates. All callbacks attached to this
    * query via on() will be cancelled. This query can no longer be used in the future.
@@ -233,7 +229,7 @@ export class GeoQuery {
    */
   public updateCriteria(newQueryCriteria: QueryCriteria): void {
     // Validate and save the new query criteria
-    this.validateCriteria(newQueryCriteria);
+    validateCriteria(newQueryCriteria);
     this._center = newQueryCriteria.center || this._center;
     this._radius = newQueryCriteria.radius || this._radius;
 

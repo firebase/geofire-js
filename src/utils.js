@@ -149,7 +149,6 @@ function validateCriteria(newQueryCriteria, requireCenterAndRadius) {
         }
     }
 }
-exports.validateCriteria = validateCriteria;
 /**
  * Converts degrees to radians.
  *
