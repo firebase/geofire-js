@@ -10,7 +10,7 @@
  * License: MIT
  */
 import { GeoQuery, QueryCriteria } from './GeoQuery';
-import { distance, encodeGeohash, validateLocation, validateKey } from './utils';
+import { distance, encodeGeohash, validateLocation, validateKey } from 'geofire-common';
 import { decodeGeoFireObject, encodeGeoFireObject } from './databaseUtils';
 
 import * as GeoFireTypes from './GeoFireTypes';

@@ -1,5 +1,5 @@
 import { Document } from './GeoFireTypes';
-import { validateLocation, validateGeohash } from './utils';
+import { validateLocation, validateGeohash } from "geofire-common";
 import { DataSnapshot } from '@firebase/database-types';
 
 /**
