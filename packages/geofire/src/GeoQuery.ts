@@ -1,7 +1,7 @@
 import { GeoCallbackRegistration } from './GeoCallbackRegistration';
 import {
   distance, encodeGeohash, geohashQueries, validateLocation
-} from './utils';
+} from 'geofire-common';
 import {
   decodeGeoFireObject, geoFireGetKey } from './databaseUtils';
 import * as GeoFireTypes from './GeoFireTypes';
