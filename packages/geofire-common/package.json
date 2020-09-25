@@ -36,19 +36,12 @@
     "LICENSE",
     "package.json"
   ],
-  "dependencies": {
-    "@firebase/database-types": "0.x.x"
-  },
-  "peerDependencies": {
-    "firebase": "^2.4.0 || 3.x.x || 4.x.x || 5.x.x"
-  },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.21",
     "chai": "^4.2.0",
     "coveralls": "^3.0.2",
-    "firebase": "5.x.x",
     "jsdom": "^13.2.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^5.2.0",
