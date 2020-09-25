@@ -4,7 +4,7 @@ import { GeoFire } from '../src/GeoFire';
 import {
   boundingBoxBits, degreesToRadians, encodeGeohash, geohashQuery, geohashQueries, GEOHASH_PRECISION,
   metersToLongitudeDegrees, validateGeohash, validateKey, validateLocation, wrapLongitude
-} from '../src/utils';
+} from 'geofire-common';
 import { validateCriteria } from '../src/GeoQuery';
 import {
   invalidGeohashes, invalidKeys, invalidLocations, invalidQueryCriterias,
