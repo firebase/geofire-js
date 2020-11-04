@@ -1,78 +1,21 @@
 {
-  "name": "geofire",
-  "description": "Location-based querying and filtering using Firebase",
-  "version": "5.0.1",
+  "name": "geofire-wrapper",
+  "version": "0.0.0",
+  "description": "Monorepo for geofire",
+  "private": true,
   "scripts": {
-    "build": "rollup -c",
-    "coverage": "nyc report --reporter=text-lcov > ./coverage/lcov.info",
-    "lint": "tslint --project ./tslint.json 'src/**/*.ts'",
-    "test": "nyc --reporter=html --reporter=text mocha",
-    "prepare": "npm run build"
-  },
-  "author": "Firebase (https://firebase.google.com/)",
-  "homepage": "https://github.com/firebase/geofire-js/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/firebase/geofire-js.git"
-  },
-  "bugs": {
-    "url": "https://github.com/firebase/geofire-js/issues"
-  },
-  "license": "MIT",
-  "keywords": [
-    "geoquery",
-    "location",
-    "firebase",
-    "realtime",
-    "geolocation"
-  ],
-  "main": "dist/index.cjs.js",
-  "browser": "dist/geofire.min.js",
-  "module": "dist/index.esm.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist/**",
-    "LICENSE",
-    "README.md",
-    "package.json"
-  ],
-  "dependencies": {
-    "@firebase/database-types": "0.x.x"
-  },
-  "peerDependencies": {
-    "firebase": "^2.4.0 || 3.x.x || 4.x.x || 5.x.x"
+    "bootstrap": "lerna bootstrap",
+    "build": "lerna run build",
+    "lint": "lerna run lint",
+    "test": "lerna run test",
+    "coverage": "lerna run coverage"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.5",
-    "@types/node": "^10.12.21",
-    "chai": "^4.2.0",
-    "coveralls": "^3.0.2",
-    "firebase": "5.x.x",
-    "jsdom": "^13.2.0",
-    "jsdom-global": "^3.0.2",
-    "mocha": "^5.2.0",
-    "nyc": "^13.1.0",
-    "rollup": "^1.1.2",
-    "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-node-resolve": "^4.0.0",
-    "rollup-plugin-typescript2": "^0.19.2",
-    "rollup-plugin-uglify": "^6.0.2",
-    "source-map-support": "^0.5.10",
-    "ts-node": "^8.0.2",
-    "tslint": "^5.12.1",
-    "typescript": "3.x.x"
+    "lerna": "^3.22.1"
   },
-  "nyc": {
-    "extension": [
-      ".ts"
-    ],
-    "include": [
-      "src/**/*.ts"
-    ],
-    "reporter": [
-      "html"
-    ],
-    "all": true
-  }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/firebase/geofire-js.git"
+  },
+  "license": "MIT"
 }

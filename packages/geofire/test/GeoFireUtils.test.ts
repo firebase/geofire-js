@@ -3,8 +3,9 @@ import * as chai from 'chai';
 import { GeoFire } from '../src/GeoFire'; 
 import {
   boundingBoxBits, degreesToRadians, encodeGeohash, geohashQuery, geohashQueries, GEOHASH_PRECISION,
-  metersToLongitudeDegrees, validateCriteria, validateGeohash, validateKey, validateLocation, wrapLongitude
-} from '../src/utils';
+  metersToLongitudeDegrees, validateGeohash, validateKey, validateLocation, wrapLongitude
+} from 'geofire-common';
+import { validateCriteria } from '../src/GeoQuery';
 import {
   invalidGeohashes, invalidKeys, invalidLocations, invalidQueryCriterias,
   validGeohashes, validKeys, validLocations, validQueryCriterias
