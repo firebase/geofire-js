@@ -139,7 +139,7 @@ export function degreesToRadians(degrees: number): number {
  * global default is used.
  * @returns The geohash of the inputted location.
  */
-export function encodeGeohash(location: number[], precision: number = GEOHASH_PRECISION): string {
+export function getGeohashForLocation(location: number[], precision: number = GEOHASH_PRECISION): string {
   validateLocation(location);
   if (typeof precision !== 'undefined') {
     if (typeof precision !== 'number' || isNaN(precision)) {
@@ -330,12 +330,12 @@ export function geohashQuery(geohash: string, bits: number): string[] {
 }
 
 /**
- * Calculates a set of queries to fully contain a given circle. A query is a [start, end] pair
+ * Calculates a set of query bounds to fully contain a given circle, each being a [start, end] pair
  * where any geohash is guaranteed to be lexiographically larger then start and smaller than end.
  *
  * @param center The center given as [latitude, longitude] pair.
  * @param radius The radius of the circle.
- * @return An array of geohashes containing a [start, end] pair.
+ * @return An array of geohash query bounds, each containing a [start, end] pair.
  */
 export function geohashQueries(center: number[], radius: number): string[][] {
   validateLocation(center);
@@ -343,7 +343,7 @@ export function geohashQueries(center: number[], radius: number): string[][] {
   const geohashPrecision = Math.ceil(queryBits / BITS_PER_CHAR);
   const coordinates = boundingBoxCoordinates(center, radius);
   const queries = coordinates.map((coordinate) => {
-    return geohashQuery(encodeGeohash(coordinate, geohashPrecision), queryBits);
+    return geohashQuery(getGeohashForLocation(coordinate, geohashPrecision), queryBits);
   });
   // remove duplicates
   return queries.filter((query, index) => {
@@ -362,7 +362,7 @@ export function geohashQueries(center: number[], radius: number): string[][] {
  * @param location2 The [latitude, longitude] pair of the second location.
  * @returns The distance, in kilometers, between the inputted locations.
  */
-export function distance(location1: number[], location2: number[]): number {
+export function distanceBetween(location1: number[], location2: number[]): number {
   validateLocation(location1);
   validateLocation(location2);
 

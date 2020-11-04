@@ -18,7 +18,7 @@
  * [`GeoCallbackRegistration`](#geocallbackregistration)
    - [`cancel()`](#geocallbackregistrationcancel)
  * [Helper Methods](#helper-methods)
-   - [`GeoFire.distance(location1, location2)`](#geofiredistancelocation1-location2)
+   - [`distanceBetween((location1, location2)`](#geofiredistancelocation1-location2)
  * [Promises](#promises)
 
 
@@ -292,7 +292,7 @@ var onKeyExitedRegistration = geoQuery.on("key_exited", function(key, location, 
 
 ## Helper Methods
 
-### GeoFire.distance(location1, location2)
+### distanceBetween((location1, location2)
 
 Static helper method which returns the distance, in kilometers, between `location1` and `location2`.
 
@@ -302,7 +302,7 @@ Static helper method which returns the distance, in kilometers, between `locatio
 var location1 = [10.3, -55.3];
 var location2 = [-78.3, 105.6];
 
-var distance = GeoFire.distance(location1, location2);  // distance === 12378.536597423461
+var distance = distanceBetween((location1, location2);  // distance === 12378.536597423461
 ```
 
 

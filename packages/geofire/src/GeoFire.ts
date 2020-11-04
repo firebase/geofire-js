@@ -10,7 +10,7 @@
  * License: MIT
  */
 import { GeoQuery, QueryCriteria } from './GeoQuery';
-import { distance, encodeGeohash, validateLocation, validateKey } from 'geofire-common';
+import { distanceBetween, getGeohashForLocation, validateLocation, validateKey } from 'geofire-common';
 import { decodeGeoFireObject, encodeGeoFireObject } from './databaseUtils';
 
 import * as GeoFireTypes from './GeoFireTypes';
@@ -110,7 +110,7 @@ export class GeoFire {
       } else {
         validateLocation(location);
 
-        const geohash: string = encodeGeohash(location);
+        const geohash: string = getGeohashForLocation(location);
         newData[key] = encodeGeoFireObject(location, geohash);
       }
     });
@@ -126,21 +126,5 @@ export class GeoFire {
    */
   public query(queryCriteria: QueryCriteria): GeoQuery {
     return new GeoQuery(this._firebaseRef, queryCriteria);
-  }
-
-  /********************/
-  /*  STATIC METHODS  */
-  /********************/
-  /**
-   * Static method which calculates the distance, in kilometers, between two locations,
-   * via the Haversine formula. Note that this is approximate due to the fact that the
-   * Earth's radius varies between 6356.752 km and 6378.137 km.
-   *
-   * @param location1 The [latitude, longitude] pair of the first location.
-   * @param location2 The [latitude, longitude] pair of the second location.
-   * @returns The distance, in kilometers, between the inputted locations.
-   */
-  public static distance(location1: number[], location2: number[]): number {
-    return distance(location1, location2);
   }
 }

@@ -1,6 +1,6 @@
 import { GeoCallbackRegistration } from './GeoCallbackRegistration';
 import {
-  distance, encodeGeohash, geohashQueries, validateLocation
+  distanceBetween, getGeohashForLocation, geohashQueries, validateLocation
 } from 'geofire-common';
 import {
   decodeGeoFireObject, geoFireGetKey } from './databaseUtils';
@@ -247,7 +247,7 @@ export class GeoQuery {
       // Save if the location was already in the query
       const wasAlreadyInQuery = locationDict.isInQuery;
       // Update the location's distance to the new query center
-      locationDict.distanceFromCenter = distance(locationDict.location, this._center);
+      locationDict.distanceFromCenter = distanceBetween(locationDict.location, this._center);
       // Determine if the location is now in this query
       locationDict.isInQuery = (locationDict.distanceFromCenter <= this._radius);
       // If the location just left the query, fire the 'key_exited' callbacks
@@ -312,7 +312,7 @@ export class GeoQuery {
     if (key in this._locationsTracked) {
       this._firebaseRef.child(key).once('value', (snapshot: DatabaseTypes.DataSnapshot) => {
         const location: number[] = (snapshot.val() === null) ? null : decodeGeoFireObject(snapshot.val());
-        const geohash: string = (location !== null) ? encodeGeohash(location) : null;
+        const geohash: string = (location !== null) ? getGeohashForLocation(location) : null;
         // Only notify observers if key is not part of any other geohash query or this actually might not be
         // a key exited event, but a key moved or entered event. These events will be triggered by updates
         // to a different query
@@ -524,7 +524,7 @@ export class GeoQuery {
     const locationDict = this._locationsTracked[key];
     delete this._locationsTracked[key];
     if (typeof locationDict !== 'undefined' && locationDict.isInQuery) {
-      const distanceFromCenter: number = (currentLocation) ? distance(currentLocation, this._center) : null;
+      const distanceFromCenter: number = (currentLocation) ? distanceBetween(currentLocation, this._center) : null;
       this._fireCallbacksForKey('key_exited', key, currentLocation, distanceFromCenter);
     }
   }
@@ -561,7 +561,7 @@ export class GeoQuery {
     const oldLocation: number[] = (key in this._locationsTracked) ? this._locationsTracked[key].location : null;
 
     // Determine if the location is within this query
-    distanceFromCenter = distance(location, this._center);
+    distanceFromCenter = distanceBetween(location, this._center);
     isInQuery = (distanceFromCenter <= this._radius);
 
     // Add this location to the locations queried dictionary even if it is not within this query
@@ -569,7 +569,7 @@ export class GeoQuery {
       location,
       distanceFromCenter,
       isInQuery,
-      geohash: encodeGeohash(location)
+      geohash: getGeohashForLocation(location)
     };
 
     // Fire the 'key_entered' event if the provided key has entered this query
