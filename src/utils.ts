@@ -1,3 +1,5 @@
+import { GeoFireTypes } from './GeoFireTypes';
+
 // Default geohash length
 export const GEOHASH_PRECISION = 10;
 
@@ -113,6 +115,44 @@ export function validateGeohash(geohash: string): void {
 
   if (typeof error !== 'undefined') {
     throw new Error('Invalid GeoFire geohash \'' + geohash + '\': ' + error);
+  }
+}
+
+/**
+ * Validates the inputted query criteria and throws an error if it is invalid.
+ *
+ * @param newQueryCriteria The criteria which specifies the query's center and/or radius.
+ * @param requireCenterAndRadius The criteria which center and radius required.
+ */
+export function validateCriteria(newQueryCriteria: GeoFireTypes.QueryCriteria, requireCenterAndRadius = false): void {
+  if (typeof newQueryCriteria !== 'object') {
+    throw new Error('query criteria must be an object');
+  } else if (typeof newQueryCriteria.center === 'undefined' && typeof newQueryCriteria.radius === 'undefined') {
+    throw new Error('radius and/or center must be specified');
+  } else if (requireCenterAndRadius && (typeof newQueryCriteria.center === 'undefined' || typeof newQueryCriteria.radius === 'undefined')) {
+    throw new Error('query criteria for a new query must contain both a center and a radius');
+  }
+
+  // Throw an error if there are any extraneous attributes
+  const keys: string[] = Object.keys(newQueryCriteria);
+  for (const key of keys) {
+    if (key !== 'center' && key !== 'radius') {
+      throw new Error('Unexpected attribute \'' + key + '\' found in query criteria');
+    }
+  }
+
+  // Validate the 'center' attribute
+  if (typeof newQueryCriteria.center !== 'undefined') {
+    validateLocation(newQueryCriteria.center);
+  }
+
+  // Validate the 'radius' attribute
+  if (typeof newQueryCriteria.radius !== 'undefined') {
+    if (typeof newQueryCriteria.radius !== 'number' || isNaN(newQueryCriteria.radius)) {
+      throw new Error('radius must be a number');
+    } else if (newQueryCriteria.radius < 0) {
+      throw new Error('radius must be greater than or equal to 0');
+    }
   }
 }
 
@@ -351,6 +391,54 @@ export function geohashQueries(center: number[], radius: number): string[][] {
       return index > otherIndex && query[0] === other[0] && query[1] === other[1];
     });
   });
+}
+
+/**
+ * Encodes a location and geohash as a GeoFire object.
+ *
+ * @param location The location as [latitude, longitude] pair.
+ * @param geohash The geohash of the location.
+ * @returns The location encoded as GeoFire object.
+ */
+export function encodeGeoFireObject(location: number[], geohash: string): GeoFireTypes.Document {
+  validateLocation(location);
+  validateGeohash(geohash);
+  return { '.priority': geohash, 'g': geohash, 'l': location };
+}
+
+/**
+ * Decodes the location given as GeoFire object. Returns null if decoding fails.
+ *
+ * @param geoFireObj The location encoded as GeoFire object.
+ * @returns The location as [latitude, longitude] pair or null if decoding fails.
+ */
+export function decodeGeoFireObject(geoFireObj: GeoFireTypes.Document): number[] {
+  if (geoFireObj && 'l' in geoFireObj && Array.isArray(geoFireObj.l) && geoFireObj.l.length === 2) {
+    return geoFireObj.l;
+  } else {
+    throw new Error('Unexpected location object encountered: ' + JSON.stringify(geoFireObj));
+  }
+}
+
+/**
+ * Returns the key of a Firebase snapshot across SDK versions.
+ *
+ * @param A Firebase snapshot.
+ * @returns The Firebase snapshot's key.
+ */
+export function geoFireGetKey(snapshot: GeoFireTypes.firebase.DataSnapshot): string {
+  let key;
+  if (typeof snapshot.key === 'string' || snapshot.key === null) {
+    key = snapshot.key;
+  } else if (typeof snapshot.key === 'function') {
+    // @ts-ignore
+    key = snapshot.key();
+  } else {
+    // @ts-ignore
+    key = snapshot.name();
+  }
+
+  return key;
 }
 
 /**

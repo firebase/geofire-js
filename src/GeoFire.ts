@@ -9,12 +9,9 @@
  * https://github.com/firebase/geofire-js/
  * License: MIT
  */
-import { GeoQuery, QueryCriteria } from './GeoQuery';
-import { distance, encodeGeohash, validateLocation, validateKey } from 'geofire-common';
-import { decodeGeoFireObject, encodeGeoFireObject } from './databaseUtils';
-
-import * as GeoFireTypes from './GeoFireTypes';
-import * as DatabaseTypes from '@firebase/database-types';
+import { GeoQuery } from './GeoQuery';
+import { decodeGeoFireObject, distance, encodeGeoFireObject, encodeGeohash, validateLocation, validateKey } from './utils';
+import { GeoFireTypes } from './GeoFireTypes';
 
 /**
  * Creates a GeoFire instance.
@@ -23,7 +20,7 @@ export class GeoFire {
   /**
    * @param _firebaseRef A Firebase reference where the GeoFire data will be stored.
    */
-  constructor(private _firebaseRef: DatabaseTypes.Reference) {
+  constructor(private _firebaseRef: GeoFireTypes.firebase.Reference) {
     if (Object.prototype.toString.call(this._firebaseRef) !== '[object Object]') {
       throw new Error('firebaseRef must be an instance of Firebase');
     }
@@ -42,7 +39,7 @@ export class GeoFire {
    */
   public get(key: string): Promise<number[]> {
     validateKey(key);
-    return this._firebaseRef.child(key).once('value').then((dataSnapshot: DatabaseTypes.DataSnapshot) => {
+    return this._firebaseRef.child(key).once('value').then((dataSnapshot: GeoFireTypes.firebase.DataSnapshot) => {
       const snapshotVal = dataSnapshot.val();
       if (snapshotVal === null) {
         return null;
@@ -57,7 +54,7 @@ export class GeoFire {
    *
    * @returns The Firebase instance used to create this GeoFire instance.
    */
-  public ref(): DatabaseTypes.Reference {
+  public ref(): GeoFireTypes.firebase.Reference {
     return this._firebaseRef;
   }
 
@@ -124,7 +121,7 @@ export class GeoFire {
    * @param queryCriteria The criteria which specifies the GeoQuery's center and radius.
    * @return A new GeoQuery object.
    */
-  public query(queryCriteria: QueryCriteria): GeoQuery {
+  public query(queryCriteria: GeoFireTypes.QueryCriteria): GeoQuery {
     return new GeoQuery(this._firebaseRef, queryCriteria);
   }
 
