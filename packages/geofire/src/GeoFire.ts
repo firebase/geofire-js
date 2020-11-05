@@ -10,7 +10,7 @@
  * License: MIT
  */
 import { GeoQuery, QueryCriteria } from './GeoQuery';
-import { distanceBetween, getGeohashForLocation, validateLocation, validateKey } from 'geofire-common';
+import { distanceBetween, geohashForLocation, validateLocation, validateKey } from 'geofire-common';
 import { decodeGeoFireObject, encodeGeoFireObject } from './databaseUtils';
 
 import * as GeoFireTypes from './GeoFireTypes';
@@ -110,7 +110,7 @@ export class GeoFire {
       } else {
         validateLocation(location);
 
-        const geohash: string = getGeohashForLocation(location);
+        const geohash: string = geohashForLocation(location);
         newData[key] = encodeGeoFireObject(location, geohash);
       }
     });

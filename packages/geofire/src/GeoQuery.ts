@@ -1,6 +1,6 @@
 import { GeoCallbackRegistration } from './GeoCallbackRegistration';
 import {
-  distanceBetween, getGeohashForLocation, geohashQueries, validateLocation
+  distanceBetween, geohashForLocation, geohashQueryBounds, validateLocation
 } from 'geofire-common';
 import {
   decodeGeoFireObject, geoFireGetKey } from './databaseUtils';
@@ -312,7 +312,7 @@ export class GeoQuery {
     if (key in this._locationsTracked) {
       this._firebaseRef.child(key).once('value', (snapshot: DatabaseTypes.DataSnapshot) => {
         const location: number[] = (snapshot.val() === null) ? null : decodeGeoFireObject(snapshot.val());
-        const geohash: string = (location !== null) ? getGeohashForLocation(location) : null;
+        const geohash: string = (location !== null) ? geohashForLocation(location) : null;
         // Only notify observers if key is not part of any other geohash query or this actually might not be
         // a key exited event, but a key moved or entered event. These events will be triggered by updates
         // to a different query
@@ -429,7 +429,7 @@ export class GeoQuery {
    */
   private _listenForNewGeohashes(): void {
     // Get the list of geohashes to query
-    let geohashesToQuery: string[] = geohashQueries(this._center, this._radius * 1000).map(this._queryToString);
+    let geohashesToQuery: string[] = geohashQueryBounds(this._center, this._radius * 1000).map(this._queryToString);
 
     // Filter out duplicate geohashes
     geohashesToQuery = geohashesToQuery.filter((geohash: string, i: number) => geohashesToQuery.indexOf(geohash) === i);
@@ -569,7 +569,7 @@ export class GeoQuery {
       location,
       distanceFromCenter,
       isInQuery,
-      geohash: getGeohashForLocation(location)
+      geohash: geohashForLocation(location)
     };
 
     // Fire the 'key_entered' event if the provided key has entered this query

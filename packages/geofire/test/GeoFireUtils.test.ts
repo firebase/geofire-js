@@ -2,8 +2,8 @@ import * as chai from 'chai';
 
 import { GeoFire } from '../src/GeoFire'; 
 import {
-  boundingBoxBits, degreesToRadians, distanceBetween, getGeohashForLocation, geohashQuery, 
-  geohashQueries,  GEOHASH_PRECISION, metersToLongitudeDegrees, validateGeohash, validateKey, 
+  boundingBoxBits, degreesToRadians, distanceBetween, geohashForLocation, geohashQuery, 
+  geohashQueryBounds,  GEOHASH_PRECISION, metersToLongitudeDegrees, validateGeohash, validateKey, 
   validateLocation, wrapLongitude
 } from 'geofire-common';
 import { validateCriteria } from '../src/GeoQuery';
@@ -148,59 +148,59 @@ describe('geoFireUtils Tests:', () => {
   });
 
   describe('Geohashing:', () => {
-    it('getGeohashForLocation() encodes locations to geohashes given no precision', () => {
-      expect(getGeohashForLocation([-90, -180])).to.be.equal('000000000000'.slice(0, GEOHASH_PRECISION));
-      expect(getGeohashForLocation([90, 180])).to.be.equal('zzzzzzzzzzzz'.slice(0, GEOHASH_PRECISION));
-      expect(getGeohashForLocation([-90, 180])).to.be.equal('pbpbpbpbpbpb'.slice(0, GEOHASH_PRECISION));
-      expect(getGeohashForLocation([90, -180])).to.be.equal('bpbpbpbpbpbp'.slice(0, GEOHASH_PRECISION));
-      expect(getGeohashForLocation([37.7853074, -122.4054274])).to.be.equal('9q8yywe56gcf'.slice(0, GEOHASH_PRECISION));
-      expect(getGeohashForLocation([38.98719, -77.250783])).to.be.equal('dqcjf17sy6cp'.slice(0, GEOHASH_PRECISION));
-      expect(getGeohashForLocation([29.3760648, 47.9818853])).to.be.equal('tj4p5gerfzqu'.slice(0, GEOHASH_PRECISION));
-      expect(getGeohashForLocation([78.216667, 15.55])).to.be.equal('umghcygjj782'.slice(0, GEOHASH_PRECISION));
-      expect(getGeohashForLocation([-54.933333, -67.616667])).to.be.equal('4qpzmren1kwb'.slice(0, GEOHASH_PRECISION));
-      expect(getGeohashForLocation([-54, -67])).to.be.equal('4w2kg3s54y7h'.slice(0, GEOHASH_PRECISION));
+    it('geohashForLocation() encodes locations to geohashes given no precision', () => {
+      expect(geohashForLocation([-90, -180])).to.be.equal('000000000000'.slice(0, GEOHASH_PRECISION));
+      expect(geohashForLocation([90, 180])).to.be.equal('zzzzzzzzzzzz'.slice(0, GEOHASH_PRECISION));
+      expect(geohashForLocation([-90, 180])).to.be.equal('pbpbpbpbpbpb'.slice(0, GEOHASH_PRECISION));
+      expect(geohashForLocation([90, -180])).to.be.equal('bpbpbpbpbpbp'.slice(0, GEOHASH_PRECISION));
+      expect(geohashForLocation([37.7853074, -122.4054274])).to.be.equal('9q8yywe56gcf'.slice(0, GEOHASH_PRECISION));
+      expect(geohashForLocation([38.98719, -77.250783])).to.be.equal('dqcjf17sy6cp'.slice(0, GEOHASH_PRECISION));
+      expect(geohashForLocation([29.3760648, 47.9818853])).to.be.equal('tj4p5gerfzqu'.slice(0, GEOHASH_PRECISION));
+      expect(geohashForLocation([78.216667, 15.55])).to.be.equal('umghcygjj782'.slice(0, GEOHASH_PRECISION));
+      expect(geohashForLocation([-54.933333, -67.616667])).to.be.equal('4qpzmren1kwb'.slice(0, GEOHASH_PRECISION));
+      expect(geohashForLocation([-54, -67])).to.be.equal('4w2kg3s54y7h'.slice(0, GEOHASH_PRECISION));
     });
 
-    it('getGeohashForLocation() encodes locations to geohashes given a custom precision', () => {
-      expect(getGeohashForLocation([-90, -180], 6)).to.be.equal('000000');
-      expect(getGeohashForLocation([90, 180], 20)).to.be.equal('zzzzzzzzzzzzzzzzzzzz');
-      expect(getGeohashForLocation([-90, 180], 1)).to.be.equal('p');
-      expect(getGeohashForLocation([90, -180], 5)).to.be.equal('bpbpb');
-      expect(getGeohashForLocation([37.7853074, -122.4054274], 8)).to.be.equal('9q8yywe5');
-      expect(getGeohashForLocation([38.98719, -77.250783], 18)).to.be.equal('dqcjf17sy6cppp8vfn');
-      expect(getGeohashForLocation([29.3760648, 47.9818853], 12)).to.be.equal('tj4p5gerfzqu');
-      expect(getGeohashForLocation([78.216667, 15.55], 1)).to.be.equal('u');
-      expect(getGeohashForLocation([-54.933333, -67.616667], 7)).to.be.equal('4qpzmre');
-      expect(getGeohashForLocation([-54, -67], 9)).to.be.equal('4w2kg3s54');
+    it('geohashForLocation() encodes locations to geohashes given a custom precision', () => {
+      expect(geohashForLocation([-90, -180], 6)).to.be.equal('000000');
+      expect(geohashForLocation([90, 180], 20)).to.be.equal('zzzzzzzzzzzzzzzzzzzz');
+      expect(geohashForLocation([-90, 180], 1)).to.be.equal('p');
+      expect(geohashForLocation([90, -180], 5)).to.be.equal('bpbpb');
+      expect(geohashForLocation([37.7853074, -122.4054274], 8)).to.be.equal('9q8yywe5');
+      expect(geohashForLocation([38.98719, -77.250783], 18)).to.be.equal('dqcjf17sy6cppp8vfn');
+      expect(geohashForLocation([29.3760648, 47.9818853], 12)).to.be.equal('tj4p5gerfzqu');
+      expect(geohashForLocation([78.216667, 15.55], 1)).to.be.equal('u');
+      expect(geohashForLocation([-54.933333, -67.616667], 7)).to.be.equal('4qpzmre');
+      expect(geohashForLocation([-54, -67], 9)).to.be.equal('4w2kg3s54');
     });
 
-    it('getGeohashForLocation() does not throw errors given valid locations', () => {
+    it('geohashForLocation() does not throw errors given valid locations', () => {
       validLocations.forEach((validLocation, i) => {
-        expect(() => getGeohashForLocation(validLocation)).not.to.throw();
+        expect(() => geohashForLocation(validLocation)).not.to.throw();
       });
     });
 
-    it('getGeohashForLocation() throws errors given invalid locations', () => {
+    it('geohashForLocation() throws errors given invalid locations', () => {
       invalidLocations.forEach((invalidLocation, i) => {
         // @ts-ignore
-        expect(() => getGeohashForLocation(invalidLocation)).to.throw();
+        expect(() => geohashForLocation(invalidLocation)).to.throw();
       });
     });
 
-    it('getGeohashForLocation() does not throw errors given valid precision', () => {
+    it('geohashForLocation() does not throw errors given valid precision', () => {
       const validPrecisions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, undefined];
 
       validPrecisions.forEach((validPrecision, i) => {
-        expect(() => getGeohashForLocation([0, 0], validPrecision)).not.to.throw();
+        expect(() => geohashForLocation([0, 0], validPrecision)).not.to.throw();
       });
     });
 
-    it('getGeohashForLocation() throws errors given invalid precision', () => {
+    it('geohashForLocation() throws errors given invalid precision', () => {
       const invalidPrecisions = [0, -1, 1.5, 23, '', 'a', true, false, [], {}, [1], { a: 1 }, null];
 
       invalidPrecisions.forEach((invalidPrecision, i) => {
         // @ts-ignore
-        expect(() => getGeohashForLocation([0, 0], invalidPrecision)).to.throw();
+        expect(() => geohashForLocation([0, 0], invalidPrecision)).to.throw();
       });
     });
   });
@@ -272,7 +272,7 @@ describe('geoFireUtils Tests:', () => {
       expect(geohashQuery('64z178', 15)).to.be.deep.equal(['64z', '64~']);
     });
 
-    it('Queries from geohashQueries must contain points in circle', () => {
+    it('Query bounds from geohashQueryBounds must contain points in circle', () => {
       function inQuery(queries, hash) {
         for (let i = 0; i < queries.length; i++) {
           if (hash >= queries[i][0] && hash < queries[i][1]) {
@@ -286,12 +286,12 @@ describe('geoFireUtils Tests:', () => {
         const centerLong = Math.pow(Math.random(), 5) * 360 - 180;
         const radius = Math.random() * Math.random() * 100000;
         const degreeRadius = metersToLongitudeDegrees(radius, centerLat);
-        const queries = geohashQueries([centerLat, centerLong], radius);
+        const queries = geohashQueryBounds([centerLat, centerLong], radius);
         for (let j = 0; j < 1000; j++) {
           const pointLat = Math.max(-89.9, Math.min(89.9, centerLat + Math.random() * degreeRadius));
           const pointLong = wrapLongitude(centerLong + Math.random() * degreeRadius);
           if (distanceBetween([centerLat, centerLong], [pointLat, pointLong]) < radius / 1000) {
-            expect(inQuery(queries, getGeohashForLocation([pointLat, pointLong]))).to.be.equal(true);
+            expect(inQuery(queries, geohashForLocation([pointLat, pointLong]))).to.be.equal(true);
           }
         }
       }

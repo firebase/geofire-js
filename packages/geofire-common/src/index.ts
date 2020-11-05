@@ -139,7 +139,7 @@ export function degreesToRadians(degrees: number): number {
  * global default is used.
  * @returns The geohash of the inputted location.
  */
-export function getGeohashForLocation(location: number[], precision: number = GEOHASH_PRECISION): string {
+export function geohashForLocation(location: number[], precision: number = GEOHASH_PRECISION): string {
   validateLocation(location);
   if (typeof precision !== 'undefined') {
     if (typeof precision !== 'number' || isNaN(precision)) {
@@ -331,19 +331,19 @@ export function geohashQuery(geohash: string, bits: number): string[] {
 
 /**
  * Calculates a set of query bounds to fully contain a given circle, each being a [start, end] pair
- * where any geohash is guaranteed to be lexiographically larger then start and smaller than end.
+ * where any geohash is guaranteed to be lexicographically larger than start and smaller than end.
  *
  * @param center The center given as [latitude, longitude] pair.
  * @param radius The radius of the circle.
  * @return An array of geohash query bounds, each containing a [start, end] pair.
  */
-export function geohashQueries(center: number[], radius: number): string[][] {
+export function geohashQueryBounds(center: number[], radius: number): string[][] {
   validateLocation(center);
   const queryBits = Math.max(1, boundingBoxBits(center, radius));
   const geohashPrecision = Math.ceil(queryBits / BITS_PER_CHAR);
   const coordinates = boundingBoxCoordinates(center, radius);
   const queries = coordinates.map((coordinate) => {
-    return geohashQuery(getGeohashForLocation(coordinate, geohashPrecision), queryBits);
+    return geohashQuery(geohashForLocation(coordinate, geohashPrecision), queryBits);
   });
   // remove duplicates
   return queries.filter((query, index) => {
