@@ -5,7 +5,6 @@ import { uglify } from 'rollup-plugin-uglify';
 import pkg from './package.json';
 
 const GLOBAL_NAME = 'geofire';
-const UTILS_NAME = 'geofire-utils';
 
 const plugins = [
   resolveModule(),
