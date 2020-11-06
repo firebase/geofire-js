@@ -1,0 +1,5 @@
+--reporter spec
+--require ts-node/register
+--require jsdom-global/register
+--timeout 30000
+--exit test/**/*.test.ts

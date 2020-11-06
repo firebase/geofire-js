@@ -1,5 +1,3 @@
-import { GeoFireTypes } from './GeoFireTypes';
-
 // Default geohash length
 export const GEOHASH_PRECISION = 10;
 
@@ -119,44 +117,6 @@ export function validateGeohash(geohash: string): void {
 }
 
 /**
- * Validates the inputted query criteria and throws an error if it is invalid.
- *
- * @param newQueryCriteria The criteria which specifies the query's center and/or radius.
- * @param requireCenterAndRadius The criteria which center and radius required.
- */
-export function validateCriteria(newQueryCriteria: GeoFireTypes.QueryCriteria, requireCenterAndRadius = false): void {
-  if (typeof newQueryCriteria !== 'object') {
-    throw new Error('query criteria must be an object');
-  } else if (typeof newQueryCriteria.center === 'undefined' && typeof newQueryCriteria.radius === 'undefined') {
-    throw new Error('radius and/or center must be specified');
-  } else if (requireCenterAndRadius && (typeof newQueryCriteria.center === 'undefined' || typeof newQueryCriteria.radius === 'undefined')) {
-    throw new Error('query criteria for a new query must contain both a center and a radius');
-  }
-
-  // Throw an error if there are any extraneous attributes
-  const keys: string[] = Object.keys(newQueryCriteria);
-  for (const key of keys) {
-    if (key !== 'center' && key !== 'radius') {
-      throw new Error('Unexpected attribute \'' + key + '\' found in query criteria');
-    }
-  }
-
-  // Validate the 'center' attribute
-  if (typeof newQueryCriteria.center !== 'undefined') {
-    validateLocation(newQueryCriteria.center);
-  }
-
-  // Validate the 'radius' attribute
-  if (typeof newQueryCriteria.radius !== 'undefined') {
-    if (typeof newQueryCriteria.radius !== 'number' || isNaN(newQueryCriteria.radius)) {
-      throw new Error('radius must be a number');
-    } else if (newQueryCriteria.radius < 0) {
-      throw new Error('radius must be greater than or equal to 0');
-    }
-  }
-}
-
-/**
  * Converts degrees to radians.
  *
  * @param degrees The number of degrees to be converted to radians.
@@ -179,7 +139,7 @@ export function degreesToRadians(degrees: number): number {
  * global default is used.
  * @returns The geohash of the inputted location.
  */
-export function encodeGeohash(location: number[], precision: number = GEOHASH_PRECISION): string {
+export function geohashForLocation(location: number[], precision: number = GEOHASH_PRECISION): string {
   validateLocation(location);
   if (typeof precision !== 'undefined') {
     if (typeof precision !== 'number' || isNaN(precision)) {
@@ -370,20 +330,20 @@ export function geohashQuery(geohash: string, bits: number): string[] {
 }
 
 /**
- * Calculates a set of queries to fully contain a given circle. A query is a [start, end] pair
- * where any geohash is guaranteed to be lexiographically larger then start and smaller than end.
+ * Calculates a set of query bounds to fully contain a given circle, each being a [start, end] pair
+ * where any geohash is guaranteed to be lexicographically larger than start and smaller than end.
  *
  * @param center The center given as [latitude, longitude] pair.
  * @param radius The radius of the circle.
- * @return An array of geohashes containing a [start, end] pair.
+ * @return An array of geohash query bounds, each containing a [start, end] pair.
  */
-export function geohashQueries(center: number[], radius: number): string[][] {
+export function geohashQueryBounds(center: number[], radius: number): string[][] {
   validateLocation(center);
   const queryBits = Math.max(1, boundingBoxBits(center, radius));
   const geohashPrecision = Math.ceil(queryBits / BITS_PER_CHAR);
   const coordinates = boundingBoxCoordinates(center, radius);
   const queries = coordinates.map((coordinate) => {
-    return geohashQuery(encodeGeohash(coordinate, geohashPrecision), queryBits);
+    return geohashQuery(geohashForLocation(coordinate, geohashPrecision), queryBits);
   });
   // remove duplicates
   return queries.filter((query, index) => {
@@ -391,54 +351,6 @@ export function geohashQueries(center: number[], radius: number): string[][] {
       return index > otherIndex && query[0] === other[0] && query[1] === other[1];
     });
   });
-}
-
-/**
- * Encodes a location and geohash as a GeoFire object.
- *
- * @param location The location as [latitude, longitude] pair.
- * @param geohash The geohash of the location.
- * @returns The location encoded as GeoFire object.
- */
-export function encodeGeoFireObject(location: number[], geohash: string): GeoFireTypes.Document {
-  validateLocation(location);
-  validateGeohash(geohash);
-  return { '.priority': geohash, 'g': geohash, 'l': location };
-}
-
-/**
- * Decodes the location given as GeoFire object. Returns null if decoding fails.
- *
- * @param geoFireObj The location encoded as GeoFire object.
- * @returns The location as [latitude, longitude] pair or null if decoding fails.
- */
-export function decodeGeoFireObject(geoFireObj: GeoFireTypes.Document): number[] {
-  if (geoFireObj && 'l' in geoFireObj && Array.isArray(geoFireObj.l) && geoFireObj.l.length === 2) {
-    return geoFireObj.l;
-  } else {
-    throw new Error('Unexpected location object encountered: ' + JSON.stringify(geoFireObj));
-  }
-}
-
-/**
- * Returns the key of a Firebase snapshot across SDK versions.
- *
- * @param A Firebase snapshot.
- * @returns The Firebase snapshot's key.
- */
-export function geoFireGetKey(snapshot: GeoFireTypes.firebase.DataSnapshot): string {
-  let key;
-  if (typeof snapshot.key === 'string' || snapshot.key === null) {
-    key = snapshot.key;
-  } else if (typeof snapshot.key === 'function') {
-    // @ts-ignore
-    key = snapshot.key();
-  } else {
-    // @ts-ignore
-    key = snapshot.name();
-  }
-
-  return key;
 }
 
 /**
@@ -450,7 +362,7 @@ export function geoFireGetKey(snapshot: GeoFireTypes.firebase.DataSnapshot): str
  * @param location2 The [latitude, longitude] pair of the second location.
  * @returns The distance, in kilometers, between the inputted locations.
  */
-export function distance(location1: number[], location2: number[]): number {
+export function distanceBetween(location1: number[], location2: number[]): number {
   validateLocation(location1);
   validateLocation(location2);
 

@@ -39,7 +39,7 @@ const completeBuilds = [{
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/geofire.js',
+      file: pkg.index,
       format: 'umd',
       name: GLOBAL_NAME
     },
