@@ -20,13 +20,12 @@ and [Java](https://github.com/firebase/geofire-java).
 
 ## Table of Contents
 
-* [Downloading GeoFire](#downloading-geofire)
+* [Add GeoFire to your project](#add-geofire-to-your-project)
 * [Documentation](#documentation)
 * [Examples](#examples)
 * [Release Notes](https://github.com/firebase/geofire-js/releases)
 * [Migration Guides](#migration-guides)
 * [Contributing](#contributing)
-
 
 ## Add GeoFire to your project
 
