@@ -4,7 +4,7 @@ import typescript from 'rollup-plugin-typescript2';
 import { uglify } from 'rollup-plugin-uglify';
 import pkg from './package.json';
 
-const GLOBAL_NAME = 'geofire';
+const GLOBAL_NAME = 'geofire-common';
 
 const plugins = [
   resolveModule(),

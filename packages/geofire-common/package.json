@@ -6,7 +6,7 @@
     "build": "rollup -c",
     "coverage": "nyc report --reporter=text-lcov > ./coverage/lcov.info",
     "lint": "tslint --project ./tslint.json 'src/**/*.ts'",
-    "test": "nyc --reporter=html --reporter=text mocha",
+    "test": "nyc --reporter=html --reporter=text mocha --exit",
     "prepare": "npm run build"
   },
   "author": "Firebase (https://firebase.google.com/)",
@@ -26,11 +26,11 @@
     "realtime",
     "geolocation"
   ],
-  "main": "dist/geofire/index.cjs.js",
-  "index": "dist/geofire/index.js",
-  "browser": "dist/geofire/geofire.min.js",
-  "module": "dist/geofire/index.esm.js",
-  "typings": "dist/geofire/index.d.ts",
+  "main": "dist/geofire-common/index.cjs.js",
+  "index": "dist/geofire-common/index.js",
+  "browser": "dist/geofire-common/geofire-common.min.js",
+  "module": "dist/geofire-common/index.esm.js",
+  "typings": "dist/geofire-common/index.d.ts",
   "files": [
     "dist/**",
     "LICENSE",

@@ -6,7 +6,7 @@
     "build": "rollup -c",
     "coverage": "nyc report --reporter=text-lcov > ./coverage/lcov.info",
     "lint": "tslint --project ./tslint.json 'src/**/*.ts'",
-    "test": "nyc --reporter=html --reporter=text mocha",
+    "test": "nyc --reporter=html --reporter=text mocha --exit",
     "prepare": "npm run build"
   },
   "author": "Firebase (https://firebase.google.com/)",
