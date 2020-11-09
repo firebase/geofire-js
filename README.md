@@ -28,31 +28,30 @@ and [Java](https://github.com/firebase/geofire-java).
 * [Contributing](#contributing)
 
 
-## Downloading GeoFire
+## Add GeoFire to your project
 
-In order to use GeoFire in your project, you need to include the following files in your HTML:
-
-```html
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/5.9.4/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase-database.js"></script>
-
-<!-- GeoFire -->
-<script src="https://cdn.firebase.com/libs/geofire/5.0.1/geofire.min.js"></script>
-```
-
-Use the URL above to download both the minified and non-minified versions of GeoFire from the
-Firebase CDN. You can also download them from the
-[releases page of this GitHub repository](https://github.com/firebase/geofire-js/releases).
-
-You can also install GeoFire via npm or Bower. If downloading via npm, you will have to install
-Firebase separately (because it is a peer dependency to GeoFire):
+The Firebase JS SDK is a peer dependency of GeoFire. Run the following command to install both libraries:
 
 ```bash
 $ npm install geofire firebase --save
 ```
 
-On Bower, the Firebase dependency will be downloaded automatically:
+### HTML
+
+Alternatively, you can include GeoFire in your HTML. To do so download a minified or non-minified version of GeoFire from the [releases page of this GitHub repository](https://github.com/firebase/geofire-js/releases). Then, deploy it to Hosting in your Firebase project. 
+
+```html
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+
+<!-- GeoFire (TODO: substitute in your own project id)-->
+<script src="https://my-firebase-project.web.app/geofire-5.0.1.min.js"></script>
+```
+
+### Bower
+
+If you use Bower, the Firebase dependency will be downloaded automatically:
 
 ```bash
 $ bower install geofire --save
