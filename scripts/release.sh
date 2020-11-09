@@ -100,7 +100,7 @@ echo ${release_notes_file}
 echo
 echo "Clearing CHANGELOG.md."
 echo > CHANGELOG.md
-git commit -am "[release] Cleared CHANGELOG.md after ${next_version} release." CHANGELOG.md
+git commit -m "[release] Cleared CHANGELOG.md after ${next_version} release." CHANGELOG.md
 
 echo
 echo "Pushing changes to GitHub."
