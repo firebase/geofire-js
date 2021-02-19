@@ -38,7 +38,7 @@
     "package.json"
   ],
   "dependencies": {
-    "@firebase/database-types": "0.x.x",
+    "@firebase/database-types": "^0.6.0",
     "geofire-common": "5.1.0"
   },
   "peerDependencies": {
