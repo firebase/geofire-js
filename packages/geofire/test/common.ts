@@ -1,6 +1,6 @@
 /* tslint:disable:max-line-length */
 import * as chai from 'chai';
-import * as firebase from 'firebase';
+import firebase from 'firebase';
 
 import { GeoFire, GeoQuery } from '../src';
 
