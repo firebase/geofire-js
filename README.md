@@ -10,6 +10,7 @@ storage, allowing query results to be updated in realtime as they change. GeoFir
 only the data near certain locations, keeping your applications light and responsive*, even with
 extremely large datasets.
 
+GeoFire is designed as a lightweight add-on to Firebase. To keep things simple, GeoFire stores data
 in its own format and its own location within your Firebase Realtime Database. This allows your existing data
 format and Security Rules to remain unchanged while still providing you with an easy solution for geo
 queries.
