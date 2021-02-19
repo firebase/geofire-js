@@ -84,7 +84,7 @@ export function getFirebaseData() {
 
 /* Returns a promise which is fulfilled after the inputted number of milliseconds pass */
 export function wait(milliseconds) {
-  return new Promise((resolve) => {
+  return new Promise<void>((resolve) => {
     const timeout = window.setTimeout(() => {
       window.clearTimeout(timeout);
       resolve();
