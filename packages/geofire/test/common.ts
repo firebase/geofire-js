@@ -2,7 +2,8 @@
 import * as chai from 'chai';
 import firebase from 'firebase';
 
-import { GeoFire, GeoQuery } from '../src';
+import { GeoFire, GeoQuery, QueryCallbacks } from '../src';
+import { QueryCriteria } from '../src/GeoQuery';
 
 
 /*************/
@@ -17,7 +18,7 @@ export const validLocations = [[0, 0], [-90, 180], [90, -180], [23, 74], [47.235
 export const invalidLocations = [[-91, 0], [91, 0], [0, 181], [0, -181], [[0, 0], 0], ['a', 0], [0, 'a'], ['a', 'a'], [NaN, 0], [0, NaN], [undefined, NaN], [null, 0], [null, null], [0, undefined], [undefined, undefined], '', 'a', true, false, [], [1], {}, { a: 1 }, null, undefined, NaN];
 export const validGeohashes = ['4', 'd62dtu', '000000000000'];
 export const invalidGeohashes = ['', 'aaa', 1, true, false, [], [1], {}, { a: 1 }, null, undefined, NaN];
-export const validQueryCriterias = [{ center: [0, 0], radius: 1000 }, { center: [1, -180], radius: 1.78 }, { center: [22.22, -107.77], radius: 0 }, { center: [0, 0] }, { center: [1, -180] }, { center: [22.22, -107.77] }, { radius: 1000 }, { radius: 1.78 }, { radius: 0 }];
+export const validQueryCriterias: QueryCriteria[] = [{ center: [0, 0], radius: 1000 }, { center: [1, -180], radius: 1.78 }, { center: [22.22, -107.77], radius: 0 }, { center: [0, 0] }, { center: [1, -180] }, { center: [22.22, -107.77] }, { radius: 1000 }, { radius: 1.78 }, { radius: 0 }];
 export const invalidQueryCriterias = [{}, { random: 100 }, { center: [91, 2], radius: 1000, random: 'a' }, { center: [91, 2], radius: 1000 }, { center: [1, -181], radius: 1000 }, { center: ['a', 2], radius: 1000 }, { center: [1, [1, 2]], radius: 1000 }, { center: [0, 0], radius: -1 }, { center: [null, 2], radius: 1000 }, { center: [1, undefined], radius: 1000 }, { center: [NaN, 0], radius: 1000 }, { center: [1, 2], radius: -10 }, { center: [1, 2], radius: 'text' }, { center: [1, 2], radius: [1, 2] }, { center: [1, 2], radius: null }, true, false, undefined, NaN, [], 'a', 1];
 
 // Create global constiables to hold the Firebase and GeoFire constiables

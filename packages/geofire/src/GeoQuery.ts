@@ -1,6 +1,7 @@
 import { GeoCallbackRegistration } from './GeoCallbackRegistration';
 import {
-  distanceBetween, geohashForLocation, geohashQueryBounds, validateLocation
+  distanceBetween, geohashForLocation, geohashQueryBounds, validateLocation, 
+  geopoint, geohash, geohashRange
 } from 'geofire-common';
 import {
   decodeGeoFireObject, geoFireGetKey } from './databaseUtils';
@@ -8,7 +9,7 @@ import * as GeoFireTypes from './GeoFireTypes';
 import * as DatabaseTypes from '@firebase/database-types';
 
 export interface QueryCriteria {
-  center?: number[];
+  center?: geopoint;
   radius?: number;
 }
 export type QueryStateCallback = (
@@ -68,7 +69,7 @@ export class GeoQuery {
   private _callbacks: GeoFireTypes.QueryCallbacks = { ready: [], key_entered: [], key_exited: [], key_moved: [] };
   // Variable to track when the query is cancelled
   private _cancelled = false;
-  private _center: number[];
+  private _center: geopoint;
   // A dictionary of geohash queries which currently have an active callbacks
   private _currentGeohashesQueried: { [name: string]: QueryState } = {};
   // A dictionary of locations that a currently active in the queries
@@ -146,7 +147,7 @@ export class GeoQuery {
    *
    * @returns The [latitude, longitude] pair signifying the center of this query.
    */
-  public center(): number[] {
+  public center(): geopoint {
     return this._center;
   }
 
@@ -311,8 +312,8 @@ export class GeoQuery {
     const key: string = geoFireGetKey(locationDataSnapshot);
     if (key in this._locationsTracked) {
       this._firebaseRef.child(key).once('value', (snapshot: DatabaseTypes.DataSnapshot) => {
-        const location: number[] = (snapshot.val() === null) ? null : decodeGeoFireObject(snapshot.val());
-        const geohash: string = (location !== null) ? geohashForLocation(location) : null;
+        const location: geopoint = (snapshot.val() === null) ? null : decodeGeoFireObject(snapshot.val());
+        const geohash: geohash = (location !== null) ? geohashForLocation(location) : null;
         // Only notify observers if key is not part of any other geohash query or this actually might not be
         // a key exited event, but a key moved or entered event. These events will be triggered by updates
         // to a different query
@@ -367,7 +368,7 @@ export class GeoQuery {
    * @param location The location as [latitude, longitude] pair
    * @param distanceFromCenter The distance from the center or null.
    */
-  private _fireCallbacksForKey(eventType: string, key: string, location?: number[], distanceFromCenter?: number): void {
+  private _fireCallbacksForKey(eventType: string, key: string, location?: geopoint, distanceFromCenter?: number): void {
     this._callbacks[eventType].forEach((callback) => {
       if (typeof location === 'undefined' || location === null) {
         callback(key, null, null);
@@ -392,7 +393,7 @@ export class GeoQuery {
    * @param geohash The geohash.
    * @returns Returns true if the geohash is part of any of the current geohash queries.
    */
-  private _geohashInSomeQuery(geohash: string): boolean {
+  private _geohashInSomeQuery(geohash: geohash): boolean {
     const keys: string[] = Object.keys(this._currentGeohashesQueried);
     for (const queryStr of keys) {
       if (queryStr in this._currentGeohashesQueried) {
@@ -507,7 +508,7 @@ export class GeoQuery {
    * @param query The query to encode.
    * @returns The encoded query as string.
    */
-  private _queryToString(query: string[]): string {
+  private _queryToString(query: geohashRange): string {
     if (query.length !== 2) {
       throw new Error('Not a valid geohash query: ' + query);
     }
@@ -520,7 +521,7 @@ export class GeoQuery {
    * @param key The key to be removed.
    * @param currentLocation The current location as [latitude, longitude] pair or null if removed.
    */
-  private _removeLocation(key: string, currentLocation?: number[]): void {
+  private _removeLocation(key: string, currentLocation?: geopoint): void {
     const locationDict = this._locationsTracked[key];
     delete this._locationsTracked[key];
     if (typeof locationDict !== 'undefined' && locationDict.isInQuery) {
@@ -553,7 +554,7 @@ export class GeoQuery {
    * @param key The key of the geofire location.
    * @param location The location as [latitude, longitude] pair.
    */
-  private _updateLocation(key: string, location?: number[]): void {
+  private _updateLocation(key: string, location?: geopoint): void {
     validateLocation(location);
     // Get the key and location
     let distanceFromCenter: number, isInQuery;

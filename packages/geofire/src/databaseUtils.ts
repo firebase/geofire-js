@@ -1,5 +1,5 @@
 import { Document } from './GeoFireTypes';
-import { validateLocation, validateGeohash } from "geofire-common";
+import { validateLocation, validateGeohash, geopoint, geohash } from "geofire-common";
 import { DataSnapshot } from '@firebase/database-types';
 
 /**
@@ -9,7 +9,7 @@ import { DataSnapshot } from '@firebase/database-types';
  * @param geohash The geohash of the location.
  * @returns The location encoded as GeoFire object.
  */
-export function encodeGeoFireObject(location: number[], geohash: string): Document {
+export function encodeGeoFireObject(location: geopoint, geohash: geohash): Document {
   validateLocation(location);
   validateGeohash(geohash);
   return { '.priority': geohash, 'g': geohash, 'l': location };
@@ -21,9 +21,9 @@ export function encodeGeoFireObject(location: number[], geohash: string): Docume
  * @param geoFireObj The location encoded as GeoFire object.
  * @returns The location as [latitude, longitude] pair or null if decoding fails.
  */
-export function decodeGeoFireObject(geoFireObj: Document): number[] {
+export function decodeGeoFireObject(geoFireObj: Document): geopoint {
   if (geoFireObj && 'l' in geoFireObj && Array.isArray(geoFireObj.l) && geoFireObj.l.length === 2) {
-    return geoFireObj.l;
+    return geoFireObj.l as geopoint;
   } else {
     throw new Error('Unexpected location object encountered: ' + JSON.stringify(geoFireObj));
   }

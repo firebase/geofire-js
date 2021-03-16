@@ -31,7 +31,7 @@ export const EPSILON = 1e-12;
 
 export type geopoint = [number, number];
 export type geohash = string;
-type geohashRange = [geohash, geohash];
+export type geohashRange = [geohash, geohash];
 
 function log2(x: number): number {
   return Math.log(x) / Math.log(2);
