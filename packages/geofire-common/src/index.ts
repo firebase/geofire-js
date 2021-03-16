@@ -285,7 +285,8 @@ export function boundingBoxBits(coordinate: geopoint, size: number): number {
  * @param radius The radius of the circle in meters.
  * @returns The center of the box, and the eight bounding box points.
  */
-export function boundingBoxCoordinates(center: number[], radius: number): [geopoint, geopoint,geopoint,geopoint,geopoint,geopoint,geopoint,geopoint,geopoint] {
+export function boundingBoxCoordinates(center: number[], radius: number): 
+  [geopoint, geopoint,geopoint,geopoint,geopoint,geopoint,geopoint,geopoint,geopoint] {
   const latDegrees = radius / METERS_PER_DEGREE_LATITUDE;
   const latitudeNorth = Math.min(90, center[0] + latDegrees);
   const latitudeSouth = Math.max(-90, center[0] - latDegrees);
