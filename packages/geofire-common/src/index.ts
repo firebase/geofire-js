@@ -348,7 +348,7 @@ export function geohashQueryBounds(center: Geopoint, radius: number): GeohashRan
   const geohashPrecision = Math.ceil(queryBits / BITS_PER_CHAR);
   const coordinates = boundingBoxCoordinates(center, radius);
   const queries = coordinates.map((coordinate) => {
-    return geohashQuery(geohashForLocation(coordinate as Geopoint, geohashPrecision), queryBits);
+    return geohashQuery(geohashForLocation(coordinate, geohashPrecision), queryBits);
   });
   // remove duplicates
   return queries.filter((query, index) => {
