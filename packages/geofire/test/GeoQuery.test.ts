@@ -1,5 +1,6 @@
 /* tslint:disable:max-line-length */
 import * as chai from 'chai';
+import { GeoQuery } from '../src';
 
 import {
   afterEachHelper, beforeEachHelper, Checklist, failTestOnCaughtError, geoFire, geoQueries, invalidQueryCriterias, validQueryCriterias, wait
@@ -23,6 +24,10 @@ describe('GeoQuery Tests:', () => {
 
       expect(geoQueries[0].center()).to.deep.equal([1, 2]);
       expect(geoQueries[0].radius()).to.equal(1000);
+    });
+    it('Constructor throws error on invalid Firebase ref', () => {
+      // @ts-ignore
+      expect(() => new GeoQuery("not a ref", { center: [1, 2], radius: 1000 })).to.throw();
     });
 
     it('Constructor throws error on invalid query criteria', () => {
