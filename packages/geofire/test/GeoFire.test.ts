@@ -4,7 +4,7 @@ import {
   afterEachHelper, beforeEachHelper, Checklist, failTestOnCaughtError, geoFire, geoFireRef, getFirebaseData, geoQueries,
   invalidFirebaseRefs, invalidKeys, invalidLocations, invalidQueryCriterias, validKeys, validLocations, validQueryCriterias
 } from './common';
-import { geopoint } from 'geofire-common';
+import { Geopoint } from 'geofire-common';
 
 const expect = chai.expect;
 
@@ -260,7 +260,7 @@ describe('GeoFire Tests:', () => {
     it('set() does not throw errors given valid locations', () => {
       validLocations.forEach((validLocation, i) => {
         expect(() => {
-          geoFire.set('loc', validLocation as geopoint);
+          geoFire.set('loc', validLocation as Geopoint);
         }).not.to.throw();
       });
     });

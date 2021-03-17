@@ -3,7 +3,7 @@ import * as chai from 'chai';
 import {
   boundingBoxBits, degreesToRadians, distanceBetween, geohashForLocation, geohashQuery, 
   geohashQueryBounds,  GEOHASH_PRECISION, metersToLongitudeDegrees, validateGeohash, validateKey, 
-  validateLocation, wrapLongitude, geopoint
+  validateLocation, wrapLongitude, Geopoint
 } from '../src/index';
 import {
   invalidGeohashes, invalidKeys, invalidLocations, invalidQueryCriterias,
@@ -29,7 +29,7 @@ describe('geoFireUtils Tests:', () => {
 
     it('validateLocation() does not throw errors given valid locations', () => {
       validLocations.forEach((validLocation, i) => {
-        expect(() => validateLocation(validLocation as geopoint)).not.to.throw();
+        expect(() => validateLocation(validLocation as Geopoint)).not.to.throw();
       });
     });
 
@@ -100,8 +100,8 @@ describe('geoFireUtils Tests:', () => {
 
     it('dist() does not throw errors given valid locations', () => {
       validLocations.forEach((validLocation, i) => {
-        expect(() => distanceBetween(validLocation as geopoint, [0, 0])).not.to.throw();
-        expect(() => distanceBetween([0, 0], validLocation as geopoint)).not.to.throw();
+        expect(() => distanceBetween(validLocation as Geopoint, [0, 0])).not.to.throw();
+        expect(() => distanceBetween([0, 0], validLocation as Geopoint)).not.to.throw();
       });
     });
 
@@ -144,7 +144,7 @@ describe('geoFireUtils Tests:', () => {
 
     it('geohashForLocation() does not throw errors given valid locations', () => {
       validLocations.forEach((validLocation, i) => {
-        expect(() => geohashForLocation(validLocation as geopoint)).not.to.throw();
+        expect(() => geohashForLocation(validLocation as Geopoint)).not.to.throw();
       });
     });
 

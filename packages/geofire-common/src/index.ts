@@ -29,9 +29,9 @@ export const E2 = 0.00669447819799;
 // Cutoff for rounding errors on double calculations
 export const EPSILON = 1e-12;
 
-export type geopoint = [number, number];
-export type geohash = string;
-export type geohashRange = [geohash, geohash];
+export type Geopoint = [number, number];
+export type Geohash = string;
+export type GeohashRange = [Geohash, Geohash];
 
 function log2(x: number): number {
   return Math.log(x) / Math.log(2);
@@ -68,7 +68,7 @@ export function validateKey(key: string): void {
  *
  * @param location The [latitude, longitude] pair to be verified.
  */
-export function validateLocation(location: geopoint): void {
+export function validateLocation(location: Geopoint): void {
   let error: string;
 
   if (!Array.isArray(location)) {
@@ -100,7 +100,7 @@ export function validateLocation(location: geopoint): void {
  *
  * @param geohash The geohash to be validated.
  */
-export function validateGeohash(geohash: geohash): void {
+export function validateGeohash(geohash: Geohash): void {
   let error;
 
   if (typeof geohash !== 'string') {
@@ -143,7 +143,7 @@ export function degreesToRadians(degrees: number): number {
  * global default is used.
  * @returns The geohash of the inputted location.
  */
-export function geohashForLocation(location: geopoint, precision: number = GEOHASH_PRECISION): geohash {
+export function geohashForLocation(location: Geopoint, precision: number = GEOHASH_PRECISION): Geohash {
   validateLocation(location);
   if (typeof precision !== 'undefined') {
     if (typeof precision !== 'number' || isNaN(precision)) {
@@ -266,7 +266,7 @@ export function wrapLongitude(longitude: number): number {
  * @param size The size of the bounding box.
  * @returns The number of bits necessary for the geohash.
  */
-export function boundingBoxBits(coordinate: geopoint, size: number): number {
+export function boundingBoxBits(coordinate: Geopoint, size: number): number {
   const latDeltaDegrees = size / METERS_PER_DEGREE_LATITUDE;
   const latitudeNorth = Math.min(90, coordinate[0] + latDeltaDegrees);
   const latitudeSouth = Math.max(-90, coordinate[0] - latDeltaDegrees);
@@ -285,8 +285,8 @@ export function boundingBoxBits(coordinate: geopoint, size: number): number {
  * @param radius The radius of the circle in meters.
  * @returns The center of the box, and the eight bounding box points.
  */
-export function boundingBoxCoordinates(center: geopoint, radius: number): 
-  [geopoint, geopoint,geopoint,geopoint,geopoint,geopoint,geopoint,geopoint,geopoint] {
+export function boundingBoxCoordinates(center: Geopoint, radius: number): 
+  [Geopoint, Geopoint,Geopoint,Geopoint,Geopoint,Geopoint,Geopoint,Geopoint,Geopoint] {
   const latDegrees = radius / METERS_PER_DEGREE_LATITUDE;
   const latitudeNorth = Math.min(90, center[0] + latDegrees);
   const latitudeSouth = Math.max(-90, center[0] - latDegrees);
@@ -313,7 +313,7 @@ export function boundingBoxCoordinates(center: geopoint, radius: number):
  * @param bits The number of bits of precision.
  * @returns A [start, end] pair of geohashes.
  */
-export function geohashQuery(geohash: geohash, bits: number): geohashRange {
+export function geohashQuery(geohash: Geohash, bits: number): GeohashRange {
   validateGeohash(geohash);
   const precision = Math.ceil(bits / BITS_PER_CHAR);
   if (geohash.length < precision) {
@@ -342,13 +342,13 @@ export function geohashQuery(geohash: geohash, bits: number): geohashRange {
  * @param radius The radius of the circle.
  * @return An array of geohash query bounds, each containing a [start, end] pair.
  */
-export function geohashQueryBounds(center: geopoint, radius: number): geohashRange[] {
+export function geohashQueryBounds(center: Geopoint, radius: number): GeohashRange[] {
   validateLocation(center);
   const queryBits = Math.max(1, boundingBoxBits(center, radius));
   const geohashPrecision = Math.ceil(queryBits / BITS_PER_CHAR);
   const coordinates = boundingBoxCoordinates(center, radius);
   const queries = coordinates.map((coordinate) => {
-    return geohashQuery(geohashForLocation(coordinate as geopoint, geohashPrecision), queryBits);
+    return geohashQuery(geohashForLocation(coordinate as Geopoint, geohashPrecision), queryBits);
   });
   // remove duplicates
   return queries.filter((query, index) => {
@@ -367,7 +367,7 @@ export function geohashQueryBounds(center: geopoint, radius: number): geohashRan
  * @param location2 The [latitude, longitude] pair of the second location.
  * @returns The distance, in kilometers, between the inputted locations.
  */
-export function distanceBetween(location1: geopoint, location2: geopoint): number {
+export function distanceBetween(location1: Geopoint, location2: Geopoint): number {
   validateLocation(location1);
   validateLocation(location2);
 
