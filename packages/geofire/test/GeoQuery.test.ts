@@ -1,10 +1,12 @@
 /* tslint:disable:max-line-length */
 import * as chai from 'chai';
-import { GeoQuery } from '../src';
+import { GeoQuery,  } from '../src';
 
 import {
-  afterEachHelper, beforeEachHelper, Checklist, failTestOnCaughtError, geoFire, geoQueries, invalidQueryCriterias, validQueryCriterias, wait
+  afterEachHelper, beforeEachHelper, Checklist, failTestOnCaughtError, geoFire, geoQueries, 
+  invalidQueryCriterias, validQueryCriterias, wait
 } from './common';
+import { validateCriteria } from '../src/GeoQuery';
 
 const expect = chai.expect;
 
@@ -1422,6 +1424,40 @@ describe('GeoQuery Tests:', () => {
           }
         });
       }).catch(failTestOnCaughtError);
+    });
+  });
+});
+
+describe('QueryCriteria Tests:', () => {
+  describe('Parameter validation:', () => {
+     it('validateCriteria(criteria, true) does not throw errors given valid query criteria', () => {
+      validQueryCriterias.forEach((validQueryCriteria) => {
+        if (typeof validQueryCriteria.center !== 'undefined' && typeof validQueryCriteria.radius !== 'undefined') {
+          expect(() => validateCriteria(validQueryCriteria, true)).not.to.throw();
+        }
+      });
+    });
+
+    it('validateCriteria(criteria) does not throw errors given valid query criteria', () => {
+      validQueryCriterias.forEach((validQueryCriteria) => {
+        expect(() => validateCriteria(validQueryCriteria)).not.to.throw();
+      });
+    });
+
+    it('validateCriteria(criteria, true) throws errors given invalid query criteria', () => {
+      invalidQueryCriterias.forEach((invalidQueryCriteria) => {
+        // @ts-ignore
+        expect(() => validateCriteria(invalidQueryCriteria, true)).to.throw();
+      });
+      expect(() => validateCriteria({ center: [0, 0] }, true)).to.throw();
+      expect(() => validateCriteria({ radius: 1000 }, true)).to.throw();
+    });
+
+    it('validateCriteria(criteria) throws errors given invalid query criteria', () => {
+      invalidQueryCriterias.forEach((invalidQueryCriteria) => {
+        // @ts-ignore
+        expect(() => validateCriteria(invalidQueryCriteria)).to.throw();
+      });
     });
   });
 });
