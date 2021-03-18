@@ -10,7 +10,7 @@
  * License: MIT
  */
 import { GeoQuery, QueryCriteria } from './GeoQuery';
-import { distanceBetween, geohashForLocation, validateLocation, validateKey } from 'geofire-common';
+import { geohashForLocation, validateLocation, validateKey, Geopoint } from 'geofire-common';
 import { decodeGeoFireObject, encodeGeoFireObject } from './databaseUtils';
 
 import * as GeoFireTypes from './GeoFireTypes';
@@ -40,7 +40,7 @@ export class GeoFire {
    * @param key The key of the location to retrieve.
    * @returns A promise that is fulfilled with the location of the given key.
    */
-  public get(key: string): Promise<number[]> {
+  public get(key: string): Promise<Geopoint> {
     validateKey(key);
     return this._firebaseRef.child(key).once('value').then((dataSnapshot: DatabaseTypes.DataSnapshot) => {
       const snapshotVal = dataSnapshot.val();
@@ -83,7 +83,7 @@ export class GeoFire {
    * @param location The [latitude, longitude] pair to add.
    * @returns A promise that is fulfilled when the write is complete.
    */
-  public set(keyOrLocations: string | any, location?: number[]): Promise<any> {
+  public set(keyOrLocations: string | any, location?: Geopoint): Promise<any> {
     let locations;
     if (typeof keyOrLocations === 'string' && keyOrLocations.length !== 0) {
       // If this is a set for a single location, convert it into a object
@@ -103,7 +103,7 @@ export class GeoFire {
     Object.keys(locations).forEach((key) => {
       validateKey(key);
 
-      const location: number[] = locations[key];
+      const location: Geopoint = locations[key];
       if (location === null) {
         // Setting location to null is valid since it will remove the key
         newData[key] = null;

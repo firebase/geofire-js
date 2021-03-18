@@ -1,21 +1,22 @@
 /* tslint:disable:no-import-side-effect no-namespace */
 import { DataSnapshot } from '@firebase/database-types';
+import { Geopoint, Geohash } from "geofire-common";
 
 export interface Document {
-  '.priority': string;
-  g: string;
-  l: number[];
+  '.priority': Geohash;
+  g: Geohash;
+  l: Geopoint;
 }
 export type KeyCallback = (
   key?: string,
-  location?: number[],
+  location?: Geopoint,
   distanceFromCenter?: number
 ) => void;
 export interface LocationTracked {
-  location: number[];
+  location: Geopoint;
   distanceFromCenter: number;
   isInQuery: boolean;
-  geohash: string;
+  geohash: Geohash;
 }
 export type ReadyCallback = () => void;
 export interface QueryCallbacks {
