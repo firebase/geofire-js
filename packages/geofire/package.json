@@ -42,7 +42,7 @@
     "geofire-common": "5.2.0"
   },
   "peerDependencies": {
-    "firebase": "^2.4.0 || 3.x.x || 4.x.x || 5.x.x || 6.x.x || 7.x.x || 8.x.x"
+    "firebase": "exp"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
@@ -50,7 +50,7 @@
     "@types/node": "^10.12.21",
     "chai": "^4.2.0",
     "coveralls": "^3.0.2",
-    "firebase": "^8.2.0",
+    "firebase": "exp",
     "jsdom": "^13.2.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^5.2.0",

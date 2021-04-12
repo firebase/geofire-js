@@ -13,8 +13,7 @@ import { GeoQuery, QueryCriteria } from './GeoQuery';
 import { geohashForLocation, validateLocation, validateKey, Geopoint } from 'geofire-common';
 import { decodeGeoFireObject, encodeGeoFireObject } from './databaseUtils';
 
-import * as GeoFireTypes from './GeoFireTypes';
-import * as DatabaseTypes from '@firebase/database-types';
+import { Reference, DataSnapshot, child, update, get } from 'firebase/database';
 
 /**
  * Creates a GeoFire instance.
@@ -23,7 +22,7 @@ export class GeoFire {
   /**
    * @param _firebaseRef A Firebase reference where the GeoFire data will be stored.
    */
-  constructor(private _firebaseRef: DatabaseTypes.Reference) {
+  constructor(private _firebaseRef: Reference) {
     if (Object.prototype.toString.call(this._firebaseRef) !== '[object Object]') {
       throw new Error('firebaseRef must be an instance of Firebase');
     }
@@ -42,7 +41,7 @@ export class GeoFire {
    */
   public get(key: string): Promise<Geopoint> {
     validateKey(key);
-    return this._firebaseRef.child(key).once('value').then((dataSnapshot: DatabaseTypes.DataSnapshot) => {
+    return get(child(this._firebaseRef, key)).then((dataSnapshot: DataSnapshot) => {
       const snapshotVal = dataSnapshot.val();
       if (snapshotVal === null) {
         return null;
@@ -57,7 +56,7 @@ export class GeoFire {
    *
    * @returns The Firebase instance used to create this GeoFire instance.
    */
-  public ref(): DatabaseTypes.Reference {
+  public ref(): Reference {
     return this._firebaseRef;
   }
 
@@ -115,7 +114,7 @@ export class GeoFire {
       }
     });
 
-    return this._firebaseRef.update(newData);
+    return update(this._firebaseRef, newData);
   }
 
   /**

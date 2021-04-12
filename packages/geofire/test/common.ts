@@ -1,6 +1,7 @@
 /* tslint:disable:max-line-length */
 import * as chai from 'chai';
-import firebase from 'firebase';
+import { initializeApp } from 'firebase/app';
+import { Reference, getDatabase, ref, push, remove, get, DataSnapshot } from 'firebase/database';
 
 import { GeoFire, GeoQuery, QueryCallbacks } from '../src';
 import { QueryCriteria } from '../src/GeoQuery';
@@ -22,7 +23,7 @@ export const validQueryCriterias: QueryCriteria[] = [{ center: [0, 0], radius: 1
 export const invalidQueryCriterias = [{}, { random: 100 }, { center: [91, 2], radius: 1000, random: 'a' }, { center: [91, 2], radius: 1000 }, { center: [1, -181], radius: 1000 }, { center: ['a', 2], radius: 1000 }, { center: [1, [1, 2]], radius: 1000 }, { center: [0, 0], radius: -1 }, { center: [null, 2], radius: 1000 }, { center: [1, undefined], radius: 1000 }, { center: [NaN, 0], radius: 1000 }, { center: [1, 2], radius: -10 }, { center: [1, 2], radius: 'text' }, { center: [1, 2], radius: [1, 2] }, { center: [1, 2], radius: null }, true, false, undefined, NaN, [], 'a', 1];
 
 // Create global constiables to hold the Firebase and GeoFire constiables
-export let geoFireRef: firebase.database.Reference,
+export let geoFireRef: Reference,
   geoFire: GeoFire,
   geoQueries: GeoQuery[] = [];
 
@@ -32,7 +33,7 @@ const config = {
   databaseURL: 'https://geofire-gh-tests.firebaseio.com',
   projectId: 'geofire-gh-tests'
 };
-firebase.initializeApp(config);
+initializeApp(config);
 
 /**********************/
 /*  HELPER FUNCTIONS  */
@@ -40,7 +41,7 @@ firebase.initializeApp(config);
 /* Helper functions which runs before each Jasmine test has started */
 export function beforeEachHelper(done) {
   // Create a new Firebase database ref at a random node
-  geoFireRef = firebase.database().ref().push();
+  geoFireRef = push(ref(getDatabase()));
   // Create a new GeoFire instance
   geoFire = new GeoFire(geoFireRef);
 
@@ -57,7 +58,7 @@ export function afterEachHelper(done) {
     geoQuery.cancel();
   });
 
-  geoFireRef.remove().then(() => {
+  remove(geoFireRef).then(() => {
     // Wait for 50 milliseconds after each test to give enough time for old query events to expire
     return wait(50);
   }).then(done);
@@ -78,7 +79,7 @@ export function generateRandomString() {
 
 /* Returns the current data in the Firebase */
 export function getFirebaseData() {
-  return geoFireRef.once('value').then((dataSnapshot: firebase.database.DataSnapshot) => {
+  return get(geoFireRef).then((dataSnapshot: DataSnapshot) => {
     return dataSnapshot.exportVal();
   });
 }
