@@ -6,7 +6,10 @@ import {
 import {
   decodeGeoFireObject, geoFireGetKey } from './databaseUtils';
 import * as GeoFireTypes from './GeoFireTypes';
-import { DataSnapshot, orderByChild, Reference, query, startAt, endAt, off, child, get, Query, onChildAdded, onChildRemoved, onChildChanged, onValue } from 'firebase/database';
+import { 
+  DataSnapshot, orderByChild, Reference, query, startAt, endAt, off, child, get, Query, onChildAdded, onChildRemoved,
+  onChildChanged, onValue 
+} from 'firebase/database';
 
 export interface QueryCriteria {
   center?: Geopoint;
