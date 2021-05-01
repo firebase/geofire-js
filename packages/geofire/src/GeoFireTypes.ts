@@ -1,5 +1,4 @@
 /* tslint:disable:no-import-side-effect no-namespace */
-import { DataSnapshot } from '@firebase/database-types';
 import { Geopoint, Geohash } from "geofire-common";
 
 export interface Document {
