@@ -3,7 +3,7 @@
 ## Table of Contents
 
  * [`GeoFire`](#geofire)
-   - [`new GeoFire(firebaseRef)`](#new-geofirefirebaseref)
+   - [`new geofire.GeoFire(firebaseRef)`](#new-geofirefirebaseref)
    - [`ref()`](#geofireref)
    - [`get(key)`](#geofiregetkey)
    - [`set(keyOrLocations[, location])`](#geofiresetkeyorlocations-location)
@@ -26,7 +26,7 @@
 
 A `GeoFire` instance is used to read and write geolocation data to your Firebase database and to create queries.
 
-### new GeoFire(firebaseRef)
+### new geofire.GeoFire(firebaseRef)
 
 Creates and returns a new `GeoFire` instance to manage your location data. Data will be stored at
 the location pointed to by `firebaseRef`. Note that this `firebaseRef` can point to anywhere in your Firebase database.
@@ -41,7 +41,7 @@ firebase.initializeApp({
 var firebaseRef = firebase.database().ref();
 
 // Create a GeoFire index
-var geoFire = new GeoFire(firebaseRef);
+var geoFire = new geofire.GeoFire(firebaseRef);
 ```
 
 ### GeoFire.ref()
@@ -50,7 +50,7 @@ Returns the `Firebase` reference used to create this `GeoFire` instance.
 
 ```JavaScript
 var firebaseRef = firebase.database().ref();
-var geoFire = new GeoFire(firebaseRef);
+var geoFire = new geofire.GeoFire(firebaseRef);
 
 var ref = geoFire.ref();  // ref === firebaseRef
 ```
