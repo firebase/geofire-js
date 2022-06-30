@@ -1,7 +1,7 @@
 /* tslint:disable:max-line-length */
 import * as chai from 'chai';
 import { initializeApp } from 'firebase/app';
-import { Reference, getDatabase, ref, push, remove, get, DataSnapshot } from 'firebase/database';
+import { DatabaseReference, getDatabase, ref, push, remove, get, DataSnapshot } from 'firebase/database';
 
 import { GeoFire, GeoQuery, QueryCallbacks } from '../src';
 import { QueryCriteria } from '../src/GeoQuery';
@@ -23,7 +23,7 @@ export const validQueryCriterias: QueryCriteria[] = [{ center: [0, 0], radius: 1
 export const invalidQueryCriterias = [{}, { random: 100 }, { center: [91, 2], radius: 1000, random: 'a' }, { center: [91, 2], radius: 1000 }, { center: [1, -181], radius: 1000 }, { center: ['a', 2], radius: 1000 }, { center: [1, [1, 2]], radius: 1000 }, { center: [0, 0], radius: -1 }, { center: [null, 2], radius: 1000 }, { center: [1, undefined], radius: 1000 }, { center: [NaN, 0], radius: 1000 }, { center: [1, 2], radius: -10 }, { center: [1, 2], radius: 'text' }, { center: [1, 2], radius: [1, 2] }, { center: [1, 2], radius: null }, true, false, undefined, NaN, [], 'a', 1];
 
 // Create global constiables to hold the Firebase and GeoFire constiables
-export let geoFireRef: Reference,
+export let geoFireRef: DatabaseReference,
   geoFire: GeoFire,
   geoQueries: GeoQuery[] = [];
 
