@@ -8,23 +8,19 @@ import {
 import * as GeoFireTypes from './GeoFireTypes';
 import { 
   DataSnapshot, orderByChild, DatabaseReference, query, startAt, endAt, off, child, get, Query, onChildAdded, onChildRemoved,
-  onChildChanged, onValue 
+  onChildChanged, onValue, Unsubscribe 
 } from 'firebase/database';
 
 export interface QueryCriteria {
   center?: Geopoint;
   radius?: number;
 }
-export type QueryStateCallback = (
-  a: DataSnapshot | null,
-  b?: string
-) => any;
 export interface QueryState {
   active: boolean;
-  childAddedCallback: QueryStateCallback;
-  childRemovedCallback: QueryStateCallback;
-  childChangedCallback: QueryStateCallback;
-  valueCallback: QueryStateCallback;
+  childAddedCallback: Unsubscribe;
+  childRemovedCallback: Unsubscribe;
+  childChangedCallback: Unsubscribe;
+  valueCallback: Unsubscribe;
 }
 /**
  * Validates the inputted query criteria and throws an error if it is invalid.
@@ -281,11 +277,10 @@ export class GeoQuery {
    * @param queryState An object storing the current state of the query.
    */
   private _cancelGeohashQuery(q: string[], queryState: QueryState): void {
-    const queryRef = query(this._firebaseRef, orderByChild('g'), startAt(q[0]), endAt(q[1]));
-    off(queryRef, 'child_added', queryState.childAddedCallback);
-    off(queryRef, 'child_removed', queryState.childRemovedCallback);
-    off(queryRef, 'child_changed', queryState.childChangedCallback);
-    off(queryRef, 'value', queryState.valueCallback);
+    queryState.childAddedCallback();
+    queryState.childRemovedCallback();
+    queryState.childChangedCallback();
+    queryState.valueCallback();
   }
 
   /**
