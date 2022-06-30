@@ -7,7 +7,7 @@ import {
   decodeGeoFireObject, geoFireGetKey } from './databaseUtils';
 import * as GeoFireTypes from './GeoFireTypes';
 import { 
-  DataSnapshot, orderByChild, Reference, query, startAt, endAt, off, child, get, Query, onChildAdded, onChildRemoved,
+  DataSnapshot, orderByChild, DatabaseReference, query, startAt, endAt, off, child, get, Query, onChildAdded, onChildRemoved,
   onChildChanged, onValue 
 } from 'firebase/database';
 
@@ -92,7 +92,7 @@ export class GeoQuery {
    * @param _firebaseRef A Firebase reference where the GeoFire data will be stored.
    * @param queryCriteria The criteria which specifies the query's center and radius.
    */
-  constructor(private _firebaseRef: Reference, queryCriteria: QueryCriteria) {
+  constructor(private _firebaseRef: DatabaseReference, queryCriteria: QueryCriteria) {
     // Firebase reference of the GeoFire which created this query
     if (Object.prototype.toString.call(this._firebaseRef) !== '[object Object]') {
       throw new Error('firebaseRef must be an instance of Firebase');

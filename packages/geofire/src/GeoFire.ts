@@ -13,7 +13,7 @@ import { GeoQuery, QueryCriteria } from './GeoQuery';
 import { geohashForLocation, validateLocation, validateKey, Geopoint } from 'geofire-common';
 import { decodeGeoFireObject, encodeGeoFireObject } from './databaseUtils';
 
-import { Reference, DataSnapshot, child, update, get } from 'firebase/database';
+import { DatabaseReference, DataSnapshot, child, update, get } from 'firebase/database';
 
 /**
  * Creates a GeoFire instance.
@@ -22,7 +22,7 @@ export class GeoFire {
   /**
    * @param _firebaseRef A Firebase reference where the GeoFire data will be stored.
    */
-  constructor(private _firebaseRef: Reference) {
+  constructor(private _firebaseRef: DatabaseReference) {
     if (Object.prototype.toString.call(this._firebaseRef) !== '[object Object]') {
       throw new Error('firebaseRef must be an instance of Firebase');
     }
@@ -56,7 +56,7 @@ export class GeoFire {
    *
    * @returns The Firebase instance used to create this GeoFire instance.
    */
-  public ref(): Reference {
+  public ref(): DatabaseReference {
     return this._firebaseRef;
   }
 
