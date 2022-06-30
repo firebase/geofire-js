@@ -1,7 +1,7 @@
 import commonjs from 'rollup-plugin-commonjs';
 import resolveModule from 'rollup-plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
-import { uglify } from 'rollup-plugin-uglify';
+import { terser } from 'rollup-plugin-terser';
 import pkg from './package.json';
 
 const GLOBAL_NAME = 'geofire';
@@ -34,7 +34,7 @@ const completeBuilds = [{
       format: 'umd',
       name: GLOBAL_NAME
     },
-    plugins: [...plugins, uglify()]
+    plugins: [...plugins, terser()]
   },
   {
     input: 'src/index.ts',
