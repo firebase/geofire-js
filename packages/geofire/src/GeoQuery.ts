@@ -17,10 +17,10 @@ export interface QueryCriteria {
 }
 export interface QueryState {
   active: boolean;
-  childAddedCallback: Unsubscribe;
-  childRemovedCallback: Unsubscribe;
-  childChangedCallback: Unsubscribe;
-  valueCallback: Unsubscribe;
+  childAddedUnsubscribe: Unsubscribe;
+  childRemovedUnsubscribe: Unsubscribe;
+  childChangedUnsubscribe: Unsubscribe;
+  valueUnsubscribe: Unsubscribe;
 }
 /**
  * Validates the inputted query criteria and throws an error if it is invalid.
@@ -277,10 +277,10 @@ export class GeoQuery {
    * @param queryState An object storing the current state of the query.
    */
   private _cancelGeohashQuery(q: string[], queryState: QueryState): void {
-    queryState.childAddedCallback();
-    queryState.childRemovedCallback();
-    queryState.childChangedCallback();
-    queryState.valueCallback();
+    queryState.childAddedUnsubscribe();
+    queryState.childRemovedUnsubscribe();
+    queryState.childChangedUnsubscribe();
+    queryState.valueUnsubscribe();
   }
 
   /**
@@ -470,25 +470,25 @@ export class GeoQuery {
       const firebaseQuery: Query = query(this._firebaseRef, orderByChild('g'), startAt(q[0]), endAt(q[1]));
 
       // For every new matching geohash, determine if we should fire the 'key_entered' event
-      const childAddedCallback = onChildAdded(firebaseQuery, (a) => this._childAddedCallback(a));
-      const childRemovedCallback = onChildRemoved(firebaseQuery, (a) => this._childRemovedCallback(a));
-      const childChangedCallback = onChildChanged( firebaseQuery, (a) => this._childChangedCallback(a));
+      const childAddedUnsubscribe = onChildAdded(firebaseQuery, (a) => this._childAddedCallback(a));
+      const childRemovedUnsubscribe = onChildRemoved(firebaseQuery, (a) => this._childRemovedCallback(a));
+      const childChangedUnsubscribe = onChildChanged( firebaseQuery, (a) => this._childChangedCallback(a));
 
       // Once the current geohash to query is processed, see if it is the last one to be processed
       // and, if so, mark the value event as fired.
       // Note that Firebase fires the 'value' event after every 'child_added' event fires.
-      const valueCallback = onValue(firebaseQuery, () => {
-        off(firebaseQuery, 'value', valueCallback);
+      const valueUnsubscribe = onValue(firebaseQuery, () => {
+        off(firebaseQuery, 'value', valueUnsubscribe);
         this._geohashQueryReadyCallback(toQueryStr);
       });
 
       // Add the geohash query to the current geohashes queried dictionary and save its state
       this._currentGeohashesQueried[toQueryStr] = {
         active: true,
-        childAddedCallback,
-        childRemovedCallback,
-        childChangedCallback,
-        valueCallback
+        childAddedUnsubscribe,
+        childRemovedUnsubscribe,
+        childChangedUnsubscribe,
+        valueUnsubscribe
       };
     });
     // Based upon the algorithm to calculate geohashes, it's possible that no 'new'
