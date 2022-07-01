@@ -32,13 +32,16 @@ Creates and returns a new `GeoFire` instance to manage your location data. Data 
 the location pointed to by `firebaseRef`. Note that this `firebaseRef` can point to anywhere in your Firebase database.
 
 ```JavaScript
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref } from "firebase/database";
+
 // Initialize the Firebase SDK
-firebase.initializeApp({
+initializeApp({
   // ...
 });
 
 // Create a Firebase reference where GeoFire will store its information
-var firebaseRef = firebase.database().ref();
+var firebaseRef = ref(getDatabase());
 
 // Create a GeoFire index
 var geoFire = new GeoFire(firebaseRef);
@@ -49,7 +52,9 @@ var geoFire = new GeoFire(firebaseRef);
 Returns the `Firebase` reference used to create this `GeoFire` instance.
 
 ```JavaScript
-var firebaseRef = firebase.database().ref();
+import { getDatabase, ref } from "firebase/database";
+
+var firebaseRef = ref(getDatabase());
 var geoFire = new GeoFire(firebaseRef);
 
 var ref = geoFire.ref();  // ref === firebaseRef
