@@ -4,14 +4,16 @@
     <title>GeoFire fish3 Example</title>
 
     <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase-database.js"></script>
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.8.4/firebase-app.js'
+      import { getDatabase, ref, push } from 'https://www.gstatic.com/firebasejs/9.8.4/firebase-database.js'
+    </script>
 
     <!-- RSVP -->
     <script src="https://unpkg.com/rsvp@3.1.0/dist/rsvp.min.js"></script>
 
     <!-- GeoFire -->
-    <script src="https://cdn.firebase.com/libs/geofire/5.0.1/geofire.min.js"></script>
+    <script src="https://cdn.firebase.com/libs/geofire/6.0.0/geofire.min.js"></script>
 
     <!-- Custom JS -->
     <script src="js/fish3.js" defer></script>
