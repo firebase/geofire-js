@@ -3,6 +3,45 @@
 Below are instructions for migrating from one version of GeoFire to another. If you are upgrading
 several versions at once, make sure you follow the migration instructions for all upgrades.
 
+## `5.x.x` to `6.x.x`
+
+With the release of GeoFire `6.0.0`, GeoFire now uses the new
+[Firebase Modular SDK](https://firebase.blog/posts/2021/07/introducing-the-new-firebase-js-sdk#introducing-firestore-lite).
+
+This only changes the way you interact with the Firebase SDK, but not how you interact with GeoFire.
+
+For example, this:
+```js
+// Initialize the Firebase SDK
+firebase.initializeApp({
+  // ...
+});
+
+// Create a Firebase reference where GeoFire will store its information
+var firebaseRef = firebase.database().ref();
+
+// Create a GeoFire index
+var geoFire = new GeoFire(firebaseRef);
+```
+
+Becomes:
+```js
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref } from "firebase/database";
+
+// Initialize the Firebase SDK
+initializeApp({
+  // ...
+});
+
+// Create a Firebase reference where GeoFire will store its information
+var firebaseRef = ref(getDatabase());
+
+// Create a GeoFire index
+var geoFire = new GeoFire(firebaseRef);
+```
+
+See [Firebase's upgrade guide](https://firebase.google.com/docs/web/modular-upgrade) for more details.
 
 ## `3.x.x` to `4.x.x`
 
