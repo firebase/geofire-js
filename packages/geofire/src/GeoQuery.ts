@@ -503,7 +503,7 @@ export class GeoQuery {
   /**
    * Encodes a query as a string for easier indexing and equality.
    *
-   * @param query The query to encode.
+   * @param q The query to encode.
    * @returns The encoded query as string.
    */
   private _queryToString(q: GeohashRange): string {
