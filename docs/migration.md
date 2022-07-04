@@ -6,9 +6,9 @@ several versions at once, make sure you follow the migration instructions for al
 ## `5.x.x` to `6.x.x`
 
 With the release of GeoFire `6.0.0`, GeoFire now uses the new
-[Firebase Modular SDK](https://firebase.blog/posts/2021/07/introducing-the-new-firebase-js-sdk#introducing-firestore-lite).
+[Firebase Modular SDK](https://firebase.blog/posts/2021/07/introducing-the-new-firebase-js-sdk#introducing-firestore-lite). This new SDK is incompatible with previous versions, so if you're still using an older version of the Firebase SDK or our [compat module](https://firebase.google.com/docs/web/modular-upgrade#update_imports_to_v9_compat), please stick to version `5.x.x` of GeoFire.
 
-This only changes the way you interact with the Firebase SDK, but not how you interact with GeoFire.
+This change only affects the way you interact with the Firebase SDK, but not how you interact with GeoFire.
 
 For example, this:
 ```js
