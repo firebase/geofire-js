@@ -1,6 +1,6 @@
 import { Document } from './GeoFireTypes';
 import { validateLocation, validateGeohash, Geopoint, Geohash } from "geofire-common";
-import { DataSnapshot } from '@firebase/database-types';
+import { DataSnapshot } from 'firebase/database';
 
 /**
  * Encodes a location and geohash as a GeoFire object.

@@ -1,13 +1,13 @@
 (function() {
   // Initialize the Firebase SDK
-  firebase.initializeApp({
+  initializeApp({
     apiKey: "AIzaSyCR4ND2xwX3kU1IxTn0youF5OlI3x6MFZs",
     databaseURL: "https://geofire-gh-tests.firebaseio.com",
     projectId: "geofire-gh-tests"
   });
 
   // Generate a random Firebase location
-  var firebaseRef = firebase.database().ref().push();
+  var firebaseRef = push(ref(getDatabase()));
 
   // Create a new GeoFire instance at the random Firebase location
   var geoFireInstance = new geofire.GeoFire(firebaseRef);

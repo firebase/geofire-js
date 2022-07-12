@@ -1,1 +1,3 @@
-
+- [Breaking change] Upgraded GeoFire to use the Firebase JS SDK v9. GeoFire no longer supports Firebase SDK below version 9.0.0
+- [Internal] Replace the `uglify` plugin with `terser`
+- See the migration guide (https://github.com/firebase/geofire-js/tree/master/migration#upgrading-from-geofire-3xx-to-4xx) for upgrade instructions
