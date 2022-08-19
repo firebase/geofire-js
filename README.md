@@ -93,3 +93,7 @@ guidelines](.github/CONTRIBUTING.md). Local setup instructions are available [he
 
 [gh-actions]: https://github.com/firebase/geofire-js/actions
 [gh-actions-badge]: https://github.com/firebase/geofire-js/workflows/CI%20Tests/badge.svg
+
+## License
+
+© Google, 2022. Licensed under [The MIT License](LICENSE).
