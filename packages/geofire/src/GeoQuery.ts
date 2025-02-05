@@ -478,8 +478,10 @@ export class GeoQuery {
       // and, if so, mark the value event as fired.
       // Note that Firebase fires the 'value' event after every 'child_added' event fires.
       const valueUnsubscribe = onValue(firebaseQuery, () => {
-        off(firebaseQuery, 'value', valueUnsubscribe);
-        this._geohashQueryReadyCallback(toQueryStr);
+        setTimeout(() => {
+          valueUnsubscribe();
+          this._geohashQueryReadyCallback(toQueryStr);
+        }, 0);
       });
 
       // Add the geohash query to the current geohashes queried dictionary and save its state
