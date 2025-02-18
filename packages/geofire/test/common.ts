@@ -30,8 +30,8 @@ export let geoFireRef: DatabaseReference,
 // Initialize Firebase
 const config = {
   apiKey: '<YOUR_API_KEY>',
-  databaseURL: '<YOUR_DB_URL>',
-  projectId: '<YOUR_PROJECT_ID>'
+  databaseURL: 'https://fake-project-id.firebaseio.com',
+  projectId: 'fake-project-id'
 };
 initializeApp(config);
 
