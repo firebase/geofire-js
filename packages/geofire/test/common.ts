@@ -29,9 +29,9 @@ export let geoFireRef: DatabaseReference,
 
 // Initialize Firebase
 const config = {
-  apiKey: 'AIzaSyCR4ND2xwX3kU1IxTn0youF5OlI3x6MFZs',
-  databaseURL: 'https://geofire-gh-tests.firebaseio.com',
-  projectId: 'geofire-gh-tests'
+  apiKey: '<YOUR_API_KEY>',
+  databaseURL: 'https://fake-project-id.firebaseio.com',
+  projectId: 'fake-project-id'
 };
 initializeApp(config);
 

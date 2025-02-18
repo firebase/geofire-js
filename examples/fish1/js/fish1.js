@@ -1,9 +1,10 @@
 (function() {
   // Initialize the Firebase SDK
+  // TODO(DEVELOPER): Change the values below using values from the initialization snippet: Firebase Console > Overview > Add Firebase to your web app.
   initializeApp({
-    apiKey: "AIzaSyCR4ND2xwX3kU1IxTn0youF5OlI3x6MFZs",
-    databaseURL: "https://geofire-gh-tests.firebaseio.com",
-    projectId: "geofire-gh-tests"
+    apiKey: "<YOUR_API_KEY>",
+    databaseURL: "<YOUR_DB_URL>",
+    projectId: "<YOUR_PROJECT_ID>"
   });
 
   // Generate a random Firebase location
