@@ -1,9 +1,9 @@
 (function() {
   // Initialize the Firebase SDK
   initializeApp({
-    apiKey: "sAIzaSyCR4ND2xwX3kU1IxTn0youF5OlI3x6MFZs",
-    databaseURL: "https://geofire-gh-tests.firebaseio.com",
-    projectId: "geofire-gh-tests"
+    apiKey: "s<YOUR_API_KEY>",
+    databaseURL: "<YOUR_DB_URL>",
+    projectId: "<YOUR_PROJECT_ID>"
   });
 
   // Generate a random Firebase location
