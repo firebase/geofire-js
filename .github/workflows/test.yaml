@@ -28,7 +28,6 @@ jobs:
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - run: npm install
-      - run: npm run bootstrap
       - run: npm run lint
       - name: Run tests against emulator
         run: |
