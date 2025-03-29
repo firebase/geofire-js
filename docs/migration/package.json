@@ -5,6 +5,6 @@
   "private": true,
   "dependencies": {
     "rsvp": "3.2.1",
-    "firebase": "2.4.2"
+    "firebase": "10.9.0"
   }
 }
