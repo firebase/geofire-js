@@ -17,11 +17,12 @@
 
         // Geohash validation
         "g": {
-          ".validate": "newData.val() == newData.parent().getPriority()"
+          ".validate": "newData.isString() && newData.val() == newData.parent().getPriority()"
         },
 
         // Location coordinates validation
         "l": {
+          ".validate": "newData.hasChildren(['0', '1'])",
           "0" : {
             ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
           },
