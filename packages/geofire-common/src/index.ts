@@ -293,16 +293,19 @@ export function boundingBoxCoordinates(center: Geopoint, radius: number):
   const longDegsNorth = metersToLongitudeDegrees(radius, latitudeNorth);
   const longDegsSouth = metersToLongitudeDegrees(radius, latitudeSouth);
   const longDegs = Math.max(longDegsNorth, longDegsSouth);
+  // A box spanning every longitude has no wrapped west or east edge.
+  const west = longDegs >= 180 ? -180 : wrapLongitude(center[1] - longDegs);
+  const east = longDegs >= 180 ? 180 : wrapLongitude(center[1] + longDegs);
   return [
     [center[0], center[1]],
-    [center[0], wrapLongitude(center[1] - longDegs)],
-    [center[0], wrapLongitude(center[1] + longDegs)],
+    [center[0], west],
+    [center[0], east],
     [latitudeNorth, center[1]],
-    [latitudeNorth, wrapLongitude(center[1] - longDegs)],
-    [latitudeNorth, wrapLongitude(center[1] + longDegs)],
+    [latitudeNorth, west],
+    [latitudeNorth, east],
     [latitudeSouth, center[1]],
-    [latitudeSouth, wrapLongitude(center[1] - longDegs)],
-    [latitudeSouth, wrapLongitude(center[1] + longDegs)]
+    [latitudeSouth, west],
+    [latitudeSouth, east]
   ];
 }
 
