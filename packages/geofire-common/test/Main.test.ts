@@ -241,6 +241,18 @@ describe('Geohash queries:', () => {
     expect(geohashQuery('64z178', 15)).to.be.deep.equal(['64z', '64~']);
   });
 
+  it('Includes nearby points across the meridian when the box spans all longitudes', () => {
+    const radius = 8587850;
+    for (const sign of [-1, 1]) {
+      const center: Geopoint = [0, sign * 0.00000001];
+      const nearby: Geopoint = [0, -sign];
+      expect(distanceBetween(center, nearby) * 1000).to.be.lessThan(radius);
+      const hash = geohashForLocation(nearby);
+      const ranges = geohashQueryBounds(center, radius);
+      expect(ranges.some(([start, end]) => start <= hash && hash < end)).to.equal(true);
+    }
+  });
+
   it('Query bounds from geohashQueryBounds must contain points in circle', () => {
     function inQuery(queries, hash) {
       for (let i = 0; i < queries.length; i++) {
